@@ -1,0 +1,94 @@
+@inherits demoVer.Shared.ArrowAnimationBase
+@namespace demoVer.Shared
+<div class="running-diagram-container">
+    <div class="running-diagram-container top">
+        <div class="leftPart">
+            連接狀態：
+            <div id="link_status">test</div>
+        </div>
+        <div class="rightPart">
+            運行模式：
+            <div id="running_mode">test</div>
+        </div>
+        <!-- <button class="top-right-button" style="position: absolute; top: 5px; right: 5px;">⋯</button> -->
+        <button class="top-right-button">⋯</button>
+    </div>
+    <div class="running-diagram-container bottom">
+        <div class="grid-container" @ref="grid_container">
+            <!-- 第一列 -->
+            <div class="grid-item">
+                <img src="images/transmission-tower.png" alt="Transmission Tower" style="width:48px; height:48px" @ref="tower"/>
+            </div>
+            <div class="placeholder">
+                @if (triGroup1.get_showArrowFlag())
+                {
+                    <div class="arrows-container">
+                        @for (int i = 0; i < 3; i++)
+                        {
+                            var cssClass = i == triGroup1.activeIndex ? "triangle active" : "triangle";
+                            <div class="@cssClass"></div>
+                        }
+                    </div>
+                }
+            </div>
+            <div class="grid-item">
+                <img src="images/fridge.png" alt="NTN" style="width:48px; height:48px" @ref="NTN"/>
+            </div>
+            <div class="placeholder">
+                @if (triGroup2.get_showArrowFlag())
+                {
+                    <div class="arrows-container">
+                        @for (int i = 0; i < 3; i++)
+                        {
+                            var cssClass = i == triGroup2.activeIndex ? "triangle active" : "triangle";
+                            <div class="@cssClass"></div>
+                        }
+                    </div>
+                }
+            </div>
+            <div class="grid-item">
+                <img src="images/charge.png" alt="load" style="width:48px; height:48px" @ref="load"/>
+            </div>
+            <!-- 第二列 -->
+            <div class="placeholder"></div>
+            <div class="placeholder"></div>
+            <div class="placeholder">
+                @if (triGroup3.get_showArrowFlag())
+                {
+                    <div class="arrows-container-downward">
+                        @for (int i = 0; i < 3; i++)
+                        {
+                            var cssClass = i == triGroup3.activeIndex ? "triangle-downward active" : "triangle-downward";
+                            <div class="@cssClass"></div>
+                        }
+                    </div>
+                }
+            </div>
+            <div class="placeholder"></div>
+            <div class="placeholder"></div>
+
+            <!-- 第三列 -->
+            <div class="placeholder"></div>
+            <div class="placeholder"></div>
+            <div class="grid-item">
+                <img src="images/car-battery.png" alt="battery" style="width:48px; height:48px" @ref="battery"/>
+            </div>
+            <div class="placeholder"></div>
+            <div class="placeholder"></div>
+            
+        </div>
+        
+    </div>
+</div>
+
+@code{
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            //[Debug] show arrow animation
+            //await UpdateArrowPosition();
+            //StartTimer();
+        }
+    }
+}

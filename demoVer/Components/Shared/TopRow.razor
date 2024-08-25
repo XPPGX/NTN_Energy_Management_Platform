@@ -5,11 +5,12 @@
 <div class="top-row">
     <div class="left-items">
         <button class="btn" @onclick="toggleMenu">
-            <i class="fas fa-th-large"></i>
+            <!-- <i class="fas fa-th-large"></i> -->
+            <img src="images/shapes.png" alt="menu" style="width:24px; height:24px"/>
         </button>
-        <div class="current_page_label">
-            <div>@currentPage</div>
-        </div>
+        <button class="btn">
+            <img src="images/pen.png" alt="edit" style="width:24px; height:24px"/>
+        </button>
         @if(menuOpen)
         {
             <div class="dropdown-menu">
@@ -39,6 +40,10 @@
     </div>
 
     <div class="right-items">
+        <div class="current_page_label">
+            <div>@currentPage</div>
+        </div>
+        <button class="btn">FrameWork</button>
     </div>
 </div>
 

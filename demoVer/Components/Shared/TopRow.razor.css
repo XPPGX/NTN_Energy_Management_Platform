@@ -3,6 +3,7 @@
     border-bottom: 1px solid #C0C0C0;
 
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
     width: 100%;
@@ -11,13 +12,21 @@
 
 .left-items{
     display: flex;
+    flex-direction: row;
     gap: 1rem;
     position: relative;
+    justify-content: center;
 }
 
 .right-items{
-
+    display: flex;
+    flex-direction: row !important; 
+    gap: 1rem;
+    position: relative;
+    justify-content: center;
 }
+
+
 
 .dropdown-menu{
     position: absolute;

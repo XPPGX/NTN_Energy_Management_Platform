@@ -26,202 +26,14 @@
     </div>
     
     <div class="row2-container">
-        <div class="card-rough-container">
-            <div class="card-rough-container top">
-                <h4>總覽</h4>
-                <button class="top-right-button">⋯</button>
-            </div>
-            <div class="card-rough-container bottom">
-                <div class="overview-inner-card">
-                    <div class="smallIcon">
-                        <img src="images/transmission-tower.png" alt="Transmission Tower" style="width:48px; height:48px" />
-                    </div>
-                    <div class="overview-inner-card rightPart">
-                        <div class="overview-inner-card valueBlock">
-                            <div>輸入電壓：</div>
-                            <div id="input_volt">test</div>
-                        </div>
-                        <div class="overview-inner-card valueBlock">
-                            <div>輸入頻率：</div>
-                            <div id="input_freq">test</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="overview-inner-card">
-                    <div class="smallIcon">
-                        <img src="images/fridge.png" alt="Transmission Tower" style="width:48px; height:48px" />
-                    </div>
-                    <div class="overview-inner-card rightPart">
-                        <div class="overview-inner-card valueBlock">
-                            <div>輸出電壓：</div>
-                            <div id="output_volt">test</div>
-                        </div>
-                        <div class="overview-inner-card valueBlock">
-                            <div>輸出頻率：</div>
-                            <div id="output_freq">test</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="overview-inner-card">
-                    <div class="smallIcon">
-                        <img src="images/car-battery.png" alt="Transmission Tower" style="width:48px; height:48px" />
-                    </div>
-                    <div class="overview-inner-card rightPart">
-                        <div class="overview-inner-card valueBlock">
-                            <div>電池電量：</div>
-                            <div id="battery_level">test</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="overview-inner-card">
-                    <div class="smallIcon">
-                        <img src="images/charge.png" alt="Transmission Tower" style="width:48px; height:48px" />
-                    </div>
-                    <div class="overview-inner-card rightPart">
-                        <div class="overview-inner-card valueBlock">
-                            <div>負載功率：</div>
-                            <div id="Load_Watt">test</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="running-diagram-container">
-            <div class="running-diagram-container top">
-                <div class="running-diagram-container leftPart">
-                    連接狀態：
-                    <div id="link_status">test</div>
-                </div>
-                <div class="running-diagram-container rightPart">
-                    運行模式：
-                    <div id="running_mode">test</div>
-                </div>
-                <!-- <button class="top-right-button" style="position: absolute; top: 5px; right: 5px;">⋯</button> -->
-                <button class="top-right-button">⋯</button>
-            </div>
-            <div class="running-diagram-container bottom">
-                <div class="grid-container" @ref="grid_container">
-                    <!-- 第一列 -->
-                    <div class="grid-item">
-                        <img src="images/transmission-tower.png" alt="Transmission Tower" style="width:48px; height:48px" @ref="tower"/>
-                    </div>
-                    <div class="placeholder">
-                        @if (triGroup1.get_showArrowFlag())
-                        {
-                            <div class="arrows-container">
-                                @for (int i = 0; i < 3; i++)
-                                {
-                                    var cssClass = i == triGroup1.activeIndex ? "triangle active" : "triangle";
-                                    <div class="@cssClass"></div>
-                                }
-                            </div>
-                        }
-                    </div>
-                    <div class="grid-item">
-                        <img src="images/fridge.png" alt="NTN" style="width:48px; height:48px" @ref="NTN"/>
-                    </div>
-                    <div class="placeholder">
-                        @if (triGroup2.get_showArrowFlag())
-                        {
-                            <div class="arrows-container">
-                                @for (int i = 0; i < 3; i++)
-                                {
-                                    var cssClass = i == triGroup2.activeIndex ? "triangle active" : "triangle";
-                                    <div class="@cssClass"></div>
-                                }
-                            </div>
-                        }
-                    </div>
-                    <div class="grid-item">
-                        <img src="images/charge.png" alt="load" style="width:48px; height:48px" @ref="load"/>
-                    </div>
-                    <!-- 第二列 -->
-                    <div class="placeholder"></div>
-                    <div class="placeholder"></div>
-                    <div class="placeholder">
-                        @if (triGroup3.get_showArrowFlag())
-                        {
-                            <div class="arrows-container-downward">
-                                @for (int i = 0; i < 3; i++)
-                                {
-                                    var cssClass = i == triGroup3.activeIndex ? "triangle-downward active" : "triangle-downward";
-                                    <div class="@cssClass"></div>
-                                }
-                            </div>
-                        }
-                    </div>
-                    <div class="placeholder"></div>
-                    <div class="placeholder"></div>
-
-                    <!-- 第三列 -->
-                    <div class="placeholder"></div>
-                    <div class="placeholder"></div>
-                    <div class="grid-item">
-                        <img src="images/car-battery.png" alt="battery" style="width:48px; height:48px" @ref="battery"/>
-                    </div>
-                    <div class="placeholder"></div>
-                    <div class="placeholder"></div>
-                    
-                </div>
-                
-            </div>
-        </div>
-
-        <div class="Statistics-container">
-            <div class="Statistics-container top">
-                <span>統計</span>
-                <button class="top-right-button">⋯</button>
-            </div>
-            <div class="Statistics-container top">
-                <span id="current_strategy">當前用電策略: test</span>
-            </div>
-            <div class="Statistics-container bottom">
-                <div class="Statistics-inner-card">
-                    <div class="smallIcon">
-                        <img src="images/plug.png" alt="plug" style="width:48px; height:48px" />
-                    </div>
-                    <div>當日充電量：</div>
-                    <div id="charging_capcity_today">test</div>
-                    <div>KWH</div>
-                </div>
-                <div class="Statistics-inner-card">
-                    <div class="smallIcon">
-                        <img src="images/plug.png" alt="plug" style="width:48px; height:48px" />
-                    </div>
-                    <div>累積充電量：</div>
-                    <div id="charging_capcity_total">test</div>
-                    <div>KWH</div>
-                </div>
-                <div class="Statistics-inner-card">
-                    <div class="smallIcon">
-                        <img src="images/lighting.png" alt="lighting" style="width:48px; height:48px" />
-                    </div>
-                    <div>當日放電量：</div>
-                    <div id="discharging_capcity_today">test</div>
-                    <div>KWH</div>
-                </div>
-                <div class="Statistics-inner-card">
-                    <div class="smallIcon">
-                        <img src="images/lighting.png" alt="lighting" style="width:48px; height:48px" />
-                    </div>
-                    <div>累積放電量：</div>
-                    <div id="discharging_capcity_total">test</div>
-                    <div>KWH</div>
-                </div>
-            </div>
-        </div>
+        <OverviewCard />
+        <RunningDiagramCard />
+        <StatisticsCard />
     </div>
     
     <div class="row3-container">
-        <div class="Watt_diagram-container">
-            <canvas id="powerchart"></canvas>
-            <button class="top-right-button">⋯</button>
-        </div>
-        <div class="Battery_diagram-container">
-            <canvas id="batterychart"></canvas>
-            <button class="top-right-button">⋯</button>
-        </div>
+        <WattDiagram />
+        <BatteryChart />
     </div>
 </div>
 
@@ -229,73 +41,7 @@
 
 @code
 {
-    private ElementReference leftRef;
-    private ElementReference rightRef;
-    
-    private ElementReference tower;
-    private ElementReference NTN;
-    private ElementReference load;
-    private ElementReference battery;
-    private ElementReference grid_container;
-
-    private int arrowLeft;
-    private int arrowTop;
-    private int activeIndex = 0;
-    private bool showArrows = false;
-
-    class triangle_group{
-        public int arrowLeft;
-        public int arrowTop;
-        public int activeIndex;
-        public bool showArrows;
-        public bool position_OK;
-
-        public triangle_group()
-        {
-            this.activeIndex = 0;
-            this.showArrows = false;
-            this.position_OK = false;
-        }
-        public void set_triGroup_postion(int left, int top)
-        {
-            this.arrowLeft = left;
-            this.arrowTop = top;
-            this.position_OK = true;
-        }
-        public void show_arrows()
-        {
-            if(this.position_OK){
-                this.showArrows = true;
-            }
-        }
-        public void clear_arrows()
-        {
-            this.showArrows = false;
-        }
-        public bool get_showArrowFlag()
-        {
-            return this.showArrows;
-        }
-        public int get_arrowLeft()
-        {
-            return this.arrowLeft;
-        }
-        public int get_arrowTop()
-        {
-            return this.arrowTop;
-        }
-        public string GetTriGroupStyle()
-        {
-            return $"left:{this.get_arrowLeft()}px; top:{this.get_arrowTop()}px;";
-        }
-    }
-
-    triangle_group triGroup1 = new triangle_group();
-    triangle_group triGroup2 = new triangle_group();
-    triangle_group triGroup3 = new triangle_group();
-
-    private System.Threading.Timer? timer;
-
+    #region RunAtStart
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {//用這個function要搭配  @rendermode InteractiveServer 放在檔案開頭
     
@@ -303,11 +49,9 @@
         {   
             Console.WriteLine("First Render");
             try{
-                await UpdateArrowPosition();
-                StartTimer();
-                await JS.InvokeVoidAsync("drawPowerChart");
-                await JS.InvokeVoidAsync("drawBatteryChart");
-                //await JS.InvokeVoidAsync("initSortableIfDesktop");
+                //[Debug] try drag function
+                // var dotNetRef = DotNetObjectReference.Create(this);
+                // await JS.InvokeVoidAsync("initSortableRows", dotNetRef);
             }
             catch(Exception ex)
             {
@@ -315,74 +59,16 @@
             }
         }
     }
+    #endregion //RunAtStart
 
-    private void StartTimer()
-    {
-        timer = new System.Threading.Timer(_ =>
-        {   
-            Console.WriteLine("timer");
-            if(triGroup1.get_showArrowFlag() || triGroup2.get_showArrowFlag() || triGroup3.get_showArrowFlag())
-            {
-                if(triGroup1.get_showArrowFlag())
-                {
-                    triGroup1.activeIndex = (triGroup1.activeIndex + 1) % 3;
-                    Console.WriteLine("group1.index : " + triGroup1.activeIndex);
-                }
-                if(triGroup2.get_showArrowFlag())
-                {
-                    triGroup2.activeIndex = (triGroup2.activeIndex + 1) % 3;
-                    Console.WriteLine("group2.index : " + triGroup2.activeIndex);
-                }
-                if(triGroup3.get_showArrowFlag())
-                {
-                    triGroup3.activeIndex = (triGroup3.activeIndex + 1) % 3;
-                    Console.WriteLine("group3.index : " + triGroup3.activeIndex);
-                }
-                InvokeAsync(StateHasChanged);
-            }
-        }, null, 0, 1000);
-    }
+    
+    
+    // #region dragFunction
+    // [JSInvokable]
+    // public Task UpdateRowOrders(string[] row1, string[] row2)
+    // {
+    //     var all = 
+    // }
+    // #endregion //dragFunction
 
-    public void Dispose()
-    {
-        timer?.Dispose();
-    }
-
-    private async Task UpdateArrowPosition()
-    {
-        var leftRect = await JS.InvokeAsync<DomRect>("getBoundingClientRect", tower, grid_container);
-        var rightRect = await JS.InvokeAsync<DomRect>("getBoundingClientRect", NTN, grid_container);
-        arrowLeft = (int)((leftRect.Right + rightRect.Left) / 2) - 8; //if no "-8", the first triangle will appear at middle
-        arrowTop = (int)((leftRect.Top + rightRect.Top) / 2);
-        Console.WriteLine($"left : {arrowLeft}, top : {arrowTop}");
-        triGroup1.set_triGroup_postion(arrowLeft, arrowTop);
-        triGroup1.show_arrows();
-
-
-        leftRect = await JS.InvokeAsync<DomRect>("getBoundingClientRect", NTN, grid_container);
-        rightRect = await JS.InvokeAsync<DomRect>("getBoundingClientRect", load, grid_container);
-        arrowLeft = (int)((leftRect.Right + rightRect.Left) / 2);
-        arrowTop = (int)((leftRect.Top + rightRect.Top) / 2);
-        triGroup2.set_triGroup_postion(arrowLeft, arrowTop);
-        triGroup2.show_arrows();
-
-
-        leftRect = await JS.InvokeAsync<DomRect>("getBoundingClientRect", NTN, grid_container);
-        rightRect = await JS.InvokeAsync<DomRect>("getBoundingClientRect", battery, grid_container);
-        arrowLeft = (int)((leftRect.Right + rightRect.Left) / 2);
-        arrowTop = (int)((leftRect.Top + rightRect.Top) / 2);
-        triGroup3.set_triGroup_postion(arrowLeft, arrowTop);
-        triGroup3.show_arrows();
-    }
-
-    // DomRect 物件用來接 JS 回傳的資料
-    private class DomRect
-    {
-        public double Bottom { get; set; }
-        public double Height { get; set; }
-        public double Left { get; set; }
-        public double Right { get; set; }
-        public double Top { get; set; }
-        public double Width { get; set; }
-    }
 }

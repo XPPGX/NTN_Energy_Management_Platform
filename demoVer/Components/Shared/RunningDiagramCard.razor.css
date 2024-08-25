@@ -1,0 +1,179 @@
+/***** Running diagram *****/
+.running-diagram-container{
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    gap:2px;
+    background-color: white;
+    border-radius: 8px;
+}
+.running-diagram-container.top{
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 1rem;
+    position: relative;
+}
+
+.leftPart{
+    display: flex;
+    flex-direction: row;
+    width: 50%;
+    justify-content: flex-start;
+}
+.rightPart{
+    display: flex;
+    flex-direction: row;
+    width: 50%;
+    justify-content: flex-start;
+}
+.running-diagram-container.bottom{
+    width: 100%;
+    position: relative;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 3欄 */
+    grid-template-rows: repeat(3, 1fr);  /* 2列 */
+    justify-content: center;
+    align-items: center;
+    gap: 10%;
+    width: 95%;
+    height: 100%;
+    margin: auto;
+    padding-left: 2%;
+  }
+  
+  .grid-item {
+    background-color: #E6F2FF;
+    width: 70px;
+    aspect-ratio: 1 / 1;
+    /* color: white; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+  }
+
+  
+  .placeholder {
+    width: 70px;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* 空格：透明、無邊框 */
+    position: relative;
+    background-color: transparent;
+    pointer-events: none; /*如果沒有這個，瀏覽器會一直攔截游標造成卡頓*/
+  }
+
+.box {
+    width: 120px;
+    height: 120px;
+    background-color: #add8e6;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: #003366;
+}
+.arrows-container {
+    position: absolute;
+    display: flex;
+    gap: 8px;
+    pointer-events: none; /* 不攔截點擊 */
+    align-items: center;
+}
+.triangle {
+    width: 0;
+    height: 0;
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+    border-left: 20px solid gray;
+    opacity: 0.3;
+    transition: opacity 0.4s, border-left-color 0.4s;
+}
+
+.triangle.active {
+    border-left-color: orange;
+    opacity: 1;
+}
+
+.arrows-cotainer-downward{
+    position: absolute;
+    top: 0;
+    left: 50%;               /* 水平中心點 */
+    transform: translateX(-50%); /* ⭐️微調讓容器整體向左偏移半寬，達到置中效果 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+}
+
+.triangle-downward{
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 20px solid gray;
+    opacity: 0.3;
+    transition: opacity 0.4s, border-left-color 0.4s;
+}
+
+.triangle-downward.active{
+    border-top-color: orange;
+    opacity: 1;
+}
+
+.top-right-button{
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    padding: 4px 8px;
+    background-color: #eee;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+    z-index: 1000;
+}
+
+/***************************/
+
+@media(max-width:1200px){
+    .running-diagram-container{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap:2px;
+        background-color: white;
+        border-radius: 8px;
+    }
+    .running-diagram-container.top{
+        display: flex;
+        width: 100%;
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 1rem;
+        position: relative;
+    }
+    
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr); /* 3欄 */
+        grid-template-rows: repeat(3, 1fr);  /* 2列 */
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        width: 95%;
+        height: 100%;
+        margin: auto;
+        padding-left: 0%;
+        transform: scale(0.8);
+    }
+}

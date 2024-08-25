@@ -1,0 +1,25 @@
+@namespace demoVer.Shared
+@inject IJSRuntime JS
+<div class="Watt_diagram-container">
+    <canvas id="powerchart"></canvas>
+    <button class="top-right-button">⋯</button>
+</div>
+
+@code
+{
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            try{
+                
+                //[Debug] draw chart
+                await JS.InvokeVoidAsync("drawPowerChart");
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Error : " + ex.Message);
+            }
+        }
+    }
+}
