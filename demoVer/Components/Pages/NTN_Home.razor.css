@@ -1,0 +1,396 @@
+.column-container{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.row1-container{
+    display: flex;
+    justify-content: space-between;
+    gap:1rem;
+    padding: 1rem;
+
+    background-color: white;
+    border-radius: 8px;
+}
+
+.row2-container{
+    display: flex;
+    flex-direction: row;
+    gap:1rem;
+}
+
+.row3-container{
+    display: flex;
+    flex-direction: row;
+    gap:1rem;
+
+}
+
+.row1-leftPart{
+    display: flex;
+    align-items: center;
+    gap:0.5rem;
+}
+
+.row1-rightPart{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/***** Slide Button *****/
+/* 外框 */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+  }
+  
+  /* 隱藏原生 checkbox */
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  /* 滑動區 */
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    background-color: #ccc;
+    border-radius: 26px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transition: 0.4s;
+  }
+  
+  /* 滑動圓點 */
+  .slider:before {
+    content: "";
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+  }
+  
+  /* 當勾選時改變背景顏色與位置 */
+  .switch input:checked + .slider {
+    background-color: #4cd964;
+  }
+  
+  .switch input:checked + .slider:before {
+    transform: translateX(24px);
+  }
+/************************/
+
+/***** ModelName *****/
+.highlighted-content {
+    background-color: #ffe5d9;  /* 柔和珊瑚橘淺色 */
+    color: #d94f28;             /* 濃郁珊瑚橘字體 */
+    padding: 2px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(217, 79, 40, 0.2);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-weight: 600;
+}
+/************************/
+
+
+/***** overview *****/
+.card-rough-container{
+    display: flex;
+    flex-direction:column;
+    gap: 2px;
+    background-color: white;
+    border-radius: 8px;
+    width: 25%;
+    /* width: 300px; */
+    height: 330px;
+}
+
+.card-rough-container.top{
+    height: 40px;
+    width: 100%;
+    display : flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.card-rough-container.bottom{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+    justify-content: top;
+}
+
+.overview-inner-card{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 90%;
+    height: 60px;
+    gap: 4rem;
+    background-color: #E6F2FF ;
+    border-radius: 8px;
+}
+.smallIcon{
+    display: flex;
+    align-items: center; /* ✅ 垂直置中 */
+    justify-content: center; /* 可選：水平置中圖片內容 */
+    height: 100%;
+    padding-left: 10px;
+}
+.overview-inner-card.rightPart{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.overview-inner-card.valueBlock{
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+}
+/********************/
+
+/***** Running diagram *****/
+.running-diagram-container{
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    gap:2px;
+    background-color: white;
+    border-radius: 8px;
+}
+.running-diagram-container.top{
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 1rem;
+    position: relative;
+}
+
+.running-diagram-container.leftPart{
+    display: flex;
+    flex-direction: row;
+    width: 50%;
+    justify-content: center;
+}
+.running-diagram-container.rightPart{
+    display: flex;
+    flex-direction: row;
+    width: 50%;
+    justify-content: center;
+}
+.running-diagram-container.bottom{
+    width: 100%;
+    position: relative;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 3欄 */
+    grid-template-rows: repeat(3, 1fr);  /* 2列 */
+    justify-content: center;
+    align-items: center;
+    gap: 10%;
+    width: 95%;
+    height: 100%;
+    margin: auto;
+    padding-left: 2%;
+  }
+  
+  .grid-item {
+    background-color: #E6F2FF;
+    width: 70px;
+    aspect-ratio: 1 / 1;
+    /* color: white; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+  }
+
+  
+  .placeholder {
+    width: 70px;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* 空格：透明、無邊框 */
+    position: relative;
+    background-color: transparent;
+    pointer-events: none; /*如果沒有這個，瀏覽器會一直攔截游標造成卡頓*/
+  }
+
+.box {
+    width: 120px;
+    height: 120px;
+    background-color: #add8e6;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: #003366;
+}
+.arrows-container {
+    position: absolute;
+    display: flex;
+    gap: 8px;
+    pointer-events: none; /* 不攔截點擊 */
+    align-items: center;
+}
+.triangle {
+    width: 0;
+    height: 0;
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+    border-left: 20px solid gray;
+    opacity: 0.3;
+    transition: opacity 0.4s, border-left-color 0.4s;
+}
+
+.triangle.active {
+    border-left-color: orange;
+    opacity: 1;
+}
+
+.arrows-cotainer-downward{
+    position: absolute;
+    top: 0;
+    left: 50%;               /* 水平中心點 */
+    transform: translateX(-50%); /* ⭐️微調讓容器整體向左偏移半寬，達到置中效果 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+}
+
+.triangle-downward{
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 20px solid gray;
+    opacity: 0.3;
+    transition: opacity 0.4s, border-left-color 0.4s;
+}
+
+.triangle-downward.active{
+    border-top-color: orange;
+    opacity: 1;
+}
+/***************************/
+
+/***** Statistics *****/
+.Statistics-container{
+    display: flex;
+    flex-direction:column;
+    gap: 2px;
+    background-color: white;
+    border-radius: 8px;
+    width: 25%;
+    /* width: 300px; */
+    height: 330px;
+}
+
+.Statistics-container.top{
+    height: 40px;
+    width: 100%;
+    display : flex;
+    align-items: center;
+    justify-content: center;
+    position : relative;
+}
+
+.Statistics-container.bottom{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+    justify-content: top;
+}
+
+.Statistics-inner-card{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    width: 90%;
+    height: 60px;
+    background-color: #E6F2FF ;
+    border-radius: 8px;
+}
+.Statistics-smallIcon{
+    display: flex;
+    align-items: center; /* ✅ 垂直置中 */
+    justify-content: center; /* 可選：水平置中圖片內容 */
+    height: 100%;
+    padding-left: 10px;
+}
+/***************************/
+
+/***** RealTime_Watt_diagram *****/
+.Watt_diagram-container{
+    display: flex;
+    flex-direction:column;
+    align-items: center;
+    /* justify-content: center; */
+    gap: 2px;
+    background-color: white;
+    border-radius: 8px;
+    width: 50%;
+    height: 300px;
+    position: relative;
+}
+
+/*********************************/
+
+/***** Battery charging and discharing volumn *****/
+.Battery_diagram-container{
+    display: flex;
+    flex-direction:column;
+    align-items: center;
+    /* justify-content: center; */
+    gap: 2px;
+    background-color: white;
+    border-radius: 8px;
+    width: 50%;
+    height: 300px;
+    position: relative;
+}
+
+/**************************************************/
+
+/***** edit button *****/
+.top-right-button{
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    padding: 4px 8px;
+    background-color: #eee;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+    z-index: 1000;
+}
+
+
+/***********************/

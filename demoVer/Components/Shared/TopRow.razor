@@ -1,0 +1,157 @@
+@namespace demoVer.Shared
+@rendermode InteractiveServer
+@inject NavigationManager NavManager
+
+<div class="top-row">
+    <div class="left-items">
+        <button class="btn" @onclick="toggleMenu">
+            <i class="fas fa-th-large"></i>
+        </button>
+        <div class="current_page_label">
+            <div>@currentPage</div>
+        </div>
+        @if(menuOpen)
+        {
+            <div class="dropdown-menu">
+                <button class="nav-link" @onclick="GoTo_NTN_HOME">NTN首頁</button>
+                <button class="nav-link expandable" @onclick="Toggle_expand_sys_setting">系統設定</button>
+                @if(expand_sys_setting)
+                {
+                    <div class="sub-menu">
+                        <button class="nav-link" @onclick="GoTo_Battery_setting">電池設定</button>
+                        <button class="nav-link" @onclick="GoTo_Inverter_setting">逆變器設定</button>
+                    </div>
+                }
+                <button class="nav-link expandable" @onclick="Toggle_expand_management">機型管理</button>
+                @if(expand_management)
+                {
+                    <div class="sub-menu">
+                        <button class="nav-link" @onclick="GoTo_Link_status">連線狀態</button>
+                        <button class="nav-link" @onclick="GoTo_Data_log">監測報告</button>
+                    </div>
+                }
+                <button class="nav-link" @onclick="GoTo_Use_strategy">用電策略</button>
+            </div>
+        }
+        <div class="current-tab">
+            
+        </div>
+    </div>
+
+    <div class="right-items">
+    </div>
+</div>
+
+
+@code{
+    private bool menuOpen = false;
+    private bool expand_sys_setting = false;
+    private bool expand_management = false;
+
+    private string currentPage;
+    private string currentRoute = "test";
+
+    private void toggleMenu()
+    {
+        menuOpen = !menuOpen;
+    }
+    
+    private void Toggle_expand_management()
+    {
+        expand_management = !expand_management;
+    }
+
+    private void Toggle_expand_sys_setting()
+    {
+        expand_sys_setting = !expand_sys_setting;
+    }
+
+    
+    private void GoTo_NTN_HOME()
+    {
+        NavManager.NavigateTo("/");
+    }
+
+    private void GoTo_Battery_setting()
+    {
+        NavManager.NavigateTo("/Battery_setting");
+    }
+
+    private void GoTo_Inverter_setting()
+    {
+        NavManager.NavigateTo("/Inverter_setting");
+    }
+
+    private void GoTo_Link_status()
+    {
+        NavManager.NavigateTo("/Link_status");
+    }
+
+    private void GoTo_Data_log()
+    {
+        NavManager.NavigateTo("/Data_log");
+    }
+
+    private void GoTo_Use_strategy()
+    {
+        NavManager.NavigateTo("/Use_strategy");
+    }
+
+    protected override void OnInitialized()
+    {
+        //update the label at the first
+        UpdatePageLabel();
+
+        //register the nav
+        NavManager.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        UpdatePageLabel();
+        StateHasChanged();
+    }
+
+    private void UpdatePageLabel()
+    {
+        //collapse all the menu when switching to other pages
+        menuOpen = false;
+        expand_sys_setting = false;
+        expand_management = false;
+
+        currentRoute = NavManager.ToBaseRelativePath(NavManager.Uri);
+        Console.WriteLine($"{currentRoute}");
+        switch(currentRoute)
+        {
+            case "":
+                currentPage = "NTN Home";
+                Console.WriteLine("App started1");
+                break;
+
+            case "Battery_setting":
+                break;
+
+            case "Inverter_setting":
+                break;
+
+            case "Link_status":
+                break;
+
+            case "Data_log":
+                break;
+
+            case "Use_strategy":
+                currentPage = "Use strategy";
+                break;
+
+            default:
+                currentPage = "Unknown Page";
+                break;
+        }
+    }
+
+    public void Dispose()
+    {
+        NavManager.LocationChanged -= OnLocationChanged;
+    }
+}
