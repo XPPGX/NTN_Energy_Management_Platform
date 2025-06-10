@@ -303,14 +303,15 @@
         {   
             Console.WriteLine("First Render");
             try{
-                //await UpdateArrowPosition();
+                await UpdateArrowPosition();
                 StartTimer();
                 await JS.InvokeVoidAsync("drawPowerChart");
                 await JS.InvokeVoidAsync("drawBatteryChart");
+                //await JS.InvokeVoidAsync("initSortableIfDesktop");
             }
             catch(Exception ex)
             {
-                Console.WriteLine("UpdateArrowPosition failed: " + ex.Message);
+                Console.WriteLine("Error : " + ex.Message);
             }
         }
     }
@@ -339,11 +340,7 @@
                 }
                 InvokeAsync(StateHasChanged);
             }
-            else
-            {
-                Dispose();
-            }
-        }, null, 0, 2000);
+        }, null, 0, 1000);
     }
 
     public void Dispose()
@@ -359,7 +356,7 @@
         arrowTop = (int)((leftRect.Top + rightRect.Top) / 2);
         Console.WriteLine($"left : {arrowLeft}, top : {arrowTop}");
         triGroup1.set_triGroup_postion(arrowLeft, arrowTop);
-        //triGroup1.show_arrows();
+        triGroup1.show_arrows();
 
 
         leftRect = await JS.InvokeAsync<DomRect>("getBoundingClientRect", NTN, grid_container);
@@ -367,7 +364,7 @@
         arrowLeft = (int)((leftRect.Right + rightRect.Left) / 2);
         arrowTop = (int)((leftRect.Top + rightRect.Top) / 2);
         triGroup2.set_triGroup_postion(arrowLeft, arrowTop);
-        //triGroup2.show_arrows();
+        triGroup2.show_arrows();
 
 
         leftRect = await JS.InvokeAsync<DomRect>("getBoundingClientRect", NTN, grid_container);
@@ -375,7 +372,7 @@
         arrowLeft = (int)((leftRect.Right + rightRect.Left) / 2);
         arrowTop = (int)((leftRect.Top + rightRect.Top) / 2);
         triGroup3.set_triGroup_postion(arrowLeft, arrowTop);
-        //triGroup3.show_arrows();
+        triGroup3.show_arrows();
     }
 
     // DomRect 物件用來接 JS 回傳的資料

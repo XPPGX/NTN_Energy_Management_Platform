@@ -391,6 +391,112 @@
     border-radius: 4px;
     z-index: 1000;
 }
-
-
 /***********************/
+
+/***** drag css *****/
+.module-card-dragable{
+    user-select: none;
+    cursor: grab;
+    box-shadow: 0 2px 8px #0001;
+    transition: box-shadow 0.2s;
+}
+/*******************/
+
+@media(max-width:1200px)
+{
+    /***** row1 *****/
+    .row1-container{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        justify-content:center;
+        padding: 5px;
+        width: 100%;
+    }
+    /****************/
+
+    /***** row2 *****/
+    .row2-container{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap:5px;
+    }
+    .card-rough-container{
+        display: flex;
+        flex-direction:column;
+        gap: 2px;
+        background-color: white;
+        border-radius: 8px;
+        width: 100%;
+        /* width: 300px; */
+        height: 330px;
+    }
+    .running-diagram-container{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap:2px;
+        background-color: white;
+        border-radius: 8px;
+    }
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr); /* 3欄 */
+        grid-template-rows: repeat(3, 1fr);  /* 2列 */
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        width: 95%;
+        height: 100%;
+        margin: auto;
+        padding-left: 0%;
+    }
+    .Statistics-container{
+        display: flex;
+        flex-direction:column;
+        gap: 2px;
+        background-color: white;
+        border-radius: 8px;
+        width: 100%;
+        /* width: 300px; */
+        height: 330px;
+    }
+    /****************/
+
+    /***** row3 *****/
+    .row3-container{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-items: center;
+        gap:5px;
+    }
+    .Watt_diagram-container{
+        display: flex;
+        flex-direction:column;
+        align-items: center;
+        /* justify-content: center; */
+        gap: 2px;
+        background-color: white;
+        border-radius: 8px;
+        width: 100%;
+        height: 300px;
+        position: relative;
+    }
+    .Battery_diagram-container{
+        display: flex;
+        flex-direction:column;
+        align-items: center;
+        /* justify-content: center; */
+        gap: 2px;
+        background-color: white;
+        border-radius: 8px;
+        width: 100%;
+        height: 300px;
+        position: relative;
+    }
+    /****************/
+}
