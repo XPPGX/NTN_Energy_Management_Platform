@@ -18,8 +18,9 @@
 .module-container{
     display: flex;
     flex-wrap: wrap;
+    width:100%;
+    column-gap: 5px;
     row-gap: 5px;
-    column-gap: 15px;
 }
 
 .module-card{
