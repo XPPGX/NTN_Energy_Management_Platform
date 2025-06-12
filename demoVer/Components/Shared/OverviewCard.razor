@@ -1,5 +1,6 @@
 @namespace demoVer.Shared
-<div class="card-rough-container">
+@inherits LayoutComponentBase
+<div class="card-rough-container @CssClass" @attributes="AdditionalAttributes">
     <div class="card-rough-container top">
         <h4>總覽</h4>
         <button class="top-right-button">⋯</button>
@@ -59,3 +60,9 @@
         </div>
     </div>
 </div>
+
+@code
+{
+    [Parameter] public string CssClass {get; set; }
+    [Parameter(CaptureUnmatchedValues  = true)] public Dictionary<string, object> AdditionalAttributes {get; set; }
+}

@@ -25,7 +25,15 @@
         </div>
     </div>
     
-    <div class="row2-container">
+    <div id="sortable-modules" class="module-container">
+        <OverviewCard CssClass="module-card" />
+        <RunningDiagramCard CssClass="module-card" />
+        <StatisticsCard CssClass="module-card" />
+        <WattDiagram CssClass="module-card" />
+        <BatteryChart CssClass="module-card" />
+    </div>
+
+    <!-- <div class="row2-container">
         <OverviewCard />
         <RunningDiagramCard />
         <StatisticsCard />
@@ -34,7 +42,7 @@
     <div class="row3-container">
         <WattDiagram />
         <BatteryChart />
-    </div>
+    </div> -->
 </div>
 
 
@@ -52,6 +60,7 @@
                 //[Debug] try drag function
                 // var dotNetRef = DotNetObjectReference.Create(this);
                 // await JS.InvokeVoidAsync("initSortableRows", dotNetRef);
+                await JS.InvokeVoidAsync("initSortable");
             }
             catch(Exception ex)
             {

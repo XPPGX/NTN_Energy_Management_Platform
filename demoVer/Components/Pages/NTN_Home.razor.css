@@ -15,6 +15,19 @@
     border-radius: 8px;
 }
 
+.module-container{
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 5px;
+    column-gap: 15px;
+}
+
+.module-card{
+    flex: 0 0 auto;
+    cursor: grab;
+    touch-action: none;
+}
+
 .row2-container{
     display: flex;
     flex-direction: row;
@@ -147,4 +160,9 @@
         gap:5px;
     }
     /****************/
+
+    .module-card{
+        cursor: grab;
+        touch-action: none;
+    }
 }

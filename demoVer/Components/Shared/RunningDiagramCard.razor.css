@@ -5,6 +5,7 @@
     width: 50%;
     gap:2px;
     background-color: white;
+    height: 300px;
     border-radius: 8px;
 }
 .running-diagram-container.top{

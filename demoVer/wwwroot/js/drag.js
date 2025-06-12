@@ -1,18 +1,11 @@
-window.initSortableRows = (dotNetHelper) => {
-    ['row1', 'row2'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-            new Sortable(el, {
-                group: 'shared-row',
-                animation: 150,
-                onEnd: function () {
-                    const row1Order = Array.from(document.getElementById('row1').children)
-                        .map(el => el.getAttribute('data-id'));
-                    const row2Order = Array.from(document.getElementById('row2').children)
-                        .map(el => el.getAttribute('data-id'));
-                    dotNetHelper.invokeMethodAsync('UpdateRowOrders', row1Order, row2Order);
-                }
-            });
-        }
-    });
+window.initSortable = function () {
+    const container = document.getElementById('sortable-modules');
+    if (container) {
+        new Sortable(container, {
+            animation: 150,
+            handle: '.module-card',
+            touchStartThreshold: 10, // 避免誤觸
+            // 可加入其他設定，例如 dragClass, ghostClass...
+        });
+    }
 };

@@ -43,7 +43,7 @@
         <div class="current_page_label">
             <div>@currentPage</div>
         </div>
-        <button class="btn">FrameWork</button>
+        <button class="btn" @onclick="GoTo_Framework">FrameWork</button>
     </div>
 </div>
 
@@ -109,6 +109,12 @@
 
         //register the nav
         NavManager.LocationChanged += OnLocationChanged;
+    }
+
+    private void GoTo_Framework()
+    {
+        var framwork_uri = $"http://localhost:5039/";
+        NavManager.NavigateTo(framwork_uri, forceLoad: true);
     }
 
     private void OnLocationChanged(object sender, LocationChangedEventArgs e)
