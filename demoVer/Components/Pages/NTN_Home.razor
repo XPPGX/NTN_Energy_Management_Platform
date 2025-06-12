@@ -5,7 +5,7 @@
 
 <PageTitle>NTN module</PageTitle>
 
-<TopRow />
+<TopRow OnSendToParent="ReceiveFromChild"/>
 
 <div class="column-container">
     <div class="row1-container">
@@ -26,29 +26,34 @@
     </div>
     
     <div id="sortable-modules" class="module-container">
-        <OverviewCard CssClass="module-card" />
-        <RunningDiagramCard CssClass="module-card" />
-        <StatisticsCard CssClass="module-card" />
-        <WattDiagram CssClass="module-card" />
-        <BatteryChart CssClass="module-card" />
+        <div class="module-wrapper w25" draggable="@showEditBtn_Flag">
+            <OverviewCard CssClass="module-card" showEditButton="@showEditBtn_Flag"/>
+        </div>
+        <div class="module-wrapper w50" draggable="@showEditBtn_Flag">
+            <RunningDiagramCard CssClass="module-card" showEditButton="@showEditBtn_Flag"/>
+        </div>
+        <div class="module-wrapper w25" draggable="@showEditBtn_Flag">
+            <StatisticsCard CssClass="module-card" showEditButton="@showEditBtn_Flag"/>
+        </div>
+        <div class="module-wrapper w50" draggable="@showEditBtn_Flag">
+            <WattDiagram CssClass="module-card" showEditButton="@showEditBtn_Flag"/>
+        </div>
+        <div class="module-wrapper w50" draggable="@showEditBtn_Flag">
+            <BatteryChart CssClass="module-card" showEditButton="@showEditBtn_Flag"/>
+        </div>
     </div>
-
-    <!-- <div class="row2-container">
-        <OverviewCard />
-        <RunningDiagramCard />
-        <StatisticsCard />
-    </div>
-    
-    <div class="row3-container">
-        <WattDiagram />
-        <BatteryChart />
-    </div> -->
 </div>
-
 
 
 @code
 {
+    private bool showEditBtn_Flag;
+    private async Task ReceiveFromChild(bool _FromTopRow_showEditBtn_Flag)
+    {
+        showEditBtn_Flag = _FromTopRow_showEditBtn_Flag;
+        await JS.InvokeVoidAsync("initSortable", showEditBtn_Flag);
+    }
+
     #region RunAtStart
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {//用這個function要搭配  @rendermode InteractiveServer 放在檔案開頭
@@ -59,8 +64,8 @@
             try{
                 //[Debug] try drag function
                 // var dotNetRef = DotNetObjectReference.Create(this);
-                // await JS.InvokeVoidAsync("initSortableRows", dotNetRef);
-                await JS.InvokeVoidAsync("initSortable");
+                await JS.InvokeVoidAsync("initSortable", showEditBtn_Flag);
+                //await JS.InvokeVoidAsync("sortableHelper.initSortable", showEditBtn_Flag);
             }
             catch(Exception ex)
             {
@@ -69,8 +74,6 @@
         }
     }
     #endregion //RunAtStart
-
-    
     
     // #region dragFunction
     // [JSInvokable]

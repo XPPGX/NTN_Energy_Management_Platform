@@ -10,23 +10,39 @@
     justify-content: space-between;
     gap:1rem;
     padding: 1rem;
-
+    width: calc(100% - 5px);
     background-color: white;
     border-radius: 8px;
+    box-sizing: border-box;
 }
 
 .module-container{
     display: flex;
     flex-wrap: wrap;
     width:100%;
-    column-gap: 5px;
-    row-gap: 5px;
+    margin: -2.5px;
+    margin-right: 0px;
+}
+
+
+.module-wrapper{
+    margin: 2.5px;
+    box-sizing: border-box;
 }
 
 .module-card{
-    flex: 0 0 auto;
+    width: 100%;
+    box-sizing: border-box;
     cursor: grab;
     touch-action: none;
+}
+
+.w25{
+    width: calc(25% - 5px);
+}
+
+.w50{
+    width: calc(50% - 5px);
 }
 
 .row2-container{
@@ -130,6 +146,22 @@
 
 @media(max-width:1200px)
 {
+    .column-container{
+        padding-top: 60px; /*same length as ".top-row" in the TopRow.razor.css*/
+
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding-top: 65px;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        padding-bottom: 1rem;
+        box-sizing: border-box;
+
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
     /***** row1 *****/
     .row1-container{
         display: flex;
@@ -161,9 +193,30 @@
         gap:5px;
     }
     /****************/
-
+    .module-container{
+        display: flex;
+        flex-wrap: wrap;
+        width:100%;
+        margin: 0px;
+    }
+    
+    
+    .module-wrapper{
+        margin: 0;
+        margin-bottom: 2.5px;
+        box-sizing:content-box;
+    }
+    
     .module-card{
         cursor: grab;
         touch-action: none;
+    }
+
+    .w25{
+        width:100%;
+    }
+
+    .w50{
+        width:100%;
     }
 }

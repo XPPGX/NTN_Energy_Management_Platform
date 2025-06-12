@@ -3,13 +3,18 @@
 @inherits LayoutComponentBase
 <div class="Battery_diagram-container @CssClass" @attributes="AdditionalAttributes">
     <canvas id="batterychart"></canvas>
-    <button class="top-right-button">⋯</button>
+    @if(showEditButton)
+    {
+        <button class="top-right-button">⋯</button>
+    }
+
 </div>
 
 @code
 {
     [Parameter] public string CssClass {get; set; }
     [Parameter(CaptureUnmatchedValues  = true)] public Dictionary<string, object> AdditionalAttributes {get; set; }
+    [Parameter] public bool showEditButton{get; set; }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if(firstRender)

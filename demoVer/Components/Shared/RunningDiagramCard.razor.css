@@ -2,7 +2,7 @@
 .running-diagram-container{
     display: flex;
     flex-direction: column;
-    width: 49%;
+    width: 100%;
     gap:2px;
     background-color: white;
     height: 330px;
@@ -11,6 +11,7 @@
 .running-diagram-container.top{
     display: flex;
     width: 100%;
+    height: 20%;
     flex-direction: row;
     justify-content: space-between;
     gap: 1rem;
@@ -31,6 +32,7 @@
 }
 .running-diagram-container.bottom{
     width: 100%;
+    height: 80%;
     position: relative;
 }
 

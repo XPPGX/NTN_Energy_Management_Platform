@@ -3,7 +3,10 @@
 <div class="Statistics-container @CssClass" @attributes="AdditionalAttributes">
     <div class="Statistics-container top">
         <span>統計</span>
-        <button class="top-right-button">⋯</button>
+        @if(showEditButton)
+        {
+            <button class="top-right-button">⋯</button>
+        }
     </div>
     <div class="Statistics-container top">
         <span id="current_strategy">當前用電策略: 無</span>
@@ -47,4 +50,5 @@
 {
     [Parameter] public string CssClass {get; set; }
     [Parameter(CaptureUnmatchedValues  = true)] public Dictionary<string, object> AdditionalAttributes {get; set; }
+    [Parameter] public bool showEditButton {get; set; }
 }

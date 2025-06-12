@@ -10,8 +10,10 @@
             運行模式：
             <div id="running_mode">ByPass</div>
         </div>
-        <!-- <button class="top-right-button" style="position: absolute; top: 5px; right: 5px;">⋯</button> -->
-        <button class="top-right-button">⋯</button>
+        @if(showEditButton)
+        {
+            <button class="top-right-button">⋯</button>
+        }
     </div>
     <div class="running-diagram-container bottom">
         <div class="grid-container" @ref="grid_container">
@@ -84,14 +86,15 @@
 @code{
     [Parameter] public string CssClass {get; set; }
     [Parameter(CaptureUnmatchedValues  = true)] public Dictionary<string, object> AdditionalAttributes {get; set; }
+    [Parameter] public bool showEditButton {get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if(firstRender)
         {
             //[Debug] show arrow animation
-            await UpdateArrowPosition();
-            StartTimer();
+            //await UpdateArrowPosition();
+            //StartTimer();
         }
     }
 

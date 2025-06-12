@@ -8,7 +8,7 @@
             <!-- <i class="fas fa-th-large"></i> -->
             <img src="images/shapes.png" alt="menu" style="width:24px; height:24px"/>
         </button>
-        <button class="btn">
+        <button class="btn" @onclick="showEditButtons">
             <img src="images/pen.png" alt="edit" style="width:24px; height:24px"/>
         </button>
         @if(menuOpen)
@@ -55,6 +55,17 @@
 
     private string currentPage;
     private string currentRoute = "test";
+
+
+    private bool showEditBtn_Flag = false;
+    [Parameter]
+    public EventCallback<bool> OnSendToParent {get; set;}
+
+    private async Task showEditButtons()
+    {
+        showEditBtn_Flag = !showEditBtn_Flag;
+        await OnSendToParent.InvokeAsync(showEditBtn_Flag);
+    }
 
     private void toggleMenu()
     {
