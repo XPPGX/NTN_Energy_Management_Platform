@@ -1,6 +1,8 @@
 .column-container{
-    display: flex;
-    flex-direction: column;
+    display:block;
+    /* display: flex; */
+    /* flex-direction: column; */
+    position: static;
     gap: 1rem;
     padding: 1rem;
 }
@@ -16,7 +18,35 @@
     box-sizing: border-box;
 }
 
+.grid-stack-wrapper {
+    height: calc(100vh); /* 根據你 .row1-container 高度調整 */
+    overflow-y: auto;
+    position: relative;
+    /* padding: 1rem; */
+}
 
+.grid-stack{
+    margin: 1rem;
+    position: relative; /*讓子元件可以計算相對位置*/
+    overflow: hidden;
+}
+
+.grid-stack-item-content.module-card {
+    background: white;
+    cursor: move;
+    user-select: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+}
+
+.module-card *{
+    pointer-events: none; /*禁止內部接收滑鼠事件*/
+}
+
+.module-card{
+    pointer-events: auto; /*卡片本體可以拖曳*/
+}
 
 /* .module-container{
     display: flex;

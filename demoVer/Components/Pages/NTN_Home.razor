@@ -58,35 +58,27 @@
             </div>
         </div>
     </div>
-    
-    <div id="sortable-modules" class="module-grid" @ref="ref_module_container">
-        @foreach(var card in CardInfos.Where(m => m.IsVisible))
+</div>
+
+<div class="grid-stack-wrapper">
+    <div class="grid-stack" id="grid-stack-container">
+        @foreach (var card in CardInfos.Where(c => c.IsVisible))
         {
-            <div class="module-wrapper @card.widthClass" cardID="@card.ID" draggable="@showEditBtn_Flag">
-                @((RenderFragment)(builder => {
-                    builder.OpenComponent(0, card.ComponentType); //Create Card
-
-                    //Parameters passed into each card(razor component)
-                    builder.AddAttribute(1, "CssClass", "module-card"); 
-                    builder.AddAttribute(2, "showEditButton", showEditBtn_Flag);
-                    builder.AddAttribute(3, "Inform_Home_openEditMenu",
-                        EventCallback.Factory.Create<string>(this, Handle_Inform_Home_openEditMenu));
-                    //builder.AddComponentReferenceCapture(4, inst =>{
-                    //    card.ComponentRef = (LayoutComponentBase)inst;
-                    //});
-
-                    builder.CloseComponent();
-                }))
-                
+            <div class="grid-stack-item" gs-x="@card.X" gs-y="@card.Y" gs-w="@card.WidthUnits" gs-h="@card.HeightUnits" cardID="@card.ID">
+                <div class="grid-stack-item-content module-card">
+                    @((RenderFragment)(builder => {
+                        builder.OpenComponent(0, card.ComponentType);
+                        builder.AddAttribute(1, "CssClass", "module-card");
+                        builder.AddAttribute(2, "showEditButton", showEditBtn_Flag);
+                        builder.AddAttribute(3, "Inform_Home_openEditMenu",
+                            EventCallback.Factory.Create<string>(this, Handle_Inform_Home_openEditMenu));
+                        builder.CloseComponent();
+                    }))
+                </div>
             </div>
-
-            //store information in CardInfos
-            //card.showSequence = cardRenderCounter;
-            //cardRenderCounter++;
         }
     </div>
 </div>
-
 
 @code
 {
@@ -113,6 +105,11 @@
         //public LayoutComponentBase ComponentRef {get; set;}                 //存Ref，之後可用這個在C#控制這些child razor元件
         public byte showSequence {get; set;}                                //存被渲染的順序 start from 0
         //public Dictionary<string, object> Parameters {get; set;} = new();   //傳入每個card的參數
+
+        public int WidthUnits {get; set;}                                       //寬度
+        public int HeightUnits {get; set;}                                      //高度
+        public int X {get; set;}                                                //初始X座標
+        public int Y {get; set;}                                                //初始Y座標
     }
     
     public List<CardInfo> CardInfos = new ()
@@ -123,6 +120,10 @@
             widthClass = "w25",
             ComponentType = typeof(OverviewCard),
             IsVisible = true,
+            WidthUnits = 3,
+            HeightUnits = 4,
+            X = 0,
+            Y = 0,
             // Parameters = new Dictionary<string, object>
             // {
             //     {"CssClass", "module-card"},
@@ -134,6 +135,10 @@
             widthClass = "w50",
             ComponentType = typeof(RunningDiagramCard),
             IsVisible = true,
+            WidthUnits = 6,
+            HeightUnits = 4,
+            X = 3,
+            Y = 0,
             // Parameters = new Dictionary<string, object>
             // {
             //     {"CssClass", "module-card"},
@@ -145,6 +150,10 @@
             widthClass = "w25",
             ComponentType = typeof(StatisticsCard),
             IsVisible = true,
+            WidthUnits = 3,
+            HeightUnits = 4,
+            X = 9,
+            Y = 0,
             // Parameters = new Dictionary<string, object>
             // {
             //     {"CssClass", "module-card"},
@@ -156,6 +165,10 @@
             widthClass = "w50",
             ComponentType = typeof(WattDiagram),
             IsVisible = true,
+            WidthUnits = 6,
+            HeightUnits = 4,
+            X = 0,
+            Y = 4,
             // Parameters = new Dictionary<string, object>
             // {
             //     {"CssClass", "module-card"},
@@ -167,6 +180,10 @@
             widthClass = "w50",
             ComponentType = typeof(BatteryChart),
             IsVisible = true,
+            WidthUnits = 6,
+            HeightUnits = 4,
+            X = 6,
+            Y = 4,
             // Parameters = new Dictionary<string, object>
             // {
             //     {"CssClass", "module-card"},
@@ -183,10 +200,12 @@
             Console.WriteLine("First Render");
             try{
                 //[Debug] try drag function
+                await JS.InvokeVoidAsync("initGridStack");
+
                 // var dotNetRef = DotNetObjectReference.Create(this);
-                await JS.InvokeVoidAsync("initSortable", showEditBtn_Flag);
-                await JS.InvokeVoidAsync("DotNetHelperRegister", DotNetObjectReference.Create(this));
-                await JS.InvokeVoidAsync("getCardOrder");
+                // await JS.InvokeVoidAsync("initSortable", showEditBtn_Flag);
+                // await JS.InvokeVoidAsync("DotNetHelperRegister", DotNetObjectReference.Create(this));
+                // await JS.InvokeVoidAsync("getCardOrder");
                 //await JS.InvokeVoidAsync("sortableHelper.initSortable", showEditBtn_Flag);
             }
             catch(Exception ex)
