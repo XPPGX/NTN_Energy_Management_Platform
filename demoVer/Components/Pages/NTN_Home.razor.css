@@ -59,7 +59,14 @@
 
 .module-wrapper {
     box-sizing: border-box;
+    /* cursor: grab; */
+}
+
+.module-card{
+    width: 100%;
+    box-sizing: border-box;
     cursor: grab;
+    touch-action: none;
 }
 
 .w25 {

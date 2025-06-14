@@ -1,10 +1,14 @@
 using demoVer.Components;
+using demoVer.Service_demo;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://0.0.0.0:5043");
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddScoped<CanBusService>(); // 建議用 Scoped
+
 
 var app = builder.Build();
 

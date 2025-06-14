@@ -1,6 +1,7 @@
 @page "/"
 @using demoVer.Components.Layout
 @inject IJSRuntime JS
+@inject CanBusService CanBusService
 @rendermode InteractiveServer
 
 <PageTitle>NTN module</PageTitle>
@@ -46,7 +47,7 @@
         <div class="row1-leftPart">
             Inverter OFF/ON：
             <label class="switch">
-                <input type="checkbox" checked>
+                <input type="checkbox" @bind="isChecked" @onclick="switchONOFF">
                 <span class="slider"></span>
             </label>
         </div>
@@ -341,4 +342,48 @@
     {
 
     }
+
+    private bool isChecked = false;
+
+    private string canInterface = "can0";
+    private string canMessage = "123#deadbeef";   
+    private string resultMessage= "";
+
+    private async void switchONOFF()
+    {
+        if(isChecked)
+        {
+            await ON();
+        }
+        else
+        {
+            await OFF();
+        }
+    }
+
+    private async Task SendCanData()
+    {
+        bool success = await CanBusService.SendCanMessageAsync(canInterface, canMessage);
+        //await CanBusService.SendCanMessageAsync("can0", "123#deadbeef");
+        resultMessage = success ? "發送成功！" : "發送失敗！";
+    }
+
+    private async Task ON()
+    {
+        canMessage = "000C0500#00010300";   
+        bool success = await CanBusService.SendCanMessageAsync(canInterface, canMessage);
+        //await CanBusService.SendCanMessageAsync("can0", "123#deadbeef");
+        resultMessage = success ? "發送成功！" : "發送失敗！";
+    }
+
+        private async Task OFF()
+    {
+
+        canMessage = "000C0500#00010200";   
+        bool success = await CanBusService.SendCanMessageAsync(canInterface, canMessage);
+        //await CanBusService.SendCanMessageAsync("can0", "123#deadbeef");
+        resultMessage = success ? "發送成功！" : "發送失敗！";
+    }
+
+
 }
