@@ -5,7 +5,7 @@
     <canvas id="batterychart"></canvas>
     @if(showEditButton)
     {
-        <button class="top-right-button">⋯</button>
+        <button class="top-right-button" @onclick="openEditMenu">⋯</button>
     }
 
 </div>
@@ -15,6 +15,16 @@
     [Parameter] public string CssClass {get; set; }
     [Parameter(CaptureUnmatchedValues  = true)] public Dictionary<string, object> AdditionalAttributes {get; set; }
     [Parameter] public bool showEditButton{get; set; }
+    [Parameter] public EventCallback<string> Inform_Home_openEditMenu {get; set;}
+    private async Task openEditMenu()
+    {
+        if(Inform_Home_openEditMenu.HasDelegate)
+        {
+            //Pass the razor component name to HOME, the name can be found definition in the HOME CardInfos List.
+            await Inform_Home_openEditMenu.InvokeAsync("BatteryChart");
+        }
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if(firstRender)

@@ -1,4 +1,6 @@
 @namespace demoVer.Shared
+@inject IJSRuntime JS
+@using System.Net.Sockets
 @rendermode InteractiveServer
 @inject NavigationManager NavManager
 
@@ -8,7 +10,7 @@
             <!-- <i class="fas fa-th-large"></i> -->
             <img src="images/shapes.png" alt="menu" style="width:24px; height:24px"/>
         </button>
-        <button class="btn" @onclick="showEditButtons">
+        <button class="btn @(showEditBtn_Flag ? "editing-mode" : "")" @onclick="showEditButtons">
             <img src="images/pen.png" alt="edit" style="width:24px; height:24px"/>
         </button>
         @if(menuOpen)
@@ -40,15 +42,34 @@
     </div>
 
     <div class="right-items">
-        <div class="current_page_label">
-            <div>@currentPage</div>
-        </div>
+        @if(afterFirstRender_Flag)
+        {
+            if(showEditBtn_Flag)
+            {
+                //show "+" button
+                <button class="btn">
+                    <img src="images/save-as.png" alt="save-edit" style="width:24px; height:24px"/>
+                </button>
+                <button class="btn" @onclick="showAddCard">
+                    <img src="images/plus.png" alt="plus" style="width:24px; height:24px"/>
+                </button>
+            }
+            if(!isMobile)
+            {
+                <div class="current_page_label">
+                    <div>@currentPage</div>
+                </div>
+            }
+        }
         <button class="btn" @onclick="GoTo_Framework">FrameWork</button>
     </div>
 </div>
 
 
 @code{
+
+    private bool isMobile;
+    private bool afterFirstRender_Flag = false;
     private bool menuOpen = false;
     private bool expand_sys_setting = false;
     private bool expand_management = false;
@@ -58,13 +79,31 @@
 
 
     private bool showEditBtn_Flag = false;
-    [Parameter]
-    public EventCallback<bool> OnSendToParent {get; set;}
+    private bool showAddBtn_Flag = false;
+
+
+    [Parameter] public EventCallback<bool> OnSendToParent {get; set;}
+    [Parameter] public EventCallback InformParentTo_OpenAddCard {get; set;}
 
     private async Task showEditButtons()
     {
         showEditBtn_Flag = !showEditBtn_Flag;
         await OnSendToParent.InvokeAsync(showEditBtn_Flag);
+    }
+
+    private async Task showAddCard()
+    {
+        await InformParentTo_OpenAddCard.InvokeAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            afterFirstRender_Flag = true;
+            isMobile = await JS.InvokeAsync<bool>("checkIsMobile");
+            StateHasChanged(); // 讓頁面更新
+        }
     }
 
     private void toggleMenu()
@@ -124,9 +163,23 @@
 
     private void GoTo_Framework()
     {
-        var framwork_uri = $"http://localhost:5039/";
+        var framwork_uri = $"http://192.168.31.30:5039/";
         NavManager.NavigateTo(framwork_uri, forceLoad: true);
     }
+
+    private bool IsPortInUse(string host, int port)
+	{
+		try
+		{
+			using var client = new TcpClient();
+			var result = client.BeginConnect(host, port, null, null);
+			return result.AsyncWaitHandle.WaitOne(TimeSpan.FromMilliseconds(300)) && client.Connected;
+		}
+		catch
+		{
+			return false;
+		}
+	}
 
     private void OnLocationChanged(object sender, LocationChangedEventArgs e)
     {
@@ -170,6 +223,11 @@
                 currentPage = "Unknown Page";
                 break;
         }
+    }
+
+    public void HideMenu()
+    {
+        menuOpen = false;
     }
 
     public void Dispose()

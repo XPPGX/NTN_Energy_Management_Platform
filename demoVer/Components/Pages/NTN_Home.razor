@@ -5,9 +5,43 @@
 
 <PageTitle>NTN module</PageTitle>
 
-<TopRow OnSendToParent="ReceiveFromChild"/>
+<TopRow OnSendToParent="ReceiveFrom_TopRow"
+        InformParentTo_OpenAddCard="ReceiveFrom_TopRow_OpenAddCard"
+        @ref="refChild_TopRow"/>
 
-<div class="column-container">
+<!-- Independent of the HOME arrangement-->
+@if(!string.IsNullOrEmpty(AlertMessage))
+{
+    <div class="custom-alert">
+        <div class="custom-alert-row">
+            <span class="alert-text">⚠️ @AlertMessage</span>
+        </div>
+        
+        <div class="custom-btn-col">
+            <button class="close-btn confirm-btn" @onclick="ConfirmDelete">確定</button>
+            <button class="close-btn cancel-btn" @onclick="CancelDelete">取消</button>
+        </div>
+        
+    </div>
+}
+
+@if(isModalOpen)
+{
+    <div class="modal-overlay" @onclick="CloseModal">
+        @if(isEditMenuOpen)
+        {
+            <div class="modal-content" @onclick:stopPropagation>
+                <h3>卡片操作</h3>
+                <button class="modal-btn" @onclick="EditCard">編輯卡片</button>
+                <button class="modal-btn" @onclick="DeleteCard">刪除卡片</button>
+            </div>
+        }
+    </div>
+}
+<!---------------------------------------->
+
+
+<div class="column-container" @onclick="HandleGlobalClick">
     <div class="row1-container">
         <div class="row1-leftPart">
             Inverter OFF/ON：
@@ -25,36 +59,122 @@
         </div>
     </div>
     
-    <div id="sortable-modules" class="module-container">
-        <div class="module-wrapper w25" draggable="@showEditBtn_Flag">
-            <OverviewCard CssClass="module-card" showEditButton="@showEditBtn_Flag"/>
-        </div>
-        <div class="module-wrapper w50" draggable="@showEditBtn_Flag">
-            <RunningDiagramCard CssClass="module-card" showEditButton="@showEditBtn_Flag"/>
-        </div>
-        <div class="module-wrapper w25" draggable="@showEditBtn_Flag">
-            <StatisticsCard CssClass="module-card" showEditButton="@showEditBtn_Flag"/>
-        </div>
-        <div class="module-wrapper w50" draggable="@showEditBtn_Flag">
-            <WattDiagram CssClass="module-card" showEditButton="@showEditBtn_Flag"/>
-        </div>
-        <div class="module-wrapper w50" draggable="@showEditBtn_Flag">
-            <BatteryChart CssClass="module-card" showEditButton="@showEditBtn_Flag"/>
-        </div>
+    <div id="sortable-modules" class="module-grid" @ref="ref_module_container">
+        @foreach(var card in CardInfos.Where(m => m.IsVisible))
+        {
+            <div class="module-wrapper @card.widthClass" cardID="@card.ID" draggable="@showEditBtn_Flag">
+                @((RenderFragment)(builder => {
+                    builder.OpenComponent(0, card.ComponentType); //Create Card
+
+                    //Parameters passed into each card(razor component)
+                    builder.AddAttribute(1, "CssClass", "module-card"); 
+                    builder.AddAttribute(2, "showEditButton", showEditBtn_Flag);
+                    builder.AddAttribute(3, "Inform_Home_openEditMenu",
+                        EventCallback.Factory.Create<string>(this, Handle_Inform_Home_openEditMenu));
+                    //builder.AddComponentReferenceCapture(4, inst =>{
+                    //    card.ComponentRef = (LayoutComponentBase)inst;
+                    //});
+
+                    builder.CloseComponent();
+                }))
+                
+            </div>
+
+            //store information in CardInfos
+            //card.showSequence = cardRenderCounter;
+            //cardRenderCounter++;
+        }
     </div>
 </div>
 
 
 @code
 {
+    //UI control code
     private bool showEditBtn_Flag;
-    private async Task ReceiveFromChild(bool _FromTopRow_showEditBtn_Flag)
-    {
-        showEditBtn_Flag = _FromTopRow_showEditBtn_Flag;
-        await JS.InvokeVoidAsync("initSortable", showEditBtn_Flag);
-    }
+    private bool showAddCard_Flag = false;
+    private bool isModalOpen;
+    private bool isEditMenuOpen;
+    private string editingCard_Name = "";
+    private string AlertMessage = "";
+    private byte cardRenderCounter = 0;
+    private TopRow refChild_TopRow;
 
-    #region RunAtStart
+    private ElementReference ref_module_container;
+
+    public class CardInfo
+    {
+        public string ID {get; set;}                                        //識別用的ID(string)
+        
+        public string widthClass {get; set;}                                //定義的寬度(w25 | w50)
+        public Type ComponentType {get; set;}                               //razor的元件類型(名稱)
+        public bool IsVisible {get; set;}                                   //控制可不可視
+
+        //public LayoutComponentBase ComponentRef {get; set;}                 //存Ref，之後可用這個在C#控制這些child razor元件
+        public byte showSequence {get; set;}                                //存被渲染的順序 start from 0
+        //public Dictionary<string, object> Parameters {get; set;} = new();   //傳入每個card的參數
+    }
+    
+    public List<CardInfo> CardInfos = new ()
+    {
+        new CardInfo
+        {
+            ID = "OverviewCard",
+            widthClass = "w25",
+            ComponentType = typeof(OverviewCard),
+            IsVisible = true,
+            // Parameters = new Dictionary<string, object>
+            // {
+            //     {"CssClass", "module-card"},
+            // }
+        },
+        new CardInfo
+        {
+            ID = "RunningDiagramCard",
+            widthClass = "w50",
+            ComponentType = typeof(RunningDiagramCard),
+            IsVisible = true,
+            // Parameters = new Dictionary<string, object>
+            // {
+            //     {"CssClass", "module-card"},
+            // }
+        },
+        new CardInfo
+        {
+            ID = "StatisticsCard",
+            widthClass = "w25",
+            ComponentType = typeof(StatisticsCard),
+            IsVisible = true,
+            // Parameters = new Dictionary<string, object>
+            // {
+            //     {"CssClass", "module-card"},
+            // }
+        },
+        new CardInfo
+        {
+            ID = "WattDiagram",
+            widthClass = "w50",
+            ComponentType = typeof(WattDiagram),
+            IsVisible = true,
+            // Parameters = new Dictionary<string, object>
+            // {
+            //     {"CssClass", "module-card"},
+            // }
+        },
+        new CardInfo
+        {
+            ID = "BatteryChart",
+            widthClass = "w50",
+            ComponentType = typeof(BatteryChart),
+            IsVisible = true,
+            // Parameters = new Dictionary<string, object>
+            // {
+            //     {"CssClass", "module-card"},
+            // }
+        }
+    };
+
+    #region Render_Flow_Control
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {//用這個function要搭配  @rendermode InteractiveServer 放在檔案開頭
     
@@ -65,6 +185,8 @@
                 //[Debug] try drag function
                 // var dotNetRef = DotNetObjectReference.Create(this);
                 await JS.InvokeVoidAsync("initSortable", showEditBtn_Flag);
+                await JS.InvokeVoidAsync("DotNetHelperRegister", DotNetObjectReference.Create(this));
+                await JS.InvokeVoidAsync("getCardOrder");
                 //await JS.InvokeVoidAsync("sortableHelper.initSortable", showEditBtn_Flag);
             }
             catch(Exception ex)
@@ -72,15 +194,151 @@
                 Console.WriteLine("Error : " + ex.Message);
             }
         }
-    }
-    #endregion //RunAtStart
-    
-    // #region dragFunction
-    // [JSInvokable]
-    // public Task UpdateRowOrders(string[] row1, string[] row2)
-    // {
-    //     var all = 
-    // }
-    // #endregion //dragFunction
+        
+        //每次StateHasChanged()重新渲染後，會執行以下
 
+        //[Only for Debug]
+        Console.WriteLine("===[NEW]===");
+        foreach (var card in CardInfos)
+        {
+            foreach (var prop in card.GetType().GetProperties())
+            {
+                Console.WriteLine($"{prop.Name} = {prop.GetValue(card)}");
+            }
+            Console.WriteLine("------");
+        }
+        Console.WriteLine($"CardInfos ref: {CardInfos.GetHashCode()}");
+    }
+
+    //UI重新Render前會做這個
+    protected override bool ShouldRender()
+    {
+        cardRenderCounter = 0;
+        Console.WriteLine(cardRenderCounter);
+        return true;
+    }
+    #endregion //Render_Flow_Control
+
+    [JSInvokable] public void UpdateCardOrderFromJS(List<string> newOrder)
+    {
+        Console.WriteLine("New card order received : ");
+        byte counter = 0;
+        foreach(var id in newOrder)
+        {
+            Console.WriteLine(id);
+            var targetCard = CardInfos.Find(c => c.ID == id);
+            if(targetCard != null)
+            {
+                targetCard.showSequence = counter;
+                counter ++;
+            }
+            else
+            {
+                Console.WriteLine("targetCard == NULL");
+            }
+        }
+
+        Console.WriteLine("=== [AFTER UPDATE] ===");
+        foreach (var card in CardInfos)
+        {
+            Console.WriteLine($"Card {card.ID} => showSequence: {card.showSequence}");
+        }
+        Console.WriteLine($"CardInfos ref: {CardInfos.GetHashCode()}");
+    }
+
+    private async Task ReceiveFrom_TopRow(bool _FromTopRow_showEditBtn_Flag)
+    {
+        showEditBtn_Flag = _FromTopRow_showEditBtn_Flag;
+        await JS.InvokeVoidAsync("initSortable", showEditBtn_Flag); //enable or disable sortableJS
+    }
+
+    private async Task ReceiveFrom_TopRow_OpenAddCard()
+    {
+        showAddCard_Flag = true;
+        Console.WriteLine("TETSTSETSETSETSETSET");
+    }
+
+    private void Handle_Inform_Home_openEditMenu(string _editingCard_Name_FromChild)
+    {
+        editingCard_Name = _editingCard_Name_FromChild;
+        isModalOpen = true;
+        isEditMenuOpen = true;
+        Console.WriteLine($"{editingCard_Name}");
+    }
+
+    private void CloseModal()
+    {   
+        //close modal
+        isModalOpen = false;
+        //Reset editingCard_Name
+        editingCard_Name = "";
+        //Close Alert
+        AlertMessage = null;
+    }
+
+    private void OpenEditCard()
+    {
+
+    }
+
+    private void DeleteCard()
+    {
+        if(editingCard_Name == "")
+        {
+            Console.WriteLine("Current editing card is empty");
+            return;
+        }
+        
+        var targetCard = CardInfos.Find(c => c.ID == editingCard_Name);
+        if(targetCard != null)
+        {
+            //show alert
+            isEditMenuOpen = false;
+            TriggerAlert("警告 : 刪除後無法復原");
+            Console.WriteLine($"ID: {targetCard.ID}, WidthClass: {targetCard.widthClass}, ComponentType: {targetCard.ComponentType}, IsVisible: {targetCard.IsVisible}");
+
+            // targetCard.IsVisible = false;
+            
+            // StateHasChanged();
+            
+        }
+    }
+
+    private void TriggerAlert(string _alertMessage_FromOtherFunc)
+    {
+        AlertMessage = _alertMessage_FromOtherFunc;
+    }
+
+    private void ConfirmDelete()
+    {
+        var targetCard = CardInfos.Find(c => c.ID == editingCard_Name);
+        if(targetCard != null)
+        {
+            targetCard.IsVisible = false;
+            StateHasChanged();
+        }
+        CloseAlert();
+        CloseModal();
+    }
+
+    private void CancelDelete()
+    {
+        CloseAlert();
+        CloseModal();
+    }
+
+    private void CloseAlert()
+    {
+        AlertMessage = null;
+    }
+
+    private void HandleGlobalClick()
+    {
+        refChild_TopRow?.HideMenu();
+    }
+
+    private void EditCard()
+    {
+
+    }
 }

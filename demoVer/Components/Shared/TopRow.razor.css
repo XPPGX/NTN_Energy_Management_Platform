@@ -84,6 +84,20 @@
     color: white;
 }
 
+.btn:hover {
+    background-color: #2A2F33; /* hover：稍亮一點的深灰 */
+}
+
+.btn:active {
+    background-color: #999; /* active：按下時更深一點 */
+    transform: translateY(1px);
+}
+
+.btn.editing-mode
+{
+    background-color: #999; /* active：按下時更深一點 */
+}
+
 .sub-menu {
     margin-left: 1rem;
     display: flex;
