@@ -1,0 +1,27 @@
+.overview-inner-card{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 90%;
+    height: 60px;
+    gap: 4rem;
+    background-color: #E6F2FF ;
+    border-radius: 8px;
+}
+.smallIcon{
+    display: flex;
+    align-items: center; /* ✅ 垂直置中 */
+    justify-content: center; /* 可選：水平置中圖片內容 */
+    height: 100%;
+    padding-left: 10px;
+}
+.overview-inner-card.rightPart{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.overview-inner-card.valueBlock{
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+}
