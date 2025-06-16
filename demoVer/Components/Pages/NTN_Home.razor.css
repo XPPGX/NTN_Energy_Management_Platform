@@ -314,6 +314,47 @@
     to { opacity: 1; transform: translate(-50%, -50%); }
 }
 
+.addCard-selection-img-label-col{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 90px;
+    height: 90px;
+    border: none;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    padding: 10px;
+}
+
+.addCard-selection-img-label-col:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+    background-color: #f7f7f7;
+}
+
+.addCard-selection-img {
+    width: 28px;
+    height: 28px;
+    margin-bottom: 6px;
+}
+
+.addCard-selection-label {
+    font-size: 13px;
+    color: #333;
+    font-weight: 500;
+}
+
+.selection-group{
+    display:flex;
+    flex-direction: row;
+    gap: 2px;
+}
+
 /*****************/
 
 @media(max-width: 1200px)
@@ -384,12 +425,28 @@
         touch-action: none;
     }
 
-    .w25{
+    /* .w25{
         width:100%;
+        
     }
 
     .w50{
         width:100%;
+    } */
+    .module-grid {
+        display: grid;
+        width: 100%;
+        margin: -2.5px;
+        margin-right: 0px;
+        grid-template-columns: repeat(3, 1fr); /* 12格網格 */
+        gap: 0.5rem;
     }
 
+    .w25 {
+        grid-column: span 3; /* 25% → 3格 */
+    }
+    
+    .w50 {
+        grid-column: span 3; /* 50% → 6格 */
+    }
 }
