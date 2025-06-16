@@ -203,6 +203,8 @@
                 await JS.InvokeVoidAsync("initSortable", showEditBtn_Flag);
                 await JS.InvokeVoidAsync("DotNetHelperRegister", DotNetObjectReference.Create(this));
                 await JS.InvokeVoidAsync("getCardOrder");
+
+                switchONOFF();
                 //await JS.InvokeVoidAsync("sortableHelper.initSortable", showEditBtn_Flag);
             }
             catch(Exception ex)
@@ -414,7 +416,7 @@
 
     private async void switchONOFF()
     {
-        if(isChecked)
+        if(!isChecked)
         {
             await ON();
         }
