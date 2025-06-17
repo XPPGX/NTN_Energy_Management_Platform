@@ -1,0 +1,6 @@
+#!/bin/bash
+export DOTNET_ROOT=/home/arthur/dotnet
+export PATH=/home/arthur/dotnet:$PATH
+export ASPNETCORE_URLS=http://0.0.0.0:5043
+cd "$(dirname "$0")"
+exec /home/arthur/dotnet/dotnet demoVer.dll

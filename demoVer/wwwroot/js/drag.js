@@ -28,6 +28,8 @@ window.initSortable = function (enable_flag) {
         if(!sort_object)
         {
             sort_object = new Sortable(container, {
+                delay: 1000,
+                delayOnTouchOnly: true,
                 animation: 150,
                 handle: '.module-card',
                 draggable: '.module-wrapper',

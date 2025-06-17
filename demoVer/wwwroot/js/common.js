@@ -9,3 +9,8 @@ window.scrollToBottom = function () {
         behavior: 'smooth'
     });
 }
+
+function jumpToApp(port) {
+    const host = window.location.hostname;
+    window.location.href = `http://${host}:${port}/`;
+}

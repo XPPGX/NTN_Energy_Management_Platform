@@ -61,7 +61,9 @@
                 </div>
             }
         }
-        <button class="btn" @onclick="GoTo_Framework">FrameWork</button>
+        <button class="btn" @onclick="GoTo_Framework">
+            <img src="images/logo.png" alt="logo" style="width:36px; height:24px"/>
+        </button>
     </div>
 </div>
 
@@ -124,32 +126,32 @@
     
     private void GoTo_NTN_HOME()
     {
-        NavManager.NavigateTo("/");
+        // NavManager.NavigateTo("/");
     }
 
     private void GoTo_Battery_setting()
     {
-        NavManager.NavigateTo("/Battery_setting");
+        // NavManager.NavigateTo("/Battery_setting");
     }
 
     private void GoTo_Inverter_setting()
     {
-        NavManager.NavigateTo("/Inverter_setting");
+        // NavManager.NavigateTo("/Inverter_setting");
     }
 
     private void GoTo_Link_status()
     {
-        NavManager.NavigateTo("/Link_status");
+        // NavManager.NavigateTo("/Link_status");
     }
 
     private void GoTo_Data_log()
     {
-        NavManager.NavigateTo("/Data_log");
+        // NavManager.NavigateTo("/Data_log");
     }
 
     private void GoTo_Use_strategy()
     {
-        NavManager.NavigateTo("/Use_strategy");
+        // NavManager.NavigateTo("/Use_strategy");
     }
 
     protected override void OnInitialized()
@@ -161,10 +163,11 @@
         NavManager.LocationChanged += OnLocationChanged;
     }
 
-    private void GoTo_Framework()
+    private async Task GoTo_Framework()
     {
-        var framwork_uri = $"http://192.168.31.30:5039/";
-        NavManager.NavigateTo(framwork_uri, forceLoad: true);
+        //var framwork_uri = $"http://192.168.102.201:5039/";
+        await JS.InvokeVoidAsync("jumpToApp", 5039);
+        // NavManager.NavigateTo(framwork_uri, forceLoad: true);
     }
 
     private bool IsPortInUse(string host, int port)

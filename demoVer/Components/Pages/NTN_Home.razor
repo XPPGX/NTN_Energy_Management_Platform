@@ -65,11 +65,13 @@
 <div class="column-container" @onclick="HandleGlobalClick">
     <div class="row1-container">
         <div class="row1-leftPart">
-            Inverter OFF/ON：
-            <label class="switch">
+            <!-- Inverter OFF/ON： -->
+            <!-- <label class="switch">
                 <input type="checkbox" @bind="isChecked" @onclick="switchONOFF">
                 <span class="slider"></span>
-            </label>
+            </label> -->
+            <button @onclick="ON">ON</button>
+            <button @onclick="OFF">OFF</button>
         </div>
 
         <div class="row1-rightPart">
@@ -149,7 +151,7 @@
     {
         new CardInfo
         {
-            ID = $"OverviewCard-{Guid.NewGuid().ToString("N").Substring(0,8)}",
+            ID = $"OverviewCard",
             widthClass = "w25",
             ComponentType = typeof(OverviewCard),
             card_Type = CARD_TYPE_INFO,
@@ -204,7 +206,7 @@
                 await JS.InvokeVoidAsync("DotNetHelperRegister", DotNetObjectReference.Create(this));
                 await JS.InvokeVoidAsync("getCardOrder");
 
-                switchONOFF();
+                //switchONOFF();
                 //await JS.InvokeVoidAsync("sortableHelper.initSortable", showEditBtn_Flag);
             }
             catch(Exception ex)
