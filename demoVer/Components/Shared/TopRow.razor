@@ -61,7 +61,9 @@
                 </div>
             }
         }
-        <button class="btn" @onclick="GoTo_Framework">FrameWork</button>
+        <button class="btn" @onclick="GoTo_Framework">
+            <img src="images/logo.png" alt="logo" style="width:36px; height:24px"/>
+        </button>
     </div>
 </div>
 
@@ -161,10 +163,9 @@
         NavManager.LocationChanged += OnLocationChanged;
     }
 
-    private void GoTo_Framework()
+    private async Task GoTo_Framework()
     {
-        var framwork_uri = $"http://192.168.31.30:5039/";
-        NavManager.NavigateTo(framwork_uri, forceLoad: true);
+        await JS.InvokeVoidAsync("jumpToApp", 5039);
     }
 
     private bool IsPortInUse(string host, int port)
