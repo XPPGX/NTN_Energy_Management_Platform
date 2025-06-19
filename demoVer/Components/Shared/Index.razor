@@ -1,0 +1,56 @@
+@* @page "/"
+
+<MudContainer MaxWidth="MaxWidth.False" Class="mt-4">
+
+    <MudText Typo="Typo.h4" Class="mb-4">儀表板總覽</MudText>
+
+    <!-- 四個統計卡片 -->
+    <MudGrid Gutter="16px">
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Class="p-4" Elevation="4">
+                <MudText Typo="Typo.subtitle1">使用者數</MudText>
+                <MudText Typo="Typo.h5">1,248</MudText>
+                <MudIcon Icon="@Icons.Material.Filled.People" Size="Size.Medium" Color="Color.Primary" />
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Class="p-4" Elevation="4">
+                <MudText Typo="Typo.subtitle1">活躍裝置</MudText>
+                <MudText Typo="Typo.h5">326</MudText>
+                <MudIcon Icon="@Icons.Material.Filled.Devices" Size="Size.Medium" Color="Color.Secondary" />
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Class="p-4" Elevation="4">
+                <MudText Typo="Typo.subtitle1">今日流量</MudText>
+                <MudText Typo="Typo.h5">145.3 kWh</MudText>
+                <MudIcon Icon="@Icons.Material.Filled.Bolt" Size="Size.Medium" Color="Color.Tertiary" />
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Class="p-4" Elevation="4">
+                <MudText Typo="Typo.subtitle1">錯誤警告</MudText>
+                <MudText Typo="Typo.h5">3</MudText>
+                <MudIcon Icon="@Icons.Material.Filled.Warning" Size="Size.Medium" Color="Color.Error" />
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+
+    <!-- 模擬折線圖 -->
+    <MudPaper Class="mt-6 p-4" Elevation="4">
+        <MudText Typo="Typo.h6">今日功率變化圖</MudText>
+        <MudChart ChartType="ChartType.Line" Labels="_labels" Datasets="_data" Class="mt-4" />
+    </MudPaper>
+
+</MudContainer>
+
+@code {
+    private string[] _labels = new[] { "00:00", "06:00", "12:00", "18:00", "23:59" };
+
+    private ChartOptions _options = new();
+
+    private ChartSeries[] _data = new[]
+    {
+        new ChartSeries() { Name = "功率 (kW)", Data = new double[] { 2.4, 3.1, 4.8, 2.6, 1.9 } }
+    };
+} *@
