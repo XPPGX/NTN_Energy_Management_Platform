@@ -1,0 +1,32 @@
+[
+  {
+    "ID": "OverviewCard",
+    "card_Type": 1,
+    "widthClass": "w25",
+    "showSequence": 0
+  },
+  {
+    "ID": "RunningDiagramCard",
+    "card_Type": 3,
+    "widthClass": "w50",
+    "showSequence": 1
+  },
+  {
+    "ID": "StatisticsCard",
+    "card_Type": 1,
+    "widthClass": "w25",
+    "showSequence": 2
+  },
+  {
+    "ID": "WattDiagram",
+    "card_Type": 2,
+    "widthClass": "w50",
+    "showSequence": 3
+  },
+  {
+    "ID": "BatteryChart",
+    "card_Type": 2,
+    "widthClass": "w50",
+    "showSequence": 4
+  }
+]

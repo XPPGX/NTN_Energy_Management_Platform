@@ -1,0 +1,8 @@
+{
+    "Current" : {
+        "Unit" : ["mA", "A"]
+    },
+    "Voltage" : {
+        "Unit" : ["mv", "V"]
+    }
+}

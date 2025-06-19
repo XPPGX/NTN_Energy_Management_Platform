@@ -39,7 +39,7 @@ window.initSortable = function (enable_flag) {
                     let order = [];
 
                     wrappers.forEach((el, index) => {
-                        const id = el.getAttribute("cardID");
+                        const id = el.getAttribute("cardID_ForSorting");
                         order.push({ id, position: index });
                     });
 

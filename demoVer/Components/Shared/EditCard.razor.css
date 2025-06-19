@@ -1,0 +1,126 @@
+.edit-info-top{
+    height: 20%;
+    width: 100%;
+    display : flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    gap: 10px;
+}
+
+.icon-button {
+    background-color: #f0f0f0;      /* 淺灰色底與白色背景有對比 */
+    border: 1px solid #ccc;         /* 淺邊框讓按鈕有層次 */
+    border-radius: 8px;             /* 圓角，現代感 */
+    /* padding: 6px;                   內距，讓圖片不會貼邊 */
+    cursor: pointer;               /* 滑鼠移過有指標 */
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.icon-button img {
+    width: 40px;
+    height: 40px;
+}
+
+.icon-button:hover {
+    background-color: #e0e0e0;      /* hover 效果 */
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.icon-button:active {
+    background-color: #d0d0d0;      /* 點下去時的顏色 */
+}
+
+.input-edit {
+    padding: 6px 10px;
+    border: 1px solid #ccc;          /* 加上灰色邊框 */
+    border-radius: 6px;              /* 輕微圓角 */
+    font-size: 16px;
+    outline: none;                   /* 去掉預設藍色 outline */
+    transition: border-color 0.2s;
+    width: 80%;                    /* 可以根據需要調整寬度 */
+    height: 40px;
+}
+
+.input-edit:focus {
+    border-color: #0078d4;           /* 聚焦時顯示藍色邊框 */
+    box-shadow: 0 0 3px rgba(0,120,212,0.3);
+}
+
+.underline {
+    height: 2px;
+    background-color: #ccc;
+    width: 100%;       /* 設定寬度 */
+    margin-top: 8px;   /* 或你想要的距離 */
+}
+
+
+table.table {
+    width: 100%;
+    table-layout: fixed; /* 關鍵！避免 input 撐開欄寬 */
+    border-collapse: collapse;
+}
+
+table.table td,
+table.table th {
+    border: 1px solid #ccc; /* 核心設定：所有格子都會有邊框 */
+    padding: 6px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-align: center;
+}
+
+table.table input {
+    width: 100%;   /* 讓 input 自動填滿欄位但不超出 */
+    box-sizing: border-box; /* 內距也計算在 width 裡 */
+}
+
+.img-select-grid{
+    display: grid;
+    width: 100%;
+    margin: 0px;
+    margin-right: 0px;
+    grid-template-columns: repeat(4, 1fr); /* 12格網格 */
+    gap: 0.5rem;
+}
+.img-select-icon{
+    grid-column: span 1;
+}
+
+.clickable-td {
+    text-align: center;
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #555;
+    background-color: #fff;
+    height: 38px;
+    vertical-align: middle;
+    transition: background-color 0.2s;
+}
+
+.clickable-td:hover {
+    background-color: #f5f5f5;
+}
+
+.scrollable-list {
+    max-height: 200px;   /* 或你要的高度 */
+    overflow-y: auto;    /* 開啟垂直捲軸 */
+    border: 1px solid #ccc;
+    padding: 8px;
+    background-color: #fafafa;
+}
+
+.list-item {
+    padding: 4px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.confirm-cancel-container{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}

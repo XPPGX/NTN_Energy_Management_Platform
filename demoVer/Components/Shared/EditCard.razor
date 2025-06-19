@@ -1,0 +1,382 @@
+@namespace demoVer.Shared
+@inherits LayoutComponentBase
+@using demoVer.Models
+@using System
+@using System.IO
+@using System.Text.Json
+@using Newtonsoft.Json.Linq
+@inject IWebHostEnvironment WebHostEnvironment
+
+@switch(currentCardInfo.card_Type)
+{
+    case CardType.Info:
+        switch(INFO_setting_stage)
+        {
+            case INFO_SETTING_STAGE.ADD_ROW_STAGE:
+                <div class="edit-info-top">
+                    <input class="input-edit" placeholder="輸入卡片名稱" style="text-align: center;"/>
+                </div>
+                @* <div class="underline"></div> *@
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>圖示</th>
+                            <th>內容設定</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for(int i = 0 ; i < INFO_DataItems.Count ; i ++)
+                        {
+                            var temp_Info_DataItem = INFO_DataItems[i];
+                            string iconPath = (string.IsNullOrEmpty(temp_Info_DataItem.iconPath)) ? "images/square.png" : temp_Info_DataItem.iconPath;
+                            <tr>
+                                <td>
+                                    <button class="icon-button" @onclick="() => selectImg(temp_Info_DataItem)">
+                                        <img src=@iconPath alt="waitImg"/>
+                                    </button>
+                                </td>
+                                <td class="clickable-td" @onclick="() => setValueAndCmd(temp_Info_DataItem)">
+                                    @(temp_Info_DataItem.status switch
+                                        {
+                                            SettingStatus.YET => "設定",
+                                            SettingStatus.PROGRESS => "設定未完成",
+                                            SettingStatus.DONE => temp_Info_DataItem.ValueName,
+                                            _ => ""
+                                        }
+                                    )
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                break;
+            case INFO_SETTING_STAGE.SELECT_ICON_STAGE:
+                <div class="img-select-grid">
+                    @foreach(var imgPath in imgRelativePaths)
+                    {
+                        <div class="img-select-icon">
+                            <button class="icon-button" @onclick="() => selectedImgFile(imgPath)">
+                                <img src=@imgPath alt="waiting"/>
+                            </button>
+                        </div>
+                    }
+                </div>
+                break;
+            case INFO_SETTING_STAGE.SETTING_VALUE_AND_CMD_STAGE:
+                <div class="edit-info-top">
+                    <h3>數值與命令設定</h3>
+                </div>
+                <table class="table">
+                    <tbody>
+                        @for (int i = 0; i < INFO_DataItems.Count; i++)
+                        {
+
+                            <tr>
+                                <th>設備選擇</th>
+                                <td class="clickable-td" @onclick="() => selectMachine()">
+                                    @(string.IsNullOrEmpty(temp_INFO_DataItem.MachineName) ? "設定" : temp_INFO_DataItem.MachineName)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>命令選擇</th>
+                                <td class="clickable-td" @onclick="() => selectCMD()">
+                                    @(string.IsNullOrEmpty(temp_INFO_DataItem.Cmd) ? "設定" : temp_INFO_DataItem.Cmd)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>數值名稱</th>
+                                <td>
+                                    <input @bind="temp_INFO_DataItem.ValueName" class="td-input"  style="text-align: center;"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>單位</th>
+                                <td class="clickable-td" @onclick="() => selectUnit()">
+                                    @{
+                                        string Uint_To_show = "";
+                                        if(string.IsNullOrEmpty(temp_INFO_DataItem.Cmd))
+                                        {
+                                            Uint_To_show = "請先選擇命令";
+                                        }
+                                        else
+                                        {
+                                            if(string.IsNullOrEmpty(temp_INFO_DataItem.Unit))
+                                            {
+                                                Uint_To_show = "設定";
+                                            }
+                                            else
+                                            {
+                                                Uint_To_show = temp_INFO_DataItem.Unit;
+                                            }
+                                        }
+                                    }
+                                    @Uint_To_show
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="confirm-cancel-container">
+                    <button @onclick="confirmInfoValueSetting">確認</button>
+                </div>
+                break;
+            case INFO_SETTING_STAGE.MACHINE_SELECTION_STAGE:
+                <div class="scrollable-list">
+                    @foreach (var item in machineNameLists)
+                    {
+                        <div class="list-item" @onclick="() => clickMachineName(item)">@item</div>
+                    }
+                </div>
+                break;
+            case INFO_SETTING_STAGE.CMD_SELECTION_STAGE:
+                <div class="scrollable-list">
+                    @foreach (var item in cmdDict)
+                    {
+                        <div class="list-item" @onclick="() => clickCmd(item.Key)">@item.Key</div>
+                    }
+                </div>
+                break;
+            case INFO_SETTING_STAGE.UNIT_SELECTION_STAGE:
+                <div class="scrollable-list">
+                    @foreach (var unit in UnitLists)
+                    {
+                        <div class="list-item" @onclick="() => clickUnit(unit)">@unit</div>
+                    }
+                </div>
+                break;
+            default:
+                break;
+        }
+        
+        break;
+    case CardType.Chart:
+        <h3>編輯 : 圖表</h3>
+        break;
+    case CardType.Status:
+        <h3>編輯 : 連接狀態</h3>
+        break;
+    default:
+        break;
+}
+
+
+
+
+@code{
+    //DEBUG
+    private List<string> machineNameLists = new List<string>()
+    {
+         "第一行資料", "第二行資料", "第三行資料", "第四行資料",
+        "第五行資料", "第六行資料", "第七行資料", "第八行資料"
+    };
+
+    @* private List<string> cmdLists = new List<string>()
+    {
+        "Current", "Voltage", "第三行命令", "第四行命令",
+        "第五行命令", "第六行命令", "第七行命令", "第八行命令"
+    }; *@
+
+    
+
+    [Parameter] public CardInfo currentCardInfo {get; set;}
+    
+    private bool _isFirstParameterSet = true;
+    private INFO_SETTING_STAGE INFO_setting_stage = INFO_SETTING_STAGE.ADD_ROW_STAGE;
+    private string title;
+    private string imgFolderPath = "";
+    private List<string> imgRelativePaths = new List<string>();
+    
+    private INFO_DataItem currentEdit_INFO_DataItem;
+    private INFO_DataItem temp_INFO_DataItem = new INFO_DataItem();
+
+    private JObject cmdDict;
+    string Cmd_filePath = "CMD.json";
+
+    private List<string> UnitLists;
+
+    protected override void OnInitialized()
+    {
+        Console.WriteLine("🚀 元件初始化：OnInitialized 被呼叫");
+        // 初始化邏輯，例如建立預設值、讀取 localStorage、設定變數等
+        imgFolderPath = Path.Combine(WebHostEnvironment.WebRootPath, "images/user_selections");
+        getCMDs();
+        getImgFiles();
+    }
+    
+    protected override void OnParametersSet()
+    {
+        if (_isFirstParameterSet)
+        {
+            _isFirstParameterSet = false;
+
+            // ✅ 第一次接收到 [Parameter] 時要執行的邏輯
+            Console.WriteLine("🚀 第一次接收到參數 currentCardInfo！");
+        }
+    }
+
+    
+
+    public enum SettingStatus
+    {
+        YET         = 1,
+        PROGRESS    = 2,
+        DONE        = 3,
+    }
+
+    public enum INFO_SETTING_STAGE
+    {
+        CLOSE_ALL                       = 0,
+        ADD_ROW_STAGE                   = 1,
+        SELECT_ICON_STAGE               = 2,
+        SETTING_VALUE_AND_CMD_STAGE     = 3,
+        MACHINE_SELECTION_STAGE         = 4,
+        CMD_SELECTION_STAGE             = 5,
+        UNIT_SELECTION_STAGE            = 6,
+    }
+
+
+    public class INFO_DataItem
+    {
+        public string iconPath { get; set; }
+        public SettingStatus status {get; set; } = SettingStatus.YET;
+        
+        public string MachineName {get; set;}
+        public string Cmd {get; set;}
+        public string ValueName {get; set;}
+        public string Unit  {get; set;}
+    }
+
+
+    private List<INFO_DataItem> INFO_DataItems = new List<INFO_DataItem>
+    {
+        new INFO_DataItem()
+    };
+
+    private void AddRow()
+    {
+        INFO_DataItems.Add(new INFO_DataItem());
+    }
+
+    private void getImgFiles()
+    {
+        if(Directory.Exists(imgFolderPath))
+        {
+            
+            imgRelativePaths = Directory.GetFiles(imgFolderPath)
+                                    .Select(path => "images/user_selections/" + Path.GetFileName(path))
+                                    .ToList();
+            foreach(var names in imgRelativePaths)
+            {
+                Console.WriteLine(names);
+            }
+        }
+        else
+        {
+            Console.WriteLine("FAIL : getImgFiles");
+        }
+    }
+
+    private async Task getCMDs()
+    {
+        if(File.Exists(Cmd_filePath))
+        {
+            string json = File.ReadAllText(Cmd_filePath);
+            cmdDict = JObject.Parse(json);
+
+            @* var json = await File.ReadAllTextAsync(Cmd_filePath);
+            cmdDict = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
+
+            var jsonString = JsonSerializer.Serialize(cmdDict, new JsonSerializerOptions { WriteIndented = true });
+            Console.WriteLine(jsonString); *@
+
+        }
+    }
+
+    private void selectImg(INFO_DataItem _temp_Info_DataItem)
+    {
+        currentEdit_INFO_DataItem = _temp_Info_DataItem;
+        INFO_setting_stage = INFO_SETTING_STAGE.SELECT_ICON_STAGE;
+    }
+
+    private void selectedImgFile(string _imgPath)
+    {
+        Console.WriteLine(_imgPath);
+
+        currentEdit_INFO_DataItem.iconPath = _imgPath;
+        INFO_setting_stage = INFO_SETTING_STAGE.ADD_ROW_STAGE;
+    }
+
+    private void setValueAndCmd(INFO_DataItem _temp_Info_DataItem)
+    {
+        Console.WriteLine("setValueAndCmd");
+        currentEdit_INFO_DataItem = _temp_Info_DataItem;
+        INFO_setting_stage = INFO_SETTING_STAGE.SETTING_VALUE_AND_CMD_STAGE;
+    }
+
+    private void selectMachine()
+    {
+        Console.WriteLine("selectMachine");
+        INFO_setting_stage = INFO_SETTING_STAGE.MACHINE_SELECTION_STAGE;
+    }
+
+    private void selectCMD()
+    {
+        Console.WriteLine("selectCMD");
+        INFO_setting_stage = INFO_SETTING_STAGE.CMD_SELECTION_STAGE;
+    }
+
+    private void selectUnit()
+    {
+        Console.WriteLine("selectUnit");
+        if(!string.IsNullOrEmpty(temp_INFO_DataItem.Cmd))
+        {
+            if(cmdDict.ContainsKey(temp_INFO_DataItem.Cmd))
+            {
+                var unitToken = cmdDict[temp_INFO_DataItem.Cmd]["Unit"];
+                if(unitToken != null)
+                {
+                    UnitLists = cmdDict[temp_INFO_DataItem.Cmd]["Unit"].ToObject<List<string>>();
+                }
+            }
+            Console.WriteLine(UnitLists);
+        }
+
+        INFO_setting_stage = INFO_SETTING_STAGE.UNIT_SELECTION_STAGE;
+    }
+
+    private void clickMachineName(string _selectedMachineName)
+    {
+        temp_INFO_DataItem.MachineName = _selectedMachineName;
+        INFO_setting_stage = INFO_SETTING_STAGE.SETTING_VALUE_AND_CMD_STAGE;
+        
+    }
+    private void clickCmd(string _cmd)
+    {
+        temp_INFO_DataItem.Cmd = _cmd;
+        INFO_setting_stage = INFO_SETTING_STAGE.SETTING_VALUE_AND_CMD_STAGE;
+    }
+    private void clickUnit(string _unit)
+    {
+        temp_INFO_DataItem.Unit = _unit;
+        INFO_setting_stage = INFO_SETTING_STAGE.SETTING_VALUE_AND_CMD_STAGE;
+    }
+
+    private void confirmInfoValueSetting()
+    {
+        if( string.IsNullOrEmpty(temp_INFO_DataItem.MachineName)    ||
+            string.IsNullOrEmpty(temp_INFO_DataItem.Cmd))
+        {
+            Console.WriteLine("有數值沒有設定");
+            return;
+        }
+
+        
+        currentEdit_INFO_DataItem.MachineName   = temp_INFO_DataItem.MachineName;
+        currentEdit_INFO_DataItem.Cmd           = temp_INFO_DataItem.Cmd;
+        currentEdit_INFO_DataItem.ValueName     = temp_INFO_DataItem.ValueName;
+        currentEdit_INFO_DataItem.Unit          = "";
+        currentEdit_INFO_DataItem.status        = SettingStatus.DONE;
+        
+        INFO_setting_stage = INFO_SETTING_STAGE.ADD_ROW_STAGE;
+    }
+}

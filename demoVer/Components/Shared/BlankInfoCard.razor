@@ -1,5 +1,6 @@
 @namespace demoVer.Shared
 @inherits LayoutComponentBase
+@using demoVer.Models
 <div class="infoCard-container @CssClass" @attributes="AdditionalAttributes">
     <div class="infoCard-container top">
         <h4>請編輯卡片</h4>
@@ -9,7 +10,7 @@
         }
     </div>
     <div class="infoCard-container bottom">
-        @foreach(var block in InfoBlocks)
+        @foreach(var block in InfoTuples)
         {
             <InfoDataItem IconPath="@block.IconPath"
                             AltText="@block.AltText"
@@ -24,45 +25,47 @@
     [Parameter(CaptureUnmatchedValues  = true)] public Dictionary<string, object> AdditionalAttributes {get; set; }
     [Parameter] public bool showEditButton {get; set; }
     [Parameter] public EventCallback<string> Inform_Home_openEditMenu {get; set;}
+    [Parameter] public CardInfo currentCard {get; set;}
     
     private async Task openEditMenu()
     {
         if(Inform_Home_openEditMenu.HasDelegate)
         {
             //Pass the razor component name to HOME, the name can be found definition in the HOME CardInfos List.
-            await Inform_Home_openEditMenu.InvokeAsync("infoCard");
+            await Inform_Home_openEditMenu.InvokeAsync(currentCard.ID);
+            Console.WriteLine("Current edit Card (from card) : " + currentCard.ID);
         }
     }
 
-    public class InfoBlock
-    {
-        public string IconPath { get; set; }
-        public string AltText { get; set; }
-        public List<(string Label, string Value)> DataPairs { get; set; }
-    }
+    // public class InfoTuple
+    // {
+    //     public string IconPath { get; set; }
+    //     public string AltText { get; set; }
+    //     public List<(string Label, string Value)> DataPairs { get; set; }
+    // }
 
-    public List<InfoBlock> InfoBlocks = new()
+    public List<InfoTuple> InfoTuples = new()
     {
-        // new InfoBlock
-        // {
-        //     IconPath = "images/transmission-tower.png",
-        //     AltText = "Input Info",
-        //     DataPairs = new()
-        //     {
-        //         ("輸入電壓：", "220V"),
-        //         ("輸入頻率：", "60Hz")
-        //     }
-        // },
-        // new InfoBlock
-        // {
-        //     IconPath = "images/fridge.png",
-        //     AltText = "Output Info",
-        //     DataPairs = new()
-        //     {
-        //         ("輸出電壓：", "48V"),
-        //         ("輸出頻率：", "0Hz")
-        //     }
-        // },
+        new InfoTuple
+        {
+            IconPath = "images/transmission-tower.png",
+            AltText = "Input Info",
+            DataPairs = new()
+            {
+                ("輸入電壓：", "220V"),
+                ("輸入頻率：", "60Hz")
+            }
+        },
+        new InfoTuple
+        {
+            IconPath = "images/fridge.png",
+            AltText = "Output Info",
+            DataPairs = new()
+            {
+                ("輸出電壓：", "48V"),
+                ("輸出頻率：", "0Hz")
+            }
+        },
     };
 
 

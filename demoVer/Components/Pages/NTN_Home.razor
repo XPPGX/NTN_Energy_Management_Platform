@@ -1,12 +1,17 @@
 @page "/"
-@using demoVer.Components.Layout
 @inject IJSRuntime JS
 @rendermode InteractiveServer
+@using demoVer.Components.Layout
+@using demoVer.Models
+@using System
+@using System.IO
+@using System.Text.Json
 
 <PageTitle>NTN module</PageTitle>
 
 <TopRow OnSendToParent="ReceiveFrom_TopRow"
         InformParentTo_OpenAddCard="ReceiveFrom_TopRow_OpenAddCard"
+        InformParentTo_SaveCardsInfo="ReceiveFrom_TopRow_SaveCardsInfo"
         @ref="refChild_TopRow"/>
 
 <!-- Independent of the HOME arrangement-->
@@ -25,23 +30,23 @@
     </div>
 }
 
-@if(isModalOpen)
+@if(modal_IsOpen)
 {
     <div class="modal-overlay" @onclick="CloseModal">
-        @if(isEditMenuOpen)
+        @if(editMenu_IsOpen)
         {
             <div class="modal-content" @onclick:stopPropagation>
                 <h3>卡片管理</h3>
-                <button class="modal-btn" @onclick="EditCard">編輯卡片</button>
+                <button class="modal-btn" @onclick="OpenEditCard">編輯卡片</button>
                 <button class="modal-btn" @onclick="DeleteCard">刪除卡片</button>
             </div>
         }
-        else if(showAddCard_Flag)
+        else if(addSelection_IsOpen)
         {
             <div class="modal-content" @onclick:stopPropagation>
                 <h3>選擇卡片</h3>
                 <div class="selection-group">
-                    <div class="addCard-selection-img-label-col" type="button" @onclick="() => addCard(CARD_TYPE_INFO)">
+                    <div class="addCard-selection-img-label-col" type="button" @onclick="() => addCard(CardType.Info)">
                         <img src="images/cardSelection-info.png" alt="plus" class="addCard-selection-img"/>
                         <div class="addCard-selection-label">資訊</div>
                     </div>
@@ -54,6 +59,32 @@
                         <div class="addCard-selection-label">連接狀態</div>
                     </div>
                 </div>
+            </div>
+        }
+        
+        @if(editCard_IsOpen)
+        {
+            <div class="modal-content-edit" @onclick:stopPropagation>
+                @{
+                    var targetCard = CardInfos.Find(c => c.ID == editingCard_Name);
+                    Console.WriteLine(targetCard);
+                    Console.WriteLine("OpenEditCard");
+                    if(targetCard != null)
+                    {
+                        @((RenderFragment)(builder => {
+                            builder.OpenComponent(0, typeof(EditCard)); //Create Card
+
+                            //Parameters passed into each card(razor component)
+                            builder.AddAttribute(1, "currentCardInfo", targetCard); 
+                            builder.CloseComponent();
+                        }));
+
+                    }
+                    else
+                    {
+                        Console.WriteLine("targetCard == NULL");
+                    }
+                }
             </div>
         }
     </div>
@@ -80,21 +111,38 @@
     </div>
     
     <div id="sortable-modules" class="module-grid" @ref="ref_module_container">
-        @foreach(var card in CardInfos.Where(m => m.IsVisible))
+        @foreach(var card in CardInfos)
         {
+            Type componentType_Temp = null;
+            switch(card.card_Type)
+            {
+                case CardType.Info:
+                    componentType_Temp = typeof(BlankInfoCard);
+                    break;
+                case CardType.Chart:
+
+                    break;
+                case CardType.Status:
+
+                    break;
+                default:
+                    componentType_Temp = null;
+                    break;
+            }
+
+            if(componentType_Temp == null){continue;}
+
             //style="resize: horizontal; overflow: auto" //卡片可以調整寬度
-            <div class="module-wrapper @card.widthClass" cardID="@card.ID" draggable="@showEditBtn_Flag" >
+            <div class="module-wrapper @card.widthClass" cardID_ForSorting="@card.ID" draggable="@showEditBtn_Flag" >
                 @((RenderFragment)(builder => {
-                    builder.OpenComponent(0, card.ComponentType); //Create Card
+                    builder.OpenComponent(0, componentType_Temp); //Create Card
 
                     //Parameters passed into each card(razor component)
                     builder.AddAttribute(1, "CssClass", "module-card"); 
                     builder.AddAttribute(2, "showEditButton", showEditBtn_Flag);
                     builder.AddAttribute(3, "Inform_Home_openEditMenu",
                         EventCallback.Factory.Create<string>(this, Handle_Inform_Home_openEditMenu));
-                    //builder.AddComponentReferenceCapture(4, inst =>{
-                    //    card.ComponentRef = (LayoutComponentBase)inst;
-                    //});
+                    builder.AddAttribute(4, "currentCard", card);
 
                     builder.CloseComponent();
                 }))
@@ -113,23 +161,24 @@
 {
 
     //UI control code
-    private bool showEditBtn_Flag;
-    private bool showAddCard_Flag = false;
-    private bool isModalOpen;
-    private bool isEditMenuOpen;
-    private bool afterAddCard_Flag = false;
-    private string editingCard_Name = "";
-    private string AlertMessage = "";
-    private byte cardRenderCounter = 0;
+    private bool showEditBtn_Flag       = false;
+    private bool addSelection_IsOpen    = false;
+    private bool modal_IsOpen           = false;
+    private bool editMenu_IsOpen        = false;
+    private bool afterAddCard_Flag      = false;
+    private bool editCard_IsOpen        = false;
+    private string editingCard_Name     = "";
+    private string AlertMessage         = "";
+    private byte cardRenderCounter      = 0;
     private TopRow refChild_TopRow;
 
     private ElementReference ref_module_container;
 
-    public const int CARD_TYPE_INFO = 1;
+    @* public const int CARD_TYPE_INFO = 1;
     public const int CARD_TYPE_CHART = 2;
-    public const int CARD_TYPE_STATUS = 3;
+    public const int CARD_TYPE_STATUS = 3; *@
 
-    public class CardInfo
+    @* public class CardInfo
     {
         public string ID {get; set;}                                        //識別用的ID(string)
         public int card_Type;                                        
@@ -141,52 +190,57 @@
         public byte showSequence {get; set;}                                //存被渲染的順序 start from 0
         //public Dictionary<string, object> Parameters {get; set;} = new();   //傳入每個card的參數
     }
-    
+     *@
     
 
     public List<CardInfo> CardInfos = new ()
     {
-        new CardInfo
+        @* new CardInfo
         {
-            ID = $"OverviewCard-{Guid.NewGuid().ToString("N").Substring(0,8)}",
+            //ID = $"OverviewCard-{Guid.NewGuid().ToString("N").Substring(0,8)}",
+            ID = "OverviewCard",
             widthClass = "w25",
-            ComponentType = typeof(OverviewCard),
-            card_Type = CARD_TYPE_INFO,
-            IsVisible = true,
-            
+            // ComponentType = typeof(OverviewCard),
+            card_Type = CardType.Info,
+            // IsVisible = true,
+            showSequence = 0,
         },
         new CardInfo
         {
             ID = "RunningDiagramCard",
             widthClass = "w50",
-            card_Type = CARD_TYPE_STATUS,
-            ComponentType = typeof(RunningDiagramCard),
-            IsVisible = true,
+            card_Type = CardType.Status,
+            // ComponentType = typeof(RunningDiagramCard),
+            // IsVisible = true,
+            showSequence = 1,
         },
         new CardInfo
         {
             ID = "StatisticsCard",
             widthClass = "w25",
-            card_Type = CARD_TYPE_INFO,
-            ComponentType = typeof(StatisticsCard),
-            IsVisible = true,
+            card_Type = CardType.Info,
+            // ComponentType = typeof(StatisticsCard),
+            // IsVisible = true,
+            showSequence = 2,
         },
         new CardInfo
         {
             ID = "WattDiagram",
             widthClass = "w50",
-            card_Type = CARD_TYPE_CHART,
-            ComponentType = typeof(WattDiagram),
-            IsVisible = true,
+            card_Type = CardType.Chart,
+            // ComponentType = typeof(WattDiagram),
+            // IsVisible = true,
+            showSequence = 3,
         },
         new CardInfo
         {
             ID = "BatteryChart",
             widthClass = "w50",
-            card_Type = CARD_TYPE_CHART,
-            ComponentType = typeof(BatteryChart),
-            IsVisible = true,
-        }
+            card_Type = CardType.Chart,
+            // ComponentType = typeof(BatteryChart),
+            // IsVisible = true,
+            showSequence = 4,
+        } *@
     };
 
     #region Render_Flow_Control
@@ -219,7 +273,7 @@
 
 
         //[Only for Debug]
-        Console.WriteLine("===[NEW]===");
+        @* Console.WriteLine("===[NEW]===");
         foreach (var card in CardInfos)
         {
             foreach (var prop in card.GetType().GetProperties())
@@ -227,8 +281,7 @@
                 Console.WriteLine($"{prop.Name} = {prop.GetValue(card)}");
             }
             Console.WriteLine("------");
-        }
-        Console.WriteLine($"CardInfos ref: {CardInfos.GetHashCode()}");
+        } *@
     }
 
     //UI重新Render前會做這個
@@ -264,7 +317,7 @@
         {
             Console.WriteLine($"Card {card.ID} => showSequence: {card.showSequence}");
         }
-        Console.WriteLine($"CardInfos ref: {CardInfos.GetHashCode()}");
+        CardInfos = CardInfos.OrderBy(c => c.showSequence).ToList();
     }
 
     private async Task ReceiveFrom_TopRow(bool _FromTopRow_showEditBtn_Flag)
@@ -275,36 +328,50 @@
 
     private async Task ReceiveFrom_TopRow_OpenAddCard()
     {
-        isModalOpen = true;
-        showAddCard_Flag = true;
+        modal_IsOpen = true;
+        addSelection_IsOpen = true;
         Console.WriteLine("TETSTSETSETSETSETSET");
+    }
+
+    private async Task ReceiveFrom_TopRow_SaveCardsInfo()
+    {
+        string jsonString = JsonSerializer.Serialize(CardInfos, new JsonSerializerOptions { WriteIndented = true });
+
+        File.WriteAllText("visibleCards.json", jsonString);
+
+        Console.WriteLine("JSON 檔案已寫入完成。");
     }
 
     private void Handle_Inform_Home_openEditMenu(string _editingCard_Name_FromChild)
     {
         editingCard_Name = _editingCard_Name_FromChild;
-        isModalOpen = true;
-        isEditMenuOpen = true;
-        Console.WriteLine($"{editingCard_Name}");
+        modal_IsOpen = true;
+        editMenu_IsOpen = true;
+        Console.WriteLine("Current edit Card (from Home) : " + _editingCard_Name_FromChild);
     }
 
     private void CloseModal()
     {   
         //close modal
-        isModalOpen = false;
+        modal_IsOpen = false;
         //Reset editingCard_Name
         editingCard_Name = "";
         //close EditMenu
-        isEditMenuOpen = false;
+        editMenu_IsOpen = false;
         //Close Alert
         AlertMessage = null;
-        //close AddCardSelection
-        showAddCard_Flag = false;
+        //Close addSelection_IsOpen
+        addSelection_IsOpen = false;
+        //Close editCard_IsOpen
+        editCard_IsOpen = false;
+
     }
 
     private void OpenEditCard()
     {
-
+        editMenu_IsOpen = false;
+        editCard_IsOpen = true;
+        Console.WriteLine("[Func] OpenEditCard");
     }
 
     private void DeleteCard()
@@ -319,9 +386,9 @@
         if(targetCard != null)
         {
             //show alert
-            isEditMenuOpen = false;
+            editMenu_IsOpen = false;
             TriggerAlert("警告 : 刪除後無法復原");
-            Console.WriteLine($"ID: {targetCard.ID}, WidthClass: {targetCard.widthClass}, ComponentType: {targetCard.ComponentType}, IsVisible: {targetCard.IsVisible}");
+            @* Console.WriteLine($"ID: {targetCard.ID}, WidthClass: {targetCard.widthClass}, ComponentType: {targetCard.ComponentType}, IsVisible: {targetCard.IsVisible}"); *@
 
             // targetCard.IsVisible = false;
             
@@ -361,30 +428,30 @@
 
     private void HandleGlobalClick()
     {
+        
         refChild_TopRow?.HideMenu();
     }
 
-    private void addCard(int _selection)
+    private void addCard(CardType _selection)
     {
         switch(_selection)
         {
-            case CARD_TYPE_INFO: //infoCard
+            case CardType.Info: //infoCard
                 var newCard = new CardInfo
                 {
-                    ID = "infoCard",
+                    ID = Guid.NewGuid().ToString("N"), //生成隨機32碼 GUID
                     widthClass = "w25",
-                    card_Type = (int)(CARD_TYPE_INFO),
-                    ComponentType = typeof(BlankInfoCard),
-                    IsVisible = true
+                    card_Type = CardType.Info,
+                    showSequence = (byte)(CardInfos.Count),
                 };
                 CardInfos.Add(newCard);
                 afterAddCard_Flag = true;
                 StateHasChanged();
                 CloseModal();
                 break;
-            case CARD_TYPE_CHART: //chart
+            case CardType.Chart: //chart
                 break;
-            case CARD_TYPE_STATUS: //status
+            case CardType.Status: //status
                 break;
             default:
                 break;
@@ -396,12 +463,5 @@
     {
         Console.WriteLine("Scroll to bottom C#");
         await JS.InvokeVoidAsync("scrollToBottom");
-    }
-
-    private void EditCard()
-    {
-        var targetCard = CardInfos.Find(c => c.ID == editingCard_Name);
-        Console.WriteLine(Guid.NewGuid().ToString("N"));
-
     }
 }

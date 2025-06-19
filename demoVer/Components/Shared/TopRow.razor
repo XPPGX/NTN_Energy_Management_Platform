@@ -47,7 +47,7 @@
             if(showEditBtn_Flag)
             {
                 //show "+" button
-                <button class="btn">
+                <button class="btn" @onclick="saveCardsInfo">
                     <img src="images/save-as.png" alt="save-edit" style="width:24px; height:24px"/>
                 </button>
                 <button class="btn" @onclick="showAddCard">
@@ -86,7 +86,8 @@
 
     [Parameter] public EventCallback<bool> OnSendToParent {get; set;}
     [Parameter] public EventCallback InformParentTo_OpenAddCard {get; set;}
-
+    [Parameter] public EventCallback InformParentTo_SaveCardsInfo {get; set;}
+    
     private async Task showEditButtons()
     {
         showEditBtn_Flag = !showEditBtn_Flag;
@@ -96,6 +97,11 @@
     private async Task showAddCard()
     {
         await InformParentTo_OpenAddCard.InvokeAsync();
+    }
+
+    private async Task saveCardsInfo()
+    {
+        await InformParentTo_SaveCardsInfo.InvokeAsync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
