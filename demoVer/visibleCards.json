@@ -1,32 +1,14 @@
 [
   {
-    "ID": "OverviewCard",
+    "ID": "393cd8a45b094672992dbfc241c576ee",
     "card_Type": 1,
     "widthClass": "w25",
     "showSequence": 0
   },
   {
-    "ID": "RunningDiagramCard",
-    "card_Type": 3,
-    "widthClass": "w50",
-    "showSequence": 1
-  },
-  {
-    "ID": "StatisticsCard",
+    "ID": "0db85788155245be8ac1ea2040b335a1",
     "card_Type": 1,
     "widthClass": "w25",
-    "showSequence": 2
-  },
-  {
-    "ID": "WattDiagram",
-    "card_Type": 2,
-    "widthClass": "w50",
-    "showSequence": 3
-  },
-  {
-    "ID": "BatteryChart",
-    "card_Type": 2,
-    "widthClass": "w50",
-    "showSequence": 4
+    "showSequence": 1
   }
 ]

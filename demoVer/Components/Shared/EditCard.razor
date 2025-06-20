@@ -14,8 +14,9 @@
         {
             case INFO_SETTING_STAGE.ADD_ROW_STAGE:
                 <div class="edit-info-top">
-                    <input class="input-edit" placeholder="輸入卡片名稱" style="text-align: center;"/>
+                    <input class="input-edit" @bind=edit_CardName placeholder="輸入卡片名稱" style="text-align: center;"/>
                 </div>
+                <br>
                 @* <div class="underline"></div> *@
                 <table class="table">
                     <thead>
@@ -25,22 +26,23 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @for(int i = 0 ; i < INFO_DataItems.Count ; i ++)
+                        @for(int i = 0 ; i < edit_INFO_DataItems.Count ; i ++)
                         {
-                            var temp_Info_DataItem = INFO_DataItems[i];
-                            string iconPath = (string.IsNullOrEmpty(temp_Info_DataItem.iconPath)) ? "images/square.png" : temp_Info_DataItem.iconPath;
+                            var temp = edit_INFO_DataItems[i];
+                            string iconPath;
+                            iconPath = (string.IsNullOrEmpty(temp.iconPath)) ? "images/square.png" : temp.iconPath;
                             <tr>
                                 <td>
-                                    <button class="icon-button" @onclick="() => selectImg(temp_Info_DataItem)">
+                                    <button class="icon-button" @onclick="() => selectImg(temp)">
                                         <img src=@iconPath alt="waitImg"/>
                                     </button>
                                 </td>
-                                <td class="clickable-td" @onclick="() => setValueAndCmd(temp_Info_DataItem)">
-                                    @(temp_Info_DataItem.status switch
+                                <td class="clickable-td" @onclick="() => AdjustValueCmdRow(temp)">
+                                    @(temp.status switch
                                         {
                                             SettingStatus.YET => "設定",
                                             SettingStatus.PROGRESS => "設定未完成",
-                                            SettingStatus.DONE => temp_Info_DataItem.ValueName,
+                                            SettingStatus.DONE => "設定完成",
                                             _ => ""
                                         }
                                     )
@@ -49,6 +51,21 @@
                         }
                     </tbody>
                 </table>
+                <div class="confirm-cancel-container">
+                    <MudButton OnClick="Add_INFO_DataItem"
+                            Variant="Variant.Filled"
+                            Color="Color.Primary"
+                            StartIcon="@Icons.Material.Filled.Add"
+                            Style="width: 120px;">
+                        新增
+                    </MudButton>
+                    <MudButton OnClick="Confirm_INFO_DataItem"
+                            Variant="Variant.Filled"
+                            Color="Color.Success"
+                            Style="width: 120px;">
+                        確定
+                    </MudButton>
+                </div>
                 break;
             case INFO_SETTING_STAGE.SELECT_ICON_STAGE:
                 <div class="img-select-grid">
@@ -68,45 +85,44 @@
                 </div>
                 <table class="table">
                     <tbody>
-                        @for (int i = 0; i < INFO_DataItems.Count; i++)
+                        @if(currentEdit_INFO_DataFormat_ref != null)
                         {
-
                             <tr>
                                 <th>設備選擇</th>
                                 <td class="clickable-td" @onclick="() => selectMachine()">
-                                    @(string.IsNullOrEmpty(temp_INFO_DataItem.MachineName) ? "設定" : temp_INFO_DataItem.MachineName)
+                                    @(string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.MachineName) ? "設定" : currentEdit_INFO_DataFormat_ref.MachineName)
                                 </td>
                             </tr>
                             <tr>
                                 <th>命令選擇</th>
                                 <td class="clickable-td" @onclick="() => selectCMD()">
-                                    @(string.IsNullOrEmpty(temp_INFO_DataItem.Cmd) ? "設定" : temp_INFO_DataItem.Cmd)
+                                    @(string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Cmd) ? "設定" : currentEdit_INFO_DataFormat_ref.Cmd)
                                 </td>
                             </tr>
                             <tr>
                                 <th>數值名稱</th>
                                 <td>
-                                    <input @bind="temp_INFO_DataItem.ValueName" class="td-input"  style="text-align: center;"/>
+                                    <input @bind="currentEdit_INFO_DataFormat_ref.ValueName" class="td-input"  style="text-align: center;"/>
                                 </td>
                             </tr>
                             <tr>
                                 <th>單位</th>
-                                <td class="clickable-td" @onclick="() => selectUnit()">
+                                <td class="clickable-td" @onclick="() => selectUnit()" style="text-align: center;">
                                     @{
                                         string Uint_To_show = "";
-                                        if(string.IsNullOrEmpty(temp_INFO_DataItem.Cmd))
+                                        if(string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Cmd))
                                         {
                                             Uint_To_show = "請先選擇命令";
                                         }
                                         else
                                         {
-                                            if(string.IsNullOrEmpty(temp_INFO_DataItem.Unit))
+                                            if(string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Unit))
                                             {
                                                 Uint_To_show = "設定";
                                             }
                                             else
                                             {
-                                                Uint_To_show = temp_INFO_DataItem.Unit;
+                                                Uint_To_show = currentEdit_INFO_DataFormat_ref.Unit;
                                             }
                                         }
                                     }
@@ -117,7 +133,12 @@
                     </tbody>
                 </table>
                 <div class="confirm-cancel-container">
-                    <button @onclick="confirmInfoValueSetting">確認</button>
+                     <MudButton OnClick="confirm_INFO_DataFormat_ValueSetting"
+                            Variant="Variant.Filled"
+                            Color="Color.Success">
+                        確定
+                    </MudButton>
+                    @* <button @onclick="confirm_INFO_DataFormat_ValueSetting">確認</button> *@
                 </div>
                 break;
             case INFO_SETTING_STAGE.MACHINE_SELECTION_STAGE:
@@ -132,7 +153,7 @@
                 <div class="scrollable-list">
                     @foreach (var item in cmdDict)
                     {
-                        <div class="list-item" @onclick="() => clickCmd(item.Key)">@item.Key</div>
+                        <div class="list-item" @onclick="() => clickCmd(item.Key)" style="text-align: ">@item.Key</div>
                     }
                 </div>
                 break;
@@ -144,6 +165,48 @@
                     }
                 </div>
                 break;
+            
+            case INFO_SETTING_STAGE.ADD_VALUE_AND_CMD_ROW_STAGE:
+                <div style="max-height: 300px; overflow-y: auto;">
+                    <table class="table">
+                        <thead>
+                            <th>數值名稱</th>
+                            <th>單位</th>
+                        </thead>
+                        <tbody>
+                            @foreach(var tempDataFormat in currentEdit_INFO_DataItem_ref.INFO_DataFormats)
+                            {
+                                <tr>
+                                    <td class="clickable-td" @onclick="() => setValueAndCmd(tempDataFormat)">
+                                        @(string.IsNullOrEmpty(tempDataFormat.ValueName) ? "點擊設定" : tempDataFormat.ValueName)
+                                    </td>
+                                    <td>
+                                        @(string.IsNullOrEmpty(tempDataFormat.Unit) ? "" : tempDataFormat.Unit)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                @* <button @onclick="AddRow_ValueAndCmd">新增</button> *@
+                <div class="confirm-cancel-container">
+                    <MudButton OnClick="AddRow_ValueAndCmd"
+                            Variant="Variant.Filled"
+                            Color="Color.Primary"
+                            StartIcon="@Icons.Material.Filled.Add"
+                            Style="width: 120px;">
+                        新增
+                    </MudButton>
+                    <MudButton OnClick="confirm_INFO_DataFormats_Setting"
+                                Variant="Variant.Filled"
+                                Color="Color.Success"
+                                Style="width: 120px;">
+                        確認
+                    </MudButton>
+                </div>
+                break;
+
             default:
                 break;
         }
@@ -179,18 +242,21 @@
     
 
     [Parameter] public CardInfo currentCardInfo {get; set;}
-    
+    [Parameter] public EventCallback<CardInfo> OnCardInfoUpdated {get; set;}
+
+
     private bool _isFirstParameterSet = true;
     private INFO_SETTING_STAGE INFO_setting_stage = INFO_SETTING_STAGE.ADD_ROW_STAGE;
     private string title;
     private string imgFolderPath = "";
     private List<string> imgRelativePaths = new List<string>();
     
-    private INFO_DataItem currentEdit_INFO_DataItem;
-    private INFO_DataItem temp_INFO_DataItem = new INFO_DataItem();
-
+    private INFO_DataItem currentEdit_INFO_DataItem_ref; //reference, modify in memory
+    private INFO_DataItem temp_INFO_DataItem_Backend;
+    private INFO_DataFormat currentEdit_INFO_DataFormat_ref; //This is point to the one DataFormat of temp_INFO_DataItem_Backend.INFO_DataFormats
     private JObject cmdDict;
-    string Cmd_filePath = "CMD.json";
+    private string edit_CardName;
+    string Cmd_filePath = "CMD_and_Unit.json";
 
     private List<string> UnitLists;
 
@@ -211,51 +277,31 @@
 
             // ✅ 第一次接收到 [Parameter] 時要執行的邏輯
             Console.WriteLine("🚀 第一次接收到參數 currentCardInfo！");
+            if(!string.IsNullOrEmpty(currentCardInfo.cardName))
+            {
+                Console.WriteLine("[EditCard] : currentCardInfo.cardName = " + currentCardInfo.cardName);
+                edit_CardName = currentCardInfo.cardName;
+            }
         }
     }
 
-    
-
-    public enum SettingStatus
-    {
-        YET         = 1,
-        PROGRESS    = 2,
-        DONE        = 3,
-    }
-
-    public enum INFO_SETTING_STAGE
-    {
-        CLOSE_ALL                       = 0,
-        ADD_ROW_STAGE                   = 1,
-        SELECT_ICON_STAGE               = 2,
-        SETTING_VALUE_AND_CMD_STAGE     = 3,
-        MACHINE_SELECTION_STAGE         = 4,
-        CMD_SELECTION_STAGE             = 5,
-        UNIT_SELECTION_STAGE            = 6,
-    }
-
-
-    public class INFO_DataItem
-    {
-        public string iconPath { get; set; }
-        public SettingStatus status {get; set; } = SettingStatus.YET;
-        
-        public string MachineName {get; set;}
-        public string Cmd {get; set;}
-        public string ValueName {get; set;}
-        public string Unit  {get; set;}
-    }
-
-
-    private List<INFO_DataItem> INFO_DataItems = new List<INFO_DataItem>
+    private List<INFO_DataItem> edit_INFO_DataItems = new List<INFO_DataItem>
     {
         new INFO_DataItem()
+        {
+            iconPath = "images/user_selections/car-battery.png",
+            status = SettingStatus.DONE,
+            INFO_DataFormats = new List<INFO_DataFormat>{
+                new INFO_DataFormat()
+                {
+                    MachineName = "123",
+                    Cmd = "Current",
+                    ValueName = "Test",
+                    Unit = "A"
+                }
+            }
+        }
     };
-
-    private void AddRow()
-    {
-        INFO_DataItems.Add(new INFO_DataItem());
-    }
 
     private void getImgFiles()
     {
@@ -292,9 +338,14 @@
         }
     }
 
+    private void Add_INFO_DataItem()
+    {
+        edit_INFO_DataItems.Add(new INFO_DataItem());
+    }
+
     private void selectImg(INFO_DataItem _temp_Info_DataItem)
     {
-        currentEdit_INFO_DataItem = _temp_Info_DataItem;
+        currentEdit_INFO_DataItem_ref = _temp_Info_DataItem; 
         INFO_setting_stage = INFO_SETTING_STAGE.SELECT_ICON_STAGE;
     }
 
@@ -302,14 +353,30 @@
     {
         Console.WriteLine(_imgPath);
 
-        currentEdit_INFO_DataItem.iconPath = _imgPath;
+        currentEdit_INFO_DataItem_ref.iconPath = _imgPath;
         INFO_setting_stage = INFO_SETTING_STAGE.ADD_ROW_STAGE;
     }
 
-    private void setValueAndCmd(INFO_DataItem _temp_Info_DataItem)
+    private void AdjustValueCmdRow(INFO_DataItem _temp_Info_DataItem)
+    {
+        Console.WriteLine("AdjustValueCmdRow");
+
+        //如果是已經存在的 currentEdit_INFO_DataItem，則
+
+        currentEdit_INFO_DataItem_ref = _temp_Info_DataItem;
+        
+        INFO_setting_stage = INFO_SETTING_STAGE.ADD_VALUE_AND_CMD_ROW_STAGE;
+    }
+
+    private void AddRow_ValueAndCmd()
+    {
+        currentEdit_INFO_DataItem_ref.INFO_DataFormats.Add(new INFO_DataFormat());
+    }
+
+    private void setValueAndCmd(INFO_DataFormat _temp_DataFormat)
     {
         Console.WriteLine("setValueAndCmd");
-        currentEdit_INFO_DataItem = _temp_Info_DataItem;
+        currentEdit_INFO_DataFormat_ref = _temp_DataFormat;
         INFO_setting_stage = INFO_SETTING_STAGE.SETTING_VALUE_AND_CMD_STAGE;
     }
 
@@ -328,55 +395,94 @@
     private void selectUnit()
     {
         Console.WriteLine("selectUnit");
-        if(!string.IsNullOrEmpty(temp_INFO_DataItem.Cmd))
+        if(!string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Cmd))
         {
-            if(cmdDict.ContainsKey(temp_INFO_DataItem.Cmd))
+            Console.WriteLine("selectUnit : currentEdit_INFO_DataFormat_ref.Cmd = " + currentEdit_INFO_DataFormat_ref.Cmd);
+            if(cmdDict.ContainsKey(currentEdit_INFO_DataFormat_ref.Cmd))
             {
-                var unitToken = cmdDict[temp_INFO_DataItem.Cmd]["Unit"];
+                var unitToken = cmdDict[currentEdit_INFO_DataFormat_ref.Cmd]["Unit"];
                 if(unitToken != null)
                 {
-                    UnitLists = cmdDict[temp_INFO_DataItem.Cmd]["Unit"].ToObject<List<string>>();
+                    UnitLists = cmdDict[currentEdit_INFO_DataFormat_ref.Cmd]["Unit"].ToObject<List<string>>();
                 }
             }
-            Console.WriteLine(UnitLists);
+            INFO_setting_stage = INFO_SETTING_STAGE.UNIT_SELECTION_STAGE;
         }
-
-        INFO_setting_stage = INFO_SETTING_STAGE.UNIT_SELECTION_STAGE;
+        else
+        {
+            Console.WriteLine("selectUnit : 尚未選擇CMD (這邊可以跳個Alert框)");
+        }
     }
 
     private void clickMachineName(string _selectedMachineName)
     {
-        temp_INFO_DataItem.MachineName = _selectedMachineName;
+        currentEdit_INFO_DataFormat_ref.MachineName = _selectedMachineName;
         INFO_setting_stage = INFO_SETTING_STAGE.SETTING_VALUE_AND_CMD_STAGE;
-        
     }
     private void clickCmd(string _cmd)
     {
-        temp_INFO_DataItem.Cmd = _cmd;
+        if(currentEdit_INFO_DataFormat_ref.Cmd != _cmd)
+        {
+            currentEdit_INFO_DataFormat_ref.Cmd = _cmd;
+            currentEdit_INFO_DataFormat_ref.Unit = "";
+        }
+        
+
         INFO_setting_stage = INFO_SETTING_STAGE.SETTING_VALUE_AND_CMD_STAGE;
     }
     private void clickUnit(string _unit)
     {
-        temp_INFO_DataItem.Unit = _unit;
+        currentEdit_INFO_DataFormat_ref.Unit = _unit;
         INFO_setting_stage = INFO_SETTING_STAGE.SETTING_VALUE_AND_CMD_STAGE;
     }
 
-    private void confirmInfoValueSetting()
+    private void confirm_INFO_DataFormat_ValueSetting()
     {
-        if( string.IsNullOrEmpty(temp_INFO_DataItem.MachineName)    ||
-            string.IsNullOrEmpty(temp_INFO_DataItem.Cmd))
+        if( string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.MachineName)      ||
+            string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Cmd)              ||
+            string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.ValueName)        ||
+            string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Unit)             ) 
         {
             Console.WriteLine("有數值沒有設定");
             return;
         }
 
         
-        currentEdit_INFO_DataItem.MachineName   = temp_INFO_DataItem.MachineName;
-        currentEdit_INFO_DataItem.Cmd           = temp_INFO_DataItem.Cmd;
-        currentEdit_INFO_DataItem.ValueName     = temp_INFO_DataItem.ValueName;
-        currentEdit_INFO_DataItem.Unit          = "";
-        currentEdit_INFO_DataItem.status        = SettingStatus.DONE;
+        @* currentEdit_INFO_DataItem_ref.MachineName   = temp_INFO_DataItem_Backend.MachineName;
+        currentEdit_INFO_DataItem_ref.Cmd           = temp_INFO_DataItem_Backend.Cmd;
+        currentEdit_INFO_DataItem_ref.ValueName     = temp_INFO_DataItem_Backend.ValueName;
+        currentEdit_INFO_DataItem_ref.Unit          = "";
+        currentEdit_INFO_DataItem_ref.status        = SettingStatus.DONE; *@
         
+        Console.WriteLine("[currentEdit_INFO_DataItem_ref] :");
+        string json = JsonSerializer.Serialize(currentEdit_INFO_DataItem_ref, new JsonSerializerOptions{
+            WriteIndented = true
+        });
+        Console.WriteLine(json);
+
+
+        INFO_setting_stage = INFO_SETTING_STAGE.ADD_VALUE_AND_CMD_ROW_STAGE;
+    }
+    
+    private void confirm_INFO_DataFormats_Setting()
+    {
+        currentEdit_INFO_DataItem_ref.status = SettingStatus.DONE;
         INFO_setting_stage = INFO_SETTING_STAGE.ADD_ROW_STAGE;
     }
+
+    private void Confirm_INFO_DataItem()
+    {
+        Console.WriteLine("[edit_INFO_DataItems] : ");
+        string json = JsonSerializer.Serialize(edit_INFO_DataItems, new JsonSerializerOptions{
+            WriteIndented = true
+        });
+        Console.WriteLine(json);
+    
+        currentCardInfo.cardName = edit_CardName;
+        currentCardInfo.Info_DataItems = edit_INFO_DataItems;
+        
+        // 通知父元件更新 currentCardInfo
+        OnCardInfoUpdated.InvokeAsync(currentCardInfo);
+    }
+
 }

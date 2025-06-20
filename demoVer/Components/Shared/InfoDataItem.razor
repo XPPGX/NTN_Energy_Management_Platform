@@ -2,14 +2,15 @@
 @inherits LayoutComponentBase
 <div class="overview-inner-card">
     <div class="smallIcon">
-        <img src="@IconPath" alt="@AltText" style="width:48px; height:48px" />
+        <img src="@IconPath" style="width:48px; height:48px" />
     </div>
     <div class="overview-inner-card rightPart">
         @foreach(var pair in DataPairs)
         {
             <div class="overview-inner-card valueBlock">
                 <div>@pair.Label</div>
-                <div id="input_volt">@pair.Value</div>
+                <div>:</div>
+                <div>@pair.Unit</div>
             </div>
         }
     </div>
@@ -18,12 +19,10 @@
 @code
 {
     [Parameter] public string IconPath {get; set;}
-    [Parameter] public string AltText {get; set;}
-    [Parameter] public List<(string Label, string Value)> DataPairs {get; set;} = new();
+    [Parameter] public List<(string Label, string Unit)> DataPairs {get; set;} = new();
 
     protected override void OnInitialized()
     {
         Console.WriteLine("InfoDataItem loaded!");
     }
-    
 }

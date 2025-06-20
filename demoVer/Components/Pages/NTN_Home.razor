@@ -1,11 +1,15 @@
 @page "/"
-@inject IJSRuntime JS
+
 @rendermode InteractiveServer
+
 @using demoVer.Components.Layout
 @using demoVer.Models
 @using System
 @using System.IO
 @using System.Text.Json
+
+@inject IJSRuntime JS
+@inject IDialogService DialogService
 
 <PageTitle>NTN module</PageTitle>
 
@@ -23,8 +27,17 @@
         </div>
         
         <div class="custom-btn-col">
-            <button class="close-btn confirm-btn" @onclick="ConfirmDelete">確定</button>
-            <button class="close-btn cancel-btn" @onclick="CancelDelete">取消</button>
+            <MudButton OnClick="ConfirmDelete"
+                    Variant="Variant.Filled"
+                    Style="background-color: #f8d7da; color: #721c24; border: 1px solid #e2aeb2; margin: 4px;">
+                確定
+            </MudButton>
+
+            <MudButton OnClick="CancelDelete"
+                    Variant="Variant.Outlined"
+                    Style="background-color: #fefefe; color: #333333; border: 1px solid #e0e0e0; margin: 4px;">
+                取消
+            </MudButton>
         </div>
         
     </div>
@@ -35,11 +48,34 @@
     <div class="modal-overlay" @onclick="CloseModal">
         @if(editMenu_IsOpen)
         {
-            <div class="modal-content" @onclick:stopPropagation>
-                <h3>卡片管理</h3>
-                <button class="modal-btn" @onclick="OpenEditCard">編輯卡片</button>
-                <button class="modal-btn" @onclick="DeleteCard">刪除卡片</button>
+            <div class="custom-dialog" @onclick:stopPropagation>
+                <MudStack Spacing="2" AlignItems="AlignItems.Center" Class="p-4">
+                    <MudText Typo="Typo.h5" Class="mb-4">卡片管理</MudText>
+
+                    <MudButton Color="Color.Primary" Variant="Variant.Filled"
+                            OnClick="OpenEditCard"
+                            StartIcon="@Icons.Material.Filled.Edit" Style="width: 100%;">
+                        編輯卡片
+                    </MudButton>
+
+                    <MudButton Color="Color.Error" Variant="Variant.Filled"
+                            OnClick="DeleteCard"
+                            StartIcon="@Icons.Material.Filled.Delete" Style="width: 100%;">
+                        刪除卡片
+                    </MudButton>
+                </MudStack>
             </div>
+                    
+            @* <div class="modal-content" @onclick:stopPropagation>
+                <h3>卡片管理</h3>
+                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="OpenEditCard" StartIcon="@Icons.Material.Filled.Edit">
+                    編輯卡片
+                </MudButton>
+
+                <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteCard" StartIcon="@Icons.Material.Filled.Delete">
+                    刪除卡片
+                </MudButton>
+            </div> *@
         }
         else if(addSelection_IsOpen)
         {
@@ -66,7 +102,7 @@
         {
             <div class="modal-content-edit" @onclick:stopPropagation>
                 @{
-                    var targetCard = CardInfos.Find(c => c.ID == editingCard_Name);
+                    var targetCard = CardInfos.Find(c => c.ID == editingCard_ID);
                     Console.WriteLine(targetCard);
                     Console.WriteLine("OpenEditCard");
                     if(targetCard != null)
@@ -75,7 +111,8 @@
                             builder.OpenComponent(0, typeof(EditCard)); //Create Card
 
                             //Parameters passed into each card(razor component)
-                            builder.AddAttribute(1, "currentCardInfo", targetCard); 
+                            builder.AddAttribute(1, "currentCardInfo", targetCard);
+                            builder.AddAttribute(2, "OnCardInfoUpdated", EventCallback.Factory.Create<CardInfo>(this, HandleCardUpdate));
                             builder.CloseComponent();
                         }));
 
@@ -167,7 +204,7 @@
     private bool editMenu_IsOpen        = false;
     private bool afterAddCard_Flag      = false;
     private bool editCard_IsOpen        = false;
-    private string editingCard_Name     = "";
+    private string editingCard_ID     = "";
     private string AlertMessage         = "";
     private byte cardRenderCounter      = 0;
     private TopRow refChild_TopRow;
@@ -184,7 +221,6 @@
         public int card_Type;                                        
         public string widthClass {get; set;}                                //定義的寬度(w25 | w50)
         public Type ComponentType {get; set;}                               //razor的元件類型(名稱)
-        public bool IsVisible {get; set;}                                   //控制可不可視
 
         //public LayoutComponentBase ComponentRef {get; set;}                 //存Ref，之後可用這個在C#控制這些child razor元件
         public byte showSequence {get; set;}                                //存被渲染的順序 start from 0
@@ -202,7 +238,6 @@
             widthClass = "w25",
             // ComponentType = typeof(OverviewCard),
             card_Type = CardType.Info,
-            // IsVisible = true,
             showSequence = 0,
         },
         new CardInfo
@@ -211,7 +246,6 @@
             widthClass = "w50",
             card_Type = CardType.Status,
             // ComponentType = typeof(RunningDiagramCard),
-            // IsVisible = true,
             showSequence = 1,
         },
         new CardInfo
@@ -220,7 +254,6 @@
             widthClass = "w25",
             card_Type = CardType.Info,
             // ComponentType = typeof(StatisticsCard),
-            // IsVisible = true,
             showSequence = 2,
         },
         new CardInfo
@@ -229,7 +262,6 @@
             widthClass = "w50",
             card_Type = CardType.Chart,
             // ComponentType = typeof(WattDiagram),
-            // IsVisible = true,
             showSequence = 3,
         },
         new CardInfo
@@ -238,7 +270,6 @@
             widthClass = "w50",
             card_Type = CardType.Chart,
             // ComponentType = typeof(BatteryChart),
-            // IsVisible = true,
             showSequence = 4,
         } *@
     };
@@ -342,20 +373,20 @@
         Console.WriteLine("JSON 檔案已寫入完成。");
     }
 
-    private void Handle_Inform_Home_openEditMenu(string _editingCard_Name_FromChild)
+    private void Handle_Inform_Home_openEditMenu(string _editingCard_ID_FromChild)
     {
-        editingCard_Name = _editingCard_Name_FromChild;
+        editingCard_ID = _editingCard_ID_FromChild;
         modal_IsOpen = true;
         editMenu_IsOpen = true;
-        Console.WriteLine("Current edit Card (from Home) : " + _editingCard_Name_FromChild);
+        Console.WriteLine("Current edit Card (from Home) : " + _editingCard_ID_FromChild);
     }
 
     private void CloseModal()
     {   
         //close modal
         modal_IsOpen = false;
-        //Reset editingCard_Name
-        editingCard_Name = "";
+        //Reset editingCard_ID
+        editingCard_ID = "";
         //close EditMenu
         editMenu_IsOpen = false;
         //Close Alert
@@ -376,21 +407,19 @@
 
     private void DeleteCard()
     {
-        if(editingCard_Name == "")
+        if(editingCard_ID == "")
         {
             Console.WriteLine("Current editing card is empty");
             return;
         }
         
-        var targetCard = CardInfos.Find(c => c.ID == editingCard_Name);
+        var targetCard = CardInfos.Find(c => c.ID == editingCard_ID);
         if(targetCard != null)
         {
             //show alert
             editMenu_IsOpen = false;
             TriggerAlert("警告 : 刪除後無法復原");
-            @* Console.WriteLine($"ID: {targetCard.ID}, WidthClass: {targetCard.widthClass}, ComponentType: {targetCard.ComponentType}, IsVisible: {targetCard.IsVisible}"); *@
-
-            // targetCard.IsVisible = false;
+          
             
             // StateHasChanged();
             
@@ -404,11 +433,10 @@
 
     private void ConfirmDelete()
     {
-        var targetCard = CardInfos.Find(c => c.ID == editingCard_Name);
+        var targetCard = CardInfos.Find(c => c.ID == editingCard_ID);
         if(targetCard != null)
         {
             CardInfos.Remove(targetCard);
-            //targetCard.IsVisible = false;
             StateHasChanged();
         }
         CloseAlert();
@@ -443,6 +471,7 @@
                     widthClass = "w25",
                     card_Type = CardType.Info,
                     showSequence = (byte)(CardInfos.Count),
+                    cardName = "FAKER",
                 };
                 CardInfos.Add(newCard);
                 afterAddCard_Flag = true;
@@ -463,5 +492,24 @@
     {
         Console.WriteLine("Scroll to bottom C#");
         await JS.InvokeVoidAsync("scrollToBottom");
+    }
+
+    private void HandleCardUpdate(CardInfo _updatedCard)
+    {
+        var index = CardInfos.FindIndex(c => c.ID == _updatedCard.ID);
+        if(index != -1)
+        {
+            Console.WriteLine("[NTN_HOME] : Card.ID : " + _updatedCard.ID + " updated");
+            CardInfos[index] = _updatedCard;
+        }
+
+
+        Console.WriteLine("[NTN_HOME] CardInfos: ");
+        string json = JsonSerializer.Serialize(CardInfos, new JsonSerializerOptions{
+            WriteIndented = true
+        });
+        Console.WriteLine(json);
+        CloseModal();
+        StateHasChanged();
     }
 }
