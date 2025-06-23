@@ -1,0 +1,33 @@
+@namespace demoVer.Shared
+@inherits LayoutComponentBase
+@using demoVer.Models
+
+<div class="custom-alert">
+    <div class="custom-alert-row">
+        <span class="alert-text">⚠️ @Message</span>
+    </div>
+    
+    <div class="custom-btn-col">
+        <MudButton OnClick="@ConfirmBtn_Func"
+                Variant="Variant.Filled"
+                Style="background-color: #f8d7da; color: #721c24; border: 1px solid #e2aeb2; margin: 4px;">
+            @ConfirmBtn_Text
+        </MudButton>
+
+        <MudButton OnClick="@CancelBtn_Func"
+                Variant="Variant.Outlined"
+                Style="background-color: #fefefe; color: #333333; border: 1px solid #e0e0e0; margin: 4px;">
+            @CancelBtn_Text
+        </MudButton>
+    </div>
+    
+</div>
+
+@code
+{
+    [Parameter] public string Message {get; set;}
+    [Parameter] public string ConfirmBtn_Text {get; set;} = "確定";
+    [Parameter] public string CancelBtn_Text {get; set;} = "取消";
+    [Parameter] public EventCallback ConfirmBtn_Func {get; set;}
+    [Parameter] public EventCallback CancelBtn_Func {get; set;}
+}

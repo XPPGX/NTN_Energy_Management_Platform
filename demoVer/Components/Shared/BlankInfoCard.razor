@@ -3,7 +3,7 @@
 @using demoVer.Models
 <div class="infoCard-container @CssClass" @attributes="AdditionalAttributes">
     <div class="infoCard-container top">
-        <h4>請編輯卡片</h4>
+        <h4>@(string.IsNullOrEmpty(currentCard.cardName) ? "請編輯卡片" : currentCard.cardName)</h4>
         @if(showEditButton)
         {
             @* <button class="top-right-button" @onclick="openEditMenu">⋯</button> *@
@@ -26,7 +26,8 @@
         {
              @foreach (var Info_DataItems_iterator in currentCard.Info_DataItems)
             {
-                string temp_iconPath = Info_DataItems_iterator.iconPath;
+                string temp_iconPath = string.IsNullOrEmpty(Info_DataItems_iterator.iconPath) ? "images/square.png" : Info_DataItems_iterator.iconPath;
+                
                 List<(string valueName, string unit)> temp_DataPairs = new List<(string valueName, string unit)>();
                 foreach (var Info_DataFormat_iter in Info_DataItems_iterator.INFO_DataFormats)
                 {

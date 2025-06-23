@@ -281,13 +281,16 @@
             {
                 Console.WriteLine("[EditCard] : currentCardInfo.cardName = " + currentCardInfo.cardName);
                 edit_CardName = currentCardInfo.cardName;
+
+                //在這裡把currentCard的INFO_DataItem掛進 edit_INFO_DataItems
+                edit_INFO_DataItems = currentCardInfo.Info_DataItems;
             }
         }
     }
 
     private List<INFO_DataItem> edit_INFO_DataItems = new List<INFO_DataItem>
     {
-        new INFO_DataItem()
+        @* new INFO_DataItem()
         {
             iconPath = "images/user_selections/car-battery.png",
             status = SettingStatus.DONE,
@@ -300,7 +303,7 @@
                     Unit = "A"
                 }
             }
-        }
+        } *@
     };
 
     private void getImgFiles()

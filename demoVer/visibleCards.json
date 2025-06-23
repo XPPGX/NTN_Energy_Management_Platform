@@ -1,14 +1,56 @@
 [
   {
-    "ID": "393cd8a45b094672992dbfc241c576ee",
+    "ID": "4ba7fa4b14414412a91854412b045a36",
     "card_Type": 1,
     "widthClass": "w25",
-    "showSequence": 0
+    "showSequence": 2,
+    "cardName": "c",
+    "Info_DataItems": [
+      {
+        "iconPath": "images/user_selections/fridge.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "\u7B2C\u4E09\u884C\u8CC7\u6599",
+            "Cmd": "Current",
+            "ValueName": "123123",
+            "Unit": "A"
+          }
+        ]
+      }
+    ]
   },
   {
-    "ID": "0db85788155245be8ac1ea2040b335a1",
+    "ID": "c4eee2c82594422c912d798721dd9956",
     "card_Type": 1,
     "widthClass": "w25",
-    "showSequence": 1
+    "showSequence": 3,
+    "cardName": "d",
+    "Info_DataItems": [
+      {
+        "iconPath": "images/user_selections/fridge.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "\u7B2C\u4E09\u884C\u8CC7\u6599",
+            "Cmd": "Current",
+            "ValueName": "123123123",
+            "Unit": "A"
+          }
+        ]
+      },
+      {
+        "iconPath": "images/user_selections/plug.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "\u7B2C\u4E09\u884C\u8CC7\u6599",
+            "Cmd": "Current",
+            "ValueName": "3132123",
+            "Unit": "A"
+          }
+        ]
+      }
+    ]
   }
 ]

@@ -19,11 +19,18 @@
         @ref="refChild_TopRow"/>
 
 <!-- Independent of the HOME arrangement-->
-@if(!string.IsNullOrEmpty(AlertMessage))
+@if(!string.IsNullOrEmpty(AlertMessage_parent))
 {
-    <div class="custom-alert">
+    <AlertMessageBox
+        Message         = "@AlertMessage_parent"
+        ConfirmBtn_Text = "@ConfirmBtn_Text_parent"
+        CancelBtn_Text  = "@CancelBtn_Text_parent"
+        ConfirmBtn_Func = "ConfirmBtn_Func_parent"
+        CancelBtn_Func  = "CancelBtn_Func_parent"
+        />
+    @* <div class="custom-alert">
         <div class="custom-alert-row">
-            <span class="alert-text">⚠️ @AlertMessage</span>
+            <span class="alert-text">⚠️ @AlertMessage_parent</span>
         </div>
         
         <div class="custom-btn-col">
@@ -40,7 +47,7 @@
             </MudButton>
         </div>
         
-    </div>
+    </div> *@
 }
 
 @if(modal_IsOpen)
@@ -77,7 +84,7 @@
                 </MudButton>
             </div> *@
         }
-        else if(addSelection_IsOpen)
+        @if(addSelection_IsOpen)
         {
             <div class="modal-content" @onclick:stopPropagation>
                 <h3>選擇卡片</h3>
@@ -205,15 +212,21 @@
     private bool afterAddCard_Flag      = false;
     private bool editCard_IsOpen        = false;
     private string editingCard_ID     = "";
-    private string AlertMessage         = "";
     private byte cardRenderCounter      = 0;
     private TopRow refChild_TopRow;
+
+    private string AlertMessage_parent      = "";
+    private string ConfirmBtn_Text_parent   = "";
+    private string CancelBtn_Text_parent    = "";
+    public EventCallback ConfirmBtn_Func_parent {get; set;}
+    public EventCallback CancelBtn_Func_parent {get; set;}
 
     private ElementReference ref_module_container;
 
     @* public const int CARD_TYPE_INFO = 1;
     public const int CARD_TYPE_CHART = 2;
     public const int CARD_TYPE_STATUS = 3; *@
+    
 
     @* public class CardInfo
     {
@@ -322,6 +335,11 @@
         Console.WriteLine(cardRenderCounter);
         return true;
     }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Read_CardInfos_FromJsonFile();
+    }
     #endregion //Render_Flow_Control
 
     [JSInvokable] public void UpdateCardOrderFromJS(List<string> newOrder)
@@ -344,11 +362,11 @@
         }
 
         Console.WriteLine("=== [AFTER UPDATE] ===");
-        foreach (var card in CardInfos)
-        {
-            Console.WriteLine($"Card {card.ID} => showSequence: {card.showSequence}");
-        }
-        CardInfos = CardInfos.OrderBy(c => c.showSequence).ToList();
+        @* Console.WriteLine("[NTN_HOME] CardInfos: ");
+        string json = JsonSerializer.Serialize(CardInfos, new JsonSerializerOptions{
+            WriteIndented = true
+        });
+        Console.WriteLine(json); *@
     }
 
     private async Task ReceiveFrom_TopRow(bool _FromTopRow_showEditBtn_Flag)
@@ -366,11 +384,7 @@
 
     private async Task ReceiveFrom_TopRow_SaveCardsInfo()
     {
-        string jsonString = JsonSerializer.Serialize(CardInfos, new JsonSerializerOptions { WriteIndented = true });
-
-        File.WriteAllText("visibleCards.json", jsonString);
-
-        Console.WriteLine("JSON 檔案已寫入完成。");
+        TriggerAlert("save");
     }
 
     private void Handle_Inform_Home_openEditMenu(string _editingCard_ID_FromChild)
@@ -390,7 +404,7 @@
         //close EditMenu
         editMenu_IsOpen = false;
         //Close Alert
-        AlertMessage = null;
+        AlertMessage_parent = null;
         //Close addSelection_IsOpen
         addSelection_IsOpen = false;
         //Close editCard_IsOpen
@@ -418,9 +432,8 @@
         {
             //show alert
             editMenu_IsOpen = false;
-            TriggerAlert("警告 : 刪除後無法復原");
-          
-            
+            TriggerAlert("delete");
+
             // StateHasChanged();
             
         }
@@ -428,10 +441,55 @@
 
     private void TriggerAlert(string _alertMessage_FromOtherFunc)
     {
-        AlertMessage = _alertMessage_FromOtherFunc;
+        
+        modal_IsOpen = true;
+
+        AlertMessage_parent     = "";
+        ConfirmBtn_Text_parent  = "";
+        CancelBtn_Text_parent   = "";
+        ConfirmBtn_Func_parent  = EventCallback.Empty;
+        CancelBtn_Func_parent   = EventCallback.Empty;
+        switch(_alertMessage_FromOtherFunc)
+        {
+            case "delete":
+                AlertMessage_parent     = "警告 : 刪除後無法復原";
+                ConfirmBtn_Text_parent  = "確定";
+                CancelBtn_Text_parent   = "取消";
+                ConfirmBtn_Func_parent  = EventCallback.Factory.Create(this, ConfirmDelete);
+                CancelBtn_Func_parent   = EventCallback.Factory.Create(this, CancelDelete);
+                break;
+            case "save":
+                AlertMessage_parent     = "是否確定要保存？";
+                ConfirmBtn_Text_parent  = "確定";
+                CancelBtn_Text_parent   = "取消";
+                ConfirmBtn_Func_parent  = EventCallback.Factory.Create(this, ConfirmSave_InfoData);
+                CancelBtn_Func_parent   = EventCallback.Factory.Create(this, CancelSave_InfoData);
+                break;
+            default:
+                break;
+        }
+        
     }
 
-    private void ConfirmDelete()
+    private async Task ConfirmSave_InfoData()
+    {
+        string jsonString = JsonSerializer.Serialize(CardInfos, new JsonSerializerOptions { WriteIndented = true });
+
+        File.WriteAllText("visibleCards.json", jsonString);
+
+        Console.WriteLine("JSON 檔案已寫入完成。");
+        
+        CloseAlert();
+        CloseModal();
+    }
+
+    private async Task CancelSave_InfoData()
+    {
+        CloseAlert();
+        CloseModal();
+    }
+
+    private async Task ConfirmDelete()
     {
         var targetCard = CardInfos.Find(c => c.ID == editingCard_ID);
         if(targetCard != null)
@@ -443,7 +501,7 @@
         CloseModal();
     }
 
-    private void CancelDelete()
+    private async Task CancelDelete()
     {
         CloseAlert();
         CloseModal();
@@ -451,7 +509,7 @@
 
     private void CloseAlert()
     {
-        AlertMessage = null;
+        AlertMessage_parent = null;
     }
 
     private void HandleGlobalClick()
@@ -471,7 +529,7 @@
                     widthClass = "w25",
                     card_Type = CardType.Info,
                     showSequence = (byte)(CardInfos.Count),
-                    cardName = "FAKER",
+                    cardName = "",
                 };
                 CardInfos.Add(newCard);
                 afterAddCard_Flag = true;
@@ -511,5 +569,35 @@
         Console.WriteLine(json);
         CloseModal();
         StateHasChanged();
+    }
+
+    private async Task Read_CardInfos_FromJsonFile()
+    {
+        var filePath = "visibleCards.json";
+        try
+        {
+            string json = File.ReadAllText(filePath);
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            CardInfos = JsonSerializer.Deserialize<List<CardInfo>>(json, options) ?? new();
+            CardInfos = CardInfos.OrderBy(c => c.showSequence).ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"JSON read fail: {ex.Message}");
+            CardInfos = new();
+        }
+        @* if(File.Exists(filePath))
+        {
+            var json= await File.ReadAllTextAsync(filePath);
+            CardInfos = JsonConvert.DeserializeObject<List<CardInfo>>(json) ?? new List<CardInfo>();   
+        }
+        else
+        {
+            Console.WriteLine("找不到 json 檔案 !!");
+        } *@
     }
 }
