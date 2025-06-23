@@ -22,18 +22,22 @@
             <InfoDataItem IconPath="@block.IconPath"
                             DataPairs="@block.DataPairs" />
         } *@
-        @foreach (var Info_DataItems_iterator in currentCard.Info_DataItems)
+        @if(currentCard?.Info_DataItems != null)
         {
-            string temp_iconPath = Info_DataItems_iterator.iconPath;
-            List<(string valueName, string unit)> temp_DataPairs = new List<(string valueName, string unit)>();
-            foreach (var Info_DataFormat_iter in Info_DataItems_iterator.INFO_DataFormats)
+             @foreach (var Info_DataItems_iterator in currentCard.Info_DataItems)
             {
-                temp_DataPairs.Add((Info_DataFormat_iter.ValueName, Info_DataFormat_iter.Unit));   
-            }
+                string temp_iconPath = Info_DataItems_iterator.iconPath;
+                List<(string valueName, string unit)> temp_DataPairs = new List<(string valueName, string unit)>();
+                foreach (var Info_DataFormat_iter in Info_DataItems_iterator.INFO_DataFormats)
+                {
+                    temp_DataPairs.Add((Info_DataFormat_iter.ValueName, Info_DataFormat_iter.Unit));   
+                }
 
-            <InfoDataItem IconPath="@temp_iconPath"
-                            DataPairs="@temp_DataPairs" />
+                <InfoDataItem IconPath="@temp_iconPath"
+                                DataPairs="@temp_DataPairs" />
+            }
         }
+       
     </div>
 </div>
 
