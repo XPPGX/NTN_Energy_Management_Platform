@@ -61,7 +61,7 @@ edit-container是用來綁以下javascript事件的 id :
                 </div>
                 <br>
                 @* <div class="underline"></div> *@
-                <table class="table" id="table-settingInfoDataItem">
+                <table class="table no-text-select" id="table-settingInfoDataItem">
                     <thead>
                         <tr>
                             <th>圖示</th>
@@ -80,29 +80,45 @@ edit-container是用來綁以下javascript事件的 id :
                                         <img src=@iconPath alt="waitImg"/>
                                     </button>
                                 </td>
-                                <td class="clickable-td" @onclick="() => AdjustValueCmdRow(temp)">
-                                    @(temp.status switch
+                                <td class="basic-td long-press-row" data-table="table-settingInfoDataItem" data-index="@i">
+                                @* <td class="clickable-td" @onclick="() => AdjustValueCmdRow(temp)"> *@
+                                    @{
+                                        string hint = "";
+                                        switch(temp.status)
                                         {
-                                            SettingStatus.YET => "設定",
-                                            SettingStatus.PROGRESS => "設定未完成",
-                                            SettingStatus.DONE => "設定完成",
-                                            _ => ""
+                                            case SettingStatus.YET:
+                                                if(isMobile){hint = "長按此處編輯";}
+                                                else{hint = "右鍵編輯";}
+                                                break;
+                                            case SettingStatus.PROGRESS:
+                                                if(isMobile){hint = "未完成:長按此處編輯";}
+                                                else{hint = "未完成:右鍵編輯";}
+                                                break;
+                                            case SettingStatus.DONE:
+                                                hint = "設定完成";
+                                                break;
+                                            default:
+                                                hint = "";
+                                                break;
                                         }
-                                    )
+                                    }
+                                    @hint
                                 </td>
                             </tr>
                         }
                     </tbody>
                 </table>
                 <div class="confirm-cancel-container">
-                    <MudButton OnClick="Add_INFO_DataItem"
+                    <MudButton Class="no-transform"
+                            OnClick="Add_INFO_DataItem"
                             Variant="Variant.Filled"
                             Color="Color.Primary"
                             StartIcon="@Icons.Material.Filled.Add"
                             Style="width: 120px;">
                         新增
                     </MudButton>
-                    <MudButton OnClick="Confirm_INFO_DataItem"
+                    <MudButton Class="no-transform" 
+                            OnClick="Confirm_INFO_DataItem"
                             Variant="Variant.Filled"
                             Color="Color.Success"
                             Style="width: 120px;">
@@ -185,28 +201,62 @@ edit-container是用來綁以下javascript事件的 id :
                 </div>
                 break;
             case INFO_SETTING_STAGE.MACHINE_SELECTION_STAGE:
-                <div class="scrollable-list">
+                <MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 200px; max-height: 240px; overflow-y: auto;">
+                    <MudList T="string" Dense="true" Hover="true">
+                        @foreach (var item in machineNameLists)
+                        {
+                            <MudListItem T="string"
+                                        @onclick="() => clickMachineName(item)"
+                                        Style="cursor: pointer;">
+                                <MudListItemIcon>
+                                    <MudIcon Icon="@Icons.Material.Filled.KeyboardCommandKey" />
+                                </MudListItemIcon>
+                                <MudText Class="ml-2">@item</MudText>
+                            </MudListItem>
+                        }
+                    </MudList>
+                </MudPaper>
+                
+                @* <div class="scrollable-list">
                     @foreach (var item in machineNameLists)
                     {
                         <div class="list-item" @onclick="() => clickMachineName(item)">@item</div>
                     }
-                </div>
+                </div> *@
                 break;
             case INFO_SETTING_STAGE.CMD_SELECTION_STAGE:
-                <div class="scrollable-list">
-                    @foreach (var item in cmdDict)
-                    {
-                        <div class="list-item" @onclick="() => clickCmd(item.Key)" style="text-align: ">@item.Key</div>
-                    }
-                </div>
+                <MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 200px; max-height: 240px; overflow-y: auto;">
+                    <MudList T="string" Dense="true" Hover="true">
+                        @foreach (var item in cmdDict)
+                        {
+                            <MudListItem T="string"
+                                        @onclick="() => clickCmd(item.Key)"
+                                        Style="cursor: pointer;">
+                                <MudListItemIcon>
+                                    <MudIcon Icon="@Icons.Material.Filled.Code" />
+                                </MudListItemIcon>
+                                <MudText Class="ml-2">@item.Key</MudText>
+                            </MudListItem>
+                        }
+                    </MudList>
+                </MudPaper>
                 break;
             case INFO_SETTING_STAGE.UNIT_SELECTION_STAGE:
-                <div class="scrollable-list">
-                    @foreach (var unit in UnitLists)
-                    {
-                        <div class="list-item" @onclick="() => clickUnit(unit)">@unit</div>
-                    }
-                </div>
+                <MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 200px; max-height: 240px; overflow-y: auto;">
+                    <MudList T="string" Dense="true" Hover="true">
+                        @foreach (var unit in UnitLists)
+                        {
+                            <MudListItem T="string"
+                                        @onclick="() => clickUnit(unit)"
+                                        Style="cursor: pointer;">
+                                <MudListItemIcon>
+                                    <MudIcon Icon="@Icons.Material.Filled.Sensors" />
+                                </MudListItemIcon>
+                                <MudText Class="ml-2">@unit</MudText>
+                            </MudListItem>
+                        }
+                    </MudList>
+                </MudPaper>
                 break;
             
             case INFO_SETTING_STAGE.ADD_VALUE_AND_CMD_ROW_STAGE:
@@ -217,7 +267,7 @@ edit-container是用來綁以下javascript事件的 id :
                             <th>數值名稱</th>
                             <th>單位</th>
                         </thead>
-                        <tbody>
+                        <tbody @onclick:stopPropagation>
                             @for(int i = 0 ; i < currentEdit_INFO_DataItem_ref.INFO_DataFormats.Count ; i ++)
                             {
                                 var tempDataFormat = currentEdit_INFO_DataItem_ref.INFO_DataFormats[i];
@@ -309,8 +359,7 @@ edit-container是用來綁以下javascript事件的 id :
     private bool showMenu = false;
     private double menuX;
     private double menuY;
-    private int InfoDataFormat_index;
-
+    private int InfoData_index; //紀錄 InfoDataItem, InfoDataFormat 被選擇到的index，依照Stage而代表不同的index
 
     private bool ConfirmDialog = false;
     private string AlertMessage = "";
@@ -323,8 +372,6 @@ edit-container是用來綁以下javascript事件的 id :
         ConfirmDialog = true;
     }
 
-
-
     private void Confirm()
     {
         ConfirmDialog = false;
@@ -336,12 +383,21 @@ edit-container是用來綁以下javascript事件的 id :
         ConfirmDialog = false;
     }
     
+    private void DeleteAction_In_ADD_ROW_STAGE()
+    {
+        Console.WriteLine("執行刪除");
+        if(InfoData_index >= 0 && InfoData_index < currentCardInfo.Info_DataItems.Count)
+        {
+            currentCardInfo.Info_DataItems.RemoveAt(InfoData_index);
+        }
+    }
+
     private void DeleteAction_In_ADD_VALUE_AND_CMD_ROW_STAGE()
     {
         Console.WriteLine("執行刪除");
-        if(InfoDataFormat_index >= 0 && InfoDataFormat_index < currentEdit_INFO_DataItem_ref.INFO_DataFormats.Count)
+        if(InfoData_index >= 0 && InfoData_index < currentEdit_INFO_DataItem_ref.INFO_DataFormats.Count)
         {
-            currentEdit_INFO_DataItem_ref.INFO_DataFormats.RemoveAt(InfoDataFormat_index);
+            currentEdit_INFO_DataItem_ref.INFO_DataFormats.RemoveAt(InfoData_index);
         }
     }
 
@@ -352,7 +408,7 @@ edit-container是用來綁以下javascript事件的 id :
         menuY = y;
         showMenu = true;
         Console.WriteLine($"[OnShowContextMenu] table : {table}, index : {index}");
-        InfoDataFormat_index = index;
+        InfoData_index = index;
         StateHasChanged();
     }
 
@@ -411,8 +467,12 @@ edit-container是用來綁以下javascript事件的 id :
         
         switch(INFO_setting_stage)
         {
+            case INFO_SETTING_STAGE.ADD_ROW_STAGE:
+                var tempINFO_DataItem = edit_INFO_DataItems[InfoData_index];
+                AdjustValueCmdRow(tempINFO_DataItem);
+                break;
             case INFO_SETTING_STAGE.ADD_VALUE_AND_CMD_ROW_STAGE:
-                var tempDataFormat = currentEdit_INFO_DataItem_ref.INFO_DataFormats[InfoDataFormat_index];
+                var tempDataFormat = currentEdit_INFO_DataItem_ref.INFO_DataFormats[InfoData_index];
                 setValueAndCmd(tempDataFormat);
                 break;
             default:
@@ -427,6 +487,9 @@ edit-container是用來綁以下javascript事件的 id :
         
         switch(INFO_setting_stage)
         {
+            case INFO_SETTING_STAGE.ADD_ROW_STAGE:
+                ShowDialog("確定要刪除?", DeleteAction_In_ADD_ROW_STAGE);
+                break;
             case INFO_SETTING_STAGE.ADD_VALUE_AND_CMD_ROW_STAGE:
                 Console.WriteLine("[Delete_inCorrespondingStage] Stage = INFO_SETTING_STAGE.ADD_VALUE_AND_CMD_ROW_STAGE");
                 ShowDialog("確定要刪除?", DeleteAction_In_ADD_VALUE_AND_CMD_ROW_STAGE);

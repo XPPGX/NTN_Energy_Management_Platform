@@ -54,7 +54,8 @@ function jumpToApp(port) {
 // };
 
 let longPressTriggered = false;
-window.registerGroupedTableTouchAndRightClick = function (containerId, dotNetHelper, pressTime = 400) {
+let suppressNextClick = false;
+window.registerGroupedTableTouchAndRightClick = function (containerId, dotNetHelper, pressTime = 800) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
@@ -73,9 +74,9 @@ window.registerGroupedTableTouchAndRightClick = function (containerId, dotNetHel
         const el = e.target.closest(".long-press-row");
         const touch = e.touches[0];
         if (!el) return;
-        longPressTriggered = false;
         timer = setTimeout(() => {
             longPressTriggered = true;
+            suppressNextClick = true;
             const info = getElementInfo(el);
             const x = touch.clientX;
             const y = touch.clientY;
@@ -83,16 +84,30 @@ window.registerGroupedTableTouchAndRightClick = function (containerId, dotNetHel
         }, pressTime);
         console.log("[touchstart]", e);
         dotNetHelper.invokeMethodAsync("JS_Console", "[touchstart]" + e);
-    });
+    }, {passive:true});
 
     container.addEventListener("touchend", function(e)
     {
         if(!longPressTriggered){
             clearTimeout(timer);
         }
-        console.log("[touchend]", e);
-        dotNetHelper.invokeMethodAsync("JS_Console", "[touchend]" + e);
+        longPressTriggered = false;
+        // setTimeout(() => longPressTriggered = false, 500);
+        // console.log("[touchend]", e);
+        // dotNetHelper.invokeMethodAsync("JS_Console", "[touchend]" + e);
     });
+
+    container.addEventListener("click", function(e){
+        if(suppressNextClick)
+        {
+            e.stopPropagation();
+            e.preventDefault();
+            suppressNextClick = false;
+            console.log("Click prevented after long press");
+        }
+        dotNetHelper.invokeMethodAsync("JS_Console", "[click]" + e);
+    },true);
+
     container.addEventListener("touchmove", function(e)
     {
         clearTimeout(timer);
@@ -100,6 +115,9 @@ window.registerGroupedTableTouchAndRightClick = function (containerId, dotNetHel
         dotNetHelper.invokeMethodAsync("JS_Console", "[touchmove]" + e);
     });
 
+
+
+    //For computer
     container.addEventListener("contextmenu", function (e) {
         if (isMobile) return;
         const el = e.target.closest(".long-press-row");

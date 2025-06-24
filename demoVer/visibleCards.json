@@ -11,15 +11,15 @@
         "status": 3,
         "INFO_DataFormats": [
           {
-            "MachineName": "\u7B2C\u4E09\u884C\u8CC7\u6599",
-            "Cmd": "Current",
-            "ValueName": "123123123",
-            "Unit": "A"
+            "MachineName": "\u7B2C\u4E8C\u884C\u8CC7\u6599",
+            "Cmd": "Voltage",
+            "ValueName": "XD",
+            "Unit": "mv"
           },
           {
-            "MachineName": "\u7B2C\u56DB\u884C\u8CC7\u6599",
+            "MachineName": "\u7B2C\u4E8C\u884C\u8CC7\u6599",
             "Cmd": "Voltage",
-            "ValueName": "ZZZZ",
+            "ValueName": "PPPPPPPPP",
             "Unit": "V"
           }
         ]
