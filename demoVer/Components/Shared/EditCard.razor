@@ -5,11 +5,54 @@
 @using System.IO
 @using System.Text.Json
 @using Newtonsoft.Json.Linq
-@inject IWebHostEnvironment WebHostEnvironment
+@using MudBlazor
 
+@inject IWebHostEnvironment WebHostEnvironment
+@inject IJSRuntime JS
+@inject IDialogService DialogService
+
+@*每個要用MudBlazor的razor元件，都要引入如下元件*@
+@using MudBlazor
+<MudThemeProvider/>
+<MudPopoverProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+
+@*
+edit-container是用來綁以下javascript事件的 id : 
+1.電腦右鍵
+2.手機長按
+*@
+<div id=edit-container @onclick="CloseMenu">
 @switch(currentCardInfo.card_Type)
 {
     case CardType.Info:
+        @if(showMenu)
+        {
+            <div class="custom-menu" style="top:@($"{menuY}px"); left:@($"{menuX}px");" @onclick:stopPropagation>
+                <div class="custom-menu-item" @onclick="Edit_inCorrespondingStage">編輯</div>
+                <div class="custom-menu-item" @onclick="Delete_inCorrespondingStage">刪除</div>
+            </div>
+            
+        }
+        @if(ConfirmDialog)
+        {
+            <div id="confirmDialog" class="custom-dialog-overlay">
+                <div class="custom-dialog">
+                    <div class="custom-dialog-content">
+                        <div class="icon-container">
+                            ⚠️
+                        </div>
+                        <p id="dialogMessage" class="dialog-message">@AlertMessage</p>
+                    </div>
+                    <div class="custom-dialog-actions">
+                        <button class="btn cancel-btn" @onclick="Cancel">取消</button>
+                        <button class="btn confirm-btn" @onclick="Confirm">確定</button>
+                    </div>
+                </div>
+            </div>
+        }
+
         switch(INFO_setting_stage)
         {
             case INFO_SETTING_STAGE.ADD_ROW_STAGE:
@@ -18,7 +61,7 @@
                 </div>
                 <br>
                 @* <div class="underline"></div> *@
-                <table class="table">
+                <table class="table" id="table-settingInfoDataItem">
                     <thead>
                         <tr>
                             <th>圖示</th>
@@ -168,17 +211,19 @@
             
             case INFO_SETTING_STAGE.ADD_VALUE_AND_CMD_ROW_STAGE:
                 <div style="max-height: 300px; overflow-y: auto;">
-                    <table class="table">
+                    <h4>@(isMobile? "長按編輯" : "右鍵編輯")</h4>
+                    <table class="table no-text-select" id="table-settingInfoDataFormat">
                         <thead>
                             <th>數值名稱</th>
                             <th>單位</th>
                         </thead>
                         <tbody>
-                            @foreach(var tempDataFormat in currentEdit_INFO_DataItem_ref.INFO_DataFormats)
+                            @for(int i = 0 ; i < currentEdit_INFO_DataItem_ref.INFO_DataFormats.Count ; i ++)
                             {
-                                <tr>
-                                    <td class="clickable-td" @onclick="() => setValueAndCmd(tempDataFormat)">
-                                        @(string.IsNullOrEmpty(tempDataFormat.ValueName) ? "點擊設定" : tempDataFormat.ValueName)
+                                var tempDataFormat = currentEdit_INFO_DataItem_ref.INFO_DataFormats[i];
+                                <tr class="long-press-row" data-table="table-settingInfoDataFormat" data-index="@i">
+                                    <td class="basic-td">
+                                        @(string.IsNullOrEmpty(tempDataFormat.ValueName) ? "" : tempDataFormat.ValueName)
                                     </td>
                                     <td>
                                         @(string.IsNullOrEmpty(tempDataFormat.Unit) ? "" : tempDataFormat.Unit)
@@ -188,8 +233,6 @@
                         </tbody>
                     </table>
                 </div>
-
-                @* <button @onclick="AddRow_ValueAndCmd">新增</button> *@
                 <div class="confirm-cancel-container">
                     <MudButton OnClick="AddRow_ValueAndCmd"
                             Variant="Variant.Filled"
@@ -206,7 +249,6 @@
                     </MudButton>
                 </div>
                 break;
-
             default:
                 break;
         }
@@ -223,6 +265,7 @@
 }
 
 
+</div>
 
 
 @code{
@@ -260,6 +303,59 @@
 
     private List<string> UnitLists;
 
+    private DotNetObjectReference<EditCard>? objRef;
+    private bool isMobile = false;
+
+    private bool showMenu = false;
+    private double menuX;
+    private double menuY;
+    private int InfoDataFormat_index;
+
+
+    private bool ConfirmDialog = false;
+    private string AlertMessage = "";
+    private Action? ConfirmCallback;
+
+    private void ShowDialog(string _message, Action _ConfirmAction)
+    {
+        AlertMessage = _message;
+        ConfirmCallback = _ConfirmAction;
+        ConfirmDialog = true;
+    }
+
+
+
+    private void Confirm()
+    {
+        ConfirmDialog = false;
+        ConfirmCallback?.Invoke();
+    }
+
+    private void Cancel()
+    {
+        ConfirmDialog = false;
+    }
+    
+    private void DeleteAction_In_ADD_VALUE_AND_CMD_ROW_STAGE()
+    {
+        Console.WriteLine("執行刪除");
+        if(InfoDataFormat_index >= 0 && InfoDataFormat_index < currentEdit_INFO_DataItem_ref.INFO_DataFormats.Count)
+        {
+            currentEdit_INFO_DataItem_ref.INFO_DataFormats.RemoveAt(InfoDataFormat_index);
+        }
+    }
+
+    [JSInvokable]
+    public void OnShowContextMenu(string table, int index, double x, double y)
+    {
+        menuX = x;
+        menuY = y;
+        showMenu = true;
+        Console.WriteLine($"[OnShowContextMenu] table : {table}, index : {index}");
+        InfoDataFormat_index = index;
+        StateHasChanged();
+    }
+
     protected override void OnInitialized()
     {
         Console.WriteLine("🚀 元件初始化：OnInitialized 被呼叫");
@@ -267,8 +363,19 @@
         imgFolderPath = Path.Combine(WebHostEnvironment.WebRootPath, "images/user_selections");
         getCMDs();
         getImgFiles();
+        
     }
     
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            objRef = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("registerGroupedTableTouchAndRightClick", "edit-container", objRef);
+            isMobile = await JS.InvokeAsync<bool>("checkIsMobile");
+        }
+    }
+
     protected override void OnParametersSet()
     {
         if (_isFirstParameterSet)
@@ -286,6 +393,65 @@
                 edit_INFO_DataItems = currentCardInfo.Info_DataItems;
             }
         }
+    }
+
+
+    private void CloseMenu()
+    {
+        if(showMenu)
+        {
+            showMenu = false;
+        }
+    }
+
+    private void Edit_inCorrespondingStage()
+    {
+        showMenu = false;
+        Console.WriteLine("點了選像1");
+        
+        switch(INFO_setting_stage)
+        {
+            case INFO_SETTING_STAGE.ADD_VALUE_AND_CMD_ROW_STAGE:
+                var tempDataFormat = currentEdit_INFO_DataItem_ref.INFO_DataFormats[InfoDataFormat_index];
+                setValueAndCmd(tempDataFormat);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void Delete_inCorrespondingStage()
+    {
+        showMenu = false;
+        Console.WriteLine("點了選像2");
+        
+        switch(INFO_setting_stage)
+        {
+            case INFO_SETTING_STAGE.ADD_VALUE_AND_CMD_ROW_STAGE:
+                Console.WriteLine("[Delete_inCorrespondingStage] Stage = INFO_SETTING_STAGE.ADD_VALUE_AND_CMD_ROW_STAGE");
+                ShowDialog("確定要刪除?", DeleteAction_In_ADD_VALUE_AND_CMD_ROW_STAGE);
+                break;
+            default:
+                break;
+        }
+    }
+
+    @* [JSInvokable]
+    public void OnLongPressRow(string table, int index)
+    {
+        Console.WriteLine($"手機長按 - table : {table}, index : {index}");
+    }
+
+    [JSInvokable]
+    public void OnRightClickRow(string table, int index)
+    {
+        Console.WriteLine($"電腦右鍵 - table : {table}, index : {index}");
+    } *@
+
+    [JSInvokable]
+    public void JS_Console(string _debug_message)
+    {
+        Console.WriteLine(_debug_message);
     }
 
     private List<INFO_DataItem> edit_INFO_DataItems = new List<INFO_DataItem>

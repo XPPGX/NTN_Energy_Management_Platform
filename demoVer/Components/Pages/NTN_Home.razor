@@ -107,7 +107,7 @@
         
         @if(editCard_IsOpen)
         {
-            <div class="modal-content-edit" @onclick:stopPropagation>
+            <div class="modal-content-edit" @onclick:stopPropagation> 
                 @{
                     var targetCard = CardInfos.Find(c => c.ID == editingCard_ID);
                     Console.WriteLine(targetCard);

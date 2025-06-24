@@ -106,6 +106,18 @@ table.table input {
     background-color: #f5f5f5;
 }
 
+.basic-td {
+    text-align: center;
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    color: #555;
+    background-color: #fff;
+    height: 38px;
+    vertical-align: middle;
+    transition: background-color 0.2s;
+}
+
 .scrollable-list {
     max-height: 200px;   /* 或你要的高度 */
     overflow-y: auto;    /* 開啟垂直捲軸 */
@@ -121,8 +133,10 @@ table.table input {
 
 .confirm-cancel-container{
     display: flex;
+    justify-content: center;
+    align-items: center;
     flex-direction: row;
-    gap: 10px;
+    gap: 10%;
 }
 
 .avatar-button {
@@ -162,4 +176,101 @@ table.table input {
         transform: translate(-50%, -50%) scale(1);
         opacity: 0;
     }
+}
+
+.no-text-select {
+    user-select: none;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none;     /* IE/Edge */
+}
+
+.custom-menu {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+    z-index: 9999;
+    padding: 4px 0;
+    min-width: 120px;
+    border-radius: 4px;
+}
+
+.custom-menu-item {
+    justify-content: center;
+    text-align: center;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.custom-menu-item:hover {
+    background-color: #f0f0f0;
+}
+
+.custom-dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: fade-in 0.3s ease;
+}
+
+.custom-dialog {
+    background: white;
+    border-radius: 8px;
+    width: 300px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    animation: scale-in 0.25s ease;
+    text-align: center;
+}
+
+.icon-container {
+    font-size: 36px;
+    margin-bottom: 12px;
+}
+
+.dialog-message {
+    font-size: 16px;
+    margin-bottom: 24px;
+}
+
+.custom-dialog-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.btn {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.cancel-btn {
+    background-color: #e0e0e0;
+}
+
+.confirm-btn {
+    background-color: #1976d2;
+    color: white;
+}
+
+/* Animations */
+@keyframes fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes scale-in {
+    from { transform: scale(0.95); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
 }
