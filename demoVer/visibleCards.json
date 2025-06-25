@@ -60,31 +60,5 @@
       }
     ],
     "Link_STATUS_Pairs": null
-  },
-  {
-    "ID": "d1f0e2795c854593a934d4ab6ed96b5c",
-    "card_Type": 3,
-    "widthClass": "w50",
-    "showSequence": 3,
-    "cardName": "",
-    "Info_DataItems": null,
-    "Link_STATUS_Pairs": [
-      {
-        "iconPath" : "images/user_selections/transmission-tower.png",
-        "label" : ""
-      },
-      {
-        "iconPath" : "images/user_selections/fridge.png",
-        "label" : ""
-      },
-      {
-        "iconPath" : "images/user_selections/plug.png",
-        "label" : ""
-      },
-      {
-        "iconPath" : "images/user_selections/car-battery.png",
-        "label" : ""
-      }
-    ]
   }
 ]

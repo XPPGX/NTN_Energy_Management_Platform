@@ -23,7 +23,6 @@
                     Color="Color.Default">
                 <MudIcon Icon="@Icons.Material.Filled.MoreHoriz" />
             </MudButton>
-            @* <button class="top-right-button" @onclick="openEditMenu">⋯</button> *@
         }
     </div>
     <div class="running-diagram-container bottom">
@@ -141,6 +140,21 @@
             await Inform_Home_openEditMenu.InvokeAsync(currentCard.ID);
         }
     }
+
+    protected override void OnInitialized()
+    {
+        if(currentCard.Link_STATUS_Pairs == null)
+        {
+            currentCard.Link_STATUS_Pairs = new List<LINK_STATUS_Pair>
+            {
+                new LINK_STATUS_Pair { iconPath = "images/user_selections/transmission-tower.png", Label = "" },
+                new LINK_STATUS_Pair { iconPath = "images/user_selections/fridge.png", Label = "" },
+                new LINK_STATUS_Pair { iconPath = "images/user_selections/plug.png", Label = "" },
+                new LINK_STATUS_Pair { iconPath = "images/user_selections/car-battery.png", Label = "" }
+            };
+        }
+    }
+
 
     protected override async Task OnInitializedAsync()
     {
