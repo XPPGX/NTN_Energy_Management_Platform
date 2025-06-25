@@ -309,6 +309,68 @@ edit-container是用來綁以下javascript事件的 id :
         break;
     case CardType.Status:
         <h3>編輯 : 連接狀態</h3>
+        switch(STATUS_setting_stage)
+        {
+            case STATUS_SETTING_STAGE.OVERVIEW:
+                <table class="table no-text-select" id="table-linkingStatus">
+                    <colgroup>
+                        <col style="width: 20%;">
+                        <col style="width: 30%;">
+                        <col style="width: 60%;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>圖示</th>
+                            <th>文字</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for(int i = 0 ; i < 4 ; i ++)
+                        {
+                            var temp = edit_Link_STATUS_Pairs[i];
+                            string iconPath = (string.IsNullOrEmpty(temp.iconPath)) ? "images/square.png" : temp.iconPath;
+                            <tr>
+                                <td>
+                                    @(i+1)
+                                </td>
+                                <td>
+                                    <button class="icon-button" @onclick="() => selectImg_LINK_STATUS(temp)">
+                                        <img src=@iconPath alt="waitImg"/>
+                                    </button>
+                                </td>
+                                <td>
+                                    <input @bind="temp.Label" class="td-input" style="text-align: center;"/>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <MudButton Class="no-transform" 
+                        OnClick="Confirm_LINK_STATUS"
+                        Variant="Variant.Filled"
+                        Color="Color.Success"
+                        Style="width: 120px;">
+                    確定
+                </MudButton>
+                break;
+            case STATUS_SETTING_STAGE.SELECT_ICON_STAGE:
+                <div class="img-select-grid">
+                    @foreach(var imgPath in imgRelativePaths)
+                    {
+                        <div class="img-select-icon">
+                            <button class="icon-button" @onclick="() => selectedImgFile_LINK_STATUS(imgPath)">
+                                <img src=@imgPath alt="waiting"/>
+                            </button>
+                        </div>
+                    }
+                </div>
+                break;
+
+            default:
+                break;
+        }
+        
         break;
     default:
         break;
@@ -326,28 +388,119 @@ edit-container是用來綁以下javascript事件的 id :
         "第五行資料", "第六行資料", "第七行資料", "第八行資料"
     };
 
+    #region Common_Variables_and_Functions
     [Parameter] public CardInfo currentCardInfo {get; set;}
     [Parameter] public EventCallback<CardInfo> OnCardInfoUpdated {get; set;}
-
+    private DotNetObjectReference<EditCard>? objRef;
 
     private bool _isFirstParameterSet = true;
-    private INFO_SETTING_STAGE INFO_setting_stage = INFO_SETTING_STAGE.ADD_ROW_STAGE;
-    private string title;
     private string imgFolderPath = "";
     private List<string> imgRelativePaths = new List<string>();
-    
+    private bool isMobile = false;
+    private JObject cmdDict;
+    string Cmd_filePath = "CMD_and_Unit.json";
+    private List<string> UnitLists;
+
+    protected override void OnInitialized()
+    {
+        Console.WriteLine("🚀 元件初始化：OnInitialized 被呼叫");
+        // 初始化邏輯，例如建立預設值、讀取 localStorage、設定變數等
+        imgFolderPath = Path.Combine(WebHostEnvironment.WebRootPath, "images/user_selections");
+        getCMDs();
+        getImgFiles();
+        
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            objRef = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("registerGroupedTableTouchAndRightClick", "edit-container", objRef);
+            isMobile = await JS.InvokeAsync<bool>("checkIsMobile");
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (_isFirstParameterSet)
+        {
+            _isFirstParameterSet = false;
+
+            // ✅ 第一次接收到 [Parameter] 時要執行的邏輯
+            Console.WriteLine("🚀 第一次接收到參數 currentCardInfo！");
+            if(!string.IsNullOrEmpty(currentCardInfo.ID))
+            {
+                Console.WriteLine("[EditCard] : currentCardInfo.cardName = " + currentCardInfo.cardName);
+                edit_CardName = currentCardInfo.cardName;
+
+                switch(currentCardInfo.card_Type)
+                {
+                    case CardType.Info:
+                        edit_INFO_DataItems = currentCardInfo.Info_DataItems; //edit_INFO_DataItems 與 currentCardInfo.Info_DataItems 同一塊記憶體
+                        break;
+                    case CardType.Chart:
+                        break;
+                    case CardType.Status:
+                        edit_Link_STATUS_Pairs = currentCardInfo.Link_STATUS_Pairs?.Select(pair => pair.DeepClone()).ToList(); //edit_Link_STATUS_Pairs 與 currentCardInfo.Link_STATUS_Pairs 不同記憶體
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    [JSInvokable]
+    public void JS_Console(string _debug_message)
+    {
+        Console.WriteLine(_debug_message);
+    }
+
+    private void getImgFiles()
+    {
+        if(Directory.Exists(imgFolderPath))
+        {
+            
+            imgRelativePaths = Directory.GetFiles(imgFolderPath)
+                                    .Select(path => "images/user_selections/" + Path.GetFileName(path))
+                                    .ToList();
+            foreach(var names in imgRelativePaths)
+            {
+                Console.WriteLine(names);
+            }
+        }
+        else
+        {
+            Console.WriteLine("FAIL : getImgFiles");
+        }
+    }
+
+    private async Task getCMDs()
+    {
+        if(File.Exists(Cmd_filePath))
+        {
+            string json = File.ReadAllText(Cmd_filePath);
+            cmdDict = JObject.Parse(json);
+
+            @* var json = await File.ReadAllTextAsync(Cmd_filePath);
+            cmdDict = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
+
+            var jsonString = JsonSerializer.Serialize(cmdDict, new JsonSerializerOptions { WriteIndented = true });
+            Console.WriteLine(jsonString); *@
+
+        }
+    }
+    #endregion Common_Variables_and_Functions
+
+
+    #region INFO_CARD_Variables_and_Functions
+    private INFO_SETTING_STAGE INFO_setting_stage = INFO_SETTING_STAGE.ADD_ROW_STAGE;
+    private string title;
     private INFO_DataItem currentEdit_INFO_DataItem_ref; //reference, modify in memory
     private INFO_DataItem temp_INFO_DataItem_Backend;
     private INFO_DataFormat currentEdit_INFO_DataFormat_ref; //This is point to the one DataFormat of temp_INFO_DataItem_Backend.INFO_DataFormats
-    private JObject cmdDict;
     private string edit_CardName;
-    string Cmd_filePath = "CMD_and_Unit.json";
-
-    private List<string> UnitLists;
-
-    private DotNetObjectReference<EditCard>? objRef;
-    private bool isMobile = false;
-
     private bool showMenu = false;
     private double menuX;
     private double menuY;
@@ -356,6 +509,22 @@ edit-container是用來綁以下javascript事件的 id :
     private bool ConfirmDialog = false;
     private string AlertMessage = "";
     private Action? ConfirmCallback;
+
+    private List<INFO_DataItem> edit_INFO_DataItems = new List<INFO_DataItem>
+    {
+
+    };
+
+    [JSInvokable]
+    public void OnShowContextMenu(string table, int index, double x, double y)
+    {
+        menuX = x;
+        menuY = y;
+        showMenu = true;
+        Console.WriteLine($"[OnShowContextMenu] table : {table}, index : {index}");
+        InfoData_index = index;
+        StateHasChanged();
+    }
 
     private void ShowDialog(string _message, Action _ConfirmAction)
     {
@@ -392,60 +561,6 @@ edit-container是用來綁以下javascript事件的 id :
             currentEdit_INFO_DataItem_ref.INFO_DataFormats.RemoveAt(InfoData_index);
         }
     }
-
-    [JSInvokable]
-    public void OnShowContextMenu(string table, int index, double x, double y)
-    {
-        menuX = x;
-        menuY = y;
-        showMenu = true;
-        Console.WriteLine($"[OnShowContextMenu] table : {table}, index : {index}");
-        InfoData_index = index;
-        StateHasChanged();
-    }
-
-    protected override void OnInitialized()
-    {
-        Console.WriteLine("🚀 元件初始化：OnInitialized 被呼叫");
-        // 初始化邏輯，例如建立預設值、讀取 localStorage、設定變數等
-        imgFolderPath = Path.Combine(WebHostEnvironment.WebRootPath, "images/user_selections");
-        getCMDs();
-        getImgFiles();
-        
-    }
-    
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if(firstRender)
-        {
-            objRef = DotNetObjectReference.Create(this);
-            await JS.InvokeVoidAsync("registerGroupedTableTouchAndRightClick", "edit-container", objRef);
-            isMobile = await JS.InvokeAsync<bool>("checkIsMobile");
-        }
-    }
-
-    protected override void OnParametersSet()
-    {
-        if (_isFirstParameterSet)
-        {
-            _isFirstParameterSet = false;
-
-            // ✅ 第一次接收到 [Parameter] 時要執行的邏輯
-            Console.WriteLine("🚀 第一次接收到參數 currentCardInfo！");
-            if(!string.IsNullOrEmpty(currentCardInfo.cardName))
-            {
-                Console.WriteLine("[EditCard] : currentCardInfo.cardName = " + currentCardInfo.cardName);
-                edit_CardName = currentCardInfo.cardName;
-
-                //在這裡把currentCard的INFO_DataItem掛進 edit_INFO_DataItems
-                if(currentCardInfo.card_Type == CardType.Info)
-                {
-                    edit_INFO_DataItems = currentCardInfo.Info_DataItems;
-                }
-            }
-        }
-    }
-
 
     private void CloseMenu()
     {
@@ -491,65 +606,6 @@ edit-container是用來綁以下javascript事件的 id :
                 break;
             default:
                 break;
-        }
-    }
-
-    [JSInvokable]
-    public void JS_Console(string _debug_message)
-    {
-        Console.WriteLine(_debug_message);
-    }
-
-    private List<INFO_DataItem> edit_INFO_DataItems = new List<INFO_DataItem>
-    {
-        @* new INFO_DataItem()
-        {
-            iconPath = "images/user_selections/car-battery.png",
-            status = SettingStatus.DONE,
-            INFO_DataFormats = new List<INFO_DataFormat>{
-                new INFO_DataFormat()
-                {
-                    MachineName = "123",
-                    Cmd = "Current",
-                    ValueName = "Test",
-                    Unit = "A"
-                }
-            }
-        } *@
-    };
-
-    private void getImgFiles()
-    {
-        if(Directory.Exists(imgFolderPath))
-        {
-            
-            imgRelativePaths = Directory.GetFiles(imgFolderPath)
-                                    .Select(path => "images/user_selections/" + Path.GetFileName(path))
-                                    .ToList();
-            foreach(var names in imgRelativePaths)
-            {
-                Console.WriteLine(names);
-            }
-        }
-        else
-        {
-            Console.WriteLine("FAIL : getImgFiles");
-        }
-    }
-
-    private async Task getCMDs()
-    {
-        if(File.Exists(Cmd_filePath))
-        {
-            string json = File.ReadAllText(Cmd_filePath);
-            cmdDict = JObject.Parse(json);
-
-            @* var json = await File.ReadAllTextAsync(Cmd_filePath);
-            cmdDict = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
-
-            var jsonString = JsonSerializer.Serialize(cmdDict, new JsonSerializerOptions { WriteIndented = true });
-            Console.WriteLine(jsonString); *@
-
         }
     }
 
@@ -661,13 +717,6 @@ edit-container是用來綁以下javascript事件的 id :
             Console.WriteLine("有數值沒有設定");
             return;
         }
-
-        
-        @* currentEdit_INFO_DataItem_ref.MachineName   = temp_INFO_DataItem_Backend.MachineName;
-        currentEdit_INFO_DataItem_ref.Cmd           = temp_INFO_DataItem_Backend.Cmd;
-        currentEdit_INFO_DataItem_ref.ValueName     = temp_INFO_DataItem_Backend.ValueName;
-        currentEdit_INFO_DataItem_ref.Unit          = "";
-        currentEdit_INFO_DataItem_ref.status        = SettingStatus.DONE; *@
         
         Console.WriteLine("[currentEdit_INFO_DataItem_ref] :");
         string json = JsonSerializer.Serialize(currentEdit_INFO_DataItem_ref, new JsonSerializerOptions{
@@ -700,4 +749,43 @@ edit-container是用來綁以下javascript事件的 id :
         OnCardInfoUpdated.InvokeAsync(currentCardInfo);
     }
 
+    #endregion INFO_CARD_Variables_and_Functions
+    
+
+    #region LINK_STATUS_Variables_and_Functions
+    private STATUS_SETTING_STAGE STATUS_setting_stage = STATUS_SETTING_STAGE.OVERVIEW;
+    private LINK_STATUS_Pair currentEdit_LINK_STATUS_pair_ref;
+    private List<LINK_STATUS_Pair> edit_Link_STATUS_Pairs = new List<LINK_STATUS_Pair>
+    {
+
+    };
+
+    private void selectImg_LINK_STATUS(LINK_STATUS_Pair _temp_LINK_STATUS_Pair)
+    {
+        currentEdit_LINK_STATUS_pair_ref = _temp_LINK_STATUS_Pair;
+        STATUS_setting_stage = STATUS_SETTING_STAGE.SELECT_ICON_STAGE;
+    }
+
+    private void selectedImgFile_LINK_STATUS(string _imgPath)
+    {
+        Console.WriteLine(_imgPath);
+        currentEdit_LINK_STATUS_pair_ref.iconPath = _imgPath;
+        STATUS_setting_stage = STATUS_SETTING_STAGE.OVERVIEW;
+    }
+
+    private void Confirm_LINK_STATUS()
+    {
+        Console.WriteLine("[edit_INFO_DataItems] : ");
+        string json = JsonSerializer.Serialize(edit_INFO_DataItems, new JsonSerializerOptions{
+            WriteIndented = true
+        });
+        Console.WriteLine(json);
+        
+        currentCardInfo.Link_STATUS_Pairs = edit_Link_STATUS_Pairs;
+
+        OnCardInfoUpdated.InvokeAsync(currentCardInfo);
+    }
+    #endregion LINK_STATUS_Variables_and_Functions
+
+    
 }

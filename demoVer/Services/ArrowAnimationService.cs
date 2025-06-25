@@ -4,6 +4,7 @@ namespace demoVer.Services
 {
     public class ArrowAnimationService : IAsyncDisposable
     {
+        private bool local_debug_enable = false;
         private readonly PeriodicTimer _timer;
         private readonly CancellationTokenSource _cts = new();
         public triangle_group triGroup1 { get; } = new();
@@ -11,6 +12,8 @@ namespace demoVer.Services
         public triangle_group triGroup3 { get; } = new();
 
         public event Action? OnTick;
+        
+        
 
         public ArrowAnimationService()
         {
@@ -27,18 +30,18 @@ namespace demoVer.Services
                     if (triGroup1.get_showArrowFlag())
                     {
                         triGroup1.activeIndex = (triGroup1.activeIndex + 1) % 3;
-                        AppLogger.Log("group1.index : " + triGroup1.activeIndex);
+                        AppLogger.Log("group1.index : " + triGroup1.activeIndex, local_debug_enable);
                     }
                     if (triGroup2.get_showArrowFlag())
                     {
                         triGroup2.activeIndex = (triGroup2.activeIndex + 1) % 3;
-                        AppLogger.Log("group2.index : " + triGroup2.activeIndex);
+                        AppLogger.Log("group2.index : " + triGroup2.activeIndex, local_debug_enable);
                     }
 
                     if (triGroup3.get_showArrowFlag())
                     {
                         triGroup3.activeIndex = (triGroup3.activeIndex + 1) % 3;
-                        AppLogger.Log("group3.index : " + triGroup3.activeIndex);
+                        AppLogger.Log("group3.index : " + triGroup3.activeIndex, local_debug_enable);
                     }
 
                     OnTick?.Invoke(); // 通知 UI 更新

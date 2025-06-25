@@ -29,39 +29,55 @@
     <div class="running-diagram-container bottom">
         <div class="grid-container" @ref="grid_container">
             <!-- 第一列 -->
-            <div class="grid-item">
-                <img src="images/transmission-tower.png" alt="Transmission Tower" style="width:48px; height:48px" @ref="tower"/>
+            <div class="grid-col">
+                <div class="grid-item">
+                    <img src="@currentCard.Link_STATUS_Pairs[0].iconPath" alt="Transmission Tower" style="width:48px; height:48px" @ref="tower"/>
+                </div>
+                <div class="grid-label">@currentCard.Link_STATUS_Pairs[0].Label</div>
             </div>
-            <div class="placeholder">
-                @if (ArrowService.triGroup1.get_showArrowFlag())
-                {
-                    <div class="arrows-container">
-                        @for (int i = 0; i < 3; i++)
-                        {
-                            var cssClass = i == ArrowService.triGroup1.activeIndex ? "triangle active" : "triangle";
-                            <div class="@cssClass"></div>
-                        }
-                    </div>
-                }
+            <div class="grid-col">
+                <div class="placeholder">
+                    @if (ArrowService.triGroup1.get_showArrowFlag())
+                    {
+                        <div class="arrows-container">
+                            @for (int i = 0; i < 3; i++)
+                            {
+                                var cssClass = i == ArrowService.triGroup1.activeIndex ? "triangle active" : "triangle";
+                                <div class="@cssClass"></div>
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="grid-label"></div>
             </div>
-            <div class="grid-item">
-                <img src="images/fridge.png" alt="NTN" style="width:48px; height:48px" @ref="NTN"/>
+            <div class="grid-col">
+                <div class="grid-item">
+                    <img src="@currentCard.Link_STATUS_Pairs[1].iconPath" alt="NTN" style="width:48px; height:48px" @ref="NTN"/>
+                </div>
+                <div class="grid-label">@currentCard.Link_STATUS_Pairs[1].Label</div>
             </div>
-            <div class="placeholder">
-                @if (ArrowService.triGroup2.get_showArrowFlag())
-                {
-                    <div class="arrows-container">
-                        @for (int i = 0; i < 3; i++)
-                        {
-                            var cssClass = i == ArrowService.triGroup2.activeIndex ? "triangle active" : "triangle";
-                            <div class="@cssClass"></div>
-                        }
-                    </div>
-                }
+            <div class="grid-col">
+                <div class="placeholder">
+                    @if (ArrowService.triGroup2.get_showArrowFlag())
+                    {
+                        <div class="arrows-container">
+                            @for (int i = 0; i < 3; i++)
+                            {
+                                var cssClass = i == ArrowService.triGroup2.activeIndex ? "triangle active" : "triangle";
+                                <div class="@cssClass"></div>
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="grid-label"></div>
             </div>
-            <div class="grid-item">
-                <img src="images/charge.png" alt="load" style="width:48px; height:48px" @ref="load"/>
+            <div class="grid-col">
+                <div class="grid-item">
+                    <img src="@currentCard.Link_STATUS_Pairs[2].iconPath" alt="load" style="width:48px; height:48px" @ref="load"/>
+                </div>
+                <div class="grid-label">@currentCard.Link_STATUS_Pairs[2].Label</div>
             </div>
+            
             <!-- 第二列 -->
             <div class="placeholder"></div>
             <div class="placeholder"></div>
@@ -83,9 +99,13 @@
             <!-- 第三列 -->
             <div class="placeholder"></div>
             <div class="placeholder"></div>
-            <div class="grid-item">
-                <img src="images/car-battery.png" alt="battery" style="width:48px; height:48px" @ref="battery"/>
+            <div class="grid-col">
+                <div class="grid-item">
+                    <img src="@currentCard.Link_STATUS_Pairs[3].iconPath" alt="battery" style="width:48px; height:48px" @ref="battery"/>
+                </div>
+                <div class="grid-label">@currentCard.Link_STATUS_Pairs[3].Label</div>
             </div>
+            
             <div class="placeholder"></div>
             <div class="placeholder"></div>
             
@@ -103,6 +123,8 @@
     [Parameter] public EventCallback<string> Inform_Home_openEditMenu {get; set;}
     [Parameter] public CardInfo currentCard {get; set;}
 
+    private bool stopTimer_Flag = false;
+
     private void Log(string message)
     {
         if(DEBUG_MODE)
@@ -116,7 +138,7 @@
         if(Inform_Home_openEditMenu.HasDelegate)
         {
             //Pass the razor component name to HOME, the name can be found definition in the HOME CardInfos List.
-            @* await Inform_Home_openEditMenu.InvokeAsync(currentCard.ID); *@
+            await Inform_Home_openEditMenu.InvokeAsync(currentCard.ID);
         }
     }
 

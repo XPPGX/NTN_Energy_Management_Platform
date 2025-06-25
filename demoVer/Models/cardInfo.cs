@@ -15,6 +15,7 @@ namespace demoVer.Models
         public byte showSequence {get; set;}                                //存被渲染的順序 start from 0
         public string cardName {get; set;}                                  //卡片名稱
         public List<INFO_DataItem> Info_DataItems {get; set;}               //存多個INFO_DataItems
+        public List<LINK_STATUS_Pair> Link_STATUS_Pairs{get; set;}          //存4個(iconPath, label) pair
     }
 
     public class InfoTuple
@@ -36,6 +37,13 @@ namespace demoVer.Models
         ADD_VALUE_AND_CMD_ROW_STAGE     = 7,
     }
     
+    public enum STATUS_SETTING_STAGE
+    {
+        CLOSE_ALL                       = 0,
+        OVERVIEW                        = 1,
+        SELECT_ICON_STAGE               = 2,
+    }
+
     public enum SettingStatus
     {
         YET         = 1,
@@ -76,6 +84,21 @@ namespace demoVer.Models
                 iconPath = this.iconPath,
                 status = this.status,
                 INFO_DataFormats = this.INFO_DataFormats.Select(data_format => data_format.DeepClone()).ToList()
+            };
+        }
+    }
+
+    public class LINK_STATUS_Pair
+    {
+        public string iconPath {get; set;}
+        public string Label{get; set;}
+
+        public LINK_STATUS_Pair DeepClone()
+        {
+            return new LINK_STATUS_Pair
+            {
+                iconPath = this.iconPath,
+                Label = this.Label
             };
         }
     }

@@ -15,44 +15,6 @@ function jumpToApp(port) {
     window.location.href = `http://${host}:${port}/`;
 }
 
-
-// window.registerGroupedTableTouchAndRightClick = function (containerId, dotNetHelper, pressTime = 800) {
-//     const container = document.getElementById(containerId);
-//     if (!container) return;
-
-//     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-//     let timer = null;
-
-//     function getElementInfo(el) {
-//         const table = el.getAttribute("data-table");
-//         const index = parseInt(el.getAttribute("data-index"));
-//         const rect = el.getBoundingClientRect();
-//         return { table, index, x: rect.right, y: rect.top + rect.height };
-//     }
-
-//     container.addEventListener("touchstart", function (e) {
-//         if (!isMobile) return;
-//         const el = e.target.closest(".long-press-row");
-//         if (!el) return;
-//         timer = setTimeout(() => {
-//             const info = getElementInfo(el);
-//             dotNetHelper.invokeMethodAsync("OnShowContextMenu", info.table, info.index, info.x, info.y);
-//         }, pressTime);
-//     });
-
-//     container.addEventListener("touchend", () => clearTimeout(timer));
-//     container.addEventListener("touchmove", () => clearTimeout(timer));
-
-//     container.addEventListener("contextmenu", function (e) {
-//         if (isMobile) return;
-//         const el = e.target.closest(".long-press-row");
-//         if (!el) return;
-//         e.preventDefault();
-//         const info = getElementInfo(el);
-//         dotNetHelper.invokeMethodAsync("OnShowContextMenu", info.table, info.index, info.x, info.y);
-//     });
-// };
-
 let longPressTriggered = false;
 let suppressNextClick = false;
 window.registerGroupedTableTouchAndRightClick = function (containerId, dotNetHelper, pressTime = 800) {
