@@ -329,6 +329,11 @@ edit-container是用來綁以下javascript事件的 id :
                         @for(int i = 0 ; i < 4 ; i ++)
                         {
                             var temp = edit_Link_STATUS_Pairs[i];
+                            if(temp == null)
+                            {
+                                Console.WriteLine($"temp is null!!!!");
+                                return;
+                            }
                             string iconPath = (string.IsNullOrEmpty(temp.iconPath)) ? "images/square.png" : temp.iconPath;
                             <tr>
                                 <td>
@@ -429,7 +434,7 @@ edit-container是用來綁以下javascript事件的 id :
 
             // ✅ 第一次接收到 [Parameter] 時要執行的邏輯
             Console.WriteLine("🚀 第一次接收到參數 currentCardInfo！");
-            if(!string.IsNullOrEmpty(currentCardInfo.ID))
+            if(!string.IsNullOrEmpty(currentCardInfo.cardName))
             {
                 Console.WriteLine("[EditCard] : currentCardInfo.cardName = " + currentCardInfo.cardName);
                 edit_CardName = currentCardInfo.cardName;
@@ -438,6 +443,7 @@ edit-container是用來綁以下javascript事件的 id :
                 {
                     case CardType.Info:
                         edit_INFO_DataItems = currentCardInfo.Info_DataItems; //edit_INFO_DataItems 與 currentCardInfo.Info_DataItems 同一塊記憶體
+                        Console.WriteLine("[OnParameterSet]CardType.Info");
                         break;
                     case CardType.Chart:
                         break;

@@ -34,10 +34,36 @@
     "Link_STATUS_Pairs": null
   },
   {
+    "ID": "a542900f83844989857b33012ff4def8",
+    "card_Type": 3,
+    "widthClass": "w50",
+    "showSequence": 1,
+    "cardName": "RunningDiagram",
+    "Info_DataItems": null,
+    "Link_STATUS_Pairs": [
+      {
+        "iconPath": "images/user_selections/transmission-tower.png",
+        "Label": "zxc"
+      },
+      {
+        "iconPath": "images/user_selections/fridge.png",
+        "Label": "asdasd"
+      },
+      {
+        "iconPath": "images/user_selections/plug.png",
+        "Label": "\u0060123123"
+      },
+      {
+        "iconPath": "images/user_selections/car-battery.png",
+        "Label": "asdasdasdas"
+      }
+    ]
+  },
+  {
     "ID": "4ba7fa4b14414412a91854412b045a36",
     "card_Type": 1,
     "widthClass": "w25",
-    "showSequence": 1,
+    "showSequence": 2,
     "cardName": "cx",
     "Info_DataItems": [
       {
@@ -55,6 +81,34 @@
             "Cmd": "Voltage",
             "ValueName": "CCCC",
             "Unit": "V"
+          }
+        ]
+      }
+    ],
+    "Link_STATUS_Pairs": null
+  },
+  {
+    "ID": "fb3e69f40bfc4786bbb79450963bab77",
+    "card_Type": 1,
+    "widthClass": "w25",
+    "showSequence": 3,
+    "cardName": "AA",
+    "Info_DataItems": [
+      {
+        "iconPath": "images/user_selections/charge.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "\u7B2C\u4E8C\u884C\u8CC7\u6599",
+            "Cmd": "Voltage",
+            "ValueName": "zxczxc",
+            "Unit": "V"
+          },
+          {
+            "MachineName": null,
+            "Cmd": null,
+            "ValueName": null,
+            "Unit": null
           }
         ]
       }

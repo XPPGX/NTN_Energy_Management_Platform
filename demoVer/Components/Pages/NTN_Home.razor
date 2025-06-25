@@ -507,19 +507,23 @@
             case CardType.Info: //infoCard
                 newCard.card_Type = CardType.Info;
                 newCard.widthClass = "w25";
+                newCard.cardName = "";
                 break;
             case CardType.Chart: //chart
+                newCard.card_Type = CardType.Chart;
+                newCard.widthClass = "w50";
                 break;
             case CardType.Status: //status
                 newCard.card_Type = CardType.Status;
                 newCard.widthClass = "w50";
+                newCard.cardName = "RunningDiagram";
                 break;
             default:
                 break;
         }
         newCard.ID = Guid.NewGuid().ToString("N");
         newCard.showSequence = (byte)(CardInfos.Count);
-        newCard.cardName = "";
+        
         
         CardInfos.Add(newCard);
         afterAddCard_Flag = true;
