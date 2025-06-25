@@ -7,19 +7,13 @@
     "cardName": "d",
     "Info_DataItems": [
       {
-        "iconPath": "images/user_selections/fridge.png",
+        "iconPath": "images/user_selections/transmission-tower.png",
         "status": 3,
         "INFO_DataFormats": [
           {
-            "MachineName": "\u7B2C\u4E8C\u884C\u8CC7\u6599",
+            "MachineName": "\u7B2C\u56DB\u884C\u8CC7\u6599",
             "Cmd": "Voltage",
-            "ValueName": "XD",
-            "Unit": "mv"
-          },
-          {
-            "MachineName": "\u7B2C\u4E8C\u884C\u8CC7\u6599",
-            "Cmd": "Voltage",
-            "ValueName": "PPPPPPPPP",
+            "ValueName": "ZZZZ",
             "Unit": "V"
           }
         ]
@@ -50,10 +44,10 @@
         "status": 3,
         "INFO_DataFormats": [
           {
-            "MachineName": "\u7B2C\u4E09\u884C\u8CC7\u6599",
-            "Cmd": "Current",
-            "ValueName": "123123",
-            "Unit": "A"
+            "MachineName": "\u7B2C\u4E8C\u884C\u8CC7\u6599",
+            "Cmd": "Voltage",
+            "ValueName": "asdasda",
+            "Unit": "V"
           },
           {
             "MachineName": "\u7B2C\u4E09\u884C\u8CC7\u6599",
@@ -62,19 +56,15 @@
             "Unit": "V"
           }
         ]
-      },
-      {
-        "iconPath": "images/user_selections/car-battery.png",
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "\u7B2C\u4E8C\u884C\u8CC7\u6599",
-            "Cmd": "Current",
-            "ValueName": "Aaaa",
-            "Unit": "A"
-          }
-        ]
       }
     ]
+  },
+  {
+    "ID": "d1f0e2795c854593a934d4ab6ed96b5c",
+    "card_Type": 3,
+    "widthClass": "w50",
+    "showSequence": 3,
+    "cardName": "",
+    "Info_DataItems": null
   }
 ]

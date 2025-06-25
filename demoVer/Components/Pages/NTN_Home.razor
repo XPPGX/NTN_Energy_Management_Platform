@@ -93,11 +93,11 @@
                         <img src="images/cardSelection-info.png" alt="plus" class="addCard-selection-img"/>
                         <div class="addCard-selection-label">資訊</div>
                     </div>
-                    <div class="addCard-selection-img-label-col" type="button">
+                    <div class="addCard-selection-img-label-col" type="button" @onclick="() => addCard(CardType.Chart)">
                         <img src="images/cardSelection-chart.png" alt="plus" class="addCard-selection-img"/>
                         <div class="addCard-selection-label">圖表</div>
                     </div>
-                    <div class="addCard-selection-img-label-col" type="button">
+                    <div class="addCard-selection-img-label-col" type="button" @onclick="() => addCard(CardType.Status)">
                         <img src="images/cardSelection-status.png" alt="plus" class="addCard-selection-img"/>
                         <div class="addCard-selection-label">連接狀態</div>
                     </div>
@@ -167,7 +167,7 @@
 
                     break;
                 case CardType.Status:
-
+                    componentType_Temp = typeof(RunningDiagramCard);
                     break;
                 default:
                     componentType_Temp = null;
@@ -222,26 +222,7 @@
     public EventCallback CancelBtn_Func_parent {get; set;}
 
     private ElementReference ref_module_container;
-
-    @* public const int CARD_TYPE_INFO = 1;
-    public const int CARD_TYPE_CHART = 2;
-    public const int CARD_TYPE_STATUS = 3; *@
     
-
-    @* public class CardInfo
-    {
-        public string ID {get; set;}                                        //識別用的ID(string)
-        public int card_Type;                                        
-        public string widthClass {get; set;}                                //定義的寬度(w25 | w50)
-        public Type ComponentType {get; set;}                               //razor的元件類型(名稱)
-
-        //public LayoutComponentBase ComponentRef {get; set;}                 //存Ref，之後可用這個在C#控制這些child razor元件
-        public byte showSequence {get; set;}                                //存被渲染的順序 start from 0
-        //public Dictionary<string, object> Parameters {get; set;} = new();   //傳入每個card的參數
-    }
-     *@
-    
-
     public List<CardInfo> CardInfos = new ()
     {
         @* new CardInfo
@@ -520,30 +501,31 @@
 
     private void addCard(CardType _selection)
     {
+        CardInfo newCard = new();
         switch(_selection)
         {
             case CardType.Info: //infoCard
-                var newCard = new CardInfo
-                {
-                    ID = Guid.NewGuid().ToString("N"), //生成隨機32碼 GUID
-                    widthClass = "w25",
-                    card_Type = CardType.Info,
-                    showSequence = (byte)(CardInfos.Count),
-                    cardName = "",
-                };
-                CardInfos.Add(newCard);
-                afterAddCard_Flag = true;
-                StateHasChanged();
-                CloseModal();
+                newCard.card_Type = CardType.Info;
+                newCard.widthClass = "w25";
                 break;
             case CardType.Chart: //chart
                 break;
             case CardType.Status: //status
+                newCard.card_Type = CardType.Status;
+                newCard.widthClass = "w50";
                 break;
             default:
                 break;
         }
+        newCard.ID = Guid.NewGuid().ToString("N");
+        newCard.showSequence = (byte)(CardInfos.Count);
+        newCard.cardName = "";
         
+        CardInfos.Add(newCard);
+        afterAddCard_Flag = true;
+        StateHasChanged();
+        CloseModal();
+
     }
 
     private async Task ScrollToBottomAsync()
@@ -584,20 +566,16 @@
 
             CardInfos = JsonSerializer.Deserialize<List<CardInfo>>(json, options) ?? new();
             CardInfos = CardInfos.OrderBy(c => c.showSequence).ToList();
+        
+            var CardInfos_jsonFormat = JsonSerializer.Serialize(CardInfos, new JsonSerializerOptions{
+                WriteIndented = true
+            });
+            Console.WriteLine(CardInfos_jsonFormat);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"JSON read fail: {ex.Message}");
             CardInfos = new();
         }
-        @* if(File.Exists(filePath))
-        {
-            var json= await File.ReadAllTextAsync(filePath);
-            CardInfos = JsonConvert.DeserializeObject<List<CardInfo>>(json) ?? new List<CardInfo>();   
-        }
-        else
-        {
-            Console.WriteLine("找不到 json 檔案 !!");
-        } *@
     }
 }

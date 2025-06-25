@@ -326,14 +326,6 @@ edit-container是用來綁以下javascript事件的 id :
         "第五行資料", "第六行資料", "第七行資料", "第八行資料"
     };
 
-    @* private List<string> cmdLists = new List<string>()
-    {
-        "Current", "Voltage", "第三行命令", "第四行命令",
-        "第五行命令", "第六行命令", "第七行命令", "第八行命令"
-    }; *@
-
-    
-
     [Parameter] public CardInfo currentCardInfo {get; set;}
     [Parameter] public EventCallback<CardInfo> OnCardInfoUpdated {get; set;}
 
@@ -446,7 +438,10 @@ edit-container是用來綁以下javascript事件的 id :
                 edit_CardName = currentCardInfo.cardName;
 
                 //在這裡把currentCard的INFO_DataItem掛進 edit_INFO_DataItems
-                edit_INFO_DataItems = currentCardInfo.Info_DataItems;
+                if(currentCardInfo.card_Type == CardType.Info)
+                {
+                    edit_INFO_DataItems = currentCardInfo.Info_DataItems;
+                }
             }
         }
     }
@@ -498,18 +493,6 @@ edit-container是用來綁以下javascript事件的 id :
                 break;
         }
     }
-
-    @* [JSInvokable]
-    public void OnLongPressRow(string table, int index)
-    {
-        Console.WriteLine($"手機長按 - table : {table}, index : {index}");
-    }
-
-    [JSInvokable]
-    public void OnRightClickRow(string table, int index)
-    {
-        Console.WriteLine($"電腦右鍵 - table : {table}, index : {index}");
-    } *@
 
     [JSInvokable]
     public void JS_Console(string _debug_message)

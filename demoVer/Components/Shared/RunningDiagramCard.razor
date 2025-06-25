@@ -1,5 +1,9 @@
 @namespace demoVer.Shared
 @inherits LayoutComponentBase
+@using demoVer.Models
+@using demoVer.Services
+@inject ArrowAnimationService ArrowService
+
 <div class="running-diagram-container @CssClass" @attributes="AdditionalAttributes">
     <div class="running-diagram-container top">
         <div class="leftPart">
@@ -12,7 +16,14 @@
         </div>
         @if(showEditButton)
         {
-            <button class="top-right-button" @onclick="openEditMenu">⋯</button>
+            <MudButton Variant="Variant.Text"
+                    Style="position: absolute; top: 4px; right: 4px; padding: 4px 8px; font-size: 16px; z-index: 999;"
+                    OnClick="openEditMenu"
+                    Class="custom-top-right-button"
+                    Color="Color.Default">
+                <MudIcon Icon="@Icons.Material.Filled.MoreHoriz" />
+            </MudButton>
+            @* <button class="top-right-button" @onclick="openEditMenu">⋯</button> *@
         }
     </div>
     <div class="running-diagram-container bottom">
@@ -22,12 +33,12 @@
                 <img src="images/transmission-tower.png" alt="Transmission Tower" style="width:48px; height:48px" @ref="tower"/>
             </div>
             <div class="placeholder">
-                @if (triGroup1.get_showArrowFlag())
+                @if (ArrowService.triGroup1.get_showArrowFlag())
                 {
                     <div class="arrows-container">
                         @for (int i = 0; i < 3; i++)
                         {
-                            var cssClass = i == triGroup1.activeIndex ? "triangle active" : "triangle";
+                            var cssClass = i == ArrowService.triGroup1.activeIndex ? "triangle active" : "triangle";
                             <div class="@cssClass"></div>
                         }
                     </div>
@@ -37,12 +48,12 @@
                 <img src="images/fridge.png" alt="NTN" style="width:48px; height:48px" @ref="NTN"/>
             </div>
             <div class="placeholder">
-                @if (triGroup2.get_showArrowFlag())
+                @if (ArrowService.triGroup2.get_showArrowFlag())
                 {
                     <div class="arrows-container">
                         @for (int i = 0; i < 3; i++)
                         {
-                            var cssClass = i == triGroup2.activeIndex ? "triangle active" : "triangle";
+                            var cssClass = i == ArrowService.triGroup2.activeIndex ? "triangle active" : "triangle";
                             <div class="@cssClass"></div>
                         }
                     </div>
@@ -55,12 +66,12 @@
             <div class="placeholder"></div>
             <div class="placeholder"></div>
             <div class="placeholder">
-                @if (triGroup3.get_showArrowFlag())
+                @if (ArrowService.triGroup3.get_showArrowFlag())
                 {
                     <div class="arrows-container-downward">
                         @for (int i = 0; i < 3; i++)
                         {
-                            var cssClass = i == triGroup3.activeIndex ? "triangle-downward active" : "triangle-downward";
+                            var cssClass = i == ArrowService.triGroup3.activeIndex ? "triangle-downward active" : "triangle-downward";
                             <div class="@cssClass"></div>
                         }
                     </div>
@@ -84,17 +95,39 @@
 </div>
 
 @code{
+    private bool DEBUG_MODE = true;
+    
     [Parameter] public string CssClass {get; set; }
     [Parameter(CaptureUnmatchedValues  = true)] public Dictionary<string, object> AdditionalAttributes {get; set; }
     [Parameter] public bool showEditButton {get; set; }
     [Parameter] public EventCallback<string> Inform_Home_openEditMenu {get; set;}
+    [Parameter] public CardInfo currentCard {get; set;}
+
+    private void Log(string message)
+    {
+        if(DEBUG_MODE)
+        {
+            Console.WriteLine($"[Debug] {message}");
+        }
+    }
+
     private async Task openEditMenu()
     {
         if(Inform_Home_openEditMenu.HasDelegate)
         {
             //Pass the razor component name to HOME, the name can be found definition in the HOME CardInfos List.
-            await Inform_Home_openEditMenu.InvokeAsync("RunningDiagramCard");
+            @* await Inform_Home_openEditMenu.InvokeAsync(currentCard.ID); *@
         }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ArrowService.OnTick += OnArrowTick;
+    }
+
+    private void OnArrowTick()
+    {
+        InvokeAsync(StateHasChanged);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -102,8 +135,7 @@
         if(firstRender)
         {
             //[Debug] show arrow animation
-            //await UpdateArrowPosition();
-            //StartTimer();
+            await UpdateArrowPosition();
         }
     }
 
@@ -121,58 +153,6 @@
     protected int arrowTop;
     protected int activeIndex = 0;
     protected bool showArrows = false;
-
-    protected class triangle_group
-    {
-        public int arrowLeft;
-        public int arrowTop;
-        public int activeIndex;
-        public bool showArrows;
-        public bool position_OK;
-
-        public triangle_group()
-        {
-            this.activeIndex = 0;
-            this.showArrows = false;
-            this.position_OK = false;
-        }
-        public void set_triGroup_postion(int left, int top)
-        {
-            this.arrowLeft = left;
-            this.arrowTop = top;
-            this.position_OK = true;
-        }
-        public void show_arrows()
-        {
-            if(this.position_OK){
-                this.showArrows = true;
-            }
-        }
-        public void clear_arrows()
-        {
-            this.showArrows = false;
-        }
-        public bool get_showArrowFlag()
-        {
-            return this.showArrows;
-        }
-        public int get_arrowLeft()
-        {
-            return this.arrowLeft;
-        }
-        public int get_arrowTop()
-        {
-            return this.arrowTop;
-        }
-        public string GetTriGroupStyle()
-        {
-            return $"left:{this.get_arrowLeft()}px; top:{this.get_arrowTop()}px;";
-        }
-    }
-
-    protected triangle_group triGroup1 = new triangle_group();
-    protected triangle_group triGroup2 = new triangle_group();
-    protected triangle_group triGroup3 = new triangle_group();
 
     protected System.Threading.Timer? timer;
 
@@ -195,56 +175,29 @@
         var rightRect = await JS.InvokeAsync<DomRect>("getBoundingClientRect", NTN, grid_container);
         arrowLeft = (int)((leftRect.Right + rightRect.Left) / 2) - 8; //if no "-8", the first triangle will appear at middle
         arrowTop = (int)((leftRect.Top + rightRect.Top) / 2);
-        Console.WriteLine($"left : {arrowLeft}, top : {arrowTop}");
-        triGroup1.set_triGroup_postion(arrowLeft, arrowTop);
-        triGroup1.show_arrows();
+        ArrowService.triGroup1.set_triGroup_postion(arrowLeft, arrowTop);
+        ArrowService.triGroup1.show_arrows();
 
 
         leftRect = await JS.InvokeAsync<DomRect>("getBoundingClientRect", NTN, grid_container);
         rightRect = await JS.InvokeAsync<DomRect>("getBoundingClientRect", load, grid_container);
         arrowLeft = (int)((leftRect.Right + rightRect.Left) / 2);
         arrowTop = (int)((leftRect.Top + rightRect.Top) / 2);
-        triGroup2.set_triGroup_postion(arrowLeft, arrowTop);
-        triGroup2.show_arrows();
+        ArrowService.triGroup2.set_triGroup_postion(arrowLeft, arrowTop);
+        ArrowService.triGroup2.show_arrows();
 
 
         leftRect = await JS.InvokeAsync<DomRect>("getBoundingClientRect", NTN, grid_container);
         rightRect = await JS.InvokeAsync<DomRect>("getBoundingClientRect", battery, grid_container);
         arrowLeft = (int)((leftRect.Right + rightRect.Left) / 2);
         arrowTop = (int)((leftRect.Top + rightRect.Top) / 2);
-        triGroup3.set_triGroup_postion(arrowLeft, arrowTop);
-        triGroup3.show_arrows();
+        ArrowService.triGroup3.set_triGroup_postion(arrowLeft, arrowTop);
+        ArrowService.triGroup3.show_arrows();
     }
 
-    protected void StartTimer()
-    {
-        timer = new System.Threading.Timer(_ =>
-        {   
-            Console.WriteLine("timer");
-            if(triGroup1.get_showArrowFlag() || triGroup2.get_showArrowFlag() || triGroup3.get_showArrowFlag())
-            {
-                if(triGroup1.get_showArrowFlag())
-                {
-                    triGroup1.activeIndex = (triGroup1.activeIndex + 1) % 3;
-                    Console.WriteLine("group1.index : " + triGroup1.activeIndex);
-                }
-                if(triGroup2.get_showArrowFlag())
-                {
-                    triGroup2.activeIndex = (triGroup2.activeIndex + 1) % 3;
-                    Console.WriteLine("group2.index : " + triGroup2.activeIndex);
-                }
-                if(triGroup3.get_showArrowFlag())
-                {
-                    triGroup3.activeIndex = (triGroup3.activeIndex + 1) % 3;
-                    Console.WriteLine("group3.index : " + triGroup3.activeIndex);
-                }
-                InvokeAsync(StateHasChanged);
-            }
-        }, null, 0, 1000);
-    }
     public void Dispose()
     {
-        timer?.Dispose();
+        ArrowService.OnTick -= OnArrowTick;
     }
     #endregion //arrowAnimation
 }
