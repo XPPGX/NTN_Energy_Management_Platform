@@ -80,17 +80,19 @@
             <!-- 第二列 -->
             <div class="placeholder"></div>
             <div class="placeholder"></div>
-            <div class="placeholder">
-                @if (ArrowService.triGroup3.get_showArrowFlag())
-                {
-                    <div class="arrows-container-downward">
-                        @for (int i = 0; i < 3; i++)
-                        {
-                            var cssClass = i == ArrowService.triGroup3.activeIndex ? "triangle-downward active" : "triangle-downward";
-                            <div class="@cssClass"></div>
-                        }
-                    </div>
-                }
+            <div class="grid-col">
+                <div class="placeholder">
+                    @if (ArrowService.triGroup3.get_showArrowFlag())
+                    {
+                        <div class="arrows-container-downward">
+                            @for (int i = 0; i < 3; i++)
+                            {
+                                var cssClass = i == ArrowService.triGroup3.activeIndex ? "triangle-downward active" : "triangle-downward";
+                                <div class="@cssClass"></div>
+                            }
+                        </div>
+                    }
+                </div>
             </div>
             <div class="placeholder"></div>
             <div class="placeholder"></div>

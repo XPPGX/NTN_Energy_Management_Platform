@@ -16,6 +16,7 @@ namespace demoVer.Models
         public string cardName {get; set;}                                  //卡片名稱
         public List<INFO_DataItem> Info_DataItems {get; set;}               //存多個INFO_DataItems
         public List<LINK_STATUS_Pair> Link_STATUS_Pairs{get; set;}          //存4個(iconPath, label) pair
+        public CHART_SETTING Chart_Setting {get; set;}                      //存chart需要的資訊
     }
 
     public class InfoTuple
@@ -42,6 +43,14 @@ namespace demoVer.Models
         CLOSE_ALL                       = 0,
         OVERVIEW                        = 1,
         SELECT_ICON_STAGE               = 2,
+    }
+
+    public enum CHART_SETTING_STAGE
+    {
+        CLOSE_ALL                       = 0,
+        OVERVIEW                        = 1,
+        SINGLE_SETTING                  = 2,
+        SELECT_CMD_STAGE                = 3,
     }
 
     public enum SettingStatus
@@ -101,5 +110,18 @@ namespace demoVer.Models
                 Label = this.Label
             };
         }
+    }
+
+    public class CHART_SETTING
+    {
+        public string canvasID {get; set;}
+        public string Cmd {get; set;}
+        public string[] Labels {get; set;}
+        public double[] Data {get; set;}
+        public string YTitle {get; set;}
+        public string XTitle {get; set;}
+        public string ChartTitle {get; set;}
+        public int YMin {get; set;}
+        public int YMax {get; set;}
     }
 }

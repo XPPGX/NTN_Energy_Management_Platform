@@ -6,7 +6,6 @@
         <h4>@(string.IsNullOrEmpty(currentCard.cardName) ? "請編輯卡片" : currentCard.cardName)</h4>
         @if(showEditButton)
         {
-            @* <button class="top-right-button" @onclick="openEditMenu">⋯</button> *@
             <MudButton Variant="Variant.Text"
                     Style="position: absolute; top: 4px; right: 4px; padding: 4px 8px; font-size: 16px; z-index: 999;"
                     OnClick="openEditMenu"
@@ -17,11 +16,6 @@
         }
     </div>
     <div class="infoCard-container bottom">
-        @* @foreach(var block in InfoTuples)
-        {
-            <InfoDataItem IconPath="@block.IconPath"
-                            DataPairs="@block.DataPairs" />
-        } *@
         @if(currentCard?.Info_DataItems != null)
         {
              @foreach (var Info_DataItems_iterator in currentCard.Info_DataItems)
@@ -59,27 +53,4 @@
             Console.WriteLine("[BlankInfoCard] Current edit Card (from card) : " + currentCard.ID);
         }
     }
-
-    public List<InfoTuple> InfoTuples = new()
-    {
-        @* new InfoTuple
-        {
-            IconPath = "images/transmission-tower.png",
-            DataPairs = new()
-            {
-                ("輸入電壓：", "220V"),
-                ("輸入頻率：", "60Hz")
-            }
-        },
-        new InfoTuple
-        {
-            IconPath = "images/fridge.png",
-            DataPairs = new()
-            {
-                ("輸出電壓：", "48V"),
-                ("輸出頻率：", "0Hz")
-            }
-        }, *@
-    };
-
 }

@@ -1,0 +1,96 @@
+@namespace demoVer.Shared
+@using demoVer.Models
+@inject IJSRuntime JS
+@inherits LayoutComponentBase
+<div class="Watt_diagram-container @CssClass" @attributes="AdditionalAttributes">
+    <canvas id="@currentCard.Chart_Setting.canvasID"></canvas>
+    @if(showEditButton)
+    {
+        @* <button class="top-right-button" @onclick="openEditMenu">⋯</button> *@
+        <MudButton Variant="Variant.Text"
+                Style="position: absolute; top: 4px; right: 4px; padding: 4px 8px; font-size: 16px; z-index: 999;"
+                OnClick="openEditMenu"
+                Class="custom-top-right-button"
+                Color="Color.Default">
+            <MudIcon Icon="@Icons.Material.Filled.MoreHoriz" />
+        </MudButton>
+    }
+</div>
+
+@code
+{
+    [Parameter] public string CssClass {get; set; }
+    [Parameter(CaptureUnmatchedValues  = true)] public Dictionary<string, object> AdditionalAttributes {get; set; }
+    [Parameter] public bool showEditButton {get; set; }
+    [Parameter] public EventCallback<string> Inform_Home_openEditMenu {get; set;}
+    [Parameter] public CardInfo currentCard {get; set;}
+
+    private async Task openEditMenu()
+    {
+        if(Inform_Home_openEditMenu.HasDelegate)
+        {
+            //Pass the razor component name to HOME, the name can be found definition in the HOME CardInfos List.
+            await Inform_Home_openEditMenu.InvokeAsync(currentCard.ID);
+        }
+    }
+    
+    
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            if(currentCard == null)
+            {
+                Console.WriteLine("[BlankChartCard] : currentCard == null !!");
+            }
+            else
+            {
+                Console.WriteLine("[BlankChartCard] : currentCard != null !!");
+            }
+
+            try{
+                
+                //[Debug] draw chart
+                await JS.InvokeVoidAsync("drawChart_Func", currentCard.Chart_Setting);
+                //[Debug]
+                _timer = new System.Timers.Timer(250); // 每 5 秒呼叫一次
+                _timer.Elapsed += async (sender, e) => await UpdateChartData();
+                _timer.AutoReset = true;
+                _timer.Start();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Error : " + ex.Message);
+            }
+        }
+    }
+
+    @* DEBUG *@
+    private System.Timers.Timer _timer;
+    protected override void OnInitialized()
+    {
+        
+    }
+
+    private async Task UpdateChartData()
+    {
+        try
+        {
+            string newLabel = DateTime.Now.ToString("HH:mm:ss");
+            int newValue = new Random().Next(100, 1000); // 模擬資料
+
+            await JS.InvokeVoidAsync("updateChartData", "test", newLabel, newValue);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("更新圖表時出錯: " + ex.Message);
+        }
+    }
+
+    public void Dispose()
+    {
+        _timer?.Stop();
+        _timer?.Dispose();
+    }
+}

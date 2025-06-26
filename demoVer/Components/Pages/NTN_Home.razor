@@ -72,17 +72,6 @@
                     </MudButton>
                 </MudStack>
             </div>
-                    
-            @* <div class="modal-content" @onclick:stopPropagation>
-                <h3>卡片管理</h3>
-                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="OpenEditCard" StartIcon="@Icons.Material.Filled.Edit">
-                    編輯卡片
-                </MudButton>
-
-                <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteCard" StartIcon="@Icons.Material.Filled.Delete">
-                    刪除卡片
-                </MudButton>
-            </div> *@
         }
         @if(addSelection_IsOpen)
         {
@@ -164,7 +153,7 @@
                     componentType_Temp = typeof(BlankInfoCard);
                     break;
                 case CardType.Chart:
-
+                    componentType_Temp = typeof(BlankChartCard);
                     break;
                 case CardType.Status:
                     componentType_Temp = typeof(RunningDiagramCard);
@@ -512,6 +501,7 @@
             case CardType.Chart: //chart
                 newCard.card_Type = CardType.Chart;
                 newCard.widthClass = "w50";
+                newCard.cardName = "";
                 break;
             case CardType.Status: //status
                 newCard.card_Type = CardType.Status;

@@ -44,7 +44,7 @@
     grid-template-rows: repeat(3, 1fr);  /* 2列 */
     justify-content: center;
     align-items: center;
-    gap: 10%;
+    gap: 2% 10%;
     width: 95%;
     height: 100%;
     margin: auto;

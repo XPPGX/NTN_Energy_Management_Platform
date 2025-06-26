@@ -305,7 +305,60 @@ edit-container是用來綁以下javascript事件的 id :
         
         break;
     case CardType.Chart:
-        <h3>編輯 : 圖表</h3>
+        <h5>編輯 : 圖表</h5>
+        switch(CHART_setting_stage)
+        {
+            case CHART_SETTING_STAGE.OVERVIEW:
+                
+                break;
+            case CHART_SETTING_STAGE.SINGLE_SETTING:
+                <EditForm Model="edit_ChartSetting" OnValidSubmit="ChartDetailSubmit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    
+                    <div class="form-group d-flex align-items-center mb-2">
+                        <label class="form-label me-2 mb-0" style="width: 100px;">圖表標題</label>
+                        <InputText class="form-control flex-grow-1" @bind-Value="edit_ChartSetting.ChartTitle" />
+                    </div>
+                    <div class="form-group d-flex align-items-center mb-2">
+                        <label class="form-label me-2 mb-0" style="width: 100px;">Command</label>
+                        <MudButton Style="width: 100%;" Class="flex-grow-1 text-start" Size="Size.Small" Variant="Variant.Text" Color="Color.Primary" OnClick="SetCMD_CHART">選擇命令</MudButton>
+                    </div> 
+                    <div class="form-group d-flex align-items-center mb-2">
+                        <label class="form-label me-2 mb-0" style="width: 100px;">Y 軸標題</label>
+                        <InputText class="form-control flex-grow-1" @bind-Value="edit_ChartSetting.YTitle" />
+                    </div>
+                    <div class="form-group d-flex align-items-center mb-2">
+                        <label class="form-label me-2 mb-0" style="width: 100px;">X 軸標題</label>
+                        <InputText class="form-control flex-grow-1" @bind-Value="edit_ChartSetting.XTitle" />
+                    </div>
+                     
+
+                    <button type="submit" class="btn btn-primary mt-2">儲存</button>
+                </EditForm>
+                break;
+            case CHART_SETTING_STAGE.SELECT_CMD_STAGE:
+                <MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 200px; max-height: 240px; overflow-y: auto;">
+                    <MudList T="string" Dense="true" Hover="true">
+                        @foreach (var item in cmdDict)
+                        {
+                            <MudListItem T="string"
+                                        @onclick="() => clickCmd_CHART(item.Key)"
+                                        Style="cursor: pointer;">
+                                <MudListItemIcon>
+                                    <MudIcon Icon="@Icons.Material.Filled.Code" />
+                                </MudListItemIcon>
+                                <MudText Class="ml-2">@item.Key</MudText>
+                            </MudListItem>
+                        }
+                    </MudList>
+                </MudPaper>
+                break;
+            default:
+                break;
+            
+        }
+        
         break;
     case CardType.Status:
         <h3>編輯 : 連接狀態</h3>
@@ -446,6 +499,7 @@ edit-container是用來綁以下javascript事件的 id :
                         Console.WriteLine("[OnParameterSet]CardType.Info");
                         break;
                     case CardType.Chart:
+                        edit_ChartSetting = currentCardInfo.Chart_Setting;
                         break;
                     case CardType.Status:
                         edit_Link_STATUS_Pairs = currentCardInfo.Link_STATUS_Pairs?.Select(pair => pair.DeepClone()).ToList(); //edit_Link_STATUS_Pairs 與 currentCardInfo.Link_STATUS_Pairs 不同記憶體
@@ -793,5 +847,26 @@ edit-container是用來綁以下javascript事件的 id :
     }
     #endregion LINK_STATUS_Variables_and_Functions
 
+    #region CHART_Variables_and_Functions
+    private CHART_SETTING_STAGE CHART_setting_stage = CHART_SETTING_STAGE.OVERVIEW;
+    private CHART_SETTING edit_ChartSetting = new CHART_SETTING();
+    private void SetCMD_CHART()
+    {
+        CHART_setting_stage = CHART_SETTING_STAGE.SELECT_CMD_STAGE;
+    }
+    private void ChartDetailSubmit()
+    {
+
+    }
+    private void ToggleDropdown_CHART()
+    {
+
+    }
+
+    private void clickCmd_CHART(string _selected_Cmd)
+    {
+
+    }
+    #endregion CHART_Variables_and_Functions
     
 }

@@ -31,7 +31,8 @@
         ]
       }
     ],
-    "Link_STATUS_Pairs": null
+    "Link_STATUS_Pairs": null,
+    "Chart_Setting": null
   },
   {
     "ID": "a542900f83844989857b33012ff4def8",
@@ -57,14 +58,73 @@
         "iconPath": "images/user_selections/car-battery.png",
         "Label": "asdasdasdas"
       }
-    ]
+    ],
+    "Chart_Setting": null
   },
   {
-    "ID": "4ba7fa4b14414412a91854412b045a36",
+    "ID": "0fca229e1df84c9c9343777d3f837e82",
     "card_Type": 1,
     "widthClass": "w25",
     "showSequence": 2,
-    "cardName": "cx",
+    "cardName": "\u96FB\u58D3\u72C0\u614B",
+    "Info_DataItems": [
+      {
+        "iconPath": "images/user_selections/plug.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "\u7B2C\u4E8C\u884C\u8CC7\u6599",
+            "Cmd": "Voltage",
+            "ValueName": "20231",
+            "Unit": "V"
+          }
+        ]
+      },
+      {
+        "iconPath": null,
+        "status": 3,
+        "INFO_DataFormats": []
+      }
+    ],
+    "Link_STATUS_Pairs": null,
+    "Chart_Setting": null
+  },
+  {
+    "ID": "983d0d3259cd4f5da3e804abb1ed82c6",
+    "card_Type": 2,
+    "widthClass": "w50",
+    "showSequence": 3,
+    "cardName": "",
+    "Info_DataItems": null,
+    "Link_STATUS_Pairs": null,
+    "Chart_Setting": {
+      "canvasID": "test",
+      "Cmd": "",
+      "Labels": [
+        "13:00",
+        "13:10",
+        "13:20",
+        "13:30"
+      ],
+      "Data": [
+        100,
+        300,
+        200,
+        450
+      ],
+      "YTitle": "\u529F\u7387(kW)",
+      "XTitle": "\u6642\u9593",
+      "ChartTitle": "\u5373\u6642\u529F\u7387",
+      "YMin": 0,
+      "YMax": 1000
+    }
+  },
+  {
+    "ID": "330bc013ed1c4b7ab483cf2270bee17c",
+    "card_Type": 1,
+    "widthClass": "w25",
+    "showSequence": 4,
+    "cardName": "ASCCASD",
     "Info_DataItems": [
       {
         "iconPath": "images/user_selections/fridge.png",
@@ -72,47 +132,14 @@
         "INFO_DataFormats": [
           {
             "MachineName": "\u7B2C\u4E8C\u884C\u8CC7\u6599",
-            "Cmd": "Voltage",
-            "ValueName": "QQ",
-            "Unit": "mv"
-          },
-          {
-            "MachineName": "\u7B2C\u4E09\u884C\u8CC7\u6599",
-            "Cmd": "Voltage",
-            "ValueName": "CCCC",
-            "Unit": "V"
+            "Cmd": "Current",
+            "ValueName": "ASDASD",
+            "Unit": "A"
           }
         ]
       }
     ],
-    "Link_STATUS_Pairs": null
-  },
-  {
-    "ID": "fb3e69f40bfc4786bbb79450963bab77",
-    "card_Type": 1,
-    "widthClass": "w25",
-    "showSequence": 3,
-    "cardName": "AA",
-    "Info_DataItems": [
-      {
-        "iconPath": "images/user_selections/charge.png",
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "\u7B2C\u4E8C\u884C\u8CC7\u6599",
-            "Cmd": "Voltage",
-            "ValueName": "zxczxc",
-            "Unit": "V"
-          },
-          {
-            "MachineName": null,
-            "Cmd": null,
-            "ValueName": null,
-            "Unit": null
-          }
-        ]
-      }
-    ],
-    "Link_STATUS_Pairs": null
+    "Link_STATUS_Pairs": null,
+    "Chart_Setting": null
   }
 ]

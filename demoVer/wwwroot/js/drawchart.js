@@ -131,3 +131,99 @@ function drawBatteryChart()
     });
 
 }
+
+
+window.chartInstances = new Map();
+
+window.drawChart_Func = function(config)
+{
+    console.log("✅ JS drawChart_Func called", config);
+    const canvas = document.getElementById(config.canvasID);
+    canvas.width = canvas.parentElement.clientWidth;
+    canvas.height = 300;
+
+    const ctx = canvas.getContext('2d');
+
+    if(chartInstances.has(config.canvasID))
+    {
+        chartInstances.get(config.canvasID).destroy();
+    }
+
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: config.labels,
+            datasets: [{
+                label: config.yTitle,
+                data: config.data,
+                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                tension: 0.1,
+                pointRadius: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            animation: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: config.chartTitle,
+                    font: { size: 24 }
+                }
+            },
+            scales: {
+                y: {
+                    min: config.yMin,
+                    max: config.yMax,
+                    title: {
+                        display: true,
+                        text: config.yTitle,
+                        font: { size: 22 }
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: config.xTitle,
+                        font: { size: 22 }
+                    }
+                }
+            }
+        }
+    });
+
+    chartInstances.set(config.canvasID, chart);
+};
+
+window.updateChartData = function (canvasID, label, value)
+{
+    const chart = chartInstances.get(canvasID);
+    if(!chart)
+    {
+        console.warn("Chart not found:", canvasID);
+        return;
+    }
+
+    chart.data.labels.push(label);
+    chart.data.datasets[0].data.push(value);
+
+    if(chart.data.labels.length > 10)
+    {
+        chart.data.labels.shift();
+        chart.data.datasets[0].data.shift();
+    }
+
+    chart.update();
+};
+
+window.destroyChart = function (canvasID) {
+    const chart = window.chartInstances.get(canvasID);
+    if (chart) {
+        chart.destroy();
+        window.chartInstances.delete(canvasID);
+        console.log(`[Chart] Destroyed chart with ID: ${canvasID}`);
+    } else {
+        console.warn(`[Chart] No chart found with ID: ${canvasID}`);
+    }
+};
