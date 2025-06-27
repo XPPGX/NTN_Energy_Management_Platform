@@ -1,95 +1,5 @@
 [
   {
-    "ID": "c4eee2c82594422c912d798721dd9956",
-    "card_Type": 1,
-    "widthClass": "w25",
-    "showSequence": 0,
-    "cardName": "d",
-    "Info_DataItems": [
-      {
-        "iconPath": "images/user_selections/transmission-tower.png",
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "\u7B2C\u56DB\u884C\u8CC7\u6599",
-            "Cmd": "Voltage",
-            "ValueName": "ZZZZ",
-            "Unit": "V"
-          }
-        ]
-      },
-      {
-        "iconPath": "images/user_selections/plug.png",
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "\u7B2C\u4E09\u884C\u8CC7\u6599",
-            "Cmd": "Current",
-            "ValueName": "3132123",
-            "Unit": "A"
-          }
-        ]
-      }
-    ],
-    "Link_STATUS_Pairs": null,
-    "Chart_Setting": null
-  },
-  {
-    "ID": "a542900f83844989857b33012ff4def8",
-    "card_Type": 3,
-    "widthClass": "w50",
-    "showSequence": 1,
-    "cardName": "RunningDiagram",
-    "Info_DataItems": null,
-    "Link_STATUS_Pairs": [
-      {
-        "iconPath": "images/user_selections/transmission-tower.png",
-        "Label": "zxc"
-      },
-      {
-        "iconPath": "images/user_selections/fridge.png",
-        "Label": "asdasd"
-      },
-      {
-        "iconPath": "images/user_selections/plug.png",
-        "Label": "\u0060123123"
-      },
-      {
-        "iconPath": "images/user_selections/car-battery.png",
-        "Label": "asdasdasdas"
-      }
-    ],
-    "Chart_Setting": null
-  },
-  {
-    "ID": "0fca229e1df84c9c9343777d3f837e82",
-    "card_Type": 1,
-    "widthClass": "w25",
-    "showSequence": 2,
-    "cardName": "\u96FB\u58D3\u72C0\u614B",
-    "Info_DataItems": [
-      {
-        "iconPath": "images/user_selections/plug.png",
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "\u7B2C\u4E8C\u884C\u8CC7\u6599",
-            "Cmd": "Voltage",
-            "ValueName": "20231",
-            "Unit": "V"
-          }
-        ]
-      },
-      {
-        "iconPath": null,
-        "status": 3,
-        "INFO_DataFormats": []
-      }
-    ],
-    "Link_STATUS_Pairs": null,
-    "Chart_Setting": null
-  },
-  {
     "ID": "983d0d3259cd4f5da3e804abb1ed82c6",
     "card_Type": 2,
     "widthClass": "w50",
@@ -98,48 +8,29 @@
     "Info_DataItems": null,
     "Link_STATUS_Pairs": null,
     "Chart_Setting": {
-      "canvasID": "test",
-      "Cmd": "",
-      "Labels": [
-        "13:00",
-        "13:10",
-        "13:20",
-        "13:30"
-      ],
-      "Data": [
-        100,
-        300,
-        200,
-        450
-      ],
-      "YTitle": "\u529F\u7387(kW)",
-      "XTitle": "\u6642\u9593",
-      "ChartTitle": "\u5373\u6642\u529F\u7387",
+      "canvasID": "chart1",
+      "ChartTitle": "三相電流與功率圖",
+      "XTitle": "時間",
+      "Y_left_Title": "電流 (A)",
+      "Y_right_Title": "功率 (kW)",
       "YMin": 0,
-      "YMax": 1000
+      "YMax": 1000,
+      "timeGap_selection": 2,
+      "Labels": ["13:00", "13:10", "13:20", "13:30"],
+      "chart_single_data_lines": [
+        {
+          "Cmd": "IA",
+          "Y_axis_selection": false,
+          "color": "blue",
+          "Data": [10, 12, 13, 15]
+        },
+        {
+          "Cmd": "PA",
+          "Y_axis_selection": true,
+          "color": "red",
+          "Data": [1.2, 1.3, 1.5, 1.6]
+        }
+      ]
     }
-  },
-  {
-    "ID": "330bc013ed1c4b7ab483cf2270bee17c",
-    "card_Type": 1,
-    "widthClass": "w25",
-    "showSequence": 4,
-    "cardName": "ASCCASD",
-    "Info_DataItems": [
-      {
-        "iconPath": "images/user_selections/fridge.png",
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "\u7B2C\u4E8C\u884C\u8CC7\u6599",
-            "Cmd": "Current",
-            "ValueName": "ASDASD",
-            "Unit": "A"
-          }
-        ]
-      }
-    ],
-    "Link_STATUS_Pairs": null,
-    "Chart_Setting": null
   }
 ]

@@ -133,34 +133,44 @@ function drawBatteryChart()
 }
 
 
-window.chartInstances = new Map();
 
-window.drawChart_Func = function(config)
-{
+window.chartInstances = window.chartInstances || new Map();
+
+window.drawChart_Func = function(config) {
     console.log("✅ JS drawChart_Func called", config);
+
     const canvas = document.getElementById(config.canvasID);
+    if (!canvas) {
+        console.warn("Canvas not found:", config.canvasID);
+        return;
+    }
+
     canvas.width = canvas.parentElement.clientWidth;
     canvas.height = 300;
 
     const ctx = canvas.getContext('2d');
-
-    if(chartInstances.has(config.canvasID))
-    {
+    console.log("[1]");
+    if (chartInstances.has(config.canvasID)) {
         chartInstances.get(config.canvasID).destroy();
     }
+
+    const datasets = config.chart_single_data_lines.map((line, index) => ({
+        label: line.cmd || `Line ${index + 1}`,
+        data: line.data,
+        borderColor: line.color || 'rgba(54, 162, 235, 1)',
+        backgroundColor: (line.color || 'rgba(54, 162, 235, 1)') + '33',
+        tension: 0.1,
+        pointRadius: 3,
+        yAxisID: line.y_axis_selection ? 'y1' : 'y'  // true=右, false=左
+    }));
+
+    console.log("config.labels", config.labels);
 
     const chart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: config.labels,
-            datasets: [{
-                label: config.yTitle,
-                data: config.data,
-                borderColor: 'rgba(54, 162, 235, 1)',
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                tension: 0.1,
-                pointRadius: 3
-            }]
+            labels: config.labels || [],
+            datasets: datasets
         },
         options: {
             responsive: true,
@@ -168,25 +178,34 @@ window.drawChart_Func = function(config)
             plugins: {
                 title: {
                     display: true,
-                    text: config.chartTitle,
+                    text: config.chartTitle || '',
                     font: { size: 24 }
                 }
             },
             scales: {
                 y: {
-                    min: config.yMin,
-                    max: config.yMax,
                     title: {
-                        display: true,
-                        text: config.yTitle,
-                        font: { size: 22 }
-                    }
+                        display: !!config.y_left_Title,
+                        text: config.y_left_Title,
+                        font: { size: 16 }
+                    },
+                    min: isNaN(config.YMin) ? undefined : config.YMin,
+                    max: isNaN(config.YMax) ? undefined : config.YMax
+                },
+                y1: {
+                    position: 'right',
+                    title: {
+                        display: !!config.y_right_Title,
+                        text: config.y_right_Title,
+                        font: { size: 16 }
+                    },
+                    grid: { drawOnChartArea: false }
                 },
                 x: {
                     title: {
-                        display: true,
+                        display: !!config.xTitle,
                         text: config.xTitle,
-                        font: { size: 22 }
+                        font: { size: 16 }
                     }
                 }
             }
@@ -196,34 +215,96 @@ window.drawChart_Func = function(config)
     chartInstances.set(config.canvasID, chart);
 };
 
-window.updateChartData = function (canvasID, label, value)
-{
-    const chart = chartInstances.get(canvasID);
-    if(!chart)
-    {
-        console.warn("Chart not found:", canvasID);
-        return;
-    }
+// window.chartInstances = new Map();
+// window.drawChart_Func = function(config)
+// {
+//     console.log("✅ JS drawChart_Func called", config);
+//     const canvas = document.getElementById(config.canvasID);
+//     canvas.width = canvas.parentElement.clientWidth;
+//     canvas.height = 300;
 
-    chart.data.labels.push(label);
-    chart.data.datasets[0].data.push(value);
+//     const ctx = canvas.getContext('2d');
 
-    if(chart.data.labels.length > 10)
-    {
-        chart.data.labels.shift();
-        chart.data.datasets[0].data.shift();
-    }
+//     if(chartInstances.has(config.canvasID))
+//     {
+//         chartInstances.get(config.canvasID).destroy();
+//     }
 
-    chart.update();
-};
+//     const chart = new Chart(ctx, {
+//         type: 'line',
+//         data: {
+//             labels: config.labels,
+//             datasets: [{
+//                 label: config.yTitle,
+//                 data: config.data,
+//                 borderColor: 'rgba(54, 162, 235, 1)',
+//                 backgroundColor: 'rgba(54, 162, 235, 0.2)',
+//                 tension: 0.1,
+//                 pointRadius: 3
+//             }]
+//         },
+//         options: {
+//             responsive: true,
+//             animation: false,
+//             plugins: {
+//                 title: {
+//                     display: true,
+//                     text: config.chartTitle,
+//                     font: { size: 24 }
+//                 }
+//             },
+//             scales: {
+//                 y: {
+//                     min: config.yMin,
+//                     max: config.yMax,
+//                     title: {
+//                         display: true,
+//                         text: config.yTitle,
+//                         font: { size: 22 }
+//                     }
+//                 },
+//                 x: {
+//                     title: {
+//                         display: true,
+//                         text: config.xTitle,
+//                         font: { size: 22 }
+//                     }
+//                 }
+//             }
+//         }
+//     });
 
-window.destroyChart = function (canvasID) {
-    const chart = window.chartInstances.get(canvasID);
-    if (chart) {
-        chart.destroy();
-        window.chartInstances.delete(canvasID);
-        console.log(`[Chart] Destroyed chart with ID: ${canvasID}`);
-    } else {
-        console.warn(`[Chart] No chart found with ID: ${canvasID}`);
-    }
-};
+//     chartInstances.set(config.canvasID, chart);
+// };
+
+// window.updateChartData = function (canvasID, label, value)
+// {
+//     const chart = chartInstances.get(canvasID);
+//     if(!chart)
+//     {
+//         console.warn("Chart not found:", canvasID);
+//         return;
+//     }
+
+//     chart.data.labels.push(label);
+//     chart.data.datasets[0].data.push(value);
+
+//     if(chart.data.labels.length > 10)
+//     {
+//         chart.data.labels.shift();
+//         chart.data.datasets[0].data.shift();
+//     }
+
+//     chart.update();
+// };
+
+// window.destroyChart = function (canvasID) {
+//     const chart = window.chartInstances.get(canvasID);
+//     if (chart) {
+//         chart.destroy();
+//         window.chartInstances.delete(canvasID);
+//         console.log(`[Chart] Destroyed chart with ID: ${canvasID}`);
+//     } else {
+//         console.warn(`[Chart] No chart found with ID: ${canvasID}`);
+//     }
+// };

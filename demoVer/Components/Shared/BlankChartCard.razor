@@ -54,10 +54,10 @@
                 //[Debug] draw chart
                 await JS.InvokeVoidAsync("drawChart_Func", currentCard.Chart_Setting);
                 //[Debug]
-                _timer = new System.Timers.Timer(250); // 每 5 秒呼叫一次
+                @* _timer = new System.Timers.Timer(250); // 每 5 秒呼叫一次
                 _timer.Elapsed += async (sender, e) => await UpdateChartData();
                 _timer.AutoReset = true;
-                _timer.Start();
+                _timer.Start(); *@
             }
             catch(Exception ex)
             {

@@ -560,7 +560,7 @@
 
             CardInfos = JsonSerializer.Deserialize<List<CardInfo>>(json, options) ?? new();
             CardInfos = CardInfos.OrderBy(c => c.showSequence).ToList();
-        
+            
             var CardInfos_jsonFormat = JsonSerializer.Serialize(CardInfos, new JsonSerializerOptions{
                 WriteIndented = true
             });

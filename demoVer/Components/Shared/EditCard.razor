@@ -309,10 +309,21 @@ edit-container是用來綁以下javascript事件的 id :
         switch(CHART_setting_stage)
         {
             case CHART_SETTING_STAGE.OVERVIEW:
-                
+                @* <table class="table no-text-select" id="table-settingChartLines">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>資料名稱</th>
+                            <th>顏色</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table> *@
                 break;
             case CHART_SETTING_STAGE.SINGLE_SETTING:
-                <EditForm Model="edit_ChartSetting" OnValidSubmit="ChartDetailSubmit">
+                @* <EditForm Model="edit_ChartSetting" OnValidSubmit="ChartDetailSubmit">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
                     
@@ -335,10 +346,10 @@ edit-container是用來綁以下javascript事件的 id :
                      
 
                     <button type="submit" class="btn btn-primary mt-2">儲存</button>
-                </EditForm>
+                </EditForm> *@
                 break;
             case CHART_SETTING_STAGE.SELECT_CMD_STAGE:
-                <MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 200px; max-height: 240px; overflow-y: auto;">
+                @* <MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 200px; max-height: 240px; overflow-y: auto;">
                     <MudList T="string" Dense="true" Hover="true">
                         @foreach (var item in cmdDict)
                         {
@@ -352,7 +363,7 @@ edit-container是用來綁以下javascript事件的 id :
                             </MudListItem>
                         }
                     </MudList>
-                </MudPaper>
+                </MudPaper> *@
                 break;
             default:
                 break;

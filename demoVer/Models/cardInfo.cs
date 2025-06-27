@@ -115,13 +115,34 @@ namespace demoVer.Models
     public class CHART_SETTING
     {
         public string canvasID {get; set;}
-        public string Cmd {get; set;}
-        public string[] Labels {get; set;}
-        public double[] Data {get; set;}
-        public string YTitle {get; set;}
-        public string XTitle {get; set;}
         public string ChartTitle {get; set;}
+        //X軸相關
+        public string XTitle {get; set;}
+        public timeGap timeGap_selection {get; set;}
+        public string[] Labels {get; set;} //X軸資料，目前只支援顯示時間
+        //Y軸相關
+        public string Y_left_Title {get; set;}
+        public string Y_right_Title {get; set;}
         public int YMin {get; set;}
         public int YMax {get; set;}
+        public List<CHART_SINGLE_DATA_LINE> chart_single_data_lines {get; set;}
+    }
+
+    public enum timeGap{
+        SECOND  = 1,
+        MINUTE  = 2,
+        HOUR    = 3,
+        DAY     = 4,
+        WEEK    = 5,
+        MONTH   = 6,
+        YEAR    = 7,
+    }
+
+    public class CHART_SINGLE_DATA_LINE
+    {
+        public string Cmd{get; set;}
+        public bool Y_axis_selection {get; set;} //選擇要Y_left還是Y_right
+        public string color {get; set;}
+        public double[] Data{get; set;} //Y軸資料
     }
 }
