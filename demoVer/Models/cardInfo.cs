@@ -1,5 +1,15 @@
 namespace demoVer.Models
 {
+    public enum PAGE
+    {
+        HOME            = 1,
+        BATTERY_SETTING = 2,
+        INV_SETTING     = 3,
+        LINK_STATUS     = 4,
+        DATA_LOG        = 5,
+        USE_STRATEGY    = 6,
+    }
+
     public enum CardType
     {
         Info = 1,

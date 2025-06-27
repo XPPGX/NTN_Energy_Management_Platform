@@ -5,13 +5,13 @@
 @using System.IO
 @using System.Text.Json
 @using Newtonsoft.Json.Linq
-@using MudBlazor
 
 @inject IWebHostEnvironment WebHostEnvironment
 @inject IJSRuntime JS
 @inject IDialogService DialogService
 
 @*每個要用MudBlazor的razor元件，都要引入如下元件*@
+@*這邊還要引用MudBlazor可能是因為 _Imports.razor的引用不會給Shared內的razor檔案*@
 @using MudBlazor
 <MudThemeProvider/>
 <MudPopoverProvider/>

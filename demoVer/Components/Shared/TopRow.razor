@@ -3,6 +3,8 @@
 @using System.Net.Sockets
 @rendermode InteractiveServer
 @inject NavigationManager NavManager
+@using demoVer.Utils
+@using demoVer.Models
 
 <div class="top-row">
     <div class="left-items">
@@ -10,9 +12,12 @@
             <!-- <i class="fas fa-th-large"></i> -->
             <img src="images/shapes.png" alt="menu" style="width:24px; height:24px"/>
         </button>
-        <button class="btn @(showEditBtn_Flag ? "editing-mode" : "")" @onclick="showEditButtons">
-            <img src="images/pen.png" alt="edit" style="width:24px; height:24px"/>
-        </button>
+        @if(Page_index == PAGE.HOME)
+        {
+            <button class="btn @(showEditBtn_Flag ? "editing-mode" : "")" @onclick="showEditButtons">
+                <img src="images/pen.png" alt="edit" style="width:24px; height:24px"/>
+            </button>
+        }
         @if(menuOpen)
         {
             <div class="dropdown-menu">
@@ -70,6 +75,8 @@
 
 @code{
 
+    private bool local_debug = true;
+    private PAGE Page_index;
     private bool isMobile;
     private bool afterFirstRender_Flag = false;
     private bool menuOpen = false;
@@ -87,6 +94,8 @@
     [Parameter] public EventCallback<bool> OnSendToParent {get; set;}
     [Parameter] public EventCallback InformParentTo_OpenAddCard {get; set;}
     [Parameter] public EventCallback InformParentTo_SaveCardsInfo {get; set;}
+    
+    
     private async Task showEditButtons()
     {
         showEditBtn_Flag = !showEditBtn_Flag;
@@ -207,9 +216,13 @@
             case "":
                 currentPage = "NTN Home";
                 Console.WriteLine("App started1");
+                Page_index = PAGE.HOME;
                 break;
 
             case "Battery_setting":
+                currentPage = "Battery Setting";
+                AppLogger.Log("[TopRow] Page : Battery Setting", local_debug);
+                Page_index = PAGE.BATTERY_SETTING;
                 break;
 
             case "Inverter_setting":

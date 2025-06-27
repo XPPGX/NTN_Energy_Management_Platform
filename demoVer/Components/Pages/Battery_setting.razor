@@ -1,1 +1,127 @@
 @page "/Battery_setting"
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+@using demoVer.Components.Layout
+@using demoVer.Models
+
+@*Web Content*@
+<PageTitle>Battery Setting</PageTitle>
+<TopRow />
+
+
+<div class="content-container">
+    <div class="card-grid">
+        <div class="w33 card-container">
+            @if(Init_Flag)
+            {
+                for(int i = 0 ; i < Sliders.Count ; i ++)
+                {
+                    var localIndex = i;
+                    var slider = Sliders[i];
+                    
+                    
+                    <div class="slider-wrapper">
+                        <div class="vue-vertical-slider"
+                            @onmousedown="@(e => StartMouseDrag(e, localIndex))"
+                            @ontouchstart="@(e => StartTouchDrag(e, localIndex))">
+                            <div class="vue-vertical-fill" @ref="@FillRefs[localIndex]"></div>
+                            <div class="vue-vertical-thumb" @ref="@ThumbRefs[localIndex]"></div>
+                        </div>
+                        <div class="slider-label">值: @slider.CurrentValue</div>
+                        <label>@slider.Label</label>
+                    </div>
+                }
+            }
+            @* <div class="slider-wrapper">
+                <div class="vue-vertical-slider" @onmousedown="@(e => StartMouseDrag(e))" @ontouchstart="@(e=>StartTouchDrag(e))">
+                    <div class="vue-vertical-fill" @ref="FillRef"></div>
+                    <div class="vue-vertical-thumb" @ref="ThumbRef"></div>
+                </div>
+                <div class="slider-label">值: @CurrentValue</div>
+                
+                <label>CC</label>
+            </div> *@
+            
+        </div>
+        
+    </div>
+</div>
+
+
+@* <MudSlider  Value="@sliderValue"
+                            ValueLabel="true"
+                            Step="0.1"
+                            Variant="Variant.Filled"
+                            Color="Color.Info"
+                            Size="Size.Large"
+                            Vertical="true"
+                            Class="my-sliderbootstrap.min"
+                            ></MudSlider> *@
+        @* Vertical="true" *@
+        @* Style="custom-mud-slider" *@
+
+@code
+{
+    private DotNetObjectReference<Battery_setting> dotNetRef;
+    private bool Init_Flag = false;
+    private List<ElementReference> FillRefs = new();
+    private List<ElementReference> ThumbRefs = new();
+
+    public class SliderItem
+    {
+        public double CurrentValue {get; set;} = 50;
+        public string Label {get; set;} = null;
+    }
+
+    public List<SliderItem> Sliders = new();
+    private ElementReference FillRef;
+    private ElementReference ThumbRef;
+    private double CurrentValue = 50;
+
+    private double sliderValue = 50;
+
+    protected override void OnInitialized()
+    {
+        Sliders = new List<SliderItem>
+        {
+            new SliderItem { Label = "CC", CurrentValue = 50 },
+            new SliderItem { Label = "TC", CurrentValue = 50 },
+            new SliderItem { Label = "CV", CurrentValue = 50 },
+            new SliderItem { Label = "FV", CurrentValue = 50 }
+        };
+        FillRefs = new List<ElementReference>(new ElementReference[Sliders.Count]);
+        ThumbRefs = new List<ElementReference>(new ElementReference[Sliders.Count]);
+        
+        Init_Flag = true;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            dotNetRef = DotNetObjectReference.Create(this);
+        }
+    }
+
+    private async Task StartMouseDrag(MouseEventArgs e, int index)
+    {
+        var slider = Sliders[index];
+        await JS.InvokeVoidAsync("startVerticalSliderDrag",
+            FillRefs[index], ThumbRefs[index], dotNetRef, index);
+    }
+
+    private async Task StartTouchDrag(TouchEventArgs e, int index)
+    {
+        var slider = Sliders[index];
+        await JS.InvokeVoidAsync("startVerticalSliderDrag",
+            FillRefs[index], ThumbRefs[index], dotNetRef, index);
+    }
+
+
+    [JSInvokable("UpdateSliderValue")]
+    public void UpdateSliderValueFromJs(int index, double value)
+    {
+        Sliders[index].CurrentValue = value;
+        StateHasChanged();
+    }
+}
