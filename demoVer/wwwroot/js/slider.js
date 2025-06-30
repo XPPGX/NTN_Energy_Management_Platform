@@ -65,3 +65,10 @@ window.startVerticalSliderDrag = (fill, thumb, dotNetHelper, index) => {
     document.addEventListener("touchmove", onMove, { passive: false });
     document.addEventListener("touchend", stop, { passive: false });
 };
+
+window.updateSilderVisual = function(fill, thumb, value)
+{
+    value = Math.max(0, Math.min(value, 100));
+    fill.style.height = `${value}%`;
+    thumb.style.bottom = `${value}%`;
+}

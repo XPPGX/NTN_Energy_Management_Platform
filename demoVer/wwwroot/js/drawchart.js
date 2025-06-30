@@ -215,6 +215,180 @@ window.drawChart_Func = function(config) {
     chartInstances.set(config.canvasID, chart);
 };
 
+// window.drawChart_Stage = function(config)
+// {
+//     const canvas = document.getElementById(config.canvasID);
+//     if (!canvas) {
+//         console.warn("找不到 canvas:", config.canvasID);
+//         return;
+//     }
+
+//     const ctx = canvas.getContext("2d");
+
+//     if (!window.chartInstances) {
+//         window.chartInstances = {};
+//     }
+
+//     if (window.chartInstances[config.canvasID]) {
+//         window.chartInstances[config.canvasID].destroy();
+//     }
+
+//     window.chartInstances[config.canvasID] = new Chart(ctx, {
+//         type: config.chartType || "line",
+//         data: {
+//             labels: config.labels,
+//             datasets: [
+//                 {
+//                     label: config.y1Label,
+//                     data: config.y1Data,
+//                     yAxisID: "y1",
+//                     borderWidth: 2,
+//                     borderColor: "rgba(255, 99, 132, 1)",
+//                     backgroundColor: "rgba(255, 99, 132, 0.2)",
+//                     fill: false
+//                 },
+//                 {
+//                     label: config.y2Label,
+//                     data: config.y2Data,
+//                     yAxisID: "y2",
+//                     borderWidth: 2,
+//                     borderColor: "rgba(54, 162, 235, 1)",
+//                     backgroundColor: "rgba(54, 162, 235, 0.2)",
+//                     fill: false
+//                 }
+//             ]
+//         },
+//         options: {
+//             responsive: true,
+//             plugins: {
+//                 legend: {
+//                     display: true
+//                 }
+//             },
+//             scales: {
+//                 x: {
+//                     title: {
+//                         display: true,
+//                         text: config.xLabel || "時間"
+//                     }
+//                 },
+//                 y1: {
+//                     type: "linear",
+//                     position: "left",
+//                     title: {
+//                         display: true,
+//                         text: config.y1Label
+//                     },
+//                     suggestedMin: 0,
+//                     suggestedMax: 50
+//                 },
+//                 y2: {
+//                     type: "linear",
+//                     position: "right",
+//                     title: {
+//                         display: true,
+//                         text: config.y2Label
+//                     },
+//                     suggestedMin: 90,
+//                     suggestedMax: 110,
+//                     grid: {
+//                         drawOnChartArea: false
+//                     }
+//                 }
+//             }
+//         }
+//     });
+// };
+
+window.drawChart_Stage = function (config) {
+    const canvas = document.getElementById(config.canvasID);
+    if (!canvas) {
+        console.warn("找不到 canvas:", config.canvasID);
+        return;
+    }
+
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+
+    const ctx = canvas.getContext("2d");
+
+    if (!window.chartInstances) {
+        window.chartInstances = {};
+    }
+
+    if (window.chartInstances[config.canvasID]) {
+        window.chartInstances[config.canvasID].destroy();
+    }
+
+    window.chartInstances[config.canvasID] = new Chart(ctx, {
+        type: config.chartType || "line",  // ✅ 支援選擇圖表類型
+        data: {
+            labels: config.labels,
+            datasets: [
+                {
+                    label: config.y1Label,
+                    data: config.y1Data,
+                    yAxisID: "y1",
+                    borderWidth: 2,
+                    borderColor: "rgba(255, 99, 132, 1)",
+                    backgroundColor: "rgba(255, 99, 132, 0.2)",
+                    fill: false
+                },
+                {
+                    label: config.y2Label,
+                    data: config.y2Data,
+                    yAxisID: "y2",
+                    borderWidth: 2,
+                    borderColor: "rgba(54, 162, 235, 1)",
+                    backgroundColor: "rgba(54, 162, 235, 0.2)",
+                    fill: false
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: config.xLabel || "時間"
+                    }
+                },
+                y1: {
+                    type: "linear",
+                    position: "left",
+                    title: {
+                        display: true,
+                        text: config.y1Label
+                    },
+                    suggestedMin: 0,
+                    suggestedMax: 50
+                },
+                y2: {
+                    type: "linear",
+                    position: "right",
+                    title: {
+                        display: true,
+                        text: config.y2Label
+                    },
+                    suggestedMin: 90,
+                    suggestedMax: 110,
+                    grid: {
+                        drawOnChartArea: false
+                    }
+                }
+            }
+        }
+    });
+};
+
+
 // window.chartInstances = new Map();
 // window.drawChart_Func = function(config)
 // {

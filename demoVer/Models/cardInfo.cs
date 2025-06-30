@@ -155,4 +155,15 @@ namespace demoVer.Models
         public string color {get; set;}
         public double[] Data{get; set;} //Y軸資料
     }
+
+    public class CHART_STAGE_CONFIG
+    {
+        public string canvasID{get; set;}
+        public string[] Labels{get; set;}
+        public string Y1Label{get; set;}
+        public double[] Y1Data{get; set;}
+        public string Y2Label{get; set;}
+        public double[] Y2Data{get; set;}
+        public string XLabel {get; set;}
+    };
 }

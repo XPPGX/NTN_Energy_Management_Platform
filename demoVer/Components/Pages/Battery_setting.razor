@@ -4,6 +4,7 @@
 @using demoVer.Components.Layout
 @using demoVer.Models
 
+<MudPopoverProvider/>
 @*Web Content*@
 <PageTitle>Battery Setting</PageTitle>
 <TopRow />
@@ -11,7 +12,7 @@
 
 <div class="content-container">
     <div class="card-grid">
-        <div class="w33 card-container">
+        <div class="cell4 card-container">
             @if(Init_Flag)
             {
                 for(int i = 0 ; i < Sliders.Count ; i ++)
@@ -27,23 +28,88 @@
                             <div class="vue-vertical-fill" @ref="@FillRefs[localIndex]"></div>
                             <div class="vue-vertical-thumb" @ref="@ThumbRefs[localIndex]"></div>
                         </div>
-                        <div class="slider-label">值: @slider.CurrentValue</div>
+                        <input type="number"
+                                min="0"
+                                max="100"
+                                step="0.1"
+                                class="slider-input"
+                                @bind="@slider.Value"
+                                @bind:after="() => OnSliderInputChanged(localIndex)" 
+                                style="text-align: center;"/>
+                        @* <div class="slider-label">值: @slider.Value</div> *@
                         <label>@slider.Label</label>
                     </div>
                 }
             }
-            @* <div class="slider-wrapper">
-                <div class="vue-vertical-slider" @onmousedown="@(e => StartMouseDrag(e))" @ontouchstart="@(e=>StartTouchDrag(e))">
-                    <div class="vue-vertical-fill" @ref="FillRef"></div>
-                    <div class="vue-vertical-thumb" @ref="ThumbRef"></div>
-                </div>
-                <div class="slider-label">值: @CurrentValue</div>
-                
-                <label>CC</label>
-            </div> *@
-            
         </div>
         
+        <div class="cell8">
+            <div class="right-part">
+
+                <div class="card-container-stage">
+                    <canvas id="stageChart" class="stage-chart"></canvas>
+                    <div class="stage-controls">
+                        <MudSelect T="string" Label="選擇充電段數" Value="selectedChartType" Immediate="true" Dense="true" Variant="Variant.Filled" ValueChanged="OnChartTypeChanged">
+                            <MudSelectItem Value="@("line")">3階段</MudSelectItem>
+                            <MudSelectItem Value="@("bar")">2階段</MudSelectItem>
+                        </MudSelect>
+                    </div>
+                </div>
+                
+                <div class="card-container-timeout">
+                    <div class="timeout-group">
+                        <MudToggleIconButton @bind-Toggled="CC_Enable"
+                            Icon="@Icons.Material.Filled.ToggleOff"
+                            Color="@Color.Error"
+                            ToggledIcon="@Icons.Material.Filled.ToggleOn"
+                            ToggledColor="@Color.Success"
+                            title="@(CC_Enable ? "On" : "Off")"
+                            IconSize="Size.Large"/>
+                        <span style="display: inline-block;">CC timeout</span>
+                        <div style="width: 15%; display: inline-block;">
+                            <MudTextField @bind-Value="@CC_Timeout_value" Label="CC Timeout" Variant="Variant.Outlined" Class="small-textField" />
+                        </div>
+                        <div class="responsive-slider">
+                            <MudSlider T="double" @bind-Value="@CC_Timeout_value" ValueLabel="true" Variant="Variant.Filled"
+                                    Min="0" Max="100" Step="0.1" Size="Size.Large" />
+                        </div>
+                    </div>
+                    <div class="timeout-group">
+                        <MudToggleIconButton @bind-Toggled="CV_Enable"
+                            Icon="@Icons.Material.Filled.ToggleOff"
+                            Color="@Color.Error"
+                            ToggledIcon="@Icons.Material.Filled.ToggleOn"
+                            ToggledColor="@Color.Success"
+                            title="@(CV_Enable ? "On" : "Off")" />
+                        <span style="display: inline-block;">CV timeout</span>
+                        <div style="width: 15%; display: inline-block;">
+                            <MudTextField @bind-Value="@CV_Timeout_value" Label="CV timeout" Variant="Variant.Outlined" Class="small-textField" />
+                        </div>
+                        <div class="responsive-slider">
+                            <MudSlider T="double" @bind-Value="@CV_Timeout_value" ValueLabel="true" Variant="Variant.Filled"
+                                    Min="0" Max="100" Step="0.1" Size="Size.Large" />
+                        </div>
+                    </div>
+                    <div class="timeout-group">
+                        <MudToggleIconButton @bind-Toggled="FV_Enable"
+                            Icon="@Icons.Material.Filled.ToggleOff"
+                            Color="@Color.Error"
+                            ToggledIcon="@Icons.Material.Filled.ToggleOn"
+                            ToggledColor="@Color.Success"
+                            title="@(FV_Enable ? "On" : "Off")" />
+                        <span style="display: inline-block;">FV timeout</span>
+                        <div style="width: 15%; display: inline-block;">
+                            <MudTextField @bind-Value="@FV_Timeout_value" Label="FV timeout" Variant="Variant.Outlined" Class="small-textField" />
+                        </div>
+                        <div class="responsive-slider">
+                            <MudSlider T="double" @bind-Value="@FV_Timeout_value" ValueLabel="true" Variant="Variant.Filled"
+                                    Min="0" Max="100" Step="0.1" Size="Size.Large" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
 </div>
 
@@ -64,30 +130,56 @@
 {
     private DotNetObjectReference<Battery_setting> dotNetRef;
     private bool Init_Flag = false;
-    private List<ElementReference> FillRefs = new();
-    private List<ElementReference> ThumbRefs = new();
-
+    private List<ElementReference>  FillRefs = new();
+    private List<ElementReference>  ThumbRefs = new();
     public class SliderItem
     {
-        public double CurrentValue {get; set;} = 50;
+        public double Value {get; set;} = 50;
         public string Label {get; set;} = null;
     }
 
     public List<SliderItem> Sliders = new();
     private ElementReference FillRef;
     private ElementReference ThumbRef;
-    private double CurrentValue = 50;
 
-    private double sliderValue = 50;
+    private double rangeValue;
+    public bool CC_Enable {get; set;}
+    public bool CV_Enable {get; set;}
+    public bool FV_Enable {get; set;}
+    private double CC_Timeout_value;
+    private double CV_Timeout_value;
+    private double FV_Timeout_value;
+
+    private string selectedChartType = "line";
+    private async Task OnChartTypeChanged(string value)
+    {
+        selectedChartType = value;
+
+        var config = new
+        {
+            canvasID = "stageChart",
+            chartType = selectedChartType,
+            xLabel = "時間",
+            y1Label = "電流 (A)",
+            y2Label = "電壓 (V)",
+            labels = new[] { "08:00", "09:00", "10:00", "11:00" },
+            y1Data = new[] { 10, 20, 30, 40 },
+            y2Data = new[] { 100, 101, 98, 102 }
+        };
+
+        await JS.InvokeVoidAsync("drawChart_Stage", config);
+    }
+
+
 
     protected override void OnInitialized()
     {
         Sliders = new List<SliderItem>
         {
-            new SliderItem { Label = "CC", CurrentValue = 50 },
-            new SliderItem { Label = "TC", CurrentValue = 50 },
-            new SliderItem { Label = "CV", CurrentValue = 50 },
-            new SliderItem { Label = "FV", CurrentValue = 50 }
+            new SliderItem { Label = "CC", Value = 50 },
+            new SliderItem { Label = "TC", Value = 50 },
+            new SliderItem { Label = "CV", Value = 50 },
+            new SliderItem { Label = "FV", Value = 50 }
         };
         FillRefs = new List<ElementReference>(new ElementReference[Sliders.Count]);
         ThumbRefs = new List<ElementReference>(new ElementReference[Sliders.Count]);
@@ -100,6 +192,19 @@
         if(firstRender)
         {
             dotNetRef = DotNetObjectReference.Create(this);
+            
+            var config = new CHART_STAGE_CONFIG
+            {
+                canvasID = "stageChart",
+                Labels = new[] { "08:00", "09:00", "10:00", "11:00" },
+                Y1Label = "電流 (A)",
+                Y1Data = new[] { 30.0, 32.0, 31.0, 29.0 },
+                Y2Label = "電壓 (V)",
+                Y2Data = new[] { 101.0, 103.0, 102.0, 100.0 },
+                XLabel = "時間"
+            };
+
+            await JS.InvokeVoidAsync("drawChart_Stage", config);
         }
     }
 
@@ -117,11 +222,17 @@
             FillRefs[index], ThumbRefs[index], dotNetRef, index);
     }
 
+    private async Task OnSliderInputChanged(int index)
+    {
+        var value = Sliders[index].Value;
+        await JS.InvokeVoidAsync("updateSilderVisual", FillRefs[index], ThumbRefs[index], value);
+    }
 
     [JSInvokable("UpdateSliderValue")]
     public void UpdateSliderValueFromJs(int index, double value)
     {
-        Sliders[index].CurrentValue = value;
+        Sliders[index].Value = value;
         StateHasChanged();
     }
+    
 }

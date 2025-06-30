@@ -59,6 +59,16 @@
                     <img src="images/plus.png" alt="plus" style="width:24px; height:24px"/>
                 </button>
             }
+            if(Page_index == PAGE.BATTERY_SETTING)
+            {
+                <button class="btn" @onclick="apply_battery_setting">
+                    <img src="images/checked.png" alt="apply" style="width:24px; height:24px"/>
+                </button>
+                <button class="btn" @onclick="restoreDefault_battery_setting">
+                    <img src="images/settings.png" alt="restore" style="width:24px; height:24px"/>
+                </button>
+            }
+
             if(!isMobile)
             {
                 <div class="current_page_label">
@@ -66,6 +76,7 @@
                 </div>
             }
         }
+
         <button class="btn" @onclick="GoTo_Framework">
             <img src="images/logo.png" alt="logo" style="width:36px; height:24px"/>
         </button>
@@ -94,8 +105,19 @@
     [Parameter] public EventCallback<bool> OnSendToParent {get; set;}
     [Parameter] public EventCallback InformParentTo_OpenAddCard {get; set;}
     [Parameter] public EventCallback InformParentTo_SaveCardsInfo {get; set;}
+    [Parameter] public EventCallback InformParentTo_ApplySetting_Battery_setting {get; set;}
+    [Parameter] public EventCallback InformParentTo_UseDefaultValue_Battery_setting {get; set;}
     
-    
+    private async Task apply_battery_setting()
+    {
+        await InformParentTo_ApplySetting_Battery_setting.InvokeAsync();
+    }
+
+    private async Task restoreDefault_battery_setting()
+    {
+        await InformParentTo_UseDefaultValue_Battery_setting.InvokeAsync();
+    }
+
     private async Task showEditButtons()
     {
         showEditBtn_Flag = !showEditBtn_Flag;
