@@ -482,3 +482,109 @@ window.drawChart_Stage = function (config) {
 //         console.warn(`[Chart] No chart found with ID: ${canvasID}`);
 //     }
 // };
+
+window.drawChart_Sin = function(config)
+{
+    const canvas = document.getElementById(config.canvasID);
+    if (!canvas) {
+        console.warn("找不到 canvas:", config.canvasID);
+        return;
+    }
+
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+
+    const ctx = canvas.getContext("2d");
+
+    if (!window.chartInstances) {
+        window.chartInstances = {};
+    }
+
+    if (window.chartInstances[config.canvasID]) {
+        window.chartInstances[config.canvasID].destroy();
+    }
+
+    // 產生 Sin 資料
+    const labels = [];
+    const data = [];
+    const peakLineData = [];
+    const peak = config.peak || 1;
+    const period = config.period || 360;
+    const totalDegrees = config.totalDegrees || 360;
+    for (let x = 0; x <= totalDegrees; x += 5) {
+        const radians = (x * Math.PI) / 180;
+        labels.push(x + "°");
+        data.push(peak * Math.sin((radians * 360) / period));
+        peakLineData.push(peak);
+    }
+
+    window.chartInstances[config.canvasID] = new Chart(ctx, {
+        type: config.chartType || "line",
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                label: config.yLabel || "輸出電壓",
+                data: data,
+                borderWidth: 2,
+                borderColor: "rgba(75, 192, 192, 1)",
+                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                fill: false,
+                tension: 0.2,
+                pointRadius: 0,
+                pointHoverRadius: 0,
+                },
+                // {
+                // label: "峰值",
+                // data: Array(100).fill(peak), // ⬅ 長度符合 labels
+                // borderColor: "red",
+                // borderDash: [5, 5],
+                // borderWidth: 2,
+                // fill: false,
+                // tension: 0,
+                // pointRadius: 0
+
+                // }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: false,
+                        text: config.xLabel || "角度 (°)"
+                    },
+                    ticks:{
+                        display: false
+                    },
+                    grid:{
+                        display: false
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: config.yLabel || "值"
+                    },
+                    min: config.yMin !== undefined ? config.yMin : -peak,
+                    max: config.yMax !== undefined ? config.yMax : peak,
+                    // suggestedMin: -peak,
+                    // suggestedMax: peak
+                    grid:{
+                        display:false
+                    },
+                    ticks:{
+                        stepSize: 10
+                    }
+                }
+            }
+        }
+    });
+}

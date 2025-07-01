@@ -1,1 +1,257 @@
 @page "/Inverter_setting"
+
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+@using demoVer.Components.Layout
+@using demoVer.Models
+
+<MudPopoverProvider/>
+@*Web Content*@
+<PageTitle>Inverter Setting</PageTitle>
+<TopRow />
+
+
+<div class="content-container">
+    <div class="card-grid">
+        <div class="w50 card-container">
+            <div class="card-container">
+                <canvas id="sinChart" class="canvas-width-height-limit"></canvas>
+                <div class="selection-container">
+                    <div class="single-selection">
+                        <MudSelect T="string" Label="輸出頻率" Value="selectedFreqType" Immediate="true" Dense="true" Variant="Variant.Filled" ValueChanged="@(v => {selectedFreqType = v; OnChartTypeChanged();})">
+                            <MudSelectItem Value="@("50Hz")">50Hz</MudSelectItem>
+                            <MudSelectItem Value="@("60Hz")">60Hz</MudSelectItem>
+                        </MudSelect>
+                    </div>
+                    <div class="single-selection">
+                        <MudSelect T="string" Label="輸出電壓" Value="selectedVoltType" Immediate="true" Dense="true" Variant="Variant.Filled" ValueChanged="@(v => {selectedVoltType = v; OnChartTypeChanged();})">
+                            <MudSelectItem Value="@("220V")">220V</MudSelectItem>
+                            <MudSelectItem Value="@("230V")">230V</MudSelectItem>
+                        </MudSelect>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="w50">
+            <div class="right-part">
+                <div class="small-row">
+                    <div class="cell">
+                        <h3>AC模式充電器</h3>
+                    </div>
+                    <div class="cell">
+                        <MudSwitch  T="bool" 
+                                @bind-Value="AC_mode_charging_enabel" 
+                                Color="Color.Primary"  
+                                Size="Size.Large">@(AC_mode_charging_enabel ? "ON" : "OFF")</MudSwitch>
+                    </div>
+                </div>
+                <div class="small-row">
+                    <div class="cell">
+                        <h3>並網供電</h3>
+                    </div>
+                    <div class="cell">
+                        <MudSwitch  T="bool" 
+                                @bind-Value="Grid_tied_power_feeding" 
+                                Color="Color.Primary"  
+                                Size="Size.Large">@(Grid_tied_power_feeding ? "ON" : "OFF")</MudSwitch>
+                    </div>
+                </div>
+                <div class="small-row">
+                    <div class="cell">
+                        <h3>輸出優先級</h3>
+                    </div>
+                    <div class="cell">
+                        <MudSelect T="OUTPUT_PRIORITY" Label="" 
+                                    Value="selectedOutputPriority" Immediate="true" 
+                                    Dense="true" Variant="Variant.Filled" 
+                                    FitContent="true"
+                                    ValueChanged="@(v => {selectedOutputPriority = v; OnOutputPriorityChanged();})">
+                            <MudSelectItem Value="OUTPUT_PRIORITY.Utility">Utility</MudSelectItem>
+                            <MudSelectItem Value="OUTPUT_PRIORITY.Battery">Battery</MudSelectItem>
+                            <MudSelectItem Value="OUTPUT_PRIORITY.Solar">Solar</MudSelectItem>
+                        </MudSelect>
+                    </div>
+
+                    
+                </div>
+                <div class="small-row">
+                    <div class="cell">
+                        <h3>充電優先級</h3>
+                    </div>
+                    <div class="cell">
+                        <MudSelect T="CHARGING_PRIORITY" Label="" 
+                                    Value="selectedChargingPriority" Immediate="true" 
+                                    Dense="true" Variant="Variant.Filled" 
+                                    FitContent="true"
+                                    ValueChanged="@(v => {selectedChargingPriority = v; OnChargingPriorityChanged();})">
+                            <MudSelectItem Value="CHARGING_PRIORITY.Utility">Utility</MudSelectItem>
+                            <MudSelectItem Value="CHARGING_PRIORITY.Solar">Solar</MudSelectItem>
+                        </MudSelect>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="w100">
+            <div class="bottom-container">
+                <div class="alarms-col">
+                    <div class="alarm-row">
+                        <div class="alarm-label">Battery alarm</div>
+                        <div class="alarm-input">
+                            <MudTextField @bind-Value="@Battery_alarm_value" Label="Battery alarm" Variant="Variant.Outlined" Class="small-textField" />
+                        </div>
+                        <div class="alarm-slider">
+                            <MudSlider T="double" @bind-Value="@Battery_alarm_value" ValueLabel="true" Variant="Variant.Filled"
+                                    Min="0" Max="100" Step="0.1" Size="Size.Large" />
+                        </div>
+                    </div>
+                    
+                    <div class="alarm-row">
+                        <div class="alarm-label">Battery shutdown</div>
+                        <div class="alarm-input">
+                            <MudTextField @bind-Value="@Battery_shutdown_value" Label="Battery shutdown" Variant="Variant.Outlined" Class="small-textField" />
+                        </div>
+                        <div class="alarm-slider">
+                            <MudSlider T="double" @bind-Value="@Battery_shutdown_value" ValueLabel="true" Variant="Variant.Filled"
+                                    Min="0" Max="100" Step="0.1" Size="Size.Large" />
+                        </div>
+                    </div>
+
+                    <div class="alarm-row">
+                        <div class="alarm-label">Battery recharge</div>
+                        <div class="alarm-input">
+                            <MudTextField @bind-Value="@Battery_recharge_value" Label="Battery recharge" Variant="Variant.Outlined" Class="small-textField" />
+                        </div>
+                        <div class="alarm-slider">
+                            <MudSlider T="double" @bind-Value="@Battery_recharge_value" ValueLabel="true" Variant="Variant.Filled"
+                                    Min="0" Max="100" Step="0.1" Size="Size.Large" />
+                        </div>
+                    </div>
+                </div>
+                <div class="alarms-col">
+                    <div class="alarm-row">
+                        <div class="alarm-label">Battery capacity</div>
+                        <div class="alarm-input">
+                            <MudTextField @bind-Value="@Battery_capacity_value" Label="Battery capacity" Variant="Variant.Outlined" Class="small-textField" />
+                        </div>
+                        <div class="alarm-slider">
+                            <MudSlider T="double" @bind-Value="@Battery_capacity_value" ValueLabel="true" Variant="Variant.Filled"
+                                    Min="0" Max="100" Step="0.1" Size="Size.Large" />
+                        </div>
+                    </div>
+                    <div class="alarm-row">
+                        <div class="alarm-label">Battery OV alarm</div>
+                        <div class="alarm-input">
+                            <MudTextField @bind-Value="@Battery_OV_alarm_value" Label="Battery OV alarm" Variant="Variant.Outlined" Class="small-textField" />
+                        </div>
+                        <div class="alarm-slider">
+                            <MudSlider T="double" @bind-Value="@Battery_OV_alarm_value" ValueLabel="true" Variant="Variant.Filled"
+                                    Min="0" Max="100" Step="0.1" Size="Size.Large" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code
+{
+    private string selectedFreqType = "50Hz";
+    private string selectedVoltType = "220V";
+    private double peak = 220;
+    private double period = 720.0 / 4;
+    private int waveCount = 1;
+
+    private bool AC_mode_charging_enabel = false;
+    private bool Grid_tied_power_feeding = false;
+    private OUTPUT_PRIORITY selectedOutputPriority = OUTPUT_PRIORITY.Utility;
+    private CHARGING_PRIORITY selectedChargingPriority = CHARGING_PRIORITY.Utility;
+    public enum OUTPUT_PRIORITY : byte
+    {
+        Utility = 1,
+        Battery = 2,
+        Solar   = 3,
+    }
+
+    public enum CHARGING_PRIORITY : byte
+    {
+        Utility = 1,
+        Solar   = 2,
+    }
+
+    private double Battery_alarm_value = 0;
+    private double Battery_shutdown_value = 0;
+    private double Battery_recharge_value = 0;
+    private double Battery_capacity_value = 0;
+    private double Battery_OV_alarm_value = 0;
+
+
+    private void OnOutputPriorityChanged()
+    {
+
+    }
+
+    private void OnChargingPriorityChanged()
+    {
+
+    }
+
+    private async Task OnChartTypeChanged()
+    {
+        switch(selectedFreqType)
+        {
+            case "50Hz":
+                waveCount = 4;
+                period = 720.0 / waveCount;
+                break;
+            case "60Hz":
+                waveCount = 5;
+                period = 720.0 / waveCount;
+                break;
+            default:
+                break;
+        }
+
+        switch(selectedVoltType)
+        {
+            case "220V":
+                peak = 220;
+                break;
+            case "230V":
+                peak = 230;
+                break;
+            default:
+                break;
+        }
+
+        Console.WriteLine($"Freq = {selectedFreqType}, Volt = {selectedVoltType}");
+        Console.WriteLine($"計算得出 peak = {peak}, period = {period}");
+        await DrawChart();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await DrawChart();
+        }
+    }
+
+    private async Task DrawChart()
+    {
+        await JS.InvokeVoidAsync("drawChart_Sin", new {
+            canvasID = "sinChart",
+            peak = peak,
+            period = period,
+            chartType = "line",
+            xLabel = "角度 (°)",
+            yLabel = "輸出電壓(V)",
+            yMin = -250,
+            yMax = 250,
+            totalDegrees = 720
+        });
+    }
+    
+}

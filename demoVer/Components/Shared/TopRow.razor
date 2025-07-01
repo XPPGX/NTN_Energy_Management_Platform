@@ -59,7 +59,8 @@
                     <img src="images/plus.png" alt="plus" style="width:24px; height:24px"/>
                 </button>
             }
-            if(Page_index == PAGE.BATTERY_SETTING)
+            if( Page_index == PAGE.BATTERY_SETTING ||
+                Page_index == PAGE.INV_SETTING)
             {
                 <button class="btn" @onclick="apply_battery_setting">
                     <img src="images/checked.png" alt="apply" style="width:24px; height:24px"/>
@@ -105,17 +106,18 @@
     [Parameter] public EventCallback<bool> OnSendToParent {get; set;}
     [Parameter] public EventCallback InformParentTo_OpenAddCard {get; set;}
     [Parameter] public EventCallback InformParentTo_SaveCardsInfo {get; set;}
-    [Parameter] public EventCallback InformParentTo_ApplySetting_Battery_setting {get; set;}
-    [Parameter] public EventCallback InformParentTo_UseDefaultValue_Battery_setting {get; set;}
-    
+
+    [Parameter] public EventCallback InformParentTo_ApplySetting {get; set;}
+    [Parameter] public EventCallback InformParentTo_UseDefaultValue{get; set;}
+
     private async Task apply_battery_setting()
     {
-        await InformParentTo_ApplySetting_Battery_setting.InvokeAsync();
+        await InformParentTo_ApplySetting.InvokeAsync();
     }
 
     private async Task restoreDefault_battery_setting()
     {
-        await InformParentTo_UseDefaultValue_Battery_setting.InvokeAsync();
+        await InformParentTo_UseDefaultValue.InvokeAsync();
     }
 
     private async Task showEditButtons()
@@ -248,6 +250,9 @@
                 break;
 
             case "Inverter_setting":
+                currentPage = "Inverter Setting";
+                AppLogger.Log("[TopRow] Page : Inverter Setting", local_debug);
+                Page_index = PAGE.INV_SETTING;
                 break;
 
             case "Link_status":
