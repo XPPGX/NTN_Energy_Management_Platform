@@ -28,7 +28,8 @@
                         @foreach(var header in (selectedLogType == "EventLog" ? EventLog_columnHeaders : DataLog_columnHeaders))
                         {
                             bool isSelected = selectedHeaders.Contains(header);
-                            <MudChip Value = "@header" OnClick="@(() => ToggleHeader(header))" Selected="true">@header</MudChip>
+                            <MudChip @key="header" 
+                                    Value = "@header" OnClick="@(() => ToggleHeader(header))" Selected="@isSelected">@header</MudChip>
                         }
                     </MudChipSet>
                 </div>
@@ -162,6 +163,7 @@
 
         foreach(var h in headersToUse)
         {
+            Console.WriteLine(h);
             selectedHeaders.Add(h);
         }
 
