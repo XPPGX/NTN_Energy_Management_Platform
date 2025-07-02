@@ -1,0 +1,188 @@
+@page "/Log"
+
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+@using demoVer.Components.Layout
+@using demoVer.Models
+
+<MudPopoverProvider/>
+
+@*Web Content*@
+<PageTitle>Battery Setting</PageTitle>
+<TopRow />
+
+<div class="content-container">
+    <div class="card-grid">
+        <div class="w100">
+            <div class="simple-container">
+                <div class="top">
+                    <div class="single-selection">
+                        <MudSelect T="string" Label="Log Type" Value="@selectedLogType" Dense="true" Variant="Variant.Outlined" ValueChanged="OnLogTypeChanged">
+                            <MudSelectItem Value="@("EventLog")">Event Log</MudSelectItem>
+                            <MudSelectItem Value="@("DataLog")">Data Log</MudSelectItem>
+                        </MudSelect>
+                    </div>
+                    @* 這邊不用官方的雙向綁定，改用自己寫的ToggleHeader搭配HashSet *@
+                    <MudChipSet T="string" SelectionMode="SelectionMode.MultiSelection" CheckMark="true" Class="mb-2" Color="Color.Primary">
+                        
+                        @foreach(var header in (selectedLogType == "EventLog" ? EventLog_columnHeaders : DataLog_columnHeaders))
+                        {
+                            bool isSelected = selectedHeaders.Contains(header);
+                            <MudChip Value = "@header" OnClick="@(() => ToggleHeader(header))" Selected="true">@header</MudChip>
+                        }
+                    </MudChipSet>
+                </div>
+
+                <div class="bottom">
+                    <div class="bottom-left">
+                        <div class="date-height-limit">
+                            <MudDateRangePicker @bind-DateRange="@_dateRange" Margin="Margin.Dense" ReadOnly="false" Clearable="true" 
+                                PlaceholderStart="Start Date" PlaceholderEnd="End Date" Label="日期選擇"/>
+                        </div>
+                    </div>
+
+                    <div class="bottom-right">
+                        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.GetApp" Style="background-color: yellowgreen; color: white; width: 200px; height: 60px;">
+                            匯出資料
+                        </MudButton>
+                        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Search" 
+                                Style="background-color: #1976d2; color: white; width: 200px; height: 60px;" OnClick="SearchData">
+                            查詢
+                        </MudButton>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="w100">
+            <div class="log-container">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            @foreach (var header in selectedHeaders)
+                            {
+                                <th>@header</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in EventLog)
+                        {
+                            <tr>
+                                @foreach (var header in selectedHeaders)
+                                {
+                                    <td>@GetValue(item, header)</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            
+
+        </div>
+    </div>
+</div>
+
+@code
+{
+    private string selectedLogType = "EventLog";
+    private List<string> EventLog_columnHeaders = new()
+    {
+        "No.",
+        "Device",
+        "Event",
+        "Time"
+    };
+    private List<string> DataLog_columnHeaders = new()
+    {
+        "Time",
+        "Voltage(V)",
+        "Total Current(A)",
+        "PSU 0~191",
+        "Relay 1~5",
+        "DIO Input 1~5",
+        "AIO Input 1~5",   
+    };
+    private HashSet<string> selectedHeaders = new();
+    private List<Dictionary<string, object>> EventLog = new();
+
+    private DateRange _dateRange {get; set;}
+    
+    private object GetValue(Dictionary<string, object> item, string key)
+        => item.TryGetValue(key, out var value) ? value : "";
+
+    private async void OnChipSelectionChanged(HashSet<string> values)
+    {
+        selectedHeaders.Clear();
+        foreach (var chip in values)
+        {
+            selectedHeaders.Add(chip);
+        }
+
+        Console.WriteLine("✔️ 使用者選擇的欄位:");
+        foreach (var chip in selectedHeaders)
+        {
+            Console.WriteLine($"    - {chip}");
+        }
+    }
+
+    private void ToggleHeader(string _header)
+    {  
+        if(selectedHeaders.Contains(_header))
+        {
+            selectedHeaders.Remove(_header);
+        }
+        else
+        {
+            selectedHeaders.Add(_header);
+        }
+        Console.WriteLine("✔️ 選中的欄位: " + string.Join(", ", selectedHeaders));
+    }
+
+    private async Task SearchData()
+    {
+        // 根據目前的 selectedLogType 與 selectedHeaders 模擬查詢資料
+        Console.WriteLine($"🔍 查詢 LogType = {selectedLogType}");
+        Console.WriteLine("✔️ 顯示欄位 = " + string.Join(", ", selectedHeaders));
+
+        await InvokeAsync(StateHasChanged); // 強制刷新畫面 *@
+    }
+
+    private async Task OnLogTypeChanged(string newType)
+    {
+        Console.WriteLine("[OnLogTypeChanged]");
+        selectedLogType = newType;
+
+        selectedHeaders.Clear();
+        
+        var headersToUse = (newType == "EventLog" 
+            ? EventLog_columnHeaders 
+            : DataLog_columnHeaders);
+
+        foreach(var h in headersToUse)
+        {
+            selectedHeaders.Add(h);
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    protected override void OnInitialized()
+    {
+        selectedHeaders.Clear();
+        foreach(var h in EventLog_columnHeaders)
+        {
+            selectedHeaders.Add(h);
+        }
+
+        EventLog = new()
+        {
+            new() { ["No."] = 1, ["Device"] = "Sensor A", ["Event"] = "Alarm", ["Time"] = "2025-07-01 09:00" },
+            new() { ["No."] = 2, ["Device"] = "Sensor B", ["Event"] = "Reset", ["Time"] = "2025-07-01 09:05" },
+            new() { ["No."] = 3, ["Device"] = "Sensor C", ["Event"] = "Error", ["Time"] = "2025-07-01 09:10" }
+        };
+    }
+
+
+}

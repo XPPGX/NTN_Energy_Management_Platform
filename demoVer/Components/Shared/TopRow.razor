@@ -35,7 +35,7 @@
                 {
                     <div class="sub-menu">
                         <button class="nav-link" @onclick="GoTo_Link_status">連線狀態</button>
-                        <button class="nav-link" @onclick="GoTo_Data_log">監測報告</button>
+                        <button class="nav-link" @onclick="GoTo_Log">監測報告</button>
                     </div>
                 }
                 <button class="nav-link" @onclick="GoTo_Use_strategy">用電策略</button>
@@ -182,9 +182,9 @@
         NavManager.NavigateTo("/Link_status");
     }
 
-    private void GoTo_Data_log()
+    private void GoTo_Log()
     {
-        NavManager.NavigateTo("/Data_log");
+        NavManager.NavigateTo("/Log");
     }
 
     private void GoTo_Use_strategy()
@@ -258,7 +258,10 @@
             case "Link_status":
                 break;
 
-            case "Data_log":
+            case "Log":
+                currentPage = "Log";
+                AppLogger.Log("[TopRow] Page : Log", local_debug);
+                Page_index = PAGE.LOG;
                 break;
 
             case "Use_strategy":
