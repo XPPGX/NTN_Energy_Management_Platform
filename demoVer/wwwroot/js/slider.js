@@ -14,6 +14,11 @@ window.startVerticalSliderDrag = (fill, thumb, dotNetHelper, index) => {
         return container.getBoundingClientRect();
     }
 
+    function isTouchDevice()
+    {
+        return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    }
+
     function updateFromY(y) {
         const rect = getRect(); // ← 注意這裡要即時取 rect
         const offset = Math.min(Math.max(y - rect.top, 0), rect.height);
@@ -31,14 +36,34 @@ window.startVerticalSliderDrag = (fill, thumb, dotNetHelper, index) => {
         }
     }
 
-    // ✅ 點擊事件處理（只觸發一次）
-    container.addEventListener("click", (e) => {
-        if(isDragging) return;
-        fill.style.transition = "all 0.2s ease-in-out";
-        thumb.style.transition = "all 0.2s ease-in-out";
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        updateFromY(clientY);
-    });
+    function preventTouchScroll(e)
+    {
+        e.preventDefault();
+    }
+
+    if(isTouchDevice())
+    {
+        console.log("is Mobile !!");
+        container.addEventListener("touchstart", (e) => {
+            fill.style.transition = "all 0.2s ease-in-out";
+            thumb.style.transition = "all 0.2s ease-in-out";
+            const clientY = e.touches[0].clientY;
+            updateFromY(clientY);
+            e.preventDefault();
+        }, {passive: false});
+    }
+    else
+    {
+        // ✅ 點擊事件處理（只觸發一次）
+        container.addEventListener("click", (e) => {
+            if(isDragging) return;
+            fill.style.transition = "all 0.2s ease-in-out";
+            thumb.style.transition = "all 0.2s ease-in-out";
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            updateFromY(clientY);
+        });
+    }
+    
 
 
     function onMove(e) {
@@ -57,12 +82,17 @@ window.startVerticalSliderDrag = (fill, thumb, dotNetHelper, index) => {
         document.removeEventListener("mouseup", stop);
         document.removeEventListener("touchmove", onMove);
         document.removeEventListener("touchend", stop);
+
+        document.removeEventListener("touchmove", preventTouchScroll);
+
         setTimeout(() => isDragging = false, 100);
         currentDrag = null;
     }
     document.addEventListener("mousemove", onMove);
     document.addEventListener("mouseup", stop);
     document.addEventListener("touchmove", onMove, { passive: false });
+
+    document.addEventListener("touchmove", preventTouchScroll, {passive: false});
     document.addEventListener("touchend", stop, { passive: false });
 };
 

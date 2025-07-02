@@ -10,8 +10,13 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddSingleton<ArrowAnimationService>();
-
 builder.Services.AddMudServices();
+
+// builder.Services.AddSingleton<HeartbeatService>();
+// builder.Services.AddHostedService(provider => provider.GetRequiredService<HeartbeatService>());
+
+// builder.Services.AddSingleton<DataCenter>();
+
 
 var app = builder.Build();
 
