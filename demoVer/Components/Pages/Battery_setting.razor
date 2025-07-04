@@ -32,8 +32,6 @@
                                 id="slider-input-@localIndex"
                                 step="0.1"
                                 class="slider-input"
-                                @bind="@slider.Value"
-                                @bind:after="() => OnSliderInputChanged(localIndex)" 
                                 style="text-align: center;"/>
                         @* <div class="slider-label">值: @slider.Value</div> *@
                         <label>@slider.Label</label>
@@ -232,7 +230,7 @@
                 cv_thumb = ThumbRefs[2],
 
                 fv_val = DataCenter.Battery.FV_Display,
-                fv_controlMax = DataCenter.Battery.CV_Display,
+                fv_controlMax = DataCenter.Battery.CV_Max_Display,
                 fv_fill = FillRefs[3],
                 fv_thumb = ThumbRefs[3],
             });
@@ -251,6 +249,7 @@
                     displayMaxValue = max,
                 });
             }
+            await JS.InvokeVoidAsync("sliderUpdateFromInput", dotNetRef);
         }
     }
 
@@ -284,7 +283,7 @@
     {
         var value = Sliders[index].Value;
         var (_, max) = GetDisplaySliderRange(Sliders[index].Label);
-       await JS.InvokeVoidAsync("updateSliderVisual", new{
+        await JS.InvokeVoidAsync("updateSliderVisual", new{
             fill = FillRefs[index],
             thumb = ThumbRefs[index],
             value = Sliders[index].Value,

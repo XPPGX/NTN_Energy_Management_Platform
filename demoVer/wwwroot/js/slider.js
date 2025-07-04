@@ -56,6 +56,107 @@ window.setSliderBars_Info = function(config)
     sliderBars_Info["FV"].thumb         = config.fv_thumb;
 
     console.log(sliderBars_Info["CC"].currentVal);
+    initializeSliderInputs();
+}
+
+window.initializeSliderInputs = function() {
+    for (let i = 0; i < 4; i++) {
+        const input = document.getElementById(`slider-input-${i}`);
+        if (!input) continue;
+
+        const label = get_slider_Label(i);
+        const val = sliderBars_Info[label].currentVal;
+
+        input.value = val.toFixed(1);
+    }
+}
+
+
+window.sliderUpdateFromInput = function(dotNetHelper)
+{
+    for(let i = 0 ; i < 4 ; i ++)
+    {
+        const input = document.getElementById(`slider-input-${i}`);
+        if(!input) continue;
+
+        input.addEventListener('change', () => {
+            const value = parseFloat(input.value);
+            if (!isNaN(value)) {
+                // 更新 JS 記憶體
+                const label = get_slider_Label(i);
+                const Final_Val = window.check_Over_Mix_Max(label, value);
+                sliderBars_Info[label].currentVal = Final_Val;
+                limitOthersMax(label, dotNetHelper);
+
+                // 更新 slider UI
+                let displayMax;
+                switch(label)
+                {
+                    case "CC":
+                        displayMax = sliderBars_Info["CC"].selfMax;
+                        break;
+                    case "TC":
+                        displayMax = sliderBars_Info["CC"].selfMax;
+                        break;
+                    case "CV":
+                        displayMax = sliderBars_Info["CV"].selfMax;
+                        break;
+                    case "FV":
+                        displayMax = sliderBars_Info["CV"].selfMax;
+                        break;
+                    default:
+                        break;
+                }
+
+                const percent = (Final_Val / displayMax) * 100;
+                sliderBars_Info[label].fill.style.height = `${percent}%`;
+                sliderBars_Info[label].thumb.style.bottom = `${percent}%`;
+
+                // if(!check_Over_Mix_Max(label, value))
+                // {
+                //     sliderBars_Info[label].currentVal = value;
+                //     limitOthersMax(label, dotNetHelper);
+
+                //     // 更新 slider UI
+                //     let displayMax;
+                //     switch(label)
+                //     {
+                //         case "CC":
+                //             displayMax = sliderBars_Info["CC"].selfMax;
+                //             break;
+                //         case "TC":
+                //             displayMax = sliderBars_Info["CC"].selfMax;
+                //             break;
+                //         case "CV":
+                //             displayMax = sliderBars_Info["CV"].selfMax;
+                //             break;
+                //         case "FV":
+                //             displayMax = sliderBars_Info["CV"].selfMax;
+                //             break;
+                //         default:
+                //             break;
+                //     }
+
+                //     const percent = (value / displayMax) * 100;
+                //     sliderBars_Info[label].fill.style.height = `${percent}%`;
+                //     sliderBars_Info[label].thumb.style.bottom = `${percent}%`;
+
+                //     // 回傳給 C#
+                //     // dotNetHelper.invokeMethodAsync("UpdateSliderValue", i, value);
+                // }
+
+            }
+        });
+    }
+}
+
+window.updateInputFromSlider = function(index, value)
+{
+    const input = document.getElementById(`slider-input-${index}`);
+    if(input)
+    {
+        input.value = value.toFixed(1);
+    }
 }
 
 window.startVerticalSliderDrag = (config) => {
@@ -94,21 +195,43 @@ window.startVerticalSliderDrag = (config) => {
         console.log(send_value);
         //取label
         const label = window.get_slider_Label(config.index);
-        if(!window.check_Over_Mix_Max(label, send_value))
-        {
-            sliderBars_Info[label].currentVal = send_value;
-            window.limitOthersMax(label, config.dotNetHelper);
-            // 顯示 config.fill/slider 在百分比位置（但使用 0~100% 表示）
-            // const visualPercent = ((value - config.minValue) / (config.maxValue - config.minValue)) * 100;
-            
-            const visualPercent = (value / config.displayMaxValue) * 100;
-            config.fill.style.height = `${visualPercent}%`;
-            config.thumb.style.bottom = `${visualPercent}%`;
         
-            if (config.dotNetHelper) {
-                config.dotNetHelper.invokeMethodAsync("UpdateSliderValue", config.index, send_value);
-            }
-        }
+        const Final_Val = window.check_Over_Mix_Max(label, send_value);
+        console.log(`Final = ${Final_Val}, send_val = ${send_value}`);
+        sliderBars_Info[label].currentVal = Final_Val;
+        window.limitOthersMax(label, config.dotNetHelper);
+        // 顯示 config.fill/slider 在百分比位置（但使用 0~100% 表示）
+        // const visualPercent = ((value - config.minValue) / (config.maxValue - config.minValue)) * 100;
+        
+        const visualPercent = (Final_Val / config.displayMaxValue) * 100;
+        config.fill.style.height = `${visualPercent}%`;
+        config.thumb.style.bottom = `${visualPercent}%`;
+    
+
+        updateInputFromSlider(config.index, Final_Val);
+
+        // if (config.dotNetHelper) {
+        //     config.dotNetHelper.invokeMethodAsync("UpdateSliderValue", config.index, send_value);
+        // }
+
+        // if(!window.check_Over_Mix_Max(label, send_value))
+        // {
+        //     sliderBars_Info[label].currentVal = send_value;
+        //     window.limitOthersMax(label, config.dotNetHelper);
+        //     // 顯示 config.fill/slider 在百分比位置（但使用 0~100% 表示）
+        //     // const visualPercent = ((value - config.minValue) / (config.maxValue - config.minValue)) * 100;
+            
+        //     const visualPercent = (value / config.displayMaxValue) * 100;
+        //     config.fill.style.height = `${visualPercent}%`;
+        //     config.thumb.style.bottom = `${visualPercent}%`;
+        
+
+        //     updateInputFromSlider(config.index, send_value);
+
+        //     if (config.dotNetHelper) {
+        //         config.dotNetHelper.invokeMethodAsync("UpdateSliderValue", config.index, send_value);
+        //     }
+        // }
 
         
     }
@@ -194,7 +317,10 @@ window.limitOthersMax = function(label, dotNetHelper)
             const visualPercent = (sliderBars_Info["TC"].currentVal / sliderBars_Info["CC"].selfMax) * 100;
             sliderBars_Info["TC"].fill.style.height = `${visualPercent}%`;
             sliderBars_Info["TC"].thumb.style.bottom = `${visualPercent}%`;
-            dotNetHelper.invokeMethodAsync("UpdateSliderValue", 1, sliderBars_Info["TC"].currentVal);
+
+            updateInputFromSlider(1, sliderBars_Info["TC"].currentVal);
+            // dotNetHelper.invokeMethodAsync("UpdateSliderValue", 1, sliderBars_Info["TC"].currentVal);
+
         }
     }
     else if(label == "CV")
@@ -206,31 +332,52 @@ window.limitOthersMax = function(label, dotNetHelper)
             const visualPercent = (sliderBars_Info["FV"].currentVal / sliderBars_Info["CV"].selfMax) * 100;
             sliderBars_Info["FV"].fill.style.height = `${visualPercent}%`;
             sliderBars_Info["FV"].thumb.style.bottom = `${visualPercent}%`;
-            dotNetHelper.invokeMethodAsync("UpdateSliderValue", 3, sliderBars_Info["FV"].currentVal);
+
+            updateInputFromSlider(3, sliderBars_Info["FV"].currentVal);
+            // dotNetHelper.invokeMethodAsync("UpdateSliderValue", 3, sliderBars_Info["FV"].currentVal);
         }
     }
 }
 
 window.check_Over_Mix_Max = function(label, tempVal)
 {
+    let temp_return;
     switch(label)
     {
         case "CC":
-            return 0;
+            temp_return = tempVal;
+            break;
         case "TC":
             tempTC_upperBound = Math.min(sliderBars_Info["CC"]["currentVal"], sliderBars_Info["TC"]["selfMax"]);
-            if(tempVal > tempTC_upperBound){return 1;}
-            else{return 0;}
+            console.log(`tempTC_upperBound = ${tempTC_upperBound}`);
+            if(tempVal > tempTC_upperBound)
+            {
+                temp_return = tempTC_upperBound;
+            }
+            else
+            {
+                temp_return = tempVal;
+            }
+            break;
         case "CV":
-            return 0;
+            temp_return = tempVal;
+            break;
         case "FV":
             tempFV_upperBound = Math.min(sliderBars_Info["CV"]["currentVal"], sliderBars_Info["FV"]["selfMax"]);
-            if(tempVal > tempFV_upperBound){return 1;}
-            else{return 0;}
+            console.log(`tempFV_upperBound = ${tempFV_upperBound}`);
+            if(tempVal > tempFV_upperBound)
+            {
+                temp_return = tempFV_upperBound;
+            }
+            else
+            {
+                temp_return = tempVal;
+            }
+            break;
         default:
             break;
     }
-
+    return temp_return;
 }
 
 window.get_slider_Label = function(index)
