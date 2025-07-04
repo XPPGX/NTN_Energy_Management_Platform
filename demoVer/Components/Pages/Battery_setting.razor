@@ -1,7 +1,7 @@
 @page "/Battery_setting"
 @rendermode InteractiveServer
 @inject IJSRuntime JS
-@* @inject HeartbeatService Heartbeat *@
+@inject DataCenter DataCenter
 @using demoVer.Components.Layout
 @using demoVer.Models
 
@@ -16,22 +16,20 @@
         <div class="cell4 card-container">
             @if(Init_Flag)
             {
+                <h3></h3>
                 for(int i = 0 ; i < Sliders.Count ; i ++)
                 {
                     var localIndex = i;
                     var slider = Sliders[i];
-                    
-                    
                     <div class="slider-wrapper">
                         <div class="vue-vertical-slider"
-                            @onmousedown="@(e => StartMouseDrag(e, localIndex))"
-                            @ontouchstart="@(e => StartTouchDrag(e, localIndex))">
+                            @onmousedown="@(e => OnSliderMouseDown(e, localIndex, slider.Label))"
+                            @ontouchstart="@(e => OnSliderTouchStart(e, localIndex, slider.Label))">
                             <div class="vue-vertical-fill" @ref="@FillRefs[localIndex]"></div>
                             <div class="vue-vertical-thumb" @ref="@ThumbRefs[localIndex]"></div>
                         </div>
                         <input type="number"
-                                min="0"
-                                max="100"
+                                id="slider-input-@localIndex"
                                 step="0.1"
                                 class="slider-input"
                                 @bind="@slider.Value"
@@ -114,28 +112,18 @@
     </div>
 </div>
 
-
-@* <MudSlider  Value="@sliderValue"
-                            ValueLabel="true"
-                            Step="0.1"
-                            Variant="Variant.Filled"
-                            Color="Color.Info"
-                            Size="Size.Large"
-                            Vertical="true"
-                            Class="my-sliderbootstrap.min"
-                            ></MudSlider> *@
-        @* Vertical="true" *@
-        @* Style="custom-mud-slider" *@
-
 @code
 {
+
     private DotNetObjectReference<Battery_setting> dotNetRef;
     private bool Init_Flag = false;
     private List<ElementReference>  FillRefs = new();
     private List<ElementReference>  ThumbRefs = new();
+
+    private bool[] _sliderInitFlags;
     public class SliderItem
     {
-        public double Value {get; set;} = 50;
+        public double Value {get; set;}
         public string Label {get; set;} = null;
     }
 
@@ -175,17 +163,39 @@
 
     protected override void OnInitialized()
     {
+        DataCenter.Battery.OnUpdated += OnBatteryChanged;
+        
+        var newInit = new BatteryInitData();
+        DataCenter.Battery.UpdateFrom(newInit);
+
         Sliders = new List<SliderItem>
         {
-            new SliderItem { Label = "CC", Value = 50 },
-            new SliderItem { Label = "TC", Value = 50 },
-            new SliderItem { Label = "CV", Value = 50 },
-            new SliderItem { Label = "FV", Value = 50 }
+            //index = 0
+            new SliderItem { Label = "CC", Value = DataCenter.Battery.CC_Display},
+            //index = 1
+            new SliderItem { Label = "TC", Value = DataCenter.Battery.TC_Display},
+            //index = 2
+            new SliderItem { Label = "CV", Value = DataCenter.Battery.CV_Display},
+            //index = 3
+            new SliderItem { Label = "FV", Value = DataCenter.Battery.FV_Display}
         };
         FillRefs = new List<ElementReference>(new ElementReference[Sliders.Count]);
         ThumbRefs = new List<ElementReference>(new ElementReference[Sliders.Count]);
         
         Init_Flag = true;
+
+        _sliderInitFlags = new bool[Sliders.Count];
+        
+    }
+
+    private void OnBatteryChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        DataCenter.Battery.OnUpdated -= OnBatteryChanged;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -205,35 +215,139 @@
                 XLabel = "時間"
             };
 
+            await JS.InvokeVoidAsync("setSliderBars_Info", new{
+                cc_val = DataCenter.Battery.CC_Display,
+                cc_controlMax = DataCenter.Battery.CC_Max_Display,
+                cc_fill = FillRefs[0],
+                cc_thumb = ThumbRefs[0],
+
+                tc_val = DataCenter.Battery.TC_Display,
+                tc_controlMax = DataCenter.Battery.TC_Max_Display,
+                tc_fill = FillRefs[1],
+                tc_thumb = ThumbRefs[1],
+
+                cv_val = DataCenter.Battery.CV_Display,
+                cv_controlMax = DataCenter.Battery.CV_Max_Display,
+                cv_fill = FillRefs[2],
+                cv_thumb = ThumbRefs[2],
+
+                fv_val = DataCenter.Battery.FV_Display,
+                fv_controlMax = DataCenter.Battery.CV_Display,
+                fv_fill = FillRefs[3],
+                fv_thumb = ThumbRefs[3],
+            });
+
             await JS.InvokeVoidAsync("drawChart_Stage", config);
+
+            for(int i = 0 ; i < Sliders.Count ; i ++)
+            {
+                var slider = Sliders[i];
+                var (_, max) = GetDisplaySliderRange(slider.Label);
+
+                await JS.InvokeVoidAsync("updateSliderVisual", new{
+                    fill = FillRefs[i],
+                    thumb = ThumbRefs[i],
+                    value = slider.Value,
+                    displayMaxValue = max,
+                });
+            }
         }
     }
 
-    private async Task StartMouseDrag(MouseEventArgs e, int index)
+    private async Task StartMouseDrag(MouseEventArgs e, int index, float _Min, float _displayMax)
     {
         var slider = Sliders[index];
-        await JS.InvokeVoidAsync("startVerticalSliderDrag",
-            FillRefs[index], ThumbRefs[index], dotNetRef, index);
+        await JS.InvokeVoidAsync("startVerticalSliderDrag", new{
+            fill = FillRefs[index],
+            thumb = ThumbRefs[index],
+            dotNetHelper = dotNetRef,
+            index = index,
+            minValue = _Min,
+            displayMaxValue = _displayMax
+        });
     }
 
-    private async Task StartTouchDrag(TouchEventArgs e, int index)
+    private async Task StartTouchDrag(TouchEventArgs e, int index, float _Min, float _displayMax)
     {
         var slider = Sliders[index];
-        await JS.InvokeVoidAsync("startVerticalSliderDrag",
-            FillRefs[index], ThumbRefs[index], dotNetRef, index);
+        await JS.InvokeVoidAsync("startVerticalSliderDrag", new{
+            fill = FillRefs[index],
+            thumb = ThumbRefs[index],
+            dotNetHelper = dotNetRef,
+            index = index,
+            minValue = _Min,
+            displayMaxValue = _displayMax
+        });
     }
 
     private async Task OnSliderInputChanged(int index)
     {
         var value = Sliders[index].Value;
-        await JS.InvokeVoidAsync("updateSilderVisual", FillRefs[index], ThumbRefs[index], value);
+        var (_, max) = GetDisplaySliderRange(Sliders[index].Label);
+       await JS.InvokeVoidAsync("updateSliderVisual", new{
+            fill = FillRefs[index],
+            thumb = ThumbRefs[index],
+            value = Sliders[index].Value,
+            displayMaxValue = max,
+        });
     }
 
+
+    //根據拉動的某一條bar，修改UI上對應的input value數值
     [JSInvokable("UpdateSliderValue")]
     public void UpdateSliderValueFromJs(int index, double value)
     {
-        Sliders[index].Value = value;
+        @* 
+        index 0 : CC
+        index 1 : TC
+        index 2 : CV
+        index 3 : FV 
+        *@
+
+        var currentSlider = Sliders[index];
+        currentSlider.Value = value;
+        
+        switch(currentSlider.Label)
+        {
+            case "CC":
+                var tempSlider_CC = Sliders[index];
+                break;
+            case "TC":
+                break;
+            case "CV":
+                break;
+            case "FV":
+                break;
+            default:
+                break;
+        }
+
         StateHasChanged();
     }
+
+    private(float min, float max) GetDisplaySliderRange(string label)
+    {
+        return label switch
+        {
+            "CC" => (DataCenter.Battery.CC_Min_Display, DataCenter.Battery.CC_Max_Display),
+            "TC" => (DataCenter.Battery.TC_Min_Display, DataCenter.Battery.CC_Max_Display),
+            "CV" => (DataCenter.Battery.CV_Min_Display, DataCenter.Battery.CV_Max_Display),
+            "FV" => (DataCenter.Battery.FV_Min_Display, DataCenter.Battery.CV_Max_Display),
+            _ => (0, 100)
+        };
+    }
+
+    private async Task OnSliderMouseDown(MouseEventArgs e, int index, string label)
+    {
+        var (min, displayMax) = GetDisplaySliderRange(label);
+        await StartMouseDrag(e, index, min, displayMax);
+    }
+
+    private async Task OnSliderTouchStart(TouchEventArgs e, int index, string label)
+    {
+        var (min, displayMax) = GetDisplaySliderRange(label);
+        await StartTouchDrag(e, index, min, displayMax);
+    }
+
     
 }

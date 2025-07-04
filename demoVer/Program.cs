@@ -1,7 +1,9 @@
 using demoVer.Components;
 using MudBlazor.Services;
 using Microsoft.AspNetCore.StaticWebAssets;
+using Microsoft.AspNetCore.Components.Server.Circuits;
 using demoVer.Services;
+using demoVer.Models;
 var builder = WebApplication.CreateBuilder(args);
 // builder.WebHost.UseUrls("http://127.0.0.1:5070");
 builder.WebHost.UseUrls("http://0.0.0.0:5042");
@@ -12,10 +14,11 @@ builder.Services.AddRazorComponents()
 builder.Services.AddSingleton<ArrowAnimationService>();
 builder.Services.AddMudServices();
 
-// builder.Services.AddSingleton<HeartbeatService>();
-// builder.Services.AddHostedService(provider => provider.GetRequiredService<HeartbeatService>());
+builder.Services.AddSingleton<HeartbeatService>();
+builder.Services.AddHostedService(provider => provider.GetRequiredService<HeartbeatService>());
+builder.Services.AddSingleton<CommonData>();
+builder.Services.AddSingleton<DataCenter>();
 
-// builder.Services.AddSingleton<DataCenter>();
 
 
 var app = builder.Build();

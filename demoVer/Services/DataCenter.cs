@@ -1,21 +1,47 @@
-// public class DataCenter
-// {
-//     private readonly HeartbeatService _heartbeat;
+using demoVer.Models;
+namespace demoVer.Services
+{
+    public class ObservableModule
+    {
+        public event Action? OnUpdated;
 
-//     public DataCenter(HeartbeatService heartbeat)
-//     {
-//         _heartbeat = heartbeat;
+        protected void NotifyChanged() => OnUpdated?.Invoke();
 
-//         // 方式 1：每秒通知
-//         _heartbeat.OnTick += OnHeartbeatTick;
+        protected bool SetProperty<T>(ref T storage, T value)
+        {
+            if(!EqualityComparer<T>.Default.Equals(storage, value))
+            {
+                storage = value;
+                NotifyChanged();
+                return true;
+            }
+            return false;
+        }
+        
+    }
 
-//         // 方式 2：如果你用 OnHeartbeatAsync 的版本
-//         // _heartbeat.OnHeartbeatAsync += async (count) => { Console.WriteLine($"tick #{count}"); };
-//     }
+    public class DataCenter
+    {
+        private readonly HeartbeatService _heartbeat;
 
-//     private Task OnHeartbeatTick()
-//     {
-//         Console.WriteLine("✅ Tick received at " + DateTime.Now);
-//         return Task.CompletedTask;
-//     }
-// }
+        private readonly CommonData _commonData;
+        public Battery_DataSetting_Module_W Battery {get;}
+
+        public DataCenter(CommonData commonData, HeartbeatService heartbeat)
+        {
+            _heartbeat  = heartbeat;
+            
+            _commonData = commonData;
+            Battery     = new Battery_DataSetting_Module_W(_commonData);
+
+            _heartbeat.OnTick += async () => await RefreshAllAsync();
+        }
+
+        private async Task RefreshAllAsync()
+        {
+            // Battery.Refresh();
+            // INV.Refresh();
+            await Task.CompletedTask;
+        }
+    }
+}
