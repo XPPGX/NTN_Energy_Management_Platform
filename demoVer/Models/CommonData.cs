@@ -28,11 +28,24 @@ namespace demoVer.Models
                 case 0.01f:  return value * 100;
                 case 0.1f:   return value * 10;
                 case 1.0f:   return value * 1;
-                case 10f:    return value / 10;
-                case 100f:   return value / 100;
+                // case 10f:    return value / 10;
+                // case 100f:   return value / 100;
                 default:    return -1;
             }
         }
+
+        public float MultOperation(float value, float factor)
+        {
+            return AutoSnapToDecimal(value * factor, 5);
+        }
+
+        public float AutoSnapToDecimal(float value, int decimals = 2)
+        {
+            float rounded = (float)Math.Round(value, decimals);
+            float tolerance = MathF.Pow(10, -decimals) * 5;
+            return Math.Abs(value - rounded) < tolerance ? rounded : value;
+        }        
+
 
         public float Scale_Freq(float value)            => DevideOperation(value, Freq_Factor);
         public float Scale_Watt(float value)            => DevideOperation(value, Watt_Factor);

@@ -5,24 +5,28 @@ let sliderBars_Info =
 {
     CC : {
         selfMax: 0,
+        selfMin: 0,
         currentVal: 0,
         fill: null,
         thumb : null,
     },
     TC : {
         selfMax: 0,
+        selfMin: 0,
         currentVal: 0,
         fill: null,
         thumb : null,
     },
     CV : {
         selfMax: 0,
+        selfMin: 0,
         currentVal: 0,
         fill: null,
         thumb : null,
     },
     FV : {
         selfMax: 0,
+        selfMin: 0,
         currentVal: 0,
         fill: null,
         thumb : null,
@@ -36,22 +40,26 @@ window.setSliderBars_Info = function(config)
 
     sliderBars_Info["CC"].currentVal    = config.cc_val;
     sliderBars_Info["CC"].selfMax       = config.cc_controlMax;
+    sliderBars_Info["CC"].selfMin       = config.cc_minValue;
     sliderBars_Info["CC"].fill          = config.cc_fill;
     sliderBars_Info["CC"].thumb         = config.cc_thumb;
 
     sliderBars_Info["TC"]["currentVal"] = config.tc_val;
     sliderBars_Info["TC"].selfMax       = config.tc_controlMax;
+    sliderBars_Info["TC"].selfMin       = config.tc_minValue;
     sliderBars_Info["TC"].fill          = config.tc_fill;
     sliderBars_Info["TC"].thumb         = config.tc_thumb;
 
 
     sliderBars_Info["CV"]["currentVal"] = config.cv_val;
     sliderBars_Info["CV"].selfMax       = config.cv_controlMax;
+    sliderBars_Info["CV"].selfMin       = config.cv_minValue;
     sliderBars_Info["CV"].fill          = config.cv_fill;
     sliderBars_Info["CV"].thumb         = config.cv_thumb;
 
     sliderBars_Info["FV"]["currentVal"] = config.fv_val;
     sliderBars_Info["FV"].selfMax       = config.fv_controlMax;
+    sliderBars_Info["FV"].selfMin       = config.fv_minValue;
     sliderBars_Info["FV"].fill          = config.fv_fill;
     sliderBars_Info["FV"].thumb         = config.fv_thumb;
 
@@ -85,6 +93,7 @@ window.sliderUpdateFromInput = function(dotNetHelper)
                 // 更新 JS 記憶體
                 const label = get_slider_Label(i);
                 const Final_Val = window.check_Over_Mix_Max(label, value);
+                input.value = Final_Val;
                 sliderBars_Info[label].currentVal = Final_Val;
                 limitOthersMax(label, dotNetHelper);
 
@@ -147,6 +156,14 @@ window.sliderUpdateFromInput = function(dotNetHelper)
 
             }
         });
+
+        // input.addEventListener('input', () => {
+        //     const label = get_slider_Label(i);
+        //     const val = input.value;
+        //     Final_Val = check_Over_Mix_Max(label, val);
+
+        //     input.value = Final_Val;
+        // })
     }
 }
 
@@ -345,7 +362,10 @@ window.check_Over_Mix_Max = function(label, tempVal)
     switch(label)
     {
         case "CC":
-            temp_return = tempVal;
+            if(tempVal > sliderBars_Info["CC"].selfMax){temp_return = sliderBars_Info["CC"].selfMax;}
+            else if(tempVal < sliderBars_Info["CC"].selfMin){temp_return = sliderBars_Info["CC"].selfMin;}
+            else{temp_return = tempVal;}
+            
             break;
         case "TC":
             tempTC_upperBound = Math.min(sliderBars_Info["CC"]["currentVal"], sliderBars_Info["TC"]["selfMax"]);
@@ -354,13 +374,20 @@ window.check_Over_Mix_Max = function(label, tempVal)
             {
                 temp_return = tempTC_upperBound;
             }
+            else if(tempVal < sliderBars_Info["TC"].selfMin)
+            {
+                temp_return = sliderBars_Info["TC"].selfMin;
+            }
             else
             {
                 temp_return = tempVal;
             }
             break;
         case "CV":
-            temp_return = tempVal;
+            if(tempVal > sliderBars_Info["CV"].selfMax){temp_return = sliderBars_Info["CV"].selfMax;}
+            else if(tempVal < sliderBars_Info["CV"].selfMin){temp_return = sliderBars_Info["CV"].selfMin;}
+            else{temp_return = tempVal;}
+
             break;
         case "FV":
             tempFV_upperBound = Math.min(sliderBars_Info["CV"]["currentVal"], sliderBars_Info["FV"]["selfMax"]);
@@ -368,6 +395,10 @@ window.check_Over_Mix_Max = function(label, tempVal)
             if(tempVal > tempFV_upperBound)
             {
                 temp_return = tempFV_upperBound;
+            }
+            else if(tempVal < sliderBars_Info["FV"].selfMin)
+            {
+                temp_return = sliderBars_Info["FV"].selfMin;
             }
             else
             {
