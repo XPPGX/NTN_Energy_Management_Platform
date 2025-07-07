@@ -1,5 +1,6 @@
 const labels = ["13:00", "13:10", "13:20", "13:30", "13:40", "13:50", "14:00", "14:10", "14:20", "14:30"];
 const data = [120, 300, 500, 250, 600, 800, 400, 100, 700, 900];
+window.stageCanvasID = "stageChart";
 
 function drawPowerChart()
 {
@@ -300,12 +301,147 @@ window.drawChart_Func = function(config) {
 //     });
 // };
 
-window.drawChart_Stage = function (config) {
-    const canvas = document.getElementById(config.canvasID);
+let oldStageOption = -1;
+
+
+
+window.stageChartStorage = {
+    stageOption : -1,    //0 for 2_stage, 1 for 3_stage
+
+    stage2:{
+        y1Data : [],
+        y2Data : [],
+        labels : []
+    },
+    stage3:{
+        y1Data : [],
+        y2Data : [],
+        labels : []
+    }
+};
+
+// window.updateStageData_AfterInit = function(_existingChart)
+// {
+//     const showY1Data = _existingChart.data.datasets[0];
+//     const showY2Data = _existingChart.data.datasets[1];
+
+//     if(stageChartStorage.stageOption == 0) // 2 stage
+//     {
+//         showY1Data.data.length = 3;
+//         showY2Data.data.length = 3;
+        
+//         showY1Data.data[0] = sliderBars_Info["CC"].currentVal;
+//         showY1Data.data[1] = sliderBars_Info["CC"].currentVal;
+//         showY1Data.data[2] = sliderBars_Info["TC"].currentVal;
+
+//         showY2Data.data[0] = sliderBars_Info["CV"].selfMin;
+//         showY2Data.data[1] = sliderBars_Info["CV"].currentVal;
+//         showY2Data.data[2] = sliderBars_Info["CV"].currentVal;
+//     }
+//     else if(stageChartStorage.stageOption == 1) // 3 stage
+//     {
+//         showY1Data.data.length = 5;
+//         showY2Data.data.length = 5;
+
+//         showY1Data.data[0] = sliderBars_Info["CC"].currentVal;
+//         showY1Data.data[1] = sliderBars_Info["CC"].currentVal;
+//         showY1Data.data[2] = sliderBars_Info["TC"].currentVal;
+//         showY1Data.data[3] = 0;
+//         showY1Data.data[4] = 0;
+
+//         showY2Data.data[0] = sliderBars_Info["CV"].selfMin;
+//         showY2Data.data[1] = sliderBars_Info["CV"].currentVal;
+//         showY2Data.data[2] = sliderBars_Info["CV"].currentVal;
+//         showY2Data.data[3] = sliderBars_Info["FV"].currentVal;
+//         showY2Data.data[4] = sliderBars_Info["FV"].currentVal;
+//     }
+// }
+
+window.updateStageData_Init = function()
+{
+    if(stageChartStorage.stageOption == 0) // 2 stage
+    {
+        //clear the lists
+        window.stageChartStorage.stage2.y1Data.length = 0;
+        window.stageChartStorage.stage2.y2Data.length = 0;
+        //current
+        window.stageChartStorage.stage2.y1Data.push(...[
+            {x:1, y:sliderBars_Info["CC"].currentVal},
+            {x:2, y:sliderBars_Info["CC"].currentVal},
+            {x:3, y:sliderBars_Info["TC"].currentVal}]);
+
+        //voltage
+        window.stageChartStorage.stage2.y2Data.push(...[
+            {x:1, y:sliderBars_Info["CV"].selfMin},
+            {x:2, y:sliderBars_Info["CV"].currentVal},
+            {x:3, y:sliderBars_Info["CV"].currentVal}]);
+    }
+    else if(stageChartStorage.stageOption == 1) // 3 stage
+    {
+        //clear the lists
+        window.stageChartStorage.stage3.y1Data.length = 0;
+        window.stageChartStorage.stage3.y2Data.length = 0;
+        //current
+        window.stageChartStorage.stage3.y1Data.push(...[
+            {x : 1, y : sliderBars_Info["CC"].currentVal},
+            {x : 2, y : sliderBars_Info["CC"].currentVal},
+            {x : 3, y : sliderBars_Info["TC"].currentVal},
+            {x : 4, y : 0}]);
+        //voltage
+        window.stageChartStorage.stage3.y2Data.push(...[
+            {x:1, y:sliderBars_Info["CV"].selfMin},
+            {x:2, y:sliderBars_Info["CV"].currentVal},
+            {x:3, y:sliderBars_Info["CV"].currentVal},
+            {x:3, y:sliderBars_Info["FV"].currentVal},
+            {x:4, y:sliderBars_Info["FV"].currentVal}]);
+    } 
+}
+
+window.setStage = function(option)
+{
+    console.log(`[Receive] option = ${option}`);
+    if(window.stageChartStorage.stageOption != option)
+    {
+        window.stageChartStorage.stageOption = option;
+        oldStageOption = option;
+        // updateStageData();
+        if(window.stageChartStorage.stageOption == 0) // 2 stage 
+        {
+            //clear the lists
+            window.stageChartStorage.stage2.labels.length = 3;
+            //fake x-axis data
+            window.stageChartStorage.stage2.labels[0] = "1";
+            window.stageChartStorage.stage2.labels[1] = "2";
+            window.stageChartStorage.stage2.labels[2] = "3";
+        }
+        else if(window.stageChartStorage.stageOption == 1) // 3 stage
+        {
+            //clear the lists
+            window.stageChartStorage.stage3.labels.length = 5;
+
+            //fake x-axis data
+            window.stageChartStorage.stage3.labels[0] = "1";
+            window.stageChartStorage.stage3.labels[1] = "2";
+            window.stageChartStorage.stage3.labels[2] = "3";
+            window.stageChartStorage.stage3.labels[3] = "4";
+            window.stageChartStorage.stage3.labels[4] = "5";
+        }
+    }
+
+
+    
+}
+
+window.drawChart_Stage = function () {
+    console.log("[drawChart_Stage]");
+    const canvas = document.getElementById(stageCanvasID);
     if (!canvas) {
-        console.warn("找不到 canvas:", config.canvasID);
+        console.warn("找不到 canvas:", stageCanvasID);
         return;
     }
+    
+    const stageData = (stageChartStorage.stageOption == 0) ? stageChartStorage.stage2 : stageChartStorage.stage3;
+    console.log(stageData);
 
     const rect = canvas.getBoundingClientRect();
     canvas.width = rect.width;
@@ -317,76 +453,91 @@ window.drawChart_Stage = function (config) {
         window.chartInstances = {};
     }
 
-    if (window.chartInstances[config.canvasID]) {
-        window.chartInstances[config.canvasID].destroy();
+    const existingChart = window.chartInstances[stageCanvasID];
+    // if (window.chartInstances[config.canvasID]) {
+    //     window.chartInstances[config.canvasID].destroy();
+    // }
+    updateStageData_Init();
+    if(existingChart)
+    {
+        console.log(existingChart)
+        existingChart.data.labels = stageData.labels;
+        existingChart.data.datasets[0].data = stageData.y1Data;
+        existingChart.data.datasets[1].data = stageData.y2Data;
+        // updateStageData_AfterInit(existingChart);
+        existingChart.update();
     }
-
-    window.chartInstances[config.canvasID] = new Chart(ctx, {
-        type: config.chartType || "line",  // ✅ 支援選擇圖表類型
-        data: {
-            labels: config.labels,
-            datasets: [
-                {
-                    label: config.y1Label,
-                    data: config.y1Data,
-                    yAxisID: "y1",
-                    borderWidth: 2,
-                    borderColor: "rgba(255, 99, 132, 1)",
-                    backgroundColor: "rgba(255, 99, 132, 0.2)",
-                    fill: false
-                },
-                {
-                    label: config.y2Label,
-                    data: config.y2Data,
-                    yAxisID: "y2",
-                    borderWidth: 2,
-                    borderColor: "rgba(54, 162, 235, 1)",
-                    backgroundColor: "rgba(54, 162, 235, 0.2)",
-                    fill: false
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: true
-                }
+    else
+    {
+        window.chartInstances[stageCanvasID] = new Chart(ctx, {
+            type: "line",  // ✅ 支援選擇圖表類型
+            data: {
+                datasets: [
+                    {
+                        label: "電流 (A)",
+                        data: stageData.y1Data,
+                        yAxisID: "y1",
+                        borderWidth: 2,
+                        borderColor: "rgba(255, 99, 132, 1)",
+                        backgroundColor: "rgba(255, 99, 132, 0.2)",
+                        fill: false
+                    },
+                    {
+                        label: "電壓 (V)",
+                        data: stageData.y2Data,
+                        yAxisID: "y2",
+                        borderWidth: 2,
+                        borderColor: "rgba(54, 162, 235, 1)",
+                        backgroundColor: "rgba(54, 162, 235, 0.2)",
+                        fill: false
+                    }
+                ]
             },
-            scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: config.xLabel || "時間"
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true
                     }
                 },
-                y1: {
-                    type: "linear",
-                    position: "left",
-                    title: {
-                        display: true,
-                        text: config.y1Label
+                scales: {
+                    x: {
+                        type:'linear',
+                        title: {
+                            display: true,
+                            text: ""
+                        }
                     },
-                    suggestedMin: 0,
-                    suggestedMax: 50
-                },
-                y2: {
-                    type: "linear",
-                    position: "right",
-                    title: {
-                        display: true,
-                        text: config.y2Label
+                    y1: {
+                        type: "linear",
+                        position: "left",
+                        title: {
+                            display: true,
+                            text: "電流 (A)"
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 100
                     },
-                    suggestedMin: 90,
-                    suggestedMax: 110,
-                    grid: {
-                        drawOnChartArea: false
+                    y2: {
+                        type: "linear",
+                        position: "right",
+                        title: {
+                            display: true,
+                            text: "電壓 (V)"
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 100,
+                        grid: {
+                            drawOnChartArea: false
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    }
+    
 };
+
 
 
 // window.chartInstances = new Map();

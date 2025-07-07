@@ -1,7 +1,7 @@
 let currentDrag = null;
 let isDragging = false;
 
-let sliderBars_Info =
+window.sliderBars_Info =
 {
     CC : {
         selfMax: 0,
@@ -74,7 +74,7 @@ window.initializeSliderInputs = function() {
 
         const label = get_slider_Label(i);
         const val = sliderBars_Info[label].currentVal;
-
+        window.drawChart_Stage();
         input.value = val.toFixed(1);
     }
 }
@@ -95,6 +95,7 @@ window.sliderUpdateFromInput = function(dotNetHelper)
                 const Final_Val = window.check_Over_Mix_Max(label, value);
                 input.value = Final_Val;
                 sliderBars_Info[label].currentVal = Final_Val;
+                window.drawChart_Stage();
                 limitOthersMax(label, dotNetHelper);
 
                 // 更新 slider UI
@@ -120,50 +121,9 @@ window.sliderUpdateFromInput = function(dotNetHelper)
                 const percent = (Final_Val / displayMax) * 100;
                 sliderBars_Info[label].fill.style.height = `${percent}%`;
                 sliderBars_Info[label].thumb.style.bottom = `${percent}%`;
-
-                // if(!check_Over_Mix_Max(label, value))
-                // {
-                //     sliderBars_Info[label].currentVal = value;
-                //     limitOthersMax(label, dotNetHelper);
-
-                //     // 更新 slider UI
-                //     let displayMax;
-                //     switch(label)
-                //     {
-                //         case "CC":
-                //             displayMax = sliderBars_Info["CC"].selfMax;
-                //             break;
-                //         case "TC":
-                //             displayMax = sliderBars_Info["CC"].selfMax;
-                //             break;
-                //         case "CV":
-                //             displayMax = sliderBars_Info["CV"].selfMax;
-                //             break;
-                //         case "FV":
-                //             displayMax = sliderBars_Info["CV"].selfMax;
-                //             break;
-                //         default:
-                //             break;
-                //     }
-
-                //     const percent = (value / displayMax) * 100;
-                //     sliderBars_Info[label].fill.style.height = `${percent}%`;
-                //     sliderBars_Info[label].thumb.style.bottom = `${percent}%`;
-
-                //     // 回傳給 C#
-                //     // dotNetHelper.invokeMethodAsync("UpdateSliderValue", i, value);
-                // }
-
             }
         });
 
-        // input.addEventListener('input', () => {
-        //     const label = get_slider_Label(i);
-        //     const val = input.value;
-        //     Final_Val = check_Over_Mix_Max(label, val);
-
-        //     input.value = Final_Val;
-        // })
     }
 }
 
@@ -216,6 +176,7 @@ window.startVerticalSliderDrag = (config) => {
         const Final_Val = window.check_Over_Mix_Max(label, send_value);
         console.log(`Final = ${Final_Val}, send_val = ${send_value}`);
         sliderBars_Info[label].currentVal = Final_Val;
+        window.drawChart_Stage();
         window.limitOthersMax(label, config.dotNetHelper);
         // 顯示 config.fill/slider 在百分比位置（但使用 0~100% 表示）
         // const visualPercent = ((value - config.minValue) / (config.maxValue - config.minValue)) * 100;
@@ -226,29 +187,6 @@ window.startVerticalSliderDrag = (config) => {
     
 
         updateInputFromSlider(config.index, Final_Val);
-
-        // if (config.dotNetHelper) {
-        //     config.dotNetHelper.invokeMethodAsync("UpdateSliderValue", config.index, send_value);
-        // }
-
-        // if(!window.check_Over_Mix_Max(label, send_value))
-        // {
-        //     sliderBars_Info[label].currentVal = send_value;
-        //     window.limitOthersMax(label, config.dotNetHelper);
-        //     // 顯示 config.fill/slider 在百分比位置（但使用 0~100% 表示）
-        //     // const visualPercent = ((value - config.minValue) / (config.maxValue - config.minValue)) * 100;
-            
-        //     const visualPercent = (value / config.displayMaxValue) * 100;
-        //     config.fill.style.height = `${visualPercent}%`;
-        //     config.thumb.style.bottom = `${visualPercent}%`;
-        
-
-        //     updateInputFromSlider(config.index, send_value);
-
-        //     if (config.dotNetHelper) {
-        //         config.dotNetHelper.invokeMethodAsync("UpdateSliderValue", config.index, send_value);
-        //     }
-        // }
 
         
     }
