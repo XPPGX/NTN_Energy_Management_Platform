@@ -67,7 +67,7 @@ namespace demoVer.Models
         public float CV_Display
         {
             get => _commonData.ScalingFactors.MultOperation((float)_CV_Raw, _commonData.ScalingFactors.VDC_Factor * 10);
-            set => _CV_Raw = (int)_commonData.ScalingFactors.Scale_VDC(value);
+            set => _CV_Raw = (int)_commonData.ScalingFactors.Scale_VDC(value) / 10;
         }
 
         private int _CV_Max_Raw;
@@ -92,7 +92,7 @@ namespace demoVer.Models
         public float FV_Display
         {
             get => _commonData.ScalingFactors.MultOperation((float)_FV_Raw, _commonData.ScalingFactors.VDC_Factor * 10);
-            set => _FV_Raw = (int)_commonData.ScalingFactors.Scale_VDC(value);
+            set => _FV_Raw = (int)_commonData.ScalingFactors.Scale_VDC(value) / 10;
         }
 
         private int _FV_Min_Raw;
@@ -145,6 +145,62 @@ namespace demoVer.Models
         private bool _CurveStage;
         public bool CurveStage{get => _CurveStage; set => _CurveStage = value;}
 
+
+        public bool SaveSettingData(BatterySetting Data)
+        {
+            bool changed_Flag = false;
+
+            if( CC_Display != Data.CC_Display ||
+                TC_Display != Data.TC_Display ||
+                CV_Display != Data.CV_Display ||
+                FV_Display != Data.FV_Display ||
+                CurveStage != Data.CurveStage ||
+                CCT_Enable != Data.CCT_Enable ||
+                CC_TimeOut_Display != Data.CC_TimeOut_Display ||
+                CVT_Enable != Data.CVT_Enable ||
+                CV_TimeOut_Display != Data.CV_TimeOut_Display ||
+                FVT_Enable != Data.FVT_Enable ||
+                FV_TimeOut_Display != Data.FV_TimeOut_Display)
+            {
+                changed_Flag = true;
+
+                CC_Display = Data.CC_Display;
+                TC_Display = Data.TC_Display;
+                CV_Display = Data.CV_Display;
+                FV_Display = Data.FV_Display;
+                CurveStage = Data.CurveStage;
+                CCT_Enable = Data.CCT_Enable;
+                CC_TimeOut_Display = Data.CC_TimeOut_Display;
+                CVT_Enable = Data.CVT_Enable;
+                CV_TimeOut_Display = Data.CV_TimeOut_Display;
+                FVT_Enable = Data.FVT_Enable;
+                FV_TimeOut_Display = Data.FV_TimeOut_Display;
+
+                NotifyChanged();
+                Console.WriteLine($"CC_Display = {CC_Display}");
+            }
+
+            return changed_Flag;
+        }
+
+        public BatterySetting_To_JS ToDto()
+        {
+            return new BatterySetting_To_JS
+            {
+                cc_Display = CC_Display,
+                tc_Display = TC_Display,
+                cv_Display = CV_Display,
+                fv_Display = FV_Display,
+                curveStage = CurveStage,
+                cct_Enable = CCT_Enable,
+                cc_TimeOut_Display = CC_TimeOut_Display,
+                cvt_Enable = CVT_Enable,
+                cv_TimeOut_Display = CV_TimeOut_Display,
+                fvt_Enable = FVT_Enable,
+                fv_TimeOut_Display = FV_TimeOut_Display,
+            };
+        }
+
         public void UpdateFrom(BatteryInitData source)
         {
             _CC_Raw = source.CC;
@@ -174,6 +230,37 @@ namespace demoVer.Models
         {
             
         }
+    }
+    
+
+    public class BatterySetting
+    {
+        public float CC_Display {get; set;}
+        public float TC_Display {get; set;}
+        public float CV_Display {get; set;}
+        public float FV_Display {get; set;}
+        public bool CurveStage {get; set;}
+        public bool CCT_Enable {get; set;}
+        public int CC_TimeOut_Display {get; set;}
+        public bool CVT_Enable {get; set;}
+        public int CV_TimeOut_Display {get; set;}
+        public bool FVT_Enable {get; set;}
+        public int FV_TimeOut_Display {get; set;}
+    }
+
+    public class BatterySetting_To_JS
+    {
+        public float cc_Display {get; set;}
+        public float tc_Display {get; set;}
+        public float cv_Display {get; set;}
+        public float fv_Display {get; set;}
+        public bool curveStage {get; set;}
+        public bool cct_Enable {get; set;}
+        public int cc_TimeOut_Display {get; set;}
+        public bool cvt_Enable {get; set;}
+        public int cv_TimeOut_Display {get; set;}
+        public bool fvt_Enable {get; set;}
+        public int fv_TimeOut_Display {get; set;}
     }
     
 }

@@ -36,7 +36,7 @@ namespace demoVer.Models
 
         public float MultOperation(float value, float factor)
         {
-            return AutoSnapToDecimal(value * factor, 5);
+            return AutoSnapToDecimal(value * factor, 3);
         }
 
         public float AutoSnapToDecimal(float value, int decimals = 2)

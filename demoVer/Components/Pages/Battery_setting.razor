@@ -11,8 +11,26 @@
 <MudPopoverProvider/>
 @*Web Content*@
 <PageTitle>Battery Setting</PageTitle>
-<TopRow InformParentTo_ApplySetting="ReceiveFrom_TopRow_SaveBatterySetting"/>
+<TopRow InformParentTo_ApplySetting="ReceiveFrom_TopRow_SaveBatterySetting"
+        InformParentTo_UseDefaultValue="ReceiveFrom_TopRow_ApplyDefaultValue"/>
 
+
+
+@if(modal_IsOpen)
+{
+    <div class="modal-overlay" @onclick="CloseModal">
+        @if(!string.IsNullOrEmpty(AlertMessage_parent))
+        {
+            <AlertMessageBox
+                Message         = "@AlertMessage_parent"
+                ConfirmBtn_Text = "@ConfirmBtn_Text_parent"
+                CancelBtn_Text  = "@CancelBtn_Text_parent"
+                ConfirmBtn_Func = "@ConfirmBtn_Func_parent"
+                CancelBtn_Func  = "@CancelBtn_Func_parent"
+                />
+        }
+    </div>
+}
 
 <div class="content-container">
     <div class="card-grid">
@@ -161,6 +179,13 @@
 
 @code
 {
+    bool modal_IsOpen = false;
+    string AlertMessage_parent = null;
+    string ConfirmBtn_Text_parent = null;
+    string CancelBtn_Text_parent = null;
+    public EventCallback ConfirmBtn_Func_parent {get; set;}
+    public EventCallback CancelBtn_Func_parent {get; set;}
+
     private bool isMobile;
     private DotNetObjectReference<Battery_setting> dotNetRef;
     private bool Init_Flag = false;
@@ -201,12 +226,8 @@
         selectedStage = value;
         Console.WriteLine($"selectedStage = {selectedStage}");
 
-        var config = new
-        {
-            canvasID = "stageChart"
-        };
         await JS.InvokeVoidAsync("setStage", selectedStage);
-        await JS.InvokeVoidAsync("drawChart_Stage", config);
+        await JS.InvokeVoidAsync("drawChart_Stage");
     }
 
 
@@ -253,31 +274,39 @@
     {
         if(firstRender)
         {
+            
+
             Console.WriteLine($"isMobile = {isMobile}");
             dotNetRef = DotNetObjectReference.Create(this);
         
+            await JS.InvokeVoidAsync("startBatteryHub", dotNetRef);
+
             await JS.InvokeVoidAsync("setSliderBars_Info", new{
                 cc_val = DataCenter.Battery.CC_Display,
                 cc_controlMax = DataCenter.Battery.CC_Max_Display,
                 cc_minValue = DataCenter.Battery.CC_Min_Display,
+                cc_UI_MAX = DataCenter.Battery.CC_Max_Display,
                 cc_fill = FillRefs[0],
                 cc_thumb = ThumbRefs[0],
 
                 tc_val = DataCenter.Battery.TC_Display,
                 tc_controlMax = DataCenter.Battery.TC_Max_Display,
                 tc_minValue = DataCenter.Battery.TC_Min_Display,
+                tc_UI_MAX = DataCenter.Battery.CC_Max_Display,
                 tc_fill = FillRefs[1],
                 tc_thumb = ThumbRefs[1],
 
                 cv_val = DataCenter.Battery.CV_Display,
                 cv_controlMax = DataCenter.Battery.CV_Max_Display,
                 cv_minValue = DataCenter.Battery.CV_Min_Display,
+                cv_UI_MAX = DataCenter.Battery.CV_Max_Display,
                 cv_fill = FillRefs[2],
                 cv_thumb = ThumbRefs[2],
 
                 fv_val = DataCenter.Battery.FV_Display,
                 fv_controlMax = DataCenter.Battery.CV_Max_Display,
                 fv_minValue = DataCenter.Battery.FV_Min_Display,
+                fv_UI_MAX = DataCenter.Battery.CV_Max_Display,
                 fv_fill = FillRefs[3],
                 fv_thumb = ThumbRefs[3],
             });
@@ -297,13 +326,8 @@
             
             await JS.InvokeVoidAsync("sliderUpdateFromInput", dotNetRef);
 
-            var config = new CHART_STAGE_CONFIG
-            {
-                canvasID = "stageChart",
-            };
-
             await JS.InvokeVoidAsync("setStage", 0);
-            await JS.InvokeVoidAsync("drawChart_Stage", config);
+            await JS.InvokeVoidAsync("drawChart_Stage");
             isMobile = await JS.InvokeAsync<bool>("checkIsMobile");
             if(isMobile)
             {
@@ -414,43 +438,166 @@
 
     private async Task ReceiveFrom_TopRow_SaveBatterySetting()
     {
+        TriggerAlert("Save");
+    }
+
+    private async Task ReceiveFrom_TopRow_ApplyDefaultValue()
+    {
+        TriggerAlert("DefaultVal");
+    }
+
+    private void TriggerAlert(string _alertMessage_FromOtherFunc)
+    {
+        
+        modal_IsOpen = true;
+
+        AlertMessage_parent     = "";
+        ConfirmBtn_Text_parent  = "";
+        CancelBtn_Text_parent   = "";
+        ConfirmBtn_Func_parent  = EventCallback.Empty;
+        CancelBtn_Func_parent   = EventCallback.Empty;
+        switch(_alertMessage_FromOtherFunc)
+        {
+            case "Save":
+                AlertMessage_parent     = "是否確定要保存？";
+                ConfirmBtn_Text_parent  = "確定";
+                CancelBtn_Text_parent   = "取消";
+                ConfirmBtn_Func_parent  = EventCallback.Factory.Create(this, ConfirmSave);
+                CancelBtn_Func_parent   = EventCallback.Factory.Create(this, CancelSave);
+                break;
+            case "DefaultVal":
+                AlertMessage_parent     = "確定要還原預設？";
+                ConfirmBtn_Text_parent  = "確定";
+                CancelBtn_Text_parent   = "取消";
+                ConfirmBtn_Func_parent  = EventCallback.Factory.Create(this, ConfirmDefault);
+                CancelBtn_Func_parent   = EventCallback.Factory.Create(this, CancelDefault);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void CloseAlert()
+    {
+        AlertMessage_parent = null;
+    }
+    private void CloseModal()
+    {   
+        //close modal
+        modal_IsOpen = false;
+        //Close Alert
+        AlertMessage_parent = null;
+    }
+
+    private async Task ConfirmSave()
+    {
         //Get CC, TC, CV, FV Data
         var sliderValues = new List<float>();
         sliderValues = (await JS.InvokeAsync<float[]>("transferSliderValue")).ToList();
 
         //arrange data
-        var Data = new
+        BatterySetting Data = new BatterySetting()
         {
             CC_Display = sliderValues[0],
             TC_Display = sliderValues[1],
             CV_Display = sliderValues[2],
             FV_Display = sliderValues[3],
-            selectedStage = selectedStage,
+            CurveStage = selectedStage,
             CCT_Enable = CCT_Enable,
-            CC_Timeout_value = CC_Timeout_value,
+            CC_TimeOut_Display = CC_Timeout_value,
             CVT_Enable = CVT_Enable,
-            CV_Timeout_value = CV_Timeout_value,
+            CV_TimeOut_Display = CV_Timeout_value,
             FVT_Enable = FVT_Enable,
-            FV_Timeout_value = FV_Timeout_value,
+            FV_TimeOut_Display = FV_Timeout_value,
         };
 
         //save into DataCenter (for boardcast)
-        DataCenter.Battery.CC_Display           = Data.CC_Display;
-        DataCenter.Battery.TC_Display           = Data.TC_Display;
-        DataCenter.Battery.CV_Display           = Data.CV_Display;
-        DataCenter.Battery.FV_Display           = Data.FV_Display;
-        DataCenter.Battery.CurveStage           = Data.selectedStage;
-        DataCenter.Battery.CCT_Enable           = Data.CCT_Enable;
-        DataCenter.Battery.CC_TimeOut_Display   = Data.CC_Timeout_value;
-        DataCenter.Battery.CVT_Enable           = Data.CVT_Enable;
-        DataCenter.Battery.CV_TimeOut_Display   = Data.CV_Timeout_value;
-        DataCenter.Battery.FVT_Enable           = Data.FVT_Enable;
-        DataCenter.Battery.FV_TimeOut_Display   = Data.FV_Timeout_value;
-
+        if(DataCenter.Battery.SaveSettingData(Data))
+        {
+            await DataCenter.BroadcastBatteryChangeAsync();
+        }
+         
         //save as Json file (Or use API to call framework to save the setting)
          @*這裡或許要改成用API去改值就好，讓框架去下命令後保存此次設定以便下次帶入*@
         string jsonString = JsonSerializer.Serialize(Data, new JsonSerializerOptions{WriteIndented=true});
         string targetPath = AppJsonManager.Get_Writable_DataPath("LastTime_settingData.json");
         AppJsonManager.SavePartialJson(targetPath, "Battery_Setting", Data);
+
+        CloseAlert();
+        CloseModal();
+    }
+
+    private async Task CancelSave()
+    {
+        CloseAlert();
+        CloseModal();
+    }
+
+    private async Task ConfirmDefault()
+    {
+        BatterySetting DefaultVal = new BatterySetting()
+        {
+            CC_Display = 60,
+            TC_Display = 6,
+            CV_Display = 57.6f,
+            FV_Display = 55.2f,
+            CurveStage = false,
+            CCT_Enable = false,
+            CC_TimeOut_Display = 600,
+            CVT_Enable = false,
+            CV_TimeOut_Display = 600,
+            FVT_Enable = false,
+            FV_TimeOut_Display = 600
+        };
+
+        if(DataCenter.Battery.SaveSettingData(DefaultVal))
+        {
+            await DataCenter.BroadcastBatteryChangeAsync();
+        }
+        CloseAlert();
+        CloseModal();
+    }
+
+    private async Task CancelDefault()
+    {
+        CloseAlert();
+        CloseModal();
+    }
+
+    [JSInvokable("OnBatteryUpdated")]
+    public void OnBatteryUpdated(JsonElement batteryData)
+    {
+        // 解析 batteryData → 更新 Sliders / Timeout / Enable 等 UI
+        // 然後刷新畫面
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        var ReceiveData_FromSignalR = batteryData.Deserialize<BatterySetting_To_JS>(options);
+        if (ReceiveData_FromSignalR == null)
+        {
+            Console.WriteLine("❌ 無法反序列化 BatterySetting_To_JS");
+            return;
+        }
+        Console.WriteLine("🔁 收到 BatterySetting 更新");
+
+
+        //這邊的資料目前不影響UI畫面(Sliders只影響初始值)
+        Sliders[0].Value    = ReceiveData_FromSignalR.cc_Display;
+        Sliders[1].Value    = ReceiveData_FromSignalR.tc_Display;
+        Sliders[2].Value    = ReceiveData_FromSignalR.cv_Display;
+        Sliders[3].Value    = ReceiveData_FromSignalR.fv_Display;
+
+        selectedStage       = ReceiveData_FromSignalR.curveStage;
+        
+        CCT_Enable          = ReceiveData_FromSignalR.cct_Enable;
+        CC_Timeout_value    = ReceiveData_FromSignalR.cc_TimeOut_Display;
+        CVT_Enable          = ReceiveData_FromSignalR.cvt_Enable;
+        CV_Timeout_value    = ReceiveData_FromSignalR.cv_TimeOut_Display;
+        FVT_Enable          = ReceiveData_FromSignalR.fvt_Enable;
+        FV_Timeout_value    = ReceiveData_FromSignalR.fv_TimeOut_Display;
+        
+        InvokeAsync(StateHasChanged);
     }
 }

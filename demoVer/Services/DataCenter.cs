@@ -8,18 +8,6 @@ namespace demoVer.Services
         public event Action? OnUpdated;
 
         protected void NotifyChanged() => OnUpdated?.Invoke();
-
-        protected bool SetProperty<T>(ref T storage, T value)
-        {
-            if(!EqualityComparer<T>.Default.Equals(storage, value))
-            {
-                storage = value;
-                NotifyChanged();
-                return true;
-            }
-            return false;
-        }
-        
     }
 
     public class DataCenter
@@ -35,15 +23,21 @@ namespace demoVer.Services
             _heartbeat  = heartbeat;
             _hubContext = hubContext;
             _commonData = commonData;
-            
+
             Battery     = new Battery_DataSetting_Module_W(_commonData);
 
             _heartbeat.OnTick += async () => await RefreshAllAsync();
         }
 
+        public async Task BroadcastBatteryChangeAsync()
+        {
+            var dto = Battery.ToDto();
+            await _hubContext.Clients.All.SendAsync("BatteryUpdated", dto);
+        }
+
         private async Task RefreshAllAsync()
         {
-            // Battery.Refresh();
+            // Battery.NotifyChanged();
             // INV.Refresh();
             await Task.CompletedTask;
         }

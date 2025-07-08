@@ -1,15 +1,15 @@
 {
   "Battery_Setting": {
-    "CC_Display": 49.5,
-    "TC_Display": 18,
-    "CV_Display": 40,
-    "FV_Display": 40,
-    "selectedStage": true,
+    "CC_Display": 60,
+    "TC_Display": 6,
+    "CV_Display": 57.6,
+    "FV_Display": 55.2,
+    "CurveStage": true,
     "CCT_Enable": false,
-    "CC_Timeout_value": 87,
-    "CVT_Enable": true,
-    "CV_Timeout_value": 123,
-    "FVT_Enable": true,
-    "FV_Timeout_value": 999
+    "CC_TimeOut_Display": 600,
+    "CVT_Enable": false,
+    "CV_TimeOut_Display": 600,
+    "FVT_Enable": false,
+    "FV_TimeOut_Display": 600
   }
 }

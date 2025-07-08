@@ -41,12 +41,15 @@ window.setSliderBars_Info = function(config)
     sliderBars_Info["CC"].currentVal    = config.cc_val;
     sliderBars_Info["CC"].selfMax       = config.cc_controlMax;
     sliderBars_Info["CC"].selfMin       = config.cc_minValue;
+    sliderBars_Info["CC"].UI_max        = config.cc_UI_MAX;
     sliderBars_Info["CC"].fill          = config.cc_fill;
     sliderBars_Info["CC"].thumb         = config.cc_thumb;
+    
 
     sliderBars_Info["TC"]["currentVal"] = config.tc_val;
     sliderBars_Info["TC"].selfMax       = config.tc_controlMax;
     sliderBars_Info["TC"].selfMin       = config.tc_minValue;
+    sliderBars_Info["TC"].UI_max        = config.tc_UI_MAX;
     sliderBars_Info["TC"].fill          = config.tc_fill;
     sliderBars_Info["TC"].thumb         = config.tc_thumb;
 
@@ -54,12 +57,14 @@ window.setSliderBars_Info = function(config)
     sliderBars_Info["CV"]["currentVal"] = config.cv_val;
     sliderBars_Info["CV"].selfMax       = config.cv_controlMax;
     sliderBars_Info["CV"].selfMin       = config.cv_minValue;
+    sliderBars_Info["CV"].UI_max        = config.cv_UI_MAX;
     sliderBars_Info["CV"].fill          = config.cv_fill;
     sliderBars_Info["CV"].thumb         = config.cv_thumb;
 
     sliderBars_Info["FV"]["currentVal"] = config.fv_val;
     sliderBars_Info["FV"].selfMax       = config.fv_controlMax;
     sliderBars_Info["FV"].selfMin       = config.fv_minValue;
+    sliderBars_Info["FV"].UI_max        = config.fv_UI_MAX;
     sliderBars_Info["FV"].fill          = config.fv_fill;
     sliderBars_Info["FV"].thumb         = config.fv_thumb;
 
