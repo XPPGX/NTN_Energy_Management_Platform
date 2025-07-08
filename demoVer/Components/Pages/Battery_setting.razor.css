@@ -192,6 +192,16 @@ mud-slider-vertical =>
     width: 60%;
     display: inline-block;
 }
+
+.inputField{
+    width: 15%; 
+    display: inline-block;
+}
+
+.timeoutLabel{
+    display: inline-block;
+}
+
 @media(max-width: 1200px)
 {
     .content-container{
@@ -261,8 +271,45 @@ mud-slider-vertical =>
         flex-direction: row;
         gap: 5%;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         width: 100%;
         height: 100%;
+    }
+
+    .inputField{
+        width: 90%; 
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 15%;
+    }
+    .timeoutLabel{
+        display: flex;
+    }
+
+    .dateTime{
+        width: 60%;
+        display: flex;
+        flex-direction: row;
+    }
+
+    .timeout-text {
+        display: block;
+        width: 100%;     /* 或用固定值，例如 80px */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .card-container-timeout{
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        background-color: white;
+        border-radius: 8px;
+        width: 100%;
+        height: calc(30vh - 5px);
+        align-items: center;
     }
 }

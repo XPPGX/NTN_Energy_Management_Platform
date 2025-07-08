@@ -320,6 +320,7 @@ window.stageChartStorage = {
     }
 };
 
+// //[DEBUG] 可能可以解掉 拉動slider時，canvas不斷重繪的問題 (只更新部分點)，目前是把動畫效果關掉(可以解決)
 // window.updateStageData_AfterInit = function(_existingChart)
 // {
 //     const showY1Data = _existingChart.data.datasets[0];
@@ -413,6 +414,8 @@ window.setStage = function(option)
             window.stageChartStorage.stage2.labels[0] = "1";
             window.stageChartStorage.stage2.labels[1] = "2";
             window.stageChartStorage.stage2.labels[2] = "3";
+
+            window.CV_Value_to_FV("CV", window.sliderBars_Info["CV"].currentVal);
         }
         else if(window.stageChartStorage.stageOption == 1) // 3 stage
         {
@@ -494,6 +497,7 @@ window.drawChart_Stage = function () {
                 ]
             },
             options: {
+                animation: false,
                 responsive: true,
                 plugins: {
                     legend: {

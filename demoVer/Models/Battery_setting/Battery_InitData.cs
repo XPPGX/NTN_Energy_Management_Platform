@@ -16,5 +16,9 @@ namespace demoVer.Models
 
         public int FV { get; set; } = 552;
         public int FV_Min { get; set; } = 400;
+
+        public int CC_TimeOut_Minute {get; set;} = 600;
+        public int CV_TimeOut_Minute {get; set;} = 600;
+        public int FV_TimeOut_Minute {get; set;} = 600;
     }
 }

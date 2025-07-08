@@ -95,6 +95,9 @@ window.sliderUpdateFromInput = function(dotNetHelper)
                 const Final_Val = window.check_Over_Mix_Max(label, value);
                 input.value = Final_Val;
                 sliderBars_Info[label].currentVal = Final_Val;
+
+                window.CV_Value_to_FV(label, Final_Val); //check 是否為 2階段時的CV拖動
+
                 window.drawChart_Stage();
                 limitOthersMax(label, dotNetHelper);
 
@@ -176,6 +179,8 @@ window.startVerticalSliderDrag = (config) => {
         const Final_Val = window.check_Over_Mix_Max(label, send_value);
         console.log(`Final = ${Final_Val}, send_val = ${send_value}`);
         sliderBars_Info[label].currentVal = Final_Val;
+        window.CV_Value_to_FV(label, Final_Val); //check 是否為 2階段時的CV拖動
+
         window.drawChart_Stage();
         window.limitOthersMax(label, config.dotNetHelper);
         // 顯示 config.fill/slider 在百分比位置（但使用 0~100% 表示）
@@ -363,3 +368,26 @@ window.get_slider_Label = function(index)
             return "FV";
     }
 }
+
+window.CV_Value_to_FV = function(label, value)
+{
+    if(window.stageChartStorage.stageOption == 0)
+    {
+        console.log("CV_Value_to_FV");
+        if(label === "CV")
+        {
+            const FV_val = value;
+            sliderBars_Info["FV"].currentVal = FV_val;
+            
+            const fvPercent = (FV_val / sliderBars_Info["CV"].selfMax) * 100;
+            sliderBars_Info["FV"].fill.style.height = `${fvPercent}%`;
+            sliderBars_Info["FV"].thumb.style.bottom = `${fvPercent}%`;
+            
+            updateInputFromSlider(3, FV_val);
+        }
+    }
+}
+
+window.transferSliderValue = function(){
+    return [sliderBars_Info["CC"].currentVal, sliderBars_Info["TC"].currentVal, sliderBars_Info["CV"].currentVal, sliderBars_Info["FV"].currentVal];
+};

@@ -1,0 +1,15 @@
+{
+  "Battery_Setting": {
+    "CC_Display": 49.5,
+    "TC_Display": 18,
+    "CV_Display": 40,
+    "FV_Display": 40,
+    "selectedStage": true,
+    "CCT_Enable": false,
+    "CC_Timeout_value": 87,
+    "CVT_Enable": true,
+    "CV_Timeout_value": 123,
+    "FVT_Enable": true,
+    "FV_Timeout_value": 999
+  }
+}

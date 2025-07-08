@@ -105,6 +105,46 @@ namespace demoVer.Models
 
         public float FV_Max_Display => CV_Display;
 
+        //CC_TimeOut(Minute)
+        private int _CC_TimeOut_Raw;
+        public int CC_TimeOut_Raw => _CC_TimeOut_Raw;
+        public int CC_TimeOut_Display
+        {
+            get => _CC_TimeOut_Raw;
+            set => _CC_TimeOut_Raw = value;
+        }
+
+        private bool _CCT_Enable;
+        public bool CCT_Enable{get => _CCT_Enable; set => _CCT_Enable = value;}
+
+        //CV_TimeOut(Minute)
+        private int _CV_TimeOut_Raw;
+        public int CV_TimeOut_Raw => _CV_TimeOut_Raw;
+        public int CV_TimeOut_Display
+        {
+            get => _CV_TimeOut_Raw;
+            set => _CV_TimeOut_Raw = value;
+        }
+
+        private bool _CVT_Enable;
+        public bool CVT_Enable{get => _CVT_Enable; set => _CVT_Enable = value;}
+
+        //FV_TimeOut(Minute)
+        private int _FV_TimeOut_Raw;
+        public int FV_TimeOut_Raw => _FV_TimeOut_Raw;
+        public int FV_TimeOut_Display
+        {
+            get => _FV_TimeOut_Raw;
+            set => _FV_TimeOut_Raw = value;
+        }
+
+        private bool _FVT_Enable;
+        public bool FVT_Enable{get => _FVT_Enable; set => _FVT_Enable = value;}
+
+        //CuverStage
+        private bool _CurveStage;
+        public bool CurveStage{get => _CurveStage; set => _CurveStage = value;}
+
         public void UpdateFrom(BatteryInitData source)
         {
             _CC_Raw = source.CC;

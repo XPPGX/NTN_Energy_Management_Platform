@@ -59,13 +59,22 @@
                     <img src="images/plus.png" alt="plus" style="width:24px; height:24px"/>
                 </button>
             }
-            if( Page_index == PAGE.BATTERY_SETTING ||
-                Page_index == PAGE.INV_SETTING)
+            if( Page_index == PAGE.BATTERY_SETTING)
             {
                 <button class="btn" @onclick="apply_battery_setting">
                     <img src="images/checked.png" alt="apply" style="width:24px; height:24px"/>
                 </button>
                 <button class="btn" @onclick="restoreDefault_battery_setting">
+                    <img src="images/settings.png" alt="restore" style="width:24px; height:24px"/>
+                </button>
+            }
+
+            if( Page_index == PAGE.INV_SETTING)
+            {
+                <button class="btn">
+                    <img src="images/checked.png" alt="apply" style="width:24px; height:24px"/>
+                </button>
+                <button class="btn">
                     <img src="images/settings.png" alt="restore" style="width:24px; height:24px"/>
                 </button>
             }

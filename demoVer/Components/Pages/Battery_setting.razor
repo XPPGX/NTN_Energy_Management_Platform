@@ -4,11 +4,14 @@
 @inject DataCenter DataCenter
 @using demoVer.Components.Layout
 @using demoVer.Models
+@using System.Text.Json
+@using System.IO
+@using demoVer.Utils
 
 <MudPopoverProvider/>
 @*Web Content*@
 <PageTitle>Battery Setting</PageTitle>
-<TopRow />
+<TopRow InformParentTo_ApplySetting="ReceiveFrom_TopRow_SaveBatterySetting"/>
 
 
 <div class="content-container">
@@ -23,8 +26,9 @@
                     var slider = Sliders[i];
                     <div class="slider-wrapper">
                         <div class="vue-vertical-slider"
-                            @onmousedown="@(e => OnSliderMouseDown(e, localIndex, slider.Label))"
-                            @ontouchstart="@(e => OnSliderTouchStart(e, localIndex, slider.Label))">
+                            style="@(slider.Label == "FV" && !selectedStage ? "opacity: 0.5;" : "")"
+                            @onmousedown="@(e => (slider.Label == "FV" && !selectedStage) ? Task.CompletedTask : OnSliderMouseDown(e, localIndex, slider.Label))"
+                            @ontouchstart="@(e => (slider.Label == "FV" && !selectedStage) ? Task.CompletedTask : OnSliderTouchStart(e, localIndex, slider.Label))">
                             <div class="vue-vertical-fill" @ref="@FillRefs[localIndex]"></div>
                             <div class="vue-vertical-thumb" @ref="@ThumbRefs[localIndex]"></div>
                         </div>
@@ -34,7 +38,8 @@
                                 min=""
                                 max=""
                                 class="slider-input"
-                                style="text-align: center;"/>
+                                style="text-align: center;"
+                                disabled="@(slider.Label == "FV" && !selectedStage)"/>
                         @* <div class="slider-label">值: @slider.Value</div> *@
                         <label>@slider.Label</label>
                     </div>
@@ -48,62 +53,104 @@
                 <div class="card-container-stage">
                     <canvas id="stageChart" class="stage-chart"></canvas>
                     <div class="stage-controls">
-                        <MudSelect T="string" Label="選擇充電段數" Value="selectedStage" Immediate="true" Dense="true" Variant="Variant.Filled" ValueChanged="OnChartTypeChanged">
-                            <MudSelectItem Value="@("stage2")">2階段</MudSelectItem>
-                            <MudSelectItem Value="@("stage3")">3階段</MudSelectItem>
+                        <MudSelect T="bool" Label="選擇充電段數" Value="selectedStage" Immediate="true" Dense="true" Variant="Variant.Filled" ValueChanged="OnStageChanged">
+                            <MudSelectItem Value="@(false)">2階段</MudSelectItem>
+                            <MudSelectItem Value="@(true)">3階段</MudSelectItem>
                         </MudSelect>
                     </div>
                 </div>
                 
                 <div class="card-container-timeout">
                     <div class="timeout-group">
-                        <MudToggleIconButton @bind-Toggled="CC_Enable"
+                        <MudToggleIconButton @bind-Toggled="@(CCT_Enable)"
                             Icon="@Icons.Material.Filled.ToggleOff"
                             Color="@Color.Error"
                             ToggledIcon="@Icons.Material.Filled.ToggleOn"
                             ToggledColor="@Color.Success"
-                            title="@(CC_Enable ? "On" : "Off")"
+                            title="@(CCT_Enable ? "On" : "Off")"
                             IconSize="Size.Large"/>
-                        <span style="display: inline-block;">CC timeout</span>
-                        <div style="width: 15%; display: inline-block;">
-                            <MudTextField @bind-Value="@CC_Timeout_value" Label="CC Timeout" Variant="Variant.Outlined" Class="small-textField" />
+                        @if(!isMobile)
+                        {
+                            <span style="display: inline-block;">CC timeout</span>
+                        }
+                        <div class="inputField">
+                            <MudTextField @bind-Value="@CC_Timeout_value" Label="CCT" Variant="Variant.Outlined" Class="small-textField" Adornment="Adornment.End" AdornmentText="Minute"/>
+                            @if(!isMobile)
+                            {
+                                <MudText Typo="Typo.body1">@FormatToHourMin(CC_Timeout_value)</MudText>
+                            }
+                            else
+                            {
+                                <div class="dateTime">@FormatToHourMin(CC_Timeout_value)</div>
+                            }
                         </div>
-                        <div class="responsive-slider">
-                            <MudSlider T="double" @bind-Value="@CC_Timeout_value" ValueLabel="true" Variant="Variant.Filled"
-                                    Min="0" Max="100" Step="0.1" Size="Size.Large" />
-                        </div>
+                        @if(!isMobile)
+                        {
+                            <div class="responsive-slider">
+                                <MudSlider T="int" @bind-Value="@CC_Timeout_value" ValueLabel="true" Variant="Variant.Filled"
+                                        Min="0" Max="6000" Step="1" Size="Size.Large" />
+                            </div>
+                        }
                     </div>
                     <div class="timeout-group">
-                        <MudToggleIconButton @bind-Toggled="CV_Enable"
+                        <MudToggleIconButton @bind-Toggled="@(CVT_Enable)"
                             Icon="@Icons.Material.Filled.ToggleOff"
                             Color="@Color.Error"
                             ToggledIcon="@Icons.Material.Filled.ToggleOn"
                             ToggledColor="@Color.Success"
-                            title="@(CV_Enable ? "On" : "Off")" />
-                        <span style="display: inline-block;">CV timeout</span>
-                        <div style="width: 15%; display: inline-block;">
-                            <MudTextField @bind-Value="@CV_Timeout_value" Label="CV timeout" Variant="Variant.Outlined" Class="small-textField" />
+                            title="@(CVT_Enable ? "On" : "Off")" />
+                        @if(!isMobile)
+                        {
+                            <span style="display: inline-block;">CV timeout</span>
+                        }
+                        <div class="inputField">
+                            <MudTextField @bind-Value="@CV_Timeout_value" Label="CVT" Variant="Variant.Outlined" Class="small-textField" Adornment="Adornment.End" AdornmentText="Minute"/>
+                            @if(!isMobile)
+                            {
+                                <MudText Typo="Typo.body1">@FormatToHourMin(CV_Timeout_value)</MudText>
+                            }
+                            else
+                            {
+                                <div class="dateTime">@FormatToHourMin(CV_Timeout_value)</div>
+                            }
                         </div>
-                        <div class="responsive-slider">
-                            <MudSlider T="double" @bind-Value="@CV_Timeout_value" ValueLabel="true" Variant="Variant.Filled"
-                                    Min="0" Max="100" Step="0.1" Size="Size.Large" />
-                        </div>
+                        @if(!isMobile)
+                        {
+                            <div class="responsive-slider">
+                                <MudSlider T="int" @bind-Value="@CV_Timeout_value" ValueLabel="true" Variant="Variant.Filled"
+                                        Min="0" Max="6000" Step="1" Size="Size.Large" />
+                            </div>
+                        }
                     </div>
                     <div class="timeout-group">
-                        <MudToggleIconButton @bind-Toggled="FV_Enable"
+                        <MudToggleIconButton @bind-Toggled="@(FVT_Enable)"
                             Icon="@Icons.Material.Filled.ToggleOff"
                             Color="@Color.Error"
                             ToggledIcon="@Icons.Material.Filled.ToggleOn"
                             ToggledColor="@Color.Success"
-                            title="@(FV_Enable ? "On" : "Off")" />
-                        <span style="display: inline-block;">FV timeout</span>
-                        <div style="width: 15%; display: inline-block;">
-                            <MudTextField @bind-Value="@FV_Timeout_value" Label="FV timeout" Variant="Variant.Outlined" Class="small-textField" />
+                            title="@(FVT_Enable ? "On" : "Off")" />
+                        @if(!isMobile)
+                        {
+                            <span style="display: inline-block;">FV timeout</span>
+                        }
+                        <div class="inputField">
+                            <MudTextField @bind-Value="@FV_Timeout_value" Label="FVT" Variant="Variant.Outlined" Class="small-textField" Adornment="Adornment.End" AdornmentText="Minute"/>
+                            @if(!isMobile)
+                            {
+                                <MudText Typo="Typo.body1">@FormatToHourMin(FV_Timeout_value)</MudText>
+                            }
+                            else
+                            {   
+                                <div class="dateTime">@FormatToHourMin(FV_Timeout_value)</div>
+                            }
                         </div>
-                        <div class="responsive-slider">
-                            <MudSlider T="double" @bind-Value="@FV_Timeout_value" ValueLabel="true" Variant="Variant.Filled"
-                                    Min="0" Max="100" Step="0.1" Size="Size.Large" />
-                        </div>
+                        @if(!isMobile)
+                        {
+                            <div class="responsive-slider">
+                                <MudSlider T="int" @bind-Value="@FV_Timeout_value" ValueLabel="true" Variant="Variant.Filled"
+                                        Min="0" Max="6000" Step="1" Size="Size.Large" />
+                            </div>
+                        }
                     </div>
                 </div>
 
@@ -114,7 +161,7 @@
 
 @code
 {
-
+    private bool isMobile;
     private DotNetObjectReference<Battery_setting> dotNetRef;
     private bool Init_Flag = false;
     private List<ElementReference>  FillRefs = new();
@@ -132,33 +179,33 @@
     private ElementReference ThumbRef;
 
     private double rangeValue;
-    public bool CC_Enable {get; set;}
-    public bool CV_Enable {get; set;}
-    public bool FV_Enable {get; set;}
-    private double CC_Timeout_value;
-    private double CV_Timeout_value;
-    private double FV_Timeout_value;
+    public bool CCT_Enable {get; set;}
+    public bool CVT_Enable {get; set;}
+    public bool FVT_Enable {get; set;}
+    private int CC_Timeout_value;
+    private int CV_Timeout_value;
+    private int FV_Timeout_value;
 
-    private string selectedStage = "stage2";
-    private async Task OnChartTypeChanged(string value)
+    private bool selectedStage;
+
+    private string FormatToHourMin(double totalMin)
+    {
+        int hours = (int)(totalMin / 60);
+        int minutes = (int)(totalMin % 60);
+        return $"{hours} 小時 {minutes} 分";
+    }
+
+    private async Task OnStageChanged(bool value)
     {
 
         selectedStage = value;
-        var selectedStage_Index = (selectedStage == "stage2") ? 0 : 1;
-        
+        Console.WriteLine($"selectedStage = {selectedStage}");
 
         var config = new
         {
-            canvasID = "stageChart",
-            chartType = selectedStage,
-            xLabel = "時間",
-            y1Label = "電流 (A)",
-            y2Label = "電壓 (V)",
-            labels = new[] { "08:00", "09:00", "10:00", "11:00" },
-            y1Data = new[] { 10, 20, 30, 40 },
-            y2Data = new[] { 100, 101, 98, 102 }
+            canvasID = "stageChart"
         };
-        await JS.InvokeVoidAsync("setStage", selectedStage_Index);
+        await JS.InvokeVoidAsync("setStage", selectedStage);
         await JS.InvokeVoidAsync("drawChart_Stage", config);
     }
 
@@ -206,6 +253,7 @@
     {
         if(firstRender)
         {
+            Console.WriteLine($"isMobile = {isMobile}");
             dotNetRef = DotNetObjectReference.Create(this);
         
             await JS.InvokeVoidAsync("setSliderBars_Info", new{
@@ -256,6 +304,11 @@
 
             await JS.InvokeVoidAsync("setStage", 0);
             await JS.InvokeVoidAsync("drawChart_Stage", config);
+            isMobile = await JS.InvokeAsync<bool>("checkIsMobile");
+            if(isMobile)
+            {
+                StateHasChanged();
+            }
         }
     }
 
@@ -354,5 +407,50 @@
         await StartTouchDrag(e, index, min, displayMax);
     }
 
-    
+    private void loadSetting()
+    {
+        @* 或許這裡也是API去拿資料 *@
+    }
+
+    private async Task ReceiveFrom_TopRow_SaveBatterySetting()
+    {
+        //Get CC, TC, CV, FV Data
+        var sliderValues = new List<float>();
+        sliderValues = (await JS.InvokeAsync<float[]>("transferSliderValue")).ToList();
+
+        //arrange data
+        var Data = new
+        {
+            CC_Display = sliderValues[0],
+            TC_Display = sliderValues[1],
+            CV_Display = sliderValues[2],
+            FV_Display = sliderValues[3],
+            selectedStage = selectedStage,
+            CCT_Enable = CCT_Enable,
+            CC_Timeout_value = CC_Timeout_value,
+            CVT_Enable = CVT_Enable,
+            CV_Timeout_value = CV_Timeout_value,
+            FVT_Enable = FVT_Enable,
+            FV_Timeout_value = FV_Timeout_value,
+        };
+
+        //save into DataCenter (for boardcast)
+        DataCenter.Battery.CC_Display           = Data.CC_Display;
+        DataCenter.Battery.TC_Display           = Data.TC_Display;
+        DataCenter.Battery.CV_Display           = Data.CV_Display;
+        DataCenter.Battery.FV_Display           = Data.FV_Display;
+        DataCenter.Battery.CurveStage           = Data.selectedStage;
+        DataCenter.Battery.CCT_Enable           = Data.CCT_Enable;
+        DataCenter.Battery.CC_TimeOut_Display   = Data.CC_Timeout_value;
+        DataCenter.Battery.CVT_Enable           = Data.CVT_Enable;
+        DataCenter.Battery.CV_TimeOut_Display   = Data.CV_Timeout_value;
+        DataCenter.Battery.FVT_Enable           = Data.FVT_Enable;
+        DataCenter.Battery.FV_TimeOut_Display   = Data.FV_Timeout_value;
+
+        //save as Json file (Or use API to call framework to save the setting)
+         @*這裡或許要改成用API去改值就好，讓框架去下命令後保存此次設定以便下次帶入*@
+        string jsonString = JsonSerializer.Serialize(Data, new JsonSerializerOptions{WriteIndented=true});
+        string targetPath = AppJsonManager.Get_Writable_DataPath("LastTime_settingData.json");
+        AppJsonManager.SavePartialJson(targetPath, "Battery_Setting", Data);
+    }
 }

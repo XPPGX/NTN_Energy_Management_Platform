@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.StaticWebAssets;
 using Microsoft.AspNetCore.Components.Server.Circuits;
 using demoVer.Services;
 using demoVer.Models;
+using demoVer.Broadcast;
 var builder = WebApplication.CreateBuilder(args);
 // builder.WebHost.UseUrls("http://127.0.0.1:5070");
 builder.WebHost.UseUrls("http://0.0.0.0:5042");
@@ -38,5 +39,7 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+app.MapHub<DataHub>("/datahub"); //Sync data for all web that connected with the server
 
 app.Run();
