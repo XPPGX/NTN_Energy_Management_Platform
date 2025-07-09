@@ -138,6 +138,7 @@ function drawBatteryChart()
 window.chartInstances = window.chartInstances || new Map();
 
 window.drawChart_Func = function(config) {
+
     console.log("✅ JS drawChart_Func called", config);
 
     const canvas = document.getElementById(config.canvasID);
@@ -149,71 +150,73 @@ window.drawChart_Func = function(config) {
     canvas.width = canvas.parentElement.clientWidth;
     canvas.height = 300;
 
-    const ctx = canvas.getContext('2d');
-    console.log("[1]");
-    if (chartInstances.has(config.canvasID)) {
-        chartInstances.get(config.canvasID).destroy();
+    if(!window.chartInstances)
+    {
+        window.chartInstances = {};
     }
 
-    const datasets = config.chart_single_data_lines.map((line, index) => ({
-        label: line.cmd || `Line ${index + 1}`,
-        data: line.data,
-        borderColor: line.color || 'rgba(54, 162, 235, 1)',
-        backgroundColor: (line.color || 'rgba(54, 162, 235, 1)') + '33',
-        tension: 0.1,
-        pointRadius: 3,
-        yAxisID: line.y_axis_selection ? 'y1' : 'y'  // true=右, false=左
-    }));
+    const existingChart = window.chartInstances[config.canvasID];
 
-    console.log("config.labels", config.labels);
+    if(existingChart)
+    {   
+        
+        console.log(config.labels);
+        console.log(config.chart_single_data_lines[0].data);
+        existingChart.data.labels = config.labels;
+        existingChart.data.datasets[0].data = config.chart_single_data_lines[0].data;
 
-    const chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: config.labels || [],
-            datasets: datasets
-        },
-        options: {
-            responsive: true,
-            animation: false,
-            plugins: {
-                title: {
-                    display: true,
-                    text: config.chartTitle || '',
-                    font: { size: 24 }
-                }
+        existingChart.update();
+    }
+    else
+    {
+        const ctx = canvas.getContext("2d");
+        window.chartInstances[config.canvasID] = new Chart(ctx, {
+            type: "line",  // ✅ 支援選擇圖表類型
+            data: {
+                labels: config.labels,
+                datasets: [
+                    {
+                        label: config.y_left_Title,
+                        data: config.chart_single_data_lines[0].data,
+                        yAxisID: "y1",
+                        borderWidth: 2,
+                        borderColor: config.chart_single_data_lines[0].color,
+                        backgroundColor: "rgba(255, 99, 132, 0.2)",
+                        fill: false
+                    },
+                ]
             },
-            scales: {
-                y: {
-                    title: {
-                        display: !!config.y_left_Title,
-                        text: config.y_left_Title,
-                        font: { size: 16 }
-                    },
-                    min: isNaN(config.YMin) ? undefined : config.YMin,
-                    max: isNaN(config.YMax) ? undefined : config.YMax
+            options: {
+                animation: false,
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true
+                    }
                 },
-                y1: {
-                    position: 'right',
-                    title: {
-                        display: !!config.y_right_Title,
-                        text: config.y_right_Title,
-                        font: { size: 16 }
+                scales: {
+                    x: {
+                        type:'category',
+                        title: {
+                            display: true,
+                            text: ""
+                        }
                     },
-                    grid: { drawOnChartArea: false }
-                },
-                x: {
-                    title: {
-                        display: !!config.xTitle,
-                        text: config.xTitle,
-                        font: { size: 16 }
+                    y1: {
+                        type: "linear",
+                        position: "left",
+                        title: {
+                            display: true,
+                            text: config.y_left_Title,
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 100
                     }
                 }
             }
-        }
-    });
-
-    chartInstances.set(config.canvasID, chart);
+        });
+    }
+   
 };
 
 // window.drawChart_Stage = function(config)

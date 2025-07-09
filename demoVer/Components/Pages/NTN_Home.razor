@@ -9,6 +9,7 @@
 @using System.Text.Json
 
 @inject IJSRuntime JS
+@inject CardUpdateNotifier Notifier
 @inject IDialogService DialogService
 
 <PageTitle>NTN module</PageTitle>
@@ -212,6 +213,8 @@
 
     private ElementReference ref_module_container;
     
+    private string ChartRenderKey = "";
+
     public List<CardInfo> CardInfos = new ()
     {
         @* new CardInfo
@@ -535,8 +538,14 @@
         {
             Console.WriteLine("[NTN_HOME] : Card.ID : " + _updatedCard.ID + " updated");
             CardInfos[index] = _updatedCard;
+            
+            if(_updatedCard.card_Type == CardType.Chart)
+            {
+                Notifier.Notify(_updatedCard.ID);
+            }
         }
-
+        
+        
 
         Console.WriteLine("[NTN_HOME] CardInfos: ");
         string json = JsonSerializer.Serialize(CardInfos, new JsonSerializerOptions{

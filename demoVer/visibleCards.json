@@ -31,12 +31,12 @@
     "card_Type": 2,
     "widthClass": "w50",
     "showSequence": 1,
-    "cardName": "\u4E09\u76F8\u96FB\u6D41\u8207\u529F\u7387\u5716(FAKER)",
+    "cardName": "\u4E09\u76F8\u96FB\u6D41\u8207\u529F\u7387\u5716(PAWN)",
     "Info_DataItems": null,
     "Link_STATUS_Pairs": null,
     "Chart_Setting": {
       "canvasID": "chart1",
-      "ChartTitle": "\u4E09\u76F8\u96FB\u6D41\u8207\u529F\u7387\u5716(FAKER)",
+      "ChartTitle": "\u4E09\u76F8\u96FB\u6D41\u8207\u529F\u7387\u5716(PAWN)",
       "XTitle": "\u6642\u9593",
       "timeGap_selection": 2,
       "Labels": [

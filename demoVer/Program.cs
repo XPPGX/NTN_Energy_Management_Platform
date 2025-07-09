@@ -12,6 +12,7 @@ builder.WebHost.UseUrls("http://0.0.0.0:5042");
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddSingleton<CardUpdateNotifier>();
 builder.Services.AddSingleton<ArrowAnimationService>();
 builder.Services.AddMudServices();
 

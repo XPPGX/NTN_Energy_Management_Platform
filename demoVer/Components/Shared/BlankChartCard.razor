@@ -1,6 +1,9 @@
 @namespace demoVer.Shared
 @using demoVer.Models
 @inject IJSRuntime JS
+@inject CardUpdateNotifier Notifier
+@inject DataCenter DataCenter
+@implements IDisposable
 @inherits LayoutComponentBase
 <div class="Watt_diagram-container @CssClass" @attributes="AdditionalAttributes">
     <canvas id="@currentCard.Chart_Setting.canvasID"></canvas>
@@ -70,7 +73,25 @@
     private System.Timers.Timer _timer;
     protected override void OnInitialized()
     {
+        if(!string.IsNullOrEmpty(currentCard.ID))
+        {
+            DataCenter.RegisterChartListener(UpdateData_OnChart);
+            Notifier.Register(currentCard.ID, Refresh);
+        }
+    }
+
+    private async Task Refresh()
+    {
         
+        Console.WriteLine($"[Chart:{currentCard.ID}] 收到重新繪圖通知");
+        await JS.InvokeVoidAsync("drawChart_Func", currentCard.Chart_Setting);
+    }
+
+    private async Task UpdateData_OnChart()
+    {
+        Console.WriteLine("[UpdateData_OnChart]");
+        DataCenter.ApplySimulatedDataToChart(currentCard.Chart_Setting);
+        await JS.InvokeVoidAsync("drawChart_Func", currentCard.Chart_Setting);
     }
 
     private async Task UpdateChartData()
@@ -90,6 +111,12 @@
 
     public void Dispose()
     {
+        if(!string.IsNullOrEmpty(currentCard.ID))
+        {
+            DataCenter.UnregisterChartListener(UpdateData_OnChart);
+            Notifier.Unregister(currentCard.ID);
+        }
+
         _timer?.Stop();
         _timer?.Dispose();
     }
