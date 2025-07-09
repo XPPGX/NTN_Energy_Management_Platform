@@ -3,13 +3,13 @@
     "CC_Display": 60,
     "TC_Display": 6,
     "CV_Display": 57.6,
-    "FV_Display": 55.2,
+    "FV_Display": 57.6,
     "CurveStage": true,
     "CCT_Enable": false,
-    "CC_TimeOut_Display": 600,
+    "CC_TimeOut_Display": 0,
     "CVT_Enable": false,
-    "CV_TimeOut_Display": 600,
+    "CV_TimeOut_Display": 0,
     "FVT_Enable": false,
-    "FV_TimeOut_Display": 600
+    "FV_TimeOut_Display": 0
   }
 }

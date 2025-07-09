@@ -325,8 +325,7 @@
             }
             
             await JS.InvokeVoidAsync("sliderUpdateFromInput", dotNetRef);
-
-            await JS.InvokeVoidAsync("setStage", 0);
+            await JS.InvokeVoidAsync("setStage", selectedStage);
             await JS.InvokeVoidAsync("drawChart_Stage");
             isMobile = await JS.InvokeAsync<bool>("checkIsMobile");
             if(isMobile)

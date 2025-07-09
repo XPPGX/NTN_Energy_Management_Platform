@@ -13,6 +13,7 @@
 @*每個要用MudBlazor的razor元件，都要引入如下元件*@
 @*這邊還要引用MudBlazor可能是因為 _Imports.razor的引用不會給Shared內的razor檔案*@
 @using MudBlazor
+@using MudBlazor.Utilities
 <MudThemeProvider/>
 <MudPopoverProvider/>
 <MudDialogProvider/>
@@ -305,51 +306,148 @@ edit-container是用來綁以下javascript事件的 id :
         
         break;
     case CardType.Chart:
-        <h5>編輯 : 圖表</h5>
+        @if(showMenu)
+        {
+            <div class="custom-menu" style="top:@($"{menuY}px"); left:@($"{menuX}px");" @onclick:stopPropagation>
+                <div class="custom-menu-item" @onclick="Edit_inCorrespondingStage">編輯</div>
+                <div class="custom-menu-item" @onclick="Delete_inCorrespondingStage">刪除</div>
+            </div>   
+        }
+        @if(ConfirmDialog)
+        {
+            <div id="confirmDialog" class="custom-dialog-overlay">
+                <div class="custom-dialog">
+                    <div class="custom-dialog-content">
+                        <div class="icon-container">
+                            ⚠️
+                        </div>
+                        <p id="dialogMessage" class="dialog-message">@AlertMessage</p>
+                    </div>
+                    <div class="custom-dialog-actions">
+                        <button class="btn cancel-btn" @onclick="Cancel">取消</button>
+                        <button class="btn confirm-btn" @onclick="Confirm">確定</button>
+                    </div>
+                </div>
+            </div>
+        }
         switch(CHART_setting_stage)
         {
             case CHART_SETTING_STAGE.OVERVIEW:
-                @* <table class="table no-text-select" id="table-settingChartLines">
+                <h5>編輯 : 圖表</h5>
+                <MudTextField T="string" @bind-Value="temp_chartTitle" Label="Y-Title" Required="true" Variant="Variant.Outlined"/>
+                <table class="table no-text-select" id="table-ChartSetting">
                     <thead>
                         <tr>
-                            <th>No.</th>
-                            <th>資料名稱</th>
-                            <th>顏色</th>
+                            <th>命令(單位)</th>
+                            <th>Y軸標題-左/右-顏色</th>
                         </tr>
                     </thead>
                     <tbody>
-
+                        @for(int i = 0 ; i < edit_ChartSetting.chart_single_data_lines.Count ; i ++)
+                        {
+                            var temp = edit_ChartSetting.chart_single_data_lines[i];
+                            <tr>
+                                <td class="basic-td long-press-row" data-table="table-ChartSetting" data-index="@i">
+                                    @{
+                                        string hint_cmd = "";
+                                        switch(temp.status)
+                                        {
+                                            case SettingStatus.YET:
+                                                if(isMobile){hint_cmd = "長按此處編輯";}
+                                                else{hint_cmd = "右鍵編輯";}
+                                                break;
+                                            case SettingStatus.PROGRESS:
+                                                if(isMobile){hint_cmd = "未完成:長按此處編輯";}
+                                                else{hint_cmd = "未完成:右鍵編輯";}
+                                                break;
+                                            case SettingStatus.DONE:
+                                                hint_cmd = temp.Cmd + $"({temp.Unit})";
+                                                break;
+                                            default:
+                                                hint_cmd = "";
+                                                break;
+                                        }
+                                    }
+                                    @hint_cmd
+                                </td>
+                                <td class="basic-td long-press-row" data-table="table-ChartSetting" data-index="@i">
+                                    @{
+                                        string hint = "";
+                                        string hint_color = "#000000";
+                                        switch(temp.status)
+                                        {
+                                            case SettingStatus.YET:
+                                                if(isMobile){hint = "長按此處編輯";}
+                                                else{hint = "右鍵編輯";}
+                                                break;
+                                            case SettingStatus.PROGRESS:
+                                                if(isMobile){hint = "未完成:長按此處編輯";}
+                                                else{hint = "未完成:右鍵編輯";}
+                                                break;
+                                            case SettingStatus.DONE:
+                                                if(temp.Y_axis_selection == true){hint = $"{edit_ChartSetting.Y_left_Title}-左";}
+                                                else if(temp.Y_axis_selection == false){hint = $"{edit_ChartSetting.Y_right_Title}-右";}
+                                                hint_color = temp.color;
+                                                break;
+                                            default:
+                                                hint = "";
+                                                break;
+                                        }
+                                    }
+                                    
+                                    <div class="display-show-setting">
+                                        <span>@hint</span>
+                                        <div style="width: 16px; height: 16px; border-radius: 4px; background-color: @hint_color; border: 1px solid #ccc;"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
                     </tbody>
-                </table> *@
+                </table>
+                <div class="confirm-cancel-container">
+                    <MudButton Class="no-transform"
+                            OnClick="Add_Curve"
+                            Variant="Variant.Filled"
+                            Color="Color.Primary"
+                            StartIcon="@Icons.Material.Filled.Add"
+                            Style="width: 120px;">
+                        新增
+                    </MudButton>
+                    <MudButton Class="no-transform" 
+                            OnClick="Confirm_CurveSetting"
+                            Variant="Variant.Filled"
+                            Color="Color.Success"
+                            Style="width: 120px;">
+                        確定
+                    </MudButton>
+                </div>
                 break;
-            case CHART_SETTING_STAGE.SINGLE_SETTING:
-                @* <EditForm Model="edit_ChartSetting" OnValidSubmit="ChartDetailSubmit">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
-                    
-                    <div class="form-group d-flex align-items-center mb-2">
-                        <label class="form-label me-2 mb-0" style="width: 100px;">圖表標題</label>
-                        <InputText class="form-control flex-grow-1" @bind-Value="edit_ChartSetting.ChartTitle" />
-                    </div>
-                    <div class="form-group d-flex align-items-center mb-2">
-                        <label class="form-label me-2 mb-0" style="width: 100px;">Command</label>
-                        <MudButton Style="width: 100%;" Class="flex-grow-1 text-start" Size="Size.Small" Variant="Variant.Text" Color="Color.Primary" OnClick="SetCMD_CHART">選擇命令</MudButton>
-                    </div> 
-                    <div class="form-group d-flex align-items-center mb-2">
-                        <label class="form-label me-2 mb-0" style="width: 100px;">Y 軸標題</label>
-                        <InputText class="form-control flex-grow-1" @bind-Value="edit_ChartSetting.YTitle" />
-                    </div>
-                    <div class="form-group d-flex align-items-center mb-2">
-                        <label class="form-label me-2 mb-0" style="width: 100px;">X 軸標題</label>
-                        <InputText class="form-control flex-grow-1" @bind-Value="edit_ChartSetting.XTitle" />
-                    </div>
-                     
-
-                    <button type="submit" class="btn btn-primary mt-2">儲存</button>
-                </EditForm> *@
+            case CHART_SETTING_STAGE.DISPLAY_SETTING:
+                <div class="chart-display-setting">
+                    <h3>顯示設定</h3>
+                    <div class="chartForm">
+                        @{
+                            <MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 400px; max-height: 400px;">
+                                <MudForm @ref="form" @bind-IsValid="@success">
+                                    <MudTextField T="string" @bind-Value="temp_Y_singleTitle" Label="Y-Title" Required="true" RequiredError="Y-Title is required!" />
+                                    <MudRadioGroup T="bool?" @bind-Value="blank_singleDataLine.Y_axis_selection" Required="true" RequiredError="Y-axis is required!">
+                                        <MudRadio T="bool?" Value="@(true)">Left-axis</MudRadio>
+                                        <MudRadio T="bool?" Value="@(false)">Right-axis</MudRadio>
+                                    </MudRadioGroup>
+                                    <MudColorPicker Label="Data-Color" @bind-Text="blank_singleDataLine.color" ColorPickerView="ColorPickerView.Palette" Style="@($"color: {blank_singleDataLine.color};")" Required="true"/>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="Confirm_SingleDataLine_setting">確定</MudButton>
+                                </MudForm>
+                            </MudPaper>
+                        }
+                    </div>  
+                    @if(!string.IsNullOrEmpty(chartForm_errorMessage))
+                    {
+                        <MudText Class="mud-error-text mt-2">@chartForm_errorMessage</MudText>
+                    }
+                </div>
                 break;
             case CHART_SETTING_STAGE.SELECT_CMD_STAGE:
-                @* <MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 200px; max-height: 240px; overflow-y: auto;">
+                <MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 200px; max-height: 240px; overflow-y: auto;">
                     <MudList T="string" Dense="true" Hover="true">
                         @foreach (var item in cmdDict)
                         {
@@ -363,7 +461,24 @@ edit-container是用來綁以下javascript事件的 id :
                             </MudListItem>
                         }
                     </MudList>
-                </MudPaper> *@
+                </MudPaper>
+                break;
+            case CHART_SETTING_STAGE.UNIT_SELECTION_STAGE:
+                <MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 200px; max-height: 240px; overflow-y: auto;">
+                    <MudList T="string" Dense="true" Hover="true">
+                        @foreach (var unit in UnitLists)
+                        {
+                            <MudListItem T="string"
+                                        @onclick="() => clickUnit_CHART(unit)"
+                                        Style="cursor: pointer;">
+                                <MudListItemIcon>
+                                    <MudIcon Icon="@Icons.Material.Filled.Sensors" />
+                                </MudListItemIcon>
+                                <MudText Class="ml-2">@unit</MudText>
+                            </MudListItem>
+                        }
+                    </MudList>
+                </MudPaper>
                 break;
             default:
                 break;
@@ -477,7 +592,6 @@ edit-container是用來綁以下javascript事件的 id :
         imgFolderPath = Path.Combine(WebHostEnvironment.WebRootPath, "images/user_selections");
         getCMDs();
         getImgFiles();
-        
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -511,6 +625,12 @@ edit-container是用來綁以下javascript事件的 id :
                         break;
                     case CardType.Chart:
                         edit_ChartSetting = currentCardInfo.Chart_Setting;
+                        temp_chartTitle = edit_ChartSetting.ChartTitle;
+
+                        if(edit_ChartSetting.chart_single_data_lines.Count == 0)
+                        {
+                            edit_ChartSetting.chart_single_data_lines = new List<CHART_SINGLE_DATA_LINE>();
+                        }
                         break;
                     case CardType.Status:
                         edit_Link_STATUS_Pairs = currentCardInfo.Link_STATUS_Pairs?.Select(pair => pair.DeepClone()).ToList(); //edit_Link_STATUS_Pairs 與 currentCardInfo.Link_STATUS_Pairs 不同記憶體
@@ -593,7 +713,19 @@ edit-container是用來綁以下javascript事件的 id :
         menuY = y;
         showMenu = true;
         Console.WriteLine($"[OnShowContextMenu] table : {table}, index : {index}");
-        InfoData_index = index;
+        switch(currentCardInfo.card_Type)
+        {
+            case CardType.Info:
+                InfoData_index = index;
+                break;
+            case CardType.Chart:
+                SingleLine_index = index;
+                break;
+            case CardType.Status:
+                break;
+            default:
+                break;
+        }
         StateHasChanged();
     }
 
@@ -644,40 +776,85 @@ edit-container是用來綁以下javascript事件的 id :
     private void Edit_inCorrespondingStage()
     {
         showMenu = false;
-        Console.WriteLine("點了選像1");
-        
-        switch(INFO_setting_stage)
+        Console.WriteLine("點了選項1");
+        switch(currentCardInfo.card_Type)
         {
-            case INFO_SETTING_STAGE.ADD_ROW_STAGE:
-                var tempINFO_DataItem = edit_INFO_DataItems[InfoData_index];
-                AdjustValueCmdRow(tempINFO_DataItem);
+            case CardType.Info:
+                switch(INFO_setting_stage)
+                {
+                    case INFO_SETTING_STAGE.ADD_ROW_STAGE:
+                        var tempINFO_DataItem = edit_INFO_DataItems[InfoData_index];
+                        AdjustValueCmdRow(tempINFO_DataItem);
+                        break;
+                    case INFO_SETTING_STAGE.ADD_VALUE_AND_CMD_ROW_STAGE:
+                        var tempDataFormat = currentEdit_INFO_DataItem_ref.INFO_DataFormats[InfoData_index];
+                        setValueAndCmd(tempDataFormat);
+                        break;
+                    default:
+                        break;
+                }
                 break;
-            case INFO_SETTING_STAGE.ADD_VALUE_AND_CMD_ROW_STAGE:
-                var tempDataFormat = currentEdit_INFO_DataItem_ref.INFO_DataFormats[InfoData_index];
-                setValueAndCmd(tempDataFormat);
+            case CardType.Chart:
+                switch(CHART_setting_stage)
+                {
+                    case CHART_SETTING_STAGE.OVERVIEW:
+                        //reset blank_singleDataLine
+                        blank_singleDataLine.Cmd = null;
+                        blank_singleDataLine.Unit = null;
+                        blank_singleDataLine.Y_axis_selection = null;
+                        blank_singleDataLine.color = null;
+                        temp_Y_singleTitle = null;
+                        CHART_setting_stage = CHART_SETTING_STAGE.SELECT_CMD_STAGE;
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case CardType.Status:
                 break;
             default:
                 break;
         }
+        
     }
 
     private void Delete_inCorrespondingStage()
     {
         showMenu = false;
-        Console.WriteLine("點了選像2");
-        
-        switch(INFO_setting_stage)
+        Console.WriteLine("點了選項2");
+         switch(currentCardInfo.card_Type)
         {
-            case INFO_SETTING_STAGE.ADD_ROW_STAGE:
-                ShowDialog("確定要刪除?", DeleteAction_In_ADD_ROW_STAGE);
+            case CardType.Info:
+                switch(INFO_setting_stage)
+                {
+                    case INFO_SETTING_STAGE.ADD_ROW_STAGE:
+                        ShowDialog("確定要刪除?", DeleteAction_In_ADD_ROW_STAGE);
+                        break;
+                    case INFO_SETTING_STAGE.ADD_VALUE_AND_CMD_ROW_STAGE:
+                        Console.WriteLine("[Delete_inCorrespondingStage] Stage = INFO_SETTING_STAGE.ADD_VALUE_AND_CMD_ROW_STAGE");
+                        ShowDialog("確定要刪除?", DeleteAction_In_ADD_VALUE_AND_CMD_ROW_STAGE);
+                        break;
+                    default:
+                        break;
+                }
                 break;
-            case INFO_SETTING_STAGE.ADD_VALUE_AND_CMD_ROW_STAGE:
-                Console.WriteLine("[Delete_inCorrespondingStage] Stage = INFO_SETTING_STAGE.ADD_VALUE_AND_CMD_ROW_STAGE");
-                ShowDialog("確定要刪除?", DeleteAction_In_ADD_VALUE_AND_CMD_ROW_STAGE);
+            case CardType.Chart:
+                switch(CHART_setting_stage)
+                {
+                    case CHART_SETTING_STAGE.OVERVIEW:
+                        Console.WriteLine("[DELETE] CHART_SETTING_STAGE.OVERVIEW");
+                        ShowDialog("確定要刪除?", DeleteAction_In_CHART_OVERVIEW_STAGE);
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case CardType.Status:
                 break;
             default:
                 break;
         }
+        
     }
 
     private void Add_INFO_DataItem()
@@ -861,6 +1038,15 @@ edit-container是用來綁以下javascript事件的 id :
     #region CHART_Variables_and_Functions
     private CHART_SETTING_STAGE CHART_setting_stage = CHART_SETTING_STAGE.OVERVIEW;
     private CHART_SETTING edit_ChartSetting = new CHART_SETTING();
+    private CHART_SINGLE_DATA_LINE blank_singleDataLine = new CHART_SINGLE_DATA_LINE();
+    private int SingleLine_index = 0;
+    private MudForm form;
+    private bool success;
+    private string chartCMD;
+    private string temp_Y_singleTitle = null;
+    private string temp_chartTitle = null;
+    private string chartForm_errorMessage = null;
+
     private void SetCMD_CHART()
     {
         CHART_setting_stage = CHART_SETTING_STAGE.SELECT_CMD_STAGE;
@@ -876,7 +1062,121 @@ edit-container是用來綁以下javascript事件的 id :
 
     private void clickCmd_CHART(string _selected_Cmd)
     {
+        var target_DataLine = edit_ChartSetting.chart_single_data_lines[SingleLine_index];
+        target_DataLine.Cmd = _selected_Cmd;
+        target_DataLine.Unit = "";
+        target_DataLine.status = SettingStatus.PROGRESS;
+        CHART_setting_stage = CHART_SETTING_STAGE.UNIT_SELECTION_STAGE;
 
+        if(!string.IsNullOrEmpty(target_DataLine.Cmd))
+        {
+            if(cmdDict.ContainsKey(target_DataLine.Cmd))
+            {
+                var unitToken = cmdDict[target_DataLine.Cmd]["Unit"];
+                if(unitToken != null)
+                {
+                    UnitLists = cmdDict[target_DataLine.Cmd]["Unit"].ToObject<List<string>>();
+                }
+            }
+            CHART_setting_stage = CHART_SETTING_STAGE.UNIT_SELECTION_STAGE;
+        }
+        else
+        {
+            Console.WriteLine("selectUnit : 尚未選擇CMD (這邊可以跳個Alert框)");
+        }
+    }
+
+    private void clickUnit_CHART(string _selected_Unit)
+    {
+        var target_DataLine = edit_ChartSetting.chart_single_data_lines[SingleLine_index];
+        target_DataLine.Unit = _selected_Unit;
+        chartForm_errorMessage = null;
+        CHART_setting_stage = CHART_SETTING_STAGE.DISPLAY_SETTING;
+        
+    }
+
+    private void DeleteAction_In_CHART_OVERVIEW_STAGE()
+    {
+        Console.WriteLine("執行刪除");
+        if(SingleLine_index >= 0 && SingleLine_index < edit_ChartSetting.chart_single_data_lines.Count)
+        {
+            edit_ChartSetting.chart_single_data_lines.RemoveAt(SingleLine_index);
+        }
+    }
+
+    private void Add_Curve()
+    {
+        if(edit_ChartSetting.chart_single_data_lines.Count == 2){return;}
+        edit_ChartSetting.chart_single_data_lines.Add(new CHART_SINGLE_DATA_LINE
+        {
+            Cmd = "",
+            Y_axis_selection = true,
+            color = "",
+            Data = null,
+        });
+    }
+
+    private void Confirm_CurveSetting()
+    {
+        Console.WriteLine("[edit_ChartSetting] : ");
+        string json = JsonSerializer.Serialize(edit_ChartSetting, new JsonSerializerOptions{
+            WriteIndented = true
+        });
+        Console.WriteLine(json);
+    
+        edit_ChartSetting.ChartTitle = temp_chartTitle;
+        currentCardInfo.cardName = temp_chartTitle; //Avoid Bug
+
+
+        
+        // 通知父元件更新 currentCardInfo
+        OnCardInfoUpdated.InvokeAsync(currentCardInfo);
+    }
+
+    private async Task Confirm_SingleDataLine_setting()
+    {
+        await form.Validate();
+        
+        string colorError = string.IsNullOrEmpty(blank_singleDataLine.color) ? "Y-Data Color is required" : null;
+        var target_DataLine = edit_ChartSetting.chart_single_data_lines[SingleLine_index];
+        bool sameAxis_Flag = false;
+        if(edit_ChartSetting.chart_single_data_lines.Count == 2)
+        {
+            int opposite_index = (SingleLine_index == 0) ? 1 : 0;
+            
+            sameAxis_Flag = (blank_singleDataLine.Y_axis_selection == edit_ChartSetting.chart_single_data_lines[opposite_index].Y_axis_selection) ? true : false;
+        }
+        
+        
+
+        if(!success || colorError != null || sameAxis_Flag == true)
+        {
+            Console.WriteLine("表單驗證失敗");
+            target_DataLine.status = SettingStatus.PROGRESS;
+            if(!success){chartForm_errorMessage = "請確認所有欄位皆已填寫";}
+            else if(colorError != null){chartForm_errorMessage = "未選擇資料顏色";}
+            else if(sameAxis_Flag){chartForm_errorMessage = "兩組資料不可位於同一側";}
+            return;
+        }
+        Console.WriteLine("表單驗證成功");
+        
+        target_DataLine.Y_axis_selection = blank_singleDataLine.Y_axis_selection;
+        target_DataLine.color = blank_singleDataLine.color;
+        if(target_DataLine.Y_axis_selection == true)
+        {//left axis
+            edit_ChartSetting.Y_left_Title = temp_Y_singleTitle;
+        }
+        else if(target_DataLine.Y_axis_selection == false)
+        {//right axis
+            edit_ChartSetting.Y_right_Title = temp_Y_singleTitle;
+        }
+
+        Console.WriteLine($"Y-Title = {temp_Y_singleTitle}, Y-axis = {edit_ChartSetting.chart_single_data_lines[SingleLine_index].Y_axis_selection}, color = {edit_ChartSetting.chart_single_data_lines[SingleLine_index].color}");
+        
+        target_DataLine.status = SettingStatus.DONE;
+        CHART_setting_stage = CHART_SETTING_STAGE.OVERVIEW;
+
+        
     }
     #endregion CHART_Variables_and_Functions
     

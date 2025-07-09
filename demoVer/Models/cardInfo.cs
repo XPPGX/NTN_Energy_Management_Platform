@@ -59,8 +59,9 @@ namespace demoVer.Models
     {
         CLOSE_ALL                       = 0,
         OVERVIEW                        = 1,
-        SINGLE_SETTING                  = 2,
+        DISPLAY_SETTING                 = 2,
         SELECT_CMD_STAGE                = 3,
+        UNIT_SELECTION_STAGE            = 4
     }
 
     public enum SettingStatus
@@ -127,7 +128,7 @@ namespace demoVer.Models
         public string canvasID {get; set;}
         public string ChartTitle {get; set;}
         //X軸相關
-        public string XTitle {get; set;}
+        public string XTitle {get; set;} = "時間";
         public timeGap timeGap_selection {get; set;}
         public string[] Labels {get; set;} //X軸資料，目前只支援顯示時間
         //Y軸相關
@@ -150,9 +151,11 @@ namespace demoVer.Models
 
     public class CHART_SINGLE_DATA_LINE
     {
-        public string Cmd{get; set;}
-        public bool Y_axis_selection {get; set;} //選擇要Y_left還是Y_right
-        public string color {get; set;}
+        public SettingStatus status {get; set; } = SettingStatus.YET;
+        public string Cmd{get; set;} = null;
+        public string Unit{get; set;} = null;
+        public bool? Y_axis_selection {get; set;} = null; //選擇要Y_left還是Y_right
+        public string color {get; set;} = null;
         public double[] Data{get; set;} //Y軸資料
     }
 
