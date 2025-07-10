@@ -55,7 +55,7 @@
             try{
                 
                 //[Debug] draw chart
-                await JS.InvokeVoidAsync("drawChart_Func", currentCard.Chart_Setting);
+                await JS.InvokeVoidAsync("drawChart_Func", currentCard.Chart_Setting, true);
             }
             catch(Exception ex)
             {

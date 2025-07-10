@@ -137,7 +137,7 @@ function drawBatteryChart()
 
 window.chartInstances = window.chartInstances || new Map();
 
-window.drawChart_Func = function(config) {
+window.drawChart_Func = function(config, webFirstRend = false) {
 
     console.log("✅ JS drawChart_Func called", config);
 
@@ -167,7 +167,7 @@ window.drawChart_Func = function(config) {
         yAxisID: line.y_axis_selection ? 'y' : 'y1'  // true=右, false=左
     }));
 
-    if(existingChart)
+    if(existingChart && webFirstRend == false)
     {   
         existingChart.options.plugins.title.text = config.chartTitle;
         existingChart.data.labels = config.labels;
@@ -179,6 +179,10 @@ window.drawChart_Func = function(config) {
     }
     else
     {
+        if (window.chartInstances[config.canvasID]) {
+            window.chartInstances[config.canvasID].destroy();
+            delete window.chartInstances[config.canvasID];
+        }
         const ctx = canvas.getContext("2d");
         window.chartInstances[config.canvasID] = new Chart(ctx, {
             type: "line",  // ✅ 支援選擇圖表類型
@@ -222,7 +226,7 @@ window.drawChart_Func = function(config) {
                         position: "right",
                         title: {
                             display: !!config.y_right_Title,
-                            text: config.y_left_Title,
+                            text: config.y_right_Title,
                             font: {size: 16}
                         },
                     }
@@ -452,7 +456,7 @@ window.setStage = function(option)
     
 }
 
-window.drawChart_Stage = function () {
+window.drawChart_Stage = function (webFirstRend = false) {
     console.log("[drawChart_Stage]");
     const canvas = document.getElementById(stageCanvasID);
     if (!canvas) {
@@ -467,8 +471,7 @@ window.drawChart_Stage = function () {
     canvas.width = rect.width;
     canvas.height = rect.height;
 
-    const ctx = canvas.getContext("2d");
-
+    
     if (!window.chartInstances) {
         window.chartInstances = {};
     }
@@ -478,7 +481,7 @@ window.drawChart_Stage = function () {
     //     window.chartInstances[config.canvasID].destroy();
     // }
     updateStageData_Init();
-    if(existingChart)
+    if(existingChart && webFirstRend == false)
     {
         console.log(existingChart)
         existingChart.data.labels = stageData.labels;
@@ -489,6 +492,11 @@ window.drawChart_Stage = function () {
     }
     else
     {
+        if (window.chartInstances[stageCanvasID]) {
+            window.chartInstances[stageCanvasID].destroy();
+            delete window.chartInstances[stageCanvasID];
+        }
+        const ctx = canvas.getContext("2d");
         window.chartInstances[stageCanvasID] = new Chart(ctx, {
             type: "line",  // ✅ 支援選擇圖表類型
             data: {
@@ -760,3 +768,8 @@ window.drawChart_Sin = function(config)
         }
     });
 }
+
+window.destroyAllCharts = function () {
+    console.log("[destoryAllCharts]");
+    console.log(window.chartInstances);
+};

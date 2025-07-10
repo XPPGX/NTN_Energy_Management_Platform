@@ -274,7 +274,8 @@
     {
         if(firstRender)
         {
-            
+            //把JS中的chartInstances清空
+            await JS.InvokeVoidAsync("destroyAllCharts");
 
             Console.WriteLine($"isMobile = {isMobile}");
             dotNetRef = DotNetObjectReference.Create(this);
@@ -326,7 +327,7 @@
             
             await JS.InvokeVoidAsync("sliderUpdateFromInput", dotNetRef);
             await JS.InvokeVoidAsync("setStage", selectedStage);
-            await JS.InvokeVoidAsync("drawChart_Stage");
+            await JS.InvokeVoidAsync("drawChart_Stage", true);
             isMobile = await JS.InvokeAsync<bool>("checkIsMobile");
             if(isMobile)
             {
