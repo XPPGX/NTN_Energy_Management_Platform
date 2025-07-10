@@ -21,6 +21,7 @@ namespace demoVer.Services
         //[DEBUG]模擬資料
         private List<string> _labels = new();
         private List<double> _values = new();
+        private List<double> _values2 = new();
         //[DEBUG]外部元件可訂閱此事件來接收圖表刷新通知
         public event Func<Task>? OnChartDataUpdated;
 
@@ -62,17 +63,25 @@ namespace demoVer.Services
             {
                 _labels.RemoveAt(0);
                 _values.RemoveAt(0);
+                _values2.RemoveAt(0);
             }
 
             _labels.Add(DateTime.Now.ToString("HH:mm:ss"));
             _values.Add(new Random().NextDouble() * 100);
-            
+            _values2.Add(new Random().NextDouble() * 100);
         }
         public void ApplySimulatedDataToChart(CHART_SETTING chartSetting)
         {
             chartSetting.Labels = _labels.ToArray();
-            if (chartSetting.chart_single_data_lines.Count > 0)
+            if (chartSetting.chart_single_data_lines.Count == 1)
+            {
                 chartSetting.chart_single_data_lines[0].Data = _values.ToArray();
+            }
+            else if(chartSetting.chart_single_data_lines.Count == 2)
+            {
+                chartSetting.chart_single_data_lines[0].Data = _values.ToArray();
+                chartSetting.chart_single_data_lines[1].Data = _values2.ToArray();
+            }
         }
         // ✅ 通知 UI 重新繪製（例如透過 CardUpdateNotifier）
         private void NotifyChartSubscribers()

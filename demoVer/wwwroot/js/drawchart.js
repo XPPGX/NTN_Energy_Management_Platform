@@ -156,14 +156,24 @@ window.drawChart_Func = function(config) {
     }
 
     const existingChart = window.chartInstances[config.canvasID];
+    
+    const datasets = config.chart_single_data_lines.map((line, index) => ({
+        label: line.cmd || `Line ${index + 1}`,
+        data: line.data,
+        borderColor: line.color || 'rgba(54, 162, 235, 1)',
+        backgroundColor: (line.color || 'rgba(54, 162, 235, 1)') + '33',
+        tension: 0.1,
+        pointRadius: 3,
+        yAxisID: line.y_axis_selection ? 'y' : 'y1'  // true=右, false=左
+    }));
 
     if(existingChart)
     {   
-        
-        console.log(config.labels);
-        console.log(config.chart_single_data_lines[0].data);
+        existingChart.options.plugins.title.text = config.chartTitle;
         existingChart.data.labels = config.labels;
-        existingChart.data.datasets[0].data = config.chart_single_data_lines[0].data;
+        existingChart.data.datasets = datasets;
+        existingChart.options.scales.y.title.text = config.y_left_Title;
+        existingChart.options.scales.y1.title.text = config.y_right_Title;
 
         existingChart.update();
     }
@@ -174,22 +184,17 @@ window.drawChart_Func = function(config) {
             type: "line",  // ✅ 支援選擇圖表類型
             data: {
                 labels: config.labels,
-                datasets: [
-                    {
-                        label: config.y_left_Title,
-                        data: config.chart_single_data_lines[0].data,
-                        yAxisID: "y1",
-                        borderWidth: 2,
-                        borderColor: config.chart_single_data_lines[0].color,
-                        backgroundColor: "rgba(255, 99, 132, 0.2)",
-                        fill: false
-                    },
-                ]
+                datasets: datasets
             },
             options: {
                 animation: false,
                 responsive: true,
                 plugins: {
+                    title: {
+                        display: true,
+                        text: config.chartTitle || '',
+                        font: {size : 26}
+                    },
                     legend: {
                         display: true
                     }
@@ -199,18 +204,27 @@ window.drawChart_Func = function(config) {
                         type:'category',
                         title: {
                             display: true,
-                            text: ""
+                            text: "時間",
+                            font: {size : 16}
                         }
+                    },
+                    y: {
+                        type: "linear",
+                        position: "left",
+                        title:{
+                            display: !!config.y_left_Title,
+                            text: config.y_left_Title,
+                            font: {size : 16}
+                        },
                     },
                     y1: {
                         type: "linear",
-                        position: "left",
+                        position: "right",
                         title: {
-                            display: true,
+                            display: !!config.y_right_Title,
                             text: config.y_left_Title,
+                            font: {size: 16}
                         },
-                        suggestedMin: 0,
-                        suggestedMax: 100
                     }
                 }
             }

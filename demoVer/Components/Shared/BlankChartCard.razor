@@ -56,11 +56,6 @@
                 
                 //[Debug] draw chart
                 await JS.InvokeVoidAsync("drawChart_Func", currentCard.Chart_Setting);
-                //[Debug]
-                @* _timer = new System.Timers.Timer(250); // 每 5 秒呼叫一次
-                _timer.Elapsed += async (sender, e) => await UpdateChartData();
-                _timer.AutoReset = true;
-                _timer.Start(); *@
             }
             catch(Exception ex)
             {
@@ -69,8 +64,6 @@
         }
     }
 
-    @* DEBUG *@
-    private System.Timers.Timer _timer;
     protected override void OnInitialized()
     {
         if(!string.IsNullOrEmpty(currentCard.ID))
@@ -94,21 +87,6 @@
         await JS.InvokeVoidAsync("drawChart_Func", currentCard.Chart_Setting);
     }
 
-    private async Task UpdateChartData()
-    {
-        try
-        {
-            string newLabel = DateTime.Now.ToString("HH:mm:ss");
-            int newValue = new Random().Next(100, 1000); // 模擬資料
-
-            await JS.InvokeVoidAsync("updateChartData", "test", newLabel, newValue);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("更新圖表時出錯: " + ex.Message);
-        }
-    }
-
     public void Dispose()
     {
         if(!string.IsNullOrEmpty(currentCard.ID))
@@ -116,8 +94,5 @@
             DataCenter.UnregisterChartListener(UpdateData_OnChart);
             Notifier.Unregister(currentCard.ID);
         }
-
-        _timer?.Stop();
-        _timer?.Dispose();
     }
 }

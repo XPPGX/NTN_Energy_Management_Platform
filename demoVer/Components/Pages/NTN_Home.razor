@@ -504,7 +504,10 @@
             case CardType.Chart: //chart
                 newCard.card_Type = CardType.Chart;
                 newCard.widthClass = "w50";
-                newCard.cardName = "";
+                newCard.cardName = "NewChart";
+                newCard.Chart_Setting = new CHART_SETTING();
+                newCard.Chart_Setting.canvasID = $"Chart_{Guid.NewGuid().ToString("N")}";
+                newCard.Chart_Setting.ChartTitle = "NewChart";
                 break;
             case CardType.Status: //status
                 newCard.card_Type = CardType.Status;
@@ -518,7 +521,9 @@
         newCard.showSequence = (byte)(CardInfos.Count);
         
         
+        Console.WriteLine("[addCard][1]");
         CardInfos.Add(newCard);
+        Console.WriteLine("[addCard][2]");
         afterAddCard_Flag = true;
         StateHasChanged();
         CloseModal();

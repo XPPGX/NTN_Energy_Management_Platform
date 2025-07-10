@@ -343,9 +343,9 @@ edit-container是用來綁以下javascript事件的 id :
                         </tr>
                     </thead>
                     <tbody>
-                        @for(int i = 0 ; i < edit_ChartSetting.chart_single_data_lines.Count ; i ++)
+                        @for(int i = 0 ; i < edit_ChartSetting_Clone.chart_single_data_lines.Count ; i ++)
                         {
-                            var temp = edit_ChartSetting.chart_single_data_lines[i];
+                            var temp = edit_ChartSetting_Clone.chart_single_data_lines[i];
                             <tr>
                                 <td class="basic-td long-press-row" data-table="table-ChartSetting" data-index="@i">
                                     @{
@@ -385,8 +385,8 @@ edit-container是用來綁以下javascript事件的 id :
                                                 else{hint = "未完成:右鍵編輯";}
                                                 break;
                                             case SettingStatus.DONE:
-                                                if(temp.Y_axis_selection == true){hint = $"{edit_ChartSetting.Y_left_Title}-左";}
-                                                else if(temp.Y_axis_selection == false){hint = $"{edit_ChartSetting.Y_right_Title}-右";}
+                                                if(temp.Y_axis_selection == true){hint = $"{edit_ChartSetting_Clone.Y_left_Title}-左";}
+                                                else if(temp.Y_axis_selection == false){hint = $"{edit_ChartSetting_Clone.Y_right_Title}-右";}
                                                 hint_color = temp.color;
                                                 break;
                                             default:
@@ -624,12 +624,12 @@ edit-container是用來綁以下javascript事件的 id :
                         Console.WriteLine("[OnParameterSet]CardType.Info");
                         break;
                     case CardType.Chart:
-                        edit_ChartSetting = currentCardInfo.Chart_Setting;
-                        temp_chartTitle = edit_ChartSetting.ChartTitle;
+                        edit_ChartSetting_Clone = currentCardInfo.Chart_Setting.DeepClone(); //edit_ChartSetting_Clone 與 currentCardInfo.Chart_Setting 不同塊記憶體
+                        temp_chartTitle = edit_ChartSetting_Clone.ChartTitle;
 
-                        if(edit_ChartSetting.chart_single_data_lines.Count == 0)
+                        if(edit_ChartSetting_Clone.chart_single_data_lines.Count == 0)
                         {
-                            edit_ChartSetting.chart_single_data_lines = new List<CHART_SINGLE_DATA_LINE>();
+                            edit_ChartSetting_Clone.chart_single_data_lines = new List<CHART_SINGLE_DATA_LINE>();
                         }
                         break;
                     case CardType.Status:
@@ -1037,7 +1037,7 @@ edit-container是用來綁以下javascript事件的 id :
 
     #region CHART_Variables_and_Functions
     private CHART_SETTING_STAGE CHART_setting_stage = CHART_SETTING_STAGE.OVERVIEW;
-    private CHART_SETTING edit_ChartSetting = new CHART_SETTING();
+    private CHART_SETTING edit_ChartSetting_Clone = new CHART_SETTING();
     private CHART_SINGLE_DATA_LINE blank_singleDataLine = new CHART_SINGLE_DATA_LINE();
     private int SingleLine_index = 0;
     private MudForm form;
@@ -1062,7 +1062,7 @@ edit-container是用來綁以下javascript事件的 id :
 
     private void clickCmd_CHART(string _selected_Cmd)
     {
-        var target_DataLine = edit_ChartSetting.chart_single_data_lines[SingleLine_index];
+        var target_DataLine = edit_ChartSetting_Clone.chart_single_data_lines[SingleLine_index];
         target_DataLine.Cmd = _selected_Cmd;
         target_DataLine.Unit = "";
         target_DataLine.status = SettingStatus.PROGRESS;
@@ -1088,7 +1088,7 @@ edit-container是用來綁以下javascript事件的 id :
 
     private void clickUnit_CHART(string _selected_Unit)
     {
-        var target_DataLine = edit_ChartSetting.chart_single_data_lines[SingleLine_index];
+        var target_DataLine = edit_ChartSetting_Clone.chart_single_data_lines[SingleLine_index];
         target_DataLine.Unit = _selected_Unit;
         chartForm_errorMessage = null;
         CHART_setting_stage = CHART_SETTING_STAGE.DISPLAY_SETTING;
@@ -1098,16 +1098,16 @@ edit-container是用來綁以下javascript事件的 id :
     private void DeleteAction_In_CHART_OVERVIEW_STAGE()
     {
         Console.WriteLine("執行刪除");
-        if(SingleLine_index >= 0 && SingleLine_index < edit_ChartSetting.chart_single_data_lines.Count)
+        if(SingleLine_index >= 0 && SingleLine_index < edit_ChartSetting_Clone.chart_single_data_lines.Count)
         {
-            edit_ChartSetting.chart_single_data_lines.RemoveAt(SingleLine_index);
+            edit_ChartSetting_Clone.chart_single_data_lines.RemoveAt(SingleLine_index);
         }
     }
 
     private void Add_Curve()
     {
-        if(edit_ChartSetting.chart_single_data_lines.Count == 2){return;}
-        edit_ChartSetting.chart_single_data_lines.Add(new CHART_SINGLE_DATA_LINE
+        if(edit_ChartSetting_Clone.chart_single_data_lines.Count == 2){return;}
+        edit_ChartSetting_Clone.chart_single_data_lines.Add(new CHART_SINGLE_DATA_LINE
         {
             Cmd = "",
             Y_axis_selection = true,
@@ -1118,13 +1118,16 @@ edit-container是用來綁以下javascript事件的 id :
 
     private void Confirm_CurveSetting()
     {
-        Console.WriteLine("[edit_ChartSetting] : ");
-        string json = JsonSerializer.Serialize(edit_ChartSetting, new JsonSerializerOptions{
+        Console.WriteLine("[edit_ChartSetting_Clone] : ");
+        string json = JsonSerializer.Serialize(edit_ChartSetting_Clone, new JsonSerializerOptions{
             WriteIndented = true
         });
         Console.WriteLine(json);
     
-        edit_ChartSetting.ChartTitle = temp_chartTitle;
+        edit_ChartSetting_Clone.ChartTitle = temp_chartTitle;
+
+        currentCardInfo.Chart_Setting = edit_ChartSetting_Clone.DeepClone();
+
         currentCardInfo.cardName = temp_chartTitle; //Avoid Bug
 
 
@@ -1138,13 +1141,13 @@ edit-container是用來綁以下javascript事件的 id :
         await form.Validate();
         
         string colorError = string.IsNullOrEmpty(blank_singleDataLine.color) ? "Y-Data Color is required" : null;
-        var target_DataLine = edit_ChartSetting.chart_single_data_lines[SingleLine_index];
+        var target_DataLine = edit_ChartSetting_Clone.chart_single_data_lines[SingleLine_index];
         bool sameAxis_Flag = false;
-        if(edit_ChartSetting.chart_single_data_lines.Count == 2)
+        if(edit_ChartSetting_Clone.chart_single_data_lines.Count == 2)
         {
             int opposite_index = (SingleLine_index == 0) ? 1 : 0;
             
-            sameAxis_Flag = (blank_singleDataLine.Y_axis_selection == edit_ChartSetting.chart_single_data_lines[opposite_index].Y_axis_selection) ? true : false;
+            sameAxis_Flag = (blank_singleDataLine.Y_axis_selection == edit_ChartSetting_Clone.chart_single_data_lines[opposite_index].Y_axis_selection) ? true : false;
         }
         
         
@@ -1164,14 +1167,14 @@ edit-container是用來綁以下javascript事件的 id :
         target_DataLine.color = blank_singleDataLine.color;
         if(target_DataLine.Y_axis_selection == true)
         {//left axis
-            edit_ChartSetting.Y_left_Title = temp_Y_singleTitle;
+            edit_ChartSetting_Clone.Y_left_Title = temp_Y_singleTitle;
         }
         else if(target_DataLine.Y_axis_selection == false)
         {//right axis
-            edit_ChartSetting.Y_right_Title = temp_Y_singleTitle;
+            edit_ChartSetting_Clone.Y_right_Title = temp_Y_singleTitle;
         }
 
-        Console.WriteLine($"Y-Title = {temp_Y_singleTitle}, Y-axis = {edit_ChartSetting.chart_single_data_lines[SingleLine_index].Y_axis_selection}, color = {edit_ChartSetting.chart_single_data_lines[SingleLine_index].color}");
+        Console.WriteLine($"Y-Title = {temp_Y_singleTitle}, Y-axis = {edit_ChartSetting_Clone.chart_single_data_lines[SingleLine_index].Y_axis_selection}, color = {edit_ChartSetting_Clone.chart_single_data_lines[SingleLine_index].color}");
         
         target_DataLine.status = SettingStatus.DONE;
         CHART_setting_stage = CHART_SETTING_STAGE.OVERVIEW;

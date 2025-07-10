@@ -136,7 +136,33 @@ namespace demoVer.Models
         public string Y_right_Title {get; set;}
         public int YMin {get; set;}
         public int YMax {get; set;}
-        public List<CHART_SINGLE_DATA_LINE> chart_single_data_lines {get; set;}
+        public List<CHART_SINGLE_DATA_LINE> chart_single_data_lines {get; set;} = new List<CHART_SINGLE_DATA_LINE>();
+
+        public CHART_SETTING DeepClone()
+        {
+            return new CHART_SETTING
+            {
+                canvasID = this.canvasID,
+                ChartTitle = this.ChartTitle,
+                XTitle = this.XTitle,
+                timeGap_selection = this.timeGap_selection,
+                Labels = this.Labels?.ToArray(),
+                Y_left_Title = this.Y_left_Title,
+                Y_right_Title = this.Y_right_Title,
+                YMin = this.YMin,
+                YMax = this.YMax,
+                chart_single_data_lines = this.chart_single_data_lines?
+                    .Select(line => new CHART_SINGLE_DATA_LINE
+                    {
+                        status = line.status,
+                        Cmd = line.Cmd,
+                        Unit = line.Unit,
+                        Y_axis_selection = line.Y_axis_selection,
+                        color = line.color,
+                        Data = line.Data?.ToArray()
+                    }).ToList()
+            };
+        }
     }
 
     public enum timeGap{
