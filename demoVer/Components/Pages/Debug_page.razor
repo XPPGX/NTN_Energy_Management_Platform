@@ -2,16 +2,14 @@
 @rendermode InteractiveServer
 @inject IJSRuntime JS
 @inject DataCenter DataCenter
+@inject HeartbeatService Heartbeat
 @using demoVer.Components.Layout
 @using System.Text.Json
 @using System.IO
 @using demoVer.Utils
 @using demoVer.Models
 
-@if (vinData != null)
-{
-    <p>電壓：@vinData.DisplayValue</p>
-}
+<p>電壓：@DataCenter.INV_MOD_READ_Data["READ_VIN"].DisplayValue</p>
 
 @code
 {
@@ -21,12 +19,7 @@
     protected override async Task OnInitializedAsync()
     {
         await SimulateJsonInputAsync();
-        if(DataCenter.INV_MOD_READ_Data.TryGetValue("READ_VIN", out var cmd))
-        {
-            vinData = cmd;
-
-            vinData.OnUpdated += OnVinDataUpdated;
-        }
+        Heartbeat.OnTick += OnHeartbeatTick;   
     }
 
     
@@ -37,16 +30,14 @@
         DataCenter.LoadSingleDeviceINVData(rawList);
     }
 
-    private void OnVinDataUpdated()
+    private Task OnHeartbeatTick()
     {
-        InvokeAsync(StateHasChanged); // 🔁 更新畫面
+        InvokeAsync(StateHasChanged);
+        return Task.CompletedTask;
     }
 
     public void Dispose()
     {
-        if(vinData != null)
-        {
-            vinData.OnUpdated -= OnVinDataUpdated;
-        }
+        Heartbeat.OnTick -= OnHeartbeatTick;
     }
 }

@@ -6,7 +6,7 @@ namespace demoVer.Models
         BATTERY_SETTING = 2,
         INV_SETTING     = 3,
         LINK_STATUS     = 4,
-        LOG        = 5,
+        LOG             = 5,
         USE_STRATEGY    = 6,
     }
 
