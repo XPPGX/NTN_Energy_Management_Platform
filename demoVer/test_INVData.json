@@ -1,1 +1,411 @@
-[{"commandName":"READ_VIN","data":[0,0],"scaling":0.1,"baseUnit":"V","dataFormat":"Numeric","split":null},{"commandName":"READ_IIN","data":[0,0],"scaling":0.1,"baseUnit":"A","dataFormat":"Numeric","split":null},{"commandName":"READ_FREQ","data":[0,0],"scaling":0.01,"baseUnit":null,"dataFormat":"Numeric","split":null},{"commandName":"READ_TEMPERATURE_1","data":[0,0],"scaling":0.1,"baseUnit":"℃","dataFormat":"Numeric","split":null},{"commandName":"READ_FAN_SPEED_1","data":[0,0],"scaling":1,"baseUnit":null,"dataFormat":"Numeric","split":null},{"commandName":"READ_FAN_SPEED_2","data":[0,0],"scaling":0.1,"baseUnit":null,"dataFormat":"Numeric","split":null},{"commandName":"MFR_ID_B0B5","data":[0,0,0,0,0,0],"scaling":1,"baseUnit":null,"dataFormat":"ASCII","split":null},{"commandName":"MFR_ID_B6B11","data":[0,0,0,0,0,0],"scaling":1,"baseUnit":null,"dataFormat":"ASCII","split":null},{"commandName":"MFR_MODEL_B0B5","data":[0,0,0,0,0,0],"scaling":1,"baseUnit":null,"dataFormat":"ASCII","split":null},{"commandName":"MFR_MODEL_B6B11","data":[0,0,0,0,0,0],"scaling":1,"baseUnit":null,"dataFormat":"ASCII","split":null},{"commandName":"MFR_REVISION_B0B5","data":[0,0,0,0,0,0],"scaling":0.1,"baseUnit":null,"dataFormat":"Numeric","split":"1,"},{"commandName":"MFR_LOCATION_B0B2","data":[0,0,0],"scaling":1,"baseUnit":null,"dataFormat":"ASCII","split":null},{"commandName":"MFR_DATE_B0B5","data":[0,0,0,0,0,0],"scaling":1,"baseUnit":null,"dataFormat":"ASCII","split":null},{"commandName":"MFR_SERIAL_B0B5","data":[0,0,0,0,0,0],"scaling":1,"baseUnit":null,"dataFormat":"ASCII","split":null},{"commandName":"MFR_SERIAL_B6B11","data":[0,0,0,0,0,0],"scaling":1,"baseUnit":null,"dataFormat":"ASCII","split":null},{"commandName":"CURVE_CC","data":[0,0],"scaling":0.01,"baseUnit":"A","dataFormat":"Numeric","split":null},{"commandName":"CURVE_CV","data":[0,0],"scaling":0.01,"baseUnit":"V","dataFormat":"Numeric","split":null},{"commandName":"CURVE_FV","data":[0,0],"scaling":0.01,"baseUnit":"V","dataFormat":"Numeric","split":null},{"commandName":"CURVE_TC","data":[0,0],"scaling":0.01,"baseUnit":"A","dataFormat":"Numeric","split":null},{"commandName":"CURVE_CONFIG","data":[0,0],"scaling":1,"baseUnit":null,"dataFormat":"Numeric","split":null},{"commandName":"CURVE_CC_TIMEOUT","data":[0,0],"scaling":1,"baseUnit":"Sec","dataFormat":"Numeric","split":null},{"commandName":"CURVE_CV_TIMEOUT","data":[0,0],"scaling":1,"baseUnit":"Sec","dataFormat":"Numeric","split":null},{"commandName":"CURVE_FV_TIMEOUT","data":[0,0],"scaling":1,"baseUnit":"Sec","dataFormat":"Numeric","split":null},{"commandName":"CHG_STATUS","data":[0,0],"scaling":0.01,"baseUnit":"V","dataFormat":"Numeric","split":null},{"commandName":"BAT_ALM_VOLT","data":[0,0],"scaling":0.01,"baseUnit":"V","dataFormat":"Numeric","split":null},{"commandName":"BAT_SHDN_VOLT","data":[0,0],"scaling":0.01,"baseUnit":"V","dataFormat":"Numeric","split":null},{"commandName":"BAT_RCHG_VOLT","data":[0,0],"scaling":0.01,"baseUnit":"V","dataFormat":"Numeric","split":null},{"commandName":"BAT_OV_ALM_VOLT","data":[0,0],"scaling":0.01,"baseUnit":"V","dataFormat":"Numeric","split":null},{"commandName":"SCALING_FACTOR","data":[0,0,0,0,0,0],"scaling":1,"baseUnit":null,"dataFormat":"Numeric","split":null},{"commandName":"SYSTEM_CONFIG","data":[0,0],"scaling":1,"baseUnit":null,"dataFormat":"Numeric","split":null},{"commandName":"INV_OPERATION","data":[0,0],"scaling":1,"baseUnit":null,"dataFormat":"Numeric","split":null},{"commandName":"INV_CONFIG","data":[0,0],"scaling":1,"baseUnit":null,"dataFormat":"Numeric","split":null},{"commandName":"Output_ACV_Set","data":[0,0],"scaling":1,"baseUnit":null,"dataFormat":"Numeric","split":null},{"commandName":"Output_ACF_Set","data":[0,0],"scaling":1,"baseUnit":null,"dataFormat":"Numeric","split":null},{"commandName":"READ_AC_FOUT","data":[0,0],"scaling":0.01,"baseUnit":null,"dataFormat":"Numeric","split":null},{"commandName":"READ_AC_VOUT","data":[0,0],"scaling":0.1,"baseUnit":"V","dataFormat":"Numeric","split":null},{"commandName":"READ_OP_LD_PCNT","data":[0,0],"scaling":1,"baseUnit":null,"dataFormat":"Numeric","split":null},{"commandName":"READ_OP_WATT_HI","data":[0,0],"scaling":1,"baseUnit":null,"dataFormat":"Numeric","split":null},{"commandName":"READ_OP_WATT_LO","data":[0,0],"scaling":0.1,"baseUnit":"W","dataFormat":"Numeric","split":null},{"commandName":"READ_OP_VA_HI","data":[0,0],"scaling":0.1,"baseUnit":"W","dataFormat":"Numeric","split":null},{"commandName":"READ_OP_VA_LO","data":[0,0],"scaling":0.1,"baseUnit":"W","dataFormat":"Numeric","split":null},{"commandName":"READ_VBAT","data":[0,0],"scaling":0.01,"baseUnit":"V","dataFormat":"Numeric","split":null},{"commandName":"READ_CHG_CURR","data":[0,0],"scaling":1,"baseUnit":null,"dataFormat":"Numeric","split":null},{"commandName":"BAT_CAPACITY","data":[0,0],"scaling":1,"baseUnit":null,"dataFormat":"Numeric","split":null},{"commandName":"INV_STATUS","data":[0,0],"scaling":1,"baseUnit":null,"dataFormat":"Numeric","split":null},{"commandName":"INV_FAULT","data":[0,0],"scaling":1,"baseUnit":null,"dataFormat":"Numeric","split":null},{"commandName":"READ_BP_WATT_HI","data":[0,0],"scaling":0.1,"baseUnit":"W","dataFormat":"Numeric","split":null},{"commandName":"READ_BP_WATT_LO","data":[0,0],"scaling":0.1,"baseUnit":"W","dataFormat":"Numeric","split":null},{"commandName":"READ_BP_VA_HI","data":[0,0],"scaling":0.1,"baseUnit":"W","dataFormat":"Numeric","split":null},{"commandName":"READ_BP_VA_LO","data":[0,0],"scaling":0.1,"baseUnit":"W","dataFormat":"Numeric","split":null},{"commandName":"READ_AC_IOUT","data":[0,0],"scaling":0.1,"baseUnit":"W","dataFormat":"Numeric","split":null}]
+[
+    {
+      "commandName": "READ_VIN",
+      "data": [2, 64],
+      "scaling": 0.1,
+      "baseUnit": "V",
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "READ_IIN",
+      "data": [0, 0],
+      "scaling": 0.1,
+      "baseUnit": "A",
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "READ_FREQ",
+      "data": [0, 0],
+      "scaling": 0.01,
+      "baseUnit": null,
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "READ_TEMPERATURE_1",
+      "data": [0, 0],
+      "scaling": 0.1,
+      "baseUnit": "℃",
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "READ_FAN_SPEED_1",
+      "data": [0, 0],
+      "scaling": 1,
+      "baseUnit": null,
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "READ_FAN_SPEED_2",
+      "data": [0, 0],
+      "scaling": 0.1,
+      "baseUnit": null,
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "MFR_ID_B0B5",
+      "data": [0, 0, 0, 0, 0, 0],
+      "scaling": 1,
+      "baseUnit": null,
+      "dataFormat": "ASCII",
+      "split": null
+    },
+    {
+      "commandName": "MFR_ID_B6B11",
+      "data": [0, 0, 0, 0, 0, 0],
+      "scaling": 1,
+      "baseUnit": null,
+      "dataFormat": "ASCII",
+      "split": null
+    },
+    {
+      "commandName": "MFR_MODEL_B0B5",
+      "data": [0, 0, 0, 0, 0, 0],
+      "scaling": 1,
+      "baseUnit": null,
+      "dataFormat": "ASCII",
+      "split": null
+    },
+    {
+      "commandName": "MFR_MODEL_B6B11",
+      "data": [0, 0, 0, 0, 0, 0],
+      "scaling": 1,
+      "baseUnit": null,
+      "dataFormat": "ASCII",
+      "split": null
+    },
+    {
+      "commandName": "MFR_REVISION_B0B5",
+      "data": [0, 0, 0, 0, 0, 0],
+      "scaling": 0.1,
+      "baseUnit": null,
+      "dataFormat": "Numeric",
+      "split": "1,"
+    },
+    {
+      "commandName": "MFR_LOCATION_B0B2",
+      "data": [0, 0, 0],
+      "scaling": 1,
+      "baseUnit": null,
+      "dataFormat": "ASCII",
+      "split": null
+    },
+    {
+      "commandName": "MFR_DATE_B0B5",
+      "data": [0, 0, 0, 0, 0, 0],
+      "scaling": 1,
+      "baseUnit": null,
+      "dataFormat": "ASCII",
+      "split": null
+    },
+    {
+      "commandName": "MFR_SERIAL_B0B5",
+      "data": [0, 0, 0, 0, 0, 0],
+      "scaling": 1,
+      "baseUnit": null,
+      "dataFormat": "ASCII",
+      "split": null
+    },
+    {
+      "commandName": "MFR_SERIAL_B6B11",
+      "data": [0, 0, 0, 0, 0, 0],
+      "scaling": 1,
+      "baseUnit": null,
+      "dataFormat": "ASCII",
+      "split": null
+    },
+    {
+      "commandName": "CURVE_CC",
+      "data": [0, 0],
+      "scaling": 0.01,
+      "baseUnit": "A",
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "CURVE_CV",
+      "data": [0, 0],
+      "scaling": 0.01,
+      "baseUnit": "V",
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "CURVE_FV",
+      "data": [0, 0],
+      "scaling": 0.01,
+      "baseUnit": "V",
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "CURVE_TC",
+      "data": [0, 0],
+      "scaling": 0.01,
+      "baseUnit": "A",
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "CURVE_CONFIG",
+      "data": [0, 0],
+      "scaling": 1,
+      "baseUnit": null,
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "CURVE_CC_TIMEOUT",
+      "data": [0, 0],
+      "scaling": 1,
+      "baseUnit": "Sec",
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "CURVE_CV_TIMEOUT",
+      "data": [0, 0],
+      "scaling": 1,
+      "baseUnit": "Sec",
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "CURVE_FV_TIMEOUT",
+      "data": [0, 0],
+      "scaling": 1,
+      "baseUnit": "Sec",
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "CHG_STATUS",
+      "data": [0, 0],
+      "scaling": 0.01,
+      "baseUnit": "V",
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "BAT_ALM_VOLT",
+      "data": [0, 0],
+      "scaling": 0.01,
+      "baseUnit": "V",
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "BAT_SHDN_VOLT",
+      "data": [0, 0],
+      "scaling": 0.01,
+      "baseUnit": "V",
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "BAT_RCHG_VOLT",
+      "data": [0, 0],
+      "scaling": 0.01,
+      "baseUnit": "V",
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "BAT_OV_ALM_VOLT",
+      "data": [0, 0],
+      "scaling": 0.01,
+      "baseUnit": "V",
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "SCALING_FACTOR",
+      "data": [0, 0, 0, 0, 0, 0],
+      "scaling": 1,
+      "baseUnit": null,
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "SYSTEM_CONFIG",
+      "data": [0, 0],
+      "scaling": 1,
+      "baseUnit": null,
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "INV_OPERATION",
+      "data": [0, 0],
+      "scaling": 1,
+      "baseUnit": null,
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "INV_CONFIG",
+      "data": [0, 0],
+      "scaling": 1,
+      "baseUnit": null,
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "Output_ACV_Set",
+      "data": [0, 0],
+      "scaling": 1,
+      "baseUnit": null,
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "Output_ACF_Set",
+      "data": [0, 0],
+      "scaling": 1,
+      "baseUnit": null,
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "READ_AC_FOUT",
+      "data": [0, 0],
+      "scaling": 0.01,
+      "baseUnit": null,
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "READ_AC_VOUT",
+      "data": [0, 0],
+      "scaling": 0.1,
+      "baseUnit": "V",
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "READ_OP_LD_PCNT",
+      "data": [0, 0],
+      "scaling": 1,
+      "baseUnit": null,
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "READ_OP_WATT_HI",
+      "data": [0, 0],
+      "scaling": 1,
+      "baseUnit": null,
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "READ_OP_WATT_LO",
+      "data": [0, 0],
+      "scaling": 0.1,
+      "baseUnit": "W",
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "READ_OP_VA_HI",
+      "data": [0, 0],
+      "scaling": 0.1,
+      "baseUnit": "W",
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "READ_OP_VA_LO",
+      "data": [0, 0],
+      "scaling": 0.1,
+      "baseUnit": "W",
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "READ_VBAT",
+      "data": [0, 0],
+      "scaling": 0.01,
+      "baseUnit": "V",
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "READ_CHG_CURR",
+      "data": [0, 0],
+      "scaling": 1,
+      "baseUnit": null,
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "BAT_CAPACITY",
+      "data": [0, 0],
+      "scaling": 1,
+      "baseUnit": null,
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "INV_STATUS",
+      "data": [0, 0],
+      "scaling": 1,
+      "baseUnit": null,
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "INV_FAULT",
+      "data": [0, 0],
+      "scaling": 1,
+      "baseUnit": null,
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "READ_BP_WATT_HI",
+      "data": [0, 0],
+      "scaling": 0.1,
+      "baseUnit": "W",
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "READ_BP_WATT_LO",
+      "data": [0, 0],
+      "scaling": 0.1,
+      "baseUnit": "W",
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "READ_BP_VA_HI",
+      "data": [0, 0],
+      "scaling": 0.1,
+      "baseUnit": "W",
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "READ_BP_VA_LO",
+      "data": [0, 0],
+      "scaling": 0.1,
+      "baseUnit": "W",
+      "dataFormat": "Numeric",
+      "split": null
+    },
+    {
+      "commandName": "READ_AC_IOUT",
+      "data": [0, 0],
+      "scaling": 0.1,
+      "baseUnit": "W",
+      "dataFormat": "Numeric",
+      "split": null
+    }
+  ]
+  

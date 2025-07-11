@@ -1,12 +1,13 @@
 using demoVer.Services;
+using demoVer.Utils;
 
 namespace demoVer.Models
 {
-    public class Battery_DataSetting_Module_W : ObservableModule
+    public class Battery_DataSetting_Module : ObservableModule
     {
         //引入commonData
         private readonly CommonData _commonData;
-        public Battery_DataSetting_Module_W(CommonData commonData)
+        public Battery_DataSetting_Module(CommonData commonData)
         {
             _commonData = commonData;
         }
@@ -16,24 +17,24 @@ namespace demoVer.Models
         public int CC_Raw => _CC_Raw;   //傳輸資料用(屬性,不消耗記憶體)
         public float CC_Display         //UI顯示與設定(屬性,不消耗記憶體)
         {
-            get => _commonData.ScalingFactors.MultOperation((float)_CC_Raw,  _commonData.ScalingFactors.IDC_Factor);
-            set => _CC_Raw = (int)_commonData.ScalingFactors.Scale_IDC(value);
+            get => ScalingComputer.MultOperation((float)_CC_Raw,  _commonData.IDC_Factor);
+            set => _CC_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.IDC_Factor);
         }
 
         private int _CC_Max_Raw;
         public int CC_Max_Raw => _CC_Max_Raw;
         public float CC_Max_Display
         {
-            get => _commonData.ScalingFactors.MultOperation((float)_CC_Max_Raw, _commonData.ScalingFactors.IDC_Factor);
-            set => _CC_Max_Raw = (int)_commonData.ScalingFactors.Scale_IDC(value);
+            get => ScalingComputer.MultOperation((float)_CC_Max_Raw, _commonData.IDC_Factor);
+            set => _CC_Max_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.IDC_Factor);
         }
 
         private int _CC_Min_Raw;
         public int CC_Min_Raw => _CC_Min_Raw;
         public float CC_Min_Display
         {
-            get => _commonData.ScalingFactors.MultOperation((float)_CC_Min_Raw, _commonData.ScalingFactors.IDC_Factor);
-            set => _CC_Min_Raw = (int)_commonData.ScalingFactors.Scale_IDC(value);
+            get => ScalingComputer.MultOperation((float)_CC_Min_Raw, _commonData.IDC_Factor);
+            set => _CC_Min_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.IDC_Factor);
         }
 
         //TC
@@ -41,24 +42,24 @@ namespace demoVer.Models
         public int TC_Raw => _TC_Raw;
         public float TC_Display
         {
-            get => _commonData.ScalingFactors.MultOperation((float)_TC_Raw, _commonData.ScalingFactors.IDC_Factor);
-            set => _TC_Raw = (int)_commonData.ScalingFactors.Scale_IDC(value);
+            get => ScalingComputer.MultOperation((float)_TC_Raw, _commonData.IDC_Factor);
+            set => _TC_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.IDC_Factor);
         }
 
         private int _TC_Max_Raw;
         public int TC_Max_Raw => _TC_Max_Raw;
         public float TC_Max_Display
         {
-            get => _commonData.ScalingFactors.MultOperation((float)_TC_Max_Raw, _commonData.ScalingFactors.IDC_Factor);
-            set => _TC_Max_Raw = (int)_commonData.ScalingFactors.Scale_IDC(value);
+            get => ScalingComputer.MultOperation((float)_TC_Max_Raw, _commonData.IDC_Factor);
+            set => _TC_Max_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.IDC_Factor);
         }
 
         private int _TC_Min_Raw;
         public int TC_Min_Raw => _TC_Min_Raw;
         public float TC_Min_Display
         {
-            get => _commonData.ScalingFactors.MultOperation((float)_TC_Min_Raw, _commonData.ScalingFactors.IDC_Factor);
-            set => _TC_Min_Raw = (int)_commonData.ScalingFactors.Scale_IDC(value);
+            get => ScalingComputer.MultOperation((float)_TC_Min_Raw, _commonData.IDC_Factor);
+            set => _TC_Min_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.IDC_Factor);
         }
 
         //CV
@@ -66,24 +67,24 @@ namespace demoVer.Models
         public int CV_Raw => _CV_Raw;
         public float CV_Display
         {
-            get => _commonData.ScalingFactors.MultOperation((float)_CV_Raw, _commonData.ScalingFactors.VDC_Factor * 10);
-            set => _CV_Raw = (int)_commonData.ScalingFactors.Scale_VDC(value) / 10;
+            get => ScalingComputer.MultOperation((float)_CV_Raw, _commonData.VDC_Factor * 10);
+            set => _CV_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.VDC_Factor) / 10;
         }
 
         private int _CV_Max_Raw;
         public int CV_Max_Raw => _CV_Max_Raw;
         public float CV_Max_Display
         {
-            get => _commonData.ScalingFactors.MultOperation((float)_CV_Max_Raw, _commonData.ScalingFactors.VDC_Factor * 10);
-            set => _CV_Max_Raw = (int)_commonData.ScalingFactors.Scale_VDC(value);
+            get => ScalingComputer.MultOperation((float)_CV_Max_Raw, _commonData.VDC_Factor * 10);
+            set => _CV_Max_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.VDC_Factor);
         }
 
         private int _CV_Min_Raw;
         public int CV_Min_Raw => _CV_Min_Raw;
         public float CV_Min_Display
         {
-            get => _commonData.ScalingFactors.MultOperation((float)_CV_Min_Raw, _commonData.ScalingFactors.VDC_Factor * 10);
-            set => _CV_Min_Raw = (int)_commonData.ScalingFactors.Scale_VDC(value);
+            get => ScalingComputer.MultOperation((float)_CV_Min_Raw, _commonData.VDC_Factor * 10);
+            set => _CV_Min_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.VDC_Factor);
         }
 
         //FV
@@ -91,16 +92,16 @@ namespace demoVer.Models
         public int FV_Raw => _FV_Raw;
         public float FV_Display
         {
-            get => _commonData.ScalingFactors.MultOperation((float)_FV_Raw, _commonData.ScalingFactors.VDC_Factor * 10);
-            set => _FV_Raw = (int)_commonData.ScalingFactors.Scale_VDC(value) / 10;
+            get => ScalingComputer.MultOperation((float)_FV_Raw, _commonData.VDC_Factor * 10);
+            set => _FV_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.VDC_Factor) / 10;
         }
 
         private int _FV_Min_Raw;
         public int FV_Min_Raw => _FV_Min_Raw;
         public float FV_Min_Display
         {
-            get => _commonData.ScalingFactors.MultOperation((float)_FV_Min_Raw, _commonData.ScalingFactors.VDC_Factor * 10);
-            set => _FV_Min_Raw = (int)_commonData.ScalingFactors.Scale_VDC(value);
+            get => ScalingComputer.MultOperation((float)_FV_Min_Raw, _commonData.VDC_Factor * 10);
+            set => _FV_Min_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.VDC_Factor);
         }
 
         public float FV_Max_Display => CV_Display;
@@ -224,11 +225,6 @@ namespace demoVer.Models
             Console.WriteLine($"FV(Raw, DMax, DMin) = {_FV_Raw}, {FV_Max_Display}, {FV_Min_Display}");
             
             NotifyChanged();
-        }
-
-        public void Refresh()
-        {
-            
         }
     }
     

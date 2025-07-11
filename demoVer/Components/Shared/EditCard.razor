@@ -427,7 +427,8 @@ edit-container是用來綁以下javascript事件的 id :
                     <h3>顯示設定</h3>
                     <div class="chartForm">
                         @{
-                            <MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 400px; max-height: 400px;">
+                            string paper_style = (isMobile) ? "" : "width: 400px; max-height: 400px;" ;
+                            <MudPaper Elevation="2" Class="pa-2 rounded" Style="@paper_style">
                                 <MudForm @ref="form" @bind-IsValid="@success">
                                     <MudTextField T="string" @bind-Value="temp_Y_singleTitle" Label="Y-Title" Required="true" RequiredError="Y-Title is required!" />
                                     <MudRadioGroup T="bool?" @bind-Value="blank_singleDataLine.Y_axis_selection" Required="true" RequiredError="Y-axis is required!">

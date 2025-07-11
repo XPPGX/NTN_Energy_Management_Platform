@@ -1,0 +1,52 @@
+@page "/Debug_page"
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+@inject DataCenter DataCenter
+@using demoVer.Components.Layout
+@using System.Text.Json
+@using System.IO
+@using demoVer.Utils
+@using demoVer.Models
+
+@if (vinData != null)
+{
+    <p>電壓：@vinData.DisplayValue</p>
+}
+
+@code
+{
+
+    private CommandData? vinData;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await SimulateJsonInputAsync();
+        if(DataCenter.INV_MOD_READ_Data.TryGetValue("READ_VIN", out var cmd))
+        {
+            vinData = cmd;
+
+            vinData.OnUpdated += OnVinDataUpdated;
+        }
+    }
+
+    
+    public async Task SimulateJsonInputAsync()
+    {
+        var filePath = "test_INVData.json";
+        var rawList = await DataCenter.LoadMockJsonAsync(filePath);
+        DataCenter.LoadSingleDeviceINVData(rawList);
+    }
+
+    private void OnVinDataUpdated()
+    {
+        InvokeAsync(StateHasChanged); // 🔁 更新畫面
+    }
+
+    public void Dispose()
+    {
+        if(vinData != null)
+        {
+            vinData.OnUpdated -= OnVinDataUpdated;
+        }
+    }
+}

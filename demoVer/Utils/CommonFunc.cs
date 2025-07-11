@@ -17,7 +17,35 @@ namespace demoVer.Utils
         }
     }
 
+    public static class ScalingComputer
+    {
+        public static float DevideOperation(float value, float factor)
+        {
+            switch(factor)
+            {
+                case 0.001f: return value * 1000;
+                case 0.01f:  return value * 100;
+                case 0.1f:   return value * 10;
+                case 1.0f:   return value * 1;
+                // case 10f:    return value / 10;
+                // case 100f:   return value / 100;
+                default:    return -1;
+            }
+        }
 
+        public static float MultOperation(float value, float factor)
+        {
+            return AutoSnapToDecimal(value * factor, 3);
+        }
+
+        public static float AutoSnapToDecimal(float value, int decimals = 2)
+        {
+            float rounded = (float)Math.Round(value, decimals);
+            float tolerance = MathF.Pow(10, -decimals) * 5;
+            return Math.Abs(value - rounded) < tolerance ? rounded : value;
+        }
+    }
+    
     public static class AppJsonManager
     {
         public static bool DEBUG_MODE = true;
