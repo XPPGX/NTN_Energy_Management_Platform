@@ -2,8 +2,10 @@
 
 @rendermode InteractiveServer
 @inject IJSRuntime JS
+@inject DataCenter DataCenter
 @using demoVer.Components.Layout
 @using demoVer.Models
+@using demoVer.Utils
 
 <MudPopoverProvider/>
 @*Web Content*@
@@ -19,14 +21,24 @@
                 <div class="selection-container">
                     <div class="single-selection">
                         <MudSelect T="string" Label="輸出頻率" Value="selectedFreqType" Immediate="true" Dense="true" Variant="Variant.Filled" ValueChanged="@(v => {selectedFreqType = v; OnChartTypeChanged();})">
-                            <MudSelectItem Value="@("50Hz")">50Hz</MudSelectItem>
-                            <MudSelectItem Value="@("60Hz")">60Hz</MudSelectItem>
+                            @foreach(var pair in DataCenter.INV.ACF_DisplayMap)
+                            {
+                                <MudSelectItem Value="@(pair.Value)">@pair.Value</MudSelectItem>
+                            }
+
+                            @* <MudSelectItem Value="@("50Hz")">50Hz</MudSelectItem>
+                            <MudSelectItem Value="@("60Hz")">60Hz</MudSelectItem> *@
                         </MudSelect>
                     </div>
                     <div class="single-selection">
                         <MudSelect T="string" Label="輸出電壓" Value="selectedVoltType" Immediate="true" Dense="true" Variant="Variant.Filled" ValueChanged="@(v => {selectedVoltType = v; OnChartTypeChanged();})">
-                            <MudSelectItem Value="@("220V")">220V</MudSelectItem>
-                            <MudSelectItem Value="@("230V")">230V</MudSelectItem>
+                            @foreach(var pair in DataCenter.INV.ACV_DisplayMap)
+                            {
+                                <MudSelectItem Value="@(pair.Value)">@pair.Value</MudSelectItem>
+                            }
+                            
+                            @* <MudSelectItem Value="@("220V")">220V</MudSelectItem>
+                            <MudSelectItem Value="@("230V")">230V</MudSelectItem> *@
                         </MudSelect>
                     </div>
                 </div>
@@ -41,9 +53,10 @@
                     </div>
                     <div class="cell">
                         <MudSwitch  T="bool" 
-                                @bind-Value="AC_mode_charging_enabel" 
+                                @bind-Value="AC_mode_charging_enable" 
                                 Color="Color.Primary"  
-                                Size="Size.Large">@(AC_mode_charging_enabel ? "ON" : "OFF")</MudSwitch>
+                                Size="Size.Large"
+                                Disabled="@(!AC_mode_charging_touchable)">@(AC_mode_charging_enable ? "ON" : "OFF")</MudSwitch>
                     </div>
                 </div>
                 <div class="small-row">
@@ -52,9 +65,10 @@
                     </div>
                     <div class="cell">
                         <MudSwitch  T="bool" 
-                                @bind-Value="Grid_tied_power_feeding" 
+                                @bind-Value="Grid_tied_power_feeding_enable" 
                                 Color="Color.Primary"  
-                                Size="Size.Large">@(Grid_tied_power_feeding ? "ON" : "OFF")</MudSwitch>
+                                Size="Size.Large"
+                                Disabled="@(!Grid_tied_power_feeding_touchable)">@(Grid_tied_power_feeding_enable ? "ON" : "OFF")</MudSwitch>
                     </div>
                 </div>
                 <div class="small-row">
@@ -66,10 +80,11 @@
                                     Value="selectedOutputPriority" Immediate="true" 
                                     Dense="true" Variant="Variant.Filled" 
                                     FitContent="true"
-                                    ValueChanged="@(v => {selectedOutputPriority = v; OnOutputPriorityChanged();})">
+                                    ValueChanged="@(v => {selectedOutputPriority = v; OnOutputPriorityChanged();})"
+                                    Disabled="@(!Output_priority_touchable)">
                             <MudSelectItem Value="OUTPUT_PRIORITY.Utility">Utility</MudSelectItem>
                             <MudSelectItem Value="OUTPUT_PRIORITY.Battery">Battery</MudSelectItem>
-                            <MudSelectItem Value="OUTPUT_PRIORITY.Solar">Solar</MudSelectItem>
+                            @* <MudSelectItem Value="OUTPUT_PRIORITY.Solar">Solar</MudSelectItem> *@
                         </MudSelect>
                     </div>
 
@@ -84,7 +99,8 @@
                                     Value="selectedChargingPriority" Immediate="true" 
                                     Dense="true" Variant="Variant.Filled" 
                                     FitContent="true"
-                                    ValueChanged="@(v => {selectedChargingPriority = v; OnChargingPriorityChanged();})">
+                                    ValueChanged="@(v => {selectedChargingPriority = v; OnChargingPriorityChanged();})"
+                                    Disabled="@(!Charge_priority_touchable)">
                             <MudSelectItem Value="CHARGING_PRIORITY.Utility">Utility</MudSelectItem>
                             <MudSelectItem Value="CHARGING_PRIORITY.Solar">Solar</MudSelectItem>
                         </MudSelect>
@@ -99,33 +115,39 @@
                     <div class="alarm-row">
                         <div class="alarm-label">Battery alarm</div>
                         <div class="alarm-input">
-                            <MudTextField @bind-Value="@Battery_alarm_value" Label="Battery alarm" Variant="Variant.Outlined" Class="small-textField" />
+                            <MudTextField @ref="_alarmFieldRef" T="double" InputType="InputType.Number" Value="@Battery_alarm_value" ValueChanged="OnBatteryAlarmChanged" ValueExpression="() => Battery_alarm_value" Label="Battery alarm" Variant="Variant.Outlined" Class="small-textField" 
+                                            Min="@(DataCenter.INV.BAT_Alarm_Min_Display)" Max="@(DataCenter.INV.BAT_Alarm_Max_Display)" Step="0.1" Validation="@((double value) => ValidateHint<double>(value, DataCenter.INV.BAT_Alarm_Max_Display, DataCenter.INV.BAT_Alarm_Min_Display))"
+                                            OnBlur="@(() => FixValue(_alarmFieldRef, Battery_alarm_value, DataCenter.INV.BAT_Alarm_Min_Display, DataCenter.INV.BAT_Alarm_Max_Display))"/> 
                         </div>
                         <div class="alarm-slider">
-                            <MudSlider T="double" @bind-Value="@Battery_alarm_value" ValueLabel="true" Variant="Variant.Filled"
-                                    Min="0" Max="100" Step="0.1" Size="Size.Large" />
+                            <MudSlider T="double" Value="@Battery_alarm_value" ValueChanged="OnBatteryAlarmChanged" ValueExpression="() => Battery_alarm_value"
+                                ValueLabel="true" Variant="Variant.Filled" Min="@(DataCenter.INV.BAT_Alarm_Min_Display)" Max="@(DataCenter.INV.BAT_Alarm_Max_Display)" Step="0.1" Size="Size.Large" />
                         </div>
                     </div>
                     
                     <div class="alarm-row">
                         <div class="alarm-label">Battery shutdown</div>
                         <div class="alarm-input">
-                            <MudTextField @bind-Value="@Battery_shutdown_value" Label="Battery shutdown" Variant="Variant.Outlined" Class="small-textField" />
+                            <MudTextField @ref="_shutdownFieldRef" T="double" Value="@Battery_shutdown_value" ValueChanged="OnBatteryShutdownChanged" ValueExpression="() => Battery_shutdown_value" Label="Battery shutdown" Variant="Variant.Outlined" Class="small-textField" 
+                                            Min="@(DataCenter.INV.BAT_Shutdown_Min_Display)" Max="@(DataCenter.INV.BAT_Shutdown_Max_Display)" Step="0.1" Validation="@((double value) => ValidateHint<double>(value, DataCenter.INV.BAT_Shutdown_Max_Display, DataCenter.INV.BAT_Shutdown_Min_Display))"
+                                            OnBlur="@(() => FixValue(_shutdownFieldRef, Battery_shutdown_value, DataCenter.INV.BAT_Shutdown_Min_Display, DataCenter.INV.BAT_Shutdown_Max_Display))"/>
                         </div>
                         <div class="alarm-slider">
-                            <MudSlider T="double" @bind-Value="@Battery_shutdown_value" ValueLabel="true" Variant="Variant.Filled"
-                                    Min="0" Max="100" Step="0.1" Size="Size.Large" />
+                            <MudSlider T="double" Value="@Battery_shutdown_value" ValueChanged="OnBatteryShutdownChanged" ValueExpression="() => Battery_shutdown_value" ValueLabel="true" Variant="Variant.Filled"
+                                    Min="@(DataCenter.INV.BAT_Shutdown_Min_Display)" Max="@(DataCenter.INV.BAT_Shutdown_Max_Display)" Step="0.1" Size="Size.Large" />
                         </div>
                     </div>
 
                     <div class="alarm-row">
                         <div class="alarm-label">Battery recharge</div>
                         <div class="alarm-input">
-                            <MudTextField @bind-Value="@Battery_recharge_value" Label="Battery recharge" Variant="Variant.Outlined" Class="small-textField" />
+                            <MudTextField @ref="_rechargeFieldRef" T="double" Value="@Battery_recharge_value" ValueChanged="OnBatteryRechargeChanged" ValueExpression="() => Battery_recharge_value" Label="Battery recharge" Variant="Variant.Outlined" Class="small-textField" 
+                                            Min="@(DataCenter.INV.BAT_Recharge_Min_Display)" Max="(@DataCenter.Battery.FV_Display)" Step="0.1" Validation="@((double value) => ValidateHint<double>(value, DataCenter.Battery.FV_Display, DataCenter.INV.BAT_Recharge_Min_Display))"
+                                            OnBlur="@(() => FixValue(_rechargeFieldRef, Battery_recharge_value, DataCenter.INV.BAT_Recharge_Min_Display, DataCenter.Battery.FV_Display))"/>
                         </div>
                         <div class="alarm-slider">
-                            <MudSlider T="double" @bind-Value="@Battery_recharge_value" ValueLabel="true" Variant="Variant.Filled"
-                                    Min="0" Max="100" Step="0.1" Size="Size.Large" />
+                            <MudSlider T="double" Value="@Battery_recharge_value" ValueChanged="OnBatteryRechargeChanged" ValueExpression="() => Battery_recharge_value" ValueLabel="true" Variant="Variant.Filled"
+                                    Min="@(DataCenter.INV.BAT_Recharge_Min_Display)" Max="@(DataCenter.Battery.FV_Display)" Step="0.1" Size="Size.Large" />
                         </div>
                     </div>
                 </div>
@@ -133,69 +155,200 @@
                     <div class="alarm-row">
                         <div class="alarm-label">Battery capacity</div>
                         <div class="alarm-input">
-                            <MudTextField @bind-Value="@Battery_capacity_value" Label="Battery capacity" Variant="Variant.Outlined" Class="small-textField" />
+                            <MudTextField T="int" Value="@Battery_capacity_value" ValueChanged="OnBatteryCapacityChanged" ValueExpression="() => Battery_capacity_value" Label="Battery capacity" Variant="Variant.Outlined" Class="small-textField" />
                         </div>
                         <div class="alarm-slider">
-                            <MudSlider T="double" @bind-Value="@Battery_capacity_value" ValueLabel="true" Variant="Variant.Filled"
-                                    Min="0" Max="100" Step="0.1" Size="Size.Large" />
+                            <MudSlider T="int" Value="@Battery_capacity_value" ValueChanged="OnBatteryCapacityChanged" ValueExpression="() => Battery_capacity_value" ValueLabel="true" Variant="Variant.Filled"
+                                    Min="0" Max="@DataCenter.INV.BAT_Capacity_Max" Step="1" Size="Size.Large" />
                         </div>
                     </div>
                     <div class="alarm-row">
                         <div class="alarm-label">Battery OV alarm</div>
                         <div class="alarm-input">
-                            <MudTextField @bind-Value="@Battery_OV_alarm_value" Label="Battery OV alarm" Variant="Variant.Outlined" Class="small-textField" />
+                            <MudTextField T="double" Value="@Battery_OV_alarm_value" ValueChanged="OnBatteryOVAlarmChanged" ValueExpression="() => Battery_OV_alarm_value" Label="Battery OV alarm" Variant="Variant.Outlined" Class="small-textField" />
                         </div>
                         <div class="alarm-slider">
-                            <MudSlider T="double" @bind-Value="@Battery_OV_alarm_value" ValueLabel="true" Variant="Variant.Filled"
-                                    Min="0" Max="100" Step="0.1" Size="Size.Large" />
+                            <MudSlider T="double" Value="@Battery_OV_alarm_value" ValueChanged="OnBatteryOVAlarmChanged" ValueExpression="() => Battery_OV_alarm_value" ValueLabel="true" Variant="Variant.Filled"
+                                    Min="@DataCenter.INV.BAT_OV_Alarm_Min_Dispaly" Max="@DataCenter.INV.BAT_OV_Alarm_Max_Display" Step="0.1" Size="Size.Large" />
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</div>.
 
 @code
 {
-    private string selectedFreqType = "50Hz";
-    private string selectedVoltType = "220V";
-    private double peak = 220;
-    private double period = 720.0 / 4;
-    private int waveCount = 1;
-
-    private bool AC_mode_charging_enabel = false;
-    private bool Grid_tied_power_feeding = false;
+    //DataCenter紀錄共用的資料，只有多個user中的某個user按下儲存設定的時候，才會去寫到DataCenter的資料，然後用DataHub去推送到其他User的頁面
+    private string selectedFreqType = null;
+    private string selectedVoltType = null;
+    private double peak;
+    private double period;
+    private int waveCount;
+    
+    private bool AC_mode_charging_touchable = true;
+    private bool Grid_tied_power_feeding_touchable = true;
+    private bool Output_priority_touchable = true;
+    private bool Charge_priority_touchable = true; 
+    private bool AC_mode_charging_enable = false;
+    private bool Grid_tied_power_feeding_enable = false;
     private OUTPUT_PRIORITY selectedOutputPriority = OUTPUT_PRIORITY.Utility;
     private CHARGING_PRIORITY selectedChargingPriority = CHARGING_PRIORITY.Utility;
-    public enum OUTPUT_PRIORITY : byte
+    
+
+    private MudTextField<double>? _alarmFieldRef;
+    private MudTextField<double>? _shutdownFieldRef;
+    private MudTextField<double>? _rechargeFieldRef;
+    private MudTextField<double>? _capacityFieldRef;
+    private MudTextField<double>? _OV_alarmFieldRef;
+
+    private double  Battery_alarm_value = 0;
+    private double  Battery_shutdown_value = 0;
+    private double  Battery_recharge_value = 0;
+    private int    Battery_capacity_value = 0;
+    private double  Battery_OV_alarm_value = 0;
+    private const double BAT_ALARM_SHDN_DIFF = 0.2;
+
+
+    private async Task OnBatteryAlarmChanged(double newValue)   {AlarmValueChange_validation(newValue, "alarm");}
+    private async Task OnBatteryShutdownChanged(double newValue){AlarmValueChange_validation(newValue, "shutdown");}
+    private async Task OnBatteryRechargeChanged(double newValue){AlarmValueChange_validation(newValue, "recharge");}
+    private async Task OnBatteryCapacityChanged(int newValue)   {AlarmValueChange_validation(newValue, "capacity");}
+    private async Task OnBatteryOVAlarmChanged(double newValue) {AlarmValueChange_validation(newValue, "OV_alarm");}
+
+    private async Task AlarmValueChange_validation(double value, string type)
     {
-        Utility = 1,
-        Battery = 2,
-        Solar   = 3,
+        //value是Display值 (只有 capacity 是 uint類型)
+        //用Display值進行比較
+        double upperBound = 0;
+        double lowerBound = 0;
+        switch(type)
+        {
+            case "alarm":
+                //check BAT_Alarm
+                upperBound = Math.Min(DataCenter.Battery.FV_Display, DataCenter.INV.BAT_Alarm_Max_Display);
+                lowerBound = DataCenter.INV.BAT_Alarm_Min_Display;
+                Console.WriteLine($"[alarm changed][Alarm] upperBound = {upperBound}, lowerBound = {lowerBound}");
+                if(value > upperBound){Battery_alarm_value = upperBound;}
+                else if(value < lowerBound){Battery_alarm_value = lowerBound;}
+                else{Battery_alarm_value = value;}
+                Console.WriteLine($"Battery_alarm_value = {Battery_alarm_value}");
+
+                //check BAT_shutdown (這裡的Battery_alarm_value已是更新過的)
+                upperBound = Math.Min(Battery_alarm_value - BAT_ALARM_SHDN_DIFF * 10, DataCenter.INV.BAT_Shutdown_Max_Display);
+                lowerBound = DataCenter.INV.BAT_Shutdown_Min_Display;
+                Console.WriteLine($"[alarm changed][Shutdown] upperBound = {upperBound}, lowerBound = {lowerBound}");
+                if(Battery_shutdown_value > upperBound){Battery_shutdown_value = upperBound;}
+                else if(Battery_shutdown_value < lowerBound){Battery_shutdown_value = lowerBound;}
+
+                break;
+            case "shutdown":
+                upperBound = Math.Min(Battery_alarm_value - BAT_ALARM_SHDN_DIFF * 10, DataCenter.INV.BAT_Shutdown_Max_Display);
+                lowerBound = DataCenter.INV.BAT_Shutdown_Min_Display;
+                if(value > upperBound){Battery_shutdown_value = upperBound;}
+                else if(value < lowerBound){Battery_shutdown_value = lowerBound;}
+                else{Battery_shutdown_value = value;}
+
+                break;
+            case "recharge":
+                upperBound = DataCenter.Battery.FV_Display;
+                lowerBound = DataCenter.INV.BAT_Recharge_Min_Display;
+                if(value > upperBound){Battery_recharge_value = upperBound;}
+                else if(value < lowerBound){Battery_recharge_value = lowerBound;}
+                else{Battery_recharge_value = value;}
+                
+                break;
+            case "OV_alarm":
+                upperBound = DataCenter.INV.BAT_OV_Alarm_Max_Display;
+                lowerBound = DataCenter.INV.BAT_OV_Alarm_Min_Dispaly;
+                if(value > upperBound){Battery_OV_alarm_value = upperBound;}
+                else if(value < lowerBound){Battery_OV_alarm_value = lowerBound;}
+                else{Battery_OV_alarm_value = value;}
+
+                break;
+            default:
+                break;
+        }
+        StateHasChanged();
     }
 
-    public enum CHARGING_PRIORITY : byte
+    private async Task AlarmValueChange_validation(int value, string type)
     {
-        Utility = 1,
-        Solar   = 2,
+        if(type == "capacity")
+        {
+            int upperBound = DataCenter.INV.BAT_Capacity_Max;
+            int lowerBound = 0;
+            if(value > upperBound){Battery_capacity_value = upperBound;}
+            else if(value < lowerBound){Battery_capacity_value = lowerBound;}
+            else{Battery_capacity_value = value;}
+        }
     }
 
-    private double Battery_alarm_value = 0;
-    private double Battery_shutdown_value = 0;
-    private double Battery_recharge_value = 0;
-    private double Battery_capacity_value = 0;
-    private double Battery_OV_alarm_value = 0;
+    private IEnumerable<string> ValidateHint<T>(T value, T max, T min) where T : IComparable<T>
+    {    
+        if(value.CompareTo(min) < 0)
+        {
+            yield return $"輸入低於下限{min}";
+        }
+        else if(value.CompareTo(max) > 0)
+        {
+            yield return $"輸入高於上限{max}";
+        }
+    }
 
+    
+
+    private void FixValue<T>(MudTextField<T>? field, T val, T min, T max) where T : IComparable<T>
+    {
+        T corrected = val;
+
+        if(val.CompareTo(min) < 0){corrected = min;}
+        else if(val.CompareTo(max) > 0){corrected = max;}
+
+        if(!EqualityComparer<T>.Default.Equals(val, corrected))
+        {
+            StateHasChanged();
+        }
+
+        field?.ResetValidation();
+    }
+
+    protected override void OnInitialized()
+    {
+        selectedFreqType = DataCenter.INV.ACF_Display_str;
+        selectedVoltType = DataCenter.INV.ACV_Display_str;
+
+        AC_mode_charging_enable = DataCenter.INV.AC_mode_charging_enable;
+        Grid_tied_power_feeding_enable = DataCenter.INV.Grid_tied_power_feeding_enable;
+        
+        AC_mode_charging_touchable = DataCenter.INV.AC_mode_charging_touchable;
+        Grid_tied_power_feeding_touchable = DataCenter.INV.Grid_tied_power_feeding_touchable;
+        Output_priority_touchable = DataCenter.INV.Output_priority_touchable;
+        Charge_priority_touchable = DataCenter.INV.Charge_priority_touchable;
+
+        Battery_alarm_value = DataCenter.INV.BAT_Alarm_Display;
+        Battery_shutdown_value = DataCenter.INV.BAT_Shutdown_Display;
+        Battery_recharge_value = DataCenter.INV.BAT_Recharge_Display;
+        Battery_OV_alarm_value = DataCenter.INV.BAT_OV_Alarm_Display;
+        Battery_capacity_value = DataCenter.INV.BAT_Capacity_Display;
+
+        Console.WriteLine($"[INV_Init] Battery_alarm_value = {Battery_alarm_value}");
+        Console.WriteLine($"[INV_Init] Battery_shutdown_value = {Battery_shutdown_value}");
+        Console.WriteLine($"[INV_Init] Battery_recharge_value = {Battery_recharge_value}");
+        Console.WriteLine($"[INV_Init] Battery_OV_alarm_value = {Battery_OV_alarm_value}");
+        Console.WriteLine($"[INV_Init] Battery_capacity_value = {Battery_capacity_value}");
+        Console.WriteLine($"Grid_touchable = {Grid_tied_power_feeding_touchable}, AC_mode_touchable = {AC_mode_charging_touchable}");
+    }
 
     private void OnOutputPriorityChanged()
     {
-
+        Console.WriteLine($"Output Priority : {selectedOutputPriority}");
     }
 
     private void OnChargingPriorityChanged()
     {
-
+        Console.WriteLine($"Charge Priority : {selectedChargingPriority}");
     }
 
     private async Task OnChartTypeChanged()
@@ -216,12 +369,14 @@
 
         switch(selectedVoltType)
         {
-            case "220V":
-                peak = 220;
-                break;
-            case "230V":
-                peak = 230;
-                break;
+            case "100VAC": peak = 100; break;
+            case "110VAC": peak = 110; break;
+            case "115VAC": peak = 115; break;
+            case "120VAC": peak = 120; break;
+            case "200VAC": peak = 200; break;
+            case "220VAC": peak = 220; break;
+            case "230VAC": peak = 230; break;
+            case "240VAC": peak = 240; break;
             default:
                 break;
         }
@@ -235,6 +390,7 @@
     {
         if (firstRender)
         {
+            OnChartTypeChanged();
             await DrawChart();
         }
     }

@@ -28,6 +28,7 @@ namespace demoVer.Services
         public event Func<Task>? OnChartDataUpdated;
 
         public Battery_DataSetting_Module Battery {get;}
+        public INV_DataSetting_Module INV{get;}
         public Dictionary<string, CommandData> INV_MOD_READ_Data {get;} = new();
         // public List<Dictionary<string, CommandData>> INV_MOD_READ_AllData {get;} = new();
 
@@ -38,7 +39,8 @@ namespace demoVer.Services
             _hubContext = hubContext;
             _commonData = commonData;
 
-            Battery     = new Battery_DataSetting_Module(_commonData);
+            Battery     = new Battery_DataSetting_Module(_commonData, new Battery_InitData());
+            INV         = new INV_DataSetting_Module(_commonData, new INV_InitData());
 
             _heartbeat.OnTick += async () => 
             {

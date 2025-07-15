@@ -236,10 +236,6 @@
     {
         DataCenter.Battery.OnUpdated += OnBatteryChanged;
         
-        var newInit = new BatteryInitData();
-        DataCenter.Battery.UpdateFrom(newInit);
-        float testFloat = 1.2f;
-        Console.WriteLine($"testFloat = {testFloat}");
         Sliders = new List<SliderItem>
         {
             //index = 0

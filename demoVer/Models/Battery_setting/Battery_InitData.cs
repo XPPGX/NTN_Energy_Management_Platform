@@ -1,6 +1,6 @@
 namespace demoVer.Models
 {
-    public class BatteryInitData
+    public class Battery_InitData
     {
         public int CC { get; set; } = 6000;
         public int CC_Max { get; set; } = 6000;
@@ -20,5 +20,7 @@ namespace demoVer.Models
         public int CC_TimeOut_Minute {get; set;} = 600;
         public int CV_TimeOut_Minute {get; set;} = 600;
         public int FV_TimeOut_Minute {get; set;} = 600;
+
+        public bool CurveStage {get; set;} = false;
     }
 }

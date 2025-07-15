@@ -7,9 +7,10 @@ namespace demoVer.Models
     {
         //引入commonData
         private readonly CommonData _commonData;
-        public Battery_DataSetting_Module(CommonData commonData)
+        public Battery_DataSetting_Module(CommonData commonData, Battery_InitData source)
         {
             _commonData = commonData;
+            UpdateFrom(source);
         }
 
         //CC
@@ -202,7 +203,7 @@ namespace demoVer.Models
             };
         }
 
-        public void UpdateFrom(BatteryInitData source)
+        public void UpdateFrom(Battery_InitData source)
         {
             _CC_Raw = source.CC;
             _CC_Max_Raw = source.CC_Max;

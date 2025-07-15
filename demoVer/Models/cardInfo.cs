@@ -195,4 +195,20 @@ namespace demoVer.Models
         public double[] Y2Data{get; set;}
         public string XLabel {get; set;}
     };
+
+    public enum OUTPUT_PRIORITY : byte
+    {
+        Utility = 0,
+        Battery = 1,
+        Solar   = 2,
+        Reserved = 3,
+    }
+
+    public enum CHARGING_PRIORITY : byte
+    {
+        Utility = 0,
+        Solar   = 1,
+        Reserved = 2,
+    }
+
 }

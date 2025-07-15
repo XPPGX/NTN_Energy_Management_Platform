@@ -44,6 +44,37 @@ namespace demoVer.Utils
             float tolerance = MathF.Pow(10, -decimals) * 5;
             return Math.Abs(value - rounded) < tolerance ? rounded : value;
         }
+
+        #region ComputationWithDoubleVer
+        public static double DevideOperation_doubleVer(double value, double factor)
+        {
+            switch(factor)
+            {
+                case 0.001: return value * 1000;
+                case 0.01:  return value * 100;
+                case 0.1:   return value * 10;
+                case 1.0:   return value * 1;
+                // case 10f:    return value / 10;
+                // case 100f:   return value / 100;
+                default:    return -1;
+            }
+        }
+
+        public static double MultOperation_doubleVer(double value, double factor)
+        {
+            
+            double return_val = AutoSnapToDecimal_doubleVer(value * factor, 3);
+            // Console.WriteLine($"[Mult] value = {value}, factor = {factor}, return_val = {return_val}");
+            return return_val;
+        }
+
+        public static double AutoSnapToDecimal_doubleVer(double value, int decimals = 2)
+        {
+            double rounded = (double)Math.Round(value, decimals);
+            double tolerance = Math.Pow(10, -decimals) * 5;
+            return Math.Abs(value - rounded) < tolerance ? rounded : value;
+        }
+        #endregion ComputationWithDoubleVer
     }
     
     public static class AppJsonManager
