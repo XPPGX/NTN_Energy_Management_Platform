@@ -21,7 +21,7 @@ namespace demoVer.Utils
     {
         public static float DevideOperation(float value, float factor)
         {
-            switch(factor)
+            switch(AutoSnapToDecimal(factor))
             {
                 case 0.001f: return value * 1000;
                 case 0.01f:  return value * 100;
@@ -34,8 +34,10 @@ namespace demoVer.Utils
         }
 
         public static float MultOperation(float value, float factor)
-        {
-            return AutoSnapToDecimal(value * factor, 3);
+        {   
+            float temp_val = AutoSnapToDecimal(value);
+            float temp_factor = AutoSnapToDecimal(factor);
+            return AutoSnapToDecimal(temp_val * temp_factor, 3);
         }
 
         public static float AutoSnapToDecimal(float value, int decimals = 2)
@@ -47,13 +49,14 @@ namespace demoVer.Utils
 
         #region ComputationWithDoubleVer
         public static double DevideOperation_doubleVer(double value, double factor)
-        {
-            switch(factor)
+        {   
+            Console.WriteLine($"[DevideOperation_doubleVer]value = {value}, factor = {factor}, processed_factor = {AutoSnapToDecimal_doubleVer(factor)}");
+            switch(AutoSnapToDecimal_doubleVer(factor))
             {
-                case 0.001: return value * 1000;
-                case 0.01:  return value * 100;
-                case 0.1:   return value * 10;
-                case 1.0:   return value * 1;
+                case 0.001: return AutoSnapToDecimal_doubleVer(value * 1000);
+                case 0.01:  return AutoSnapToDecimal_doubleVer(value * 100);
+                case 0.1:   return AutoSnapToDecimal_doubleVer(value * 10);
+                case 1.0:   return AutoSnapToDecimal_doubleVer(value * 1);
                 // case 10f:    return value / 10;
                 // case 100f:   return value / 100;
                 default:    return -1;

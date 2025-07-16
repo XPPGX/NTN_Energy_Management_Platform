@@ -64,17 +64,17 @@
                 <button class="btn" @onclick="apply_battery_setting">
                     <img src="images/checked.png" alt="apply" style="width:24px; height:24px"/>
                 </button>
-                <button class="btn" @onclick="restoreDefault_battery_setting">
+                <button class="btn" @onclick="UseDefault_battery_setting">
                     <img src="images/settings.png" alt="restore" style="width:24px; height:24px"/>
                 </button>
             }
 
             if( Page_index == PAGE.INV_SETTING)
             {
-                <button class="btn">
+                <button class="btn" @onclick="apply_INV_setting">
                     <img src="images/checked.png" alt="apply" style="width:24px; height:24px"/>
                 </button>
-                <button class="btn">
+                <button class="btn" @onclick="UseDefault_INV_setting">
                     <img src="images/settings.png" alt="restore" style="width:24px; height:24px"/>
                 </button>
             }
@@ -119,12 +119,22 @@
     [Parameter] public EventCallback InformParentTo_ApplySetting {get; set;}
     [Parameter] public EventCallback InformParentTo_UseDefaultValue{get; set;}
 
+    private async Task apply_INV_setting()
+    {
+        await InformParentTo_ApplySetting.InvokeAsync();
+    }
+
+    private async Task UseDefault_INV_setting()
+    {
+        await InformParentTo_UseDefaultValue.InvokeAsync();
+    }
+
     private async Task apply_battery_setting()
     {
         await InformParentTo_ApplySetting.InvokeAsync();
     }
 
-    private async Task restoreDefault_battery_setting()
+    private async Task UseDefault_battery_setting()
     {
         await InformParentTo_UseDefaultValue.InvokeAsync();
     }

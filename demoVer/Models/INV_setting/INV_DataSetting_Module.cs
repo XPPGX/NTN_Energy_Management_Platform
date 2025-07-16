@@ -8,10 +8,9 @@ namespace demoVer.Models
         
         //引入commonData
         private readonly CommonData _commonData;
-        public INV_DataSetting_Module(CommonData commonData, INV_InitData source)
+        public INV_DataSetting_Module(CommonData commonData)
         {
             _commonData = commonData;
-            UpdateFrom(source);
         }
 
         //AC_Series
@@ -222,7 +221,7 @@ namespace demoVer.Models
         public double BAT_OV_Alarm_Display
         {
             get => ScalingComputer.MultOperation_doubleVer((double)_BAT_OV_Alarm, _commonData.VDC_Factor * 10);
-            set => _BAT_Recharge = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, _commonData.VDC_Factor) / 10;
+            set => _BAT_OV_Alarm = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, _commonData.VDC_Factor) / 10;
         }
 
         private uint _BAT_OV_Alarm_Max;
@@ -235,7 +234,7 @@ namespace demoVer.Models
 
         private uint _BAT_OV_Alarm_Min;
         public uint BAT_OV_Alarm_Min => _BAT_OV_Alarm_Min;
-        public double BAT_OV_Alarm_Min_Dispaly
+        public double BAT_OV_Alarm_Min_Display
         {
             get => ScalingComputer.MultOperation_doubleVer((double)_BAT_OV_Alarm_Min, _commonData.VDC_Factor * 10);
             set => _BAT_OV_Alarm_Min = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, _commonData.VDC_Factor) / 10;
@@ -252,6 +251,44 @@ namespace demoVer.Models
 
         private uint _BAT_Capacity_Max = 9999;
         public int BAT_Capacity_Max => (int)_BAT_Capacity_Max;
+
+        public bool SaveSettingData(INVSetting Data)
+        {
+            bool changed_Flag = false;
+
+            if( ACF_Display_str                 != Data.new_ACF_Display_str             ||
+                ACV_Display_str                 != Data.new_ACV_Display_str             ||
+                AC_mode_charging_enable         != Data.new_AC_mode_charging_enable     ||
+                Grid_tied_power_feeding_enable  != Data.new_Grid_tied_feeding_enable    ||
+                Output_priority                 != Data.new_Output_priority             ||
+                Charging_priority               != Data.new_Charge_priority             ||
+                BAT_Alarm_Display               != Data.new_BAT_Alarm_Display           ||
+                BAT_Shutdown_Display            != Data.new_BAT_Shutdown_Display        ||
+                BAT_Recharge_Display            != Data.new_BAT_Recharge_Display        ||
+                BAT_OV_Alarm_Display            != Data.new_BAT_OV_Alarm_Value          ||
+                BAT_Capacity_Display            != Data.new_BAT_Capacity_Value)
+            {
+                changed_Flag = true;
+
+                ACF_Display_str = Data.new_ACF_Display_str;
+                ACV_Display_str = Data.new_ACV_Display_str;
+                AC_mode_charging_enable = Data.new_AC_mode_charging_enable;
+                Grid_tied_power_feeding_enable = Data.new_Grid_tied_feeding_enable;
+                Output_priority = Data.new_Output_priority;
+                Charging_priority = Data.new_Charge_priority;
+                BAT_Alarm_Display = Data.new_BAT_Alarm_Display;
+                BAT_Shutdown_Display = Data.new_BAT_Shutdown_Display;
+                BAT_Recharge_Display = Data.new_BAT_Recharge_Display;
+                BAT_OV_Alarm_Display = Data.new_BAT_OV_Alarm_Value;
+                BAT_Capacity_Display = Data.new_BAT_Capacity_Value;
+
+                NotifyChanged();
+            }
+
+            Console.WriteLine($"[INV][SaveSettingData] : return {changed_Flag}");
+            return changed_Flag;
+        }
+
 
         //Total data update
         public void UpdateFrom(INV_InitData source)
@@ -284,8 +321,61 @@ namespace demoVer.Models
             UpdateACV_DisplayMap();
 
             Console.WriteLine($"AC_Series = {_AC_Series}, ACF = {_ACF}, ACV = {_ACV}");
-        
+            NotifyChanged();
         }
         
+        public INVSetting_To_JS ToDto()
+        {
+            return new INVSetting_To_JS
+            {
+                acf_display_str = ACF_Display_str,
+                acv_display_str = ACV_Display_str,
+                
+                ac_mode_charging_enable = AC_mode_charging_enable,
+                grid_tied_feeding_enable = Grid_tied_power_feeding_enable,
+                output_priority = Output_priority,
+                charge_priority = Charging_priority,
+
+                bat_alarm_display = BAT_Alarm_Display,
+                bat_shutdown_display = BAT_Shutdown_Display,
+                bat_recharge_display = BAT_Recharge_Display,
+                bat_ov_alarm_display = BAT_OV_Alarm_Display,
+                bat_capacity_value = BAT_Capacity_Display
+            };
+        }
+    }
+
+    public class INVSetting
+    {
+        public string new_ACF_Display_str {get; set;}
+        public string new_ACV_Display_str {get; set;}
+        
+        public bool new_AC_mode_charging_enable {get; set;}
+        public bool new_Grid_tied_feeding_enable {get; set;}
+        public byte new_Output_priority {get; set;}
+        public byte new_Charge_priority {get; set;}
+        
+        public double new_BAT_Alarm_Display {get; set;}
+        public double new_BAT_Shutdown_Display {get; set;}
+        public double new_BAT_Recharge_Display {get; set;}
+        public double new_BAT_OV_Alarm_Value {get; set;}
+        public int new_BAT_Capacity_Value {get; set;}
+    }
+
+    public class INVSetting_To_JS
+    {
+        public string acf_display_str {get; set;}
+        public string acv_display_str {get; set;}
+
+        public bool ac_mode_charging_enable {get; set;}
+        public bool grid_tied_feeding_enable {get; set;}
+        public byte output_priority {get; set;}
+        public byte charge_priority {get; set;}
+
+        public double bat_alarm_display {get; set;}
+        public double bat_shutdown_display {get; set;}
+        public double bat_recharge_display {get; set;}
+        public double bat_ov_alarm_display {get; set;}
+        public int bat_capacity_value {get; set;}
     }
 }

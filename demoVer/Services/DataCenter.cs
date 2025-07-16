@@ -27,8 +27,8 @@ namespace demoVer.Services
         //[DEBUG]外部元件可訂閱此事件來接收圖表刷新通知
         public event Func<Task>? OnChartDataUpdated;
 
-        public Battery_DataSetting_Module Battery {get;}
-        public INV_DataSetting_Module INV{get;}
+        public Battery_DataSetting_Module Battery {get; set;}
+        public INV_DataSetting_Module INV{get; set;}
         public Dictionary<string, CommandData> INV_MOD_READ_Data {get;} = new();
         // public List<Dictionary<string, CommandData>> INV_MOD_READ_AllData {get;} = new();
 
@@ -39,8 +39,10 @@ namespace demoVer.Services
             _hubContext = hubContext;
             _commonData = commonData;
 
-            Battery     = new Battery_DataSetting_Module(_commonData, new Battery_InitData());
-            INV         = new INV_DataSetting_Module(_commonData, new INV_InitData());
+            Battery     = new Battery_DataSetting_Module(_commonData);
+            Battery.UpdateFrom(new Battery_InitData()); //接收初始值
+            INV         = new INV_DataSetting_Module(_commonData);
+            INV.UpdateFrom(new INV_InitData()); //接收初始值
 
             _heartbeat.OnTick += async () => 
             {
@@ -57,6 +59,12 @@ namespace demoVer.Services
         {
             var dto = Battery.ToDto();
             await _hubContext.Clients.All.SendAsync("BatteryUpdated", dto);
+        }
+
+        public async Task BroadcastINVChangeAsync()
+        {
+            var dto = INV.ToDto();
+            await _hubContext.Clients.All.SendAsync("INVUpdated", dto);
         }
 
         private async Task RefreshAllAsync()

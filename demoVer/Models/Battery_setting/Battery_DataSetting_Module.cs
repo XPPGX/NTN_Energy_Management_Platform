@@ -7,10 +7,9 @@ namespace demoVer.Models
     {
         //引入commonData
         private readonly CommonData _commonData;
-        public Battery_DataSetting_Module(CommonData commonData, Battery_InitData source)
+        public Battery_DataSetting_Module(CommonData commonData)
         {
             _commonData = commonData;
-            UpdateFrom(source);
         }
 
         //CC

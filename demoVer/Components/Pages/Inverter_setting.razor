@@ -4,18 +4,36 @@
 @inject IJSRuntime JS
 @inject DataCenter DataCenter
 @using demoVer.Components.Layout
+@using System.Text.Json
 @using demoVer.Models
 @using demoVer.Utils
 
 <MudPopoverProvider/>
 @*Web Content*@
 <PageTitle>Inverter Setting</PageTitle>
-<TopRow />
+<TopRow InformParentTo_ApplySetting="ReceiveFrom_TopRow_SaveINVSetting"
+        InformParentTo_UseDefaultValue="ReceiveFrom_TopRow_ApplyDefaultValue"/>
+
+@if(modal_IsOpen)
+{
+    <div class="modal-overlay" @onclick="CloseModal">
+        @if(!string.IsNullOrEmpty(AlertMessage_parent))
+        {
+            <AlertMessageBox
+                Message         = "@AlertMessage_parent"
+                ConfirmBtn_Text = "@ConfirmBtn_Text_parent"
+                CancelBtn_Text  = "@CancelBtn_Text_parent"
+                ConfirmBtn_Func = "@ConfirmBtn_Func_parent"
+                CancelBtn_Func  = "@CancelBtn_Func_parent"
+                />
+        }
+    </div>
+}
 
 
 <div class="content-container">
     <div class="card-grid">
-        <div class="w50 card-container">
+        <div class="w50">
             <div class="card-container">
                 <canvas id="sinChart" class="canvas-width-height-limit"></canvas>
                 <div class="selection-container">
@@ -49,7 +67,8 @@
             <div class="right-part">
                 <div class="small-row">
                     <div class="cell">
-                        <h3>AC模式充電器</h3>
+                        <h3 class="desktop-only">AC模式充電器</h3>
+                        <div class="mobile-only">AC模式充電器</div>
                     </div>
                     <div class="cell">
                         <MudSwitch  T="bool" 
@@ -61,7 +80,8 @@
                 </div>
                 <div class="small-row">
                     <div class="cell">
-                        <h3>並網供電</h3>
+                        <h3 class="desktop-only">並網供電</h3>
+                        <div class="mobile-only">並網供電</div>
                     </div>
                     <div class="cell">
                         <MudSwitch  T="bool" 
@@ -73,7 +93,8 @@
                 </div>
                 <div class="small-row">
                     <div class="cell">
-                        <h3>輸出優先級</h3>
+                        <h3 class="desktop-only">輸出優先級</h3>
+                        <div class="mobile-only">輸出優先級</div>
                     </div>
                     <div class="cell">
                         <MudSelect T="OUTPUT_PRIORITY" Label="" 
@@ -92,7 +113,8 @@
                 </div>
                 <div class="small-row">
                     <div class="cell">
-                        <h3>充電優先級</h3>
+                        <h3 class="desktop-only">充電優先級</h3>
+                        <div class="mobile-only">充電優先級</div>
                     </div>
                     <div class="cell">
                         <MudSelect T="CHARGING_PRIORITY" Label="" 
@@ -121,7 +143,7 @@
                         </div>
                         <div class="alarm-slider">
                             <MudSlider T="double" Value="@Battery_alarm_value" ValueChanged="OnBatteryAlarmChanged" ValueExpression="() => Battery_alarm_value"
-                                ValueLabel="true" Variant="Variant.Filled" Min="@(DataCenter.INV.BAT_Alarm_Min_Display)" Max="@(DataCenter.INV.BAT_Alarm_Max_Display)" Step="0.1" Size="Size.Large" />
+                                  Variant="Variant.Filled" Min="@(DataCenter.INV.BAT_Alarm_Min_Display)" Max="@(DataCenter.INV.BAT_Alarm_Max_Display)" Step="0.1" Size="Size.Large" />
                         </div>
                     </div>
                     
@@ -129,12 +151,12 @@
                         <div class="alarm-label">Battery shutdown</div>
                         <div class="alarm-input">
                             <MudTextField @ref="_shutdownFieldRef" T="double" Value="@Battery_shutdown_value" ValueChanged="OnBatteryShutdownChanged" ValueExpression="() => Battery_shutdown_value" Label="Battery shutdown" Variant="Variant.Outlined" Class="small-textField" 
-                                            Min="@(DataCenter.INV.BAT_Shutdown_Min_Display)" Max="@(DataCenter.INV.BAT_Shutdown_Max_Display)" Step="0.1" Validation="@((double value) => ValidateHint<double>(value, DataCenter.INV.BAT_Shutdown_Max_Display, DataCenter.INV.BAT_Shutdown_Min_Display))"
-                                            OnBlur="@(() => FixValue(_shutdownFieldRef, Battery_shutdown_value, DataCenter.INV.BAT_Shutdown_Min_Display, DataCenter.INV.BAT_Shutdown_Max_Display))"/>
+                                            Min="@(DataCenter.INV.BAT_Shutdown_Min_Display)" Max="@(Battery_shutdown_dynamic_upperBound)" Step="0.1" Validation="@((double value) => ValidateHint<double>(value, Battery_shutdown_dynamic_upperBound, DataCenter.INV.BAT_Shutdown_Min_Display))"
+                                            OnBlur="@(() => FixValue(_shutdownFieldRef, Battery_shutdown_value, DataCenter.INV.BAT_Shutdown_Min_Display, Battery_shutdown_dynamic_upperBound))"/>
                         </div>
                         <div class="alarm-slider">
-                            <MudSlider T="double" Value="@Battery_shutdown_value" ValueChanged="OnBatteryShutdownChanged" ValueExpression="() => Battery_shutdown_value" ValueLabel="true" Variant="Variant.Filled"
-                                    Min="@(DataCenter.INV.BAT_Shutdown_Min_Display)" Max="@(DataCenter.INV.BAT_Shutdown_Max_Display)" Step="0.1" Size="Size.Large" />
+                            <MudSlider T="double" Value="@Battery_shutdown_value" ValueChanged="OnBatteryShutdownChanged" ValueExpression="() => Battery_shutdown_value"   Variant="Variant.Filled"
+                                    Min="@(DataCenter.INV.BAT_Shutdown_Min_Display)" Max="@(Battery_shutdown_dynamic_upperBound)" Step="0.1" Size="Size.Large" />
                         </div>
                     </div>
 
@@ -142,12 +164,12 @@
                         <div class="alarm-label">Battery recharge</div>
                         <div class="alarm-input">
                             <MudTextField @ref="_rechargeFieldRef" T="double" Value="@Battery_recharge_value" ValueChanged="OnBatteryRechargeChanged" ValueExpression="() => Battery_recharge_value" Label="Battery recharge" Variant="Variant.Outlined" Class="small-textField" 
-                                            Min="@(DataCenter.INV.BAT_Recharge_Min_Display)" Max="(@DataCenter.Battery.FV_Display)" Step="0.1" Validation="@((double value) => ValidateHint<double>(value, DataCenter.Battery.FV_Display, DataCenter.INV.BAT_Recharge_Min_Display))"
-                                            OnBlur="@(() => FixValue(_rechargeFieldRef, Battery_recharge_value, DataCenter.INV.BAT_Recharge_Min_Display, DataCenter.Battery.FV_Display))"/>
+                                            Min="@(DataCenter.INV.BAT_Recharge_Min_Display)" Max="@(Battery_recharge_dynamic_upperBound)" Step="0.1" Validation="@((double value) => ValidateHint<double>(value, Battery_recharge_dynamic_upperBound, DataCenter.INV.BAT_Recharge_Min_Display))"
+                                            OnBlur="@(() => FixValue(_rechargeFieldRef, Battery_recharge_value, DataCenter.INV.BAT_Recharge_Min_Display, Battery_recharge_dynamic_upperBound))"/>
                         </div>
                         <div class="alarm-slider">
-                            <MudSlider T="double" Value="@Battery_recharge_value" ValueChanged="OnBatteryRechargeChanged" ValueExpression="() => Battery_recharge_value" ValueLabel="true" Variant="Variant.Filled"
-                                    Min="@(DataCenter.INV.BAT_Recharge_Min_Display)" Max="@(DataCenter.Battery.FV_Display)" Step="0.1" Size="Size.Large" />
+                            <MudSlider T="double" Value="@Battery_recharge_value" ValueChanged="OnBatteryRechargeChanged" ValueExpression="() => Battery_recharge_value"   Variant="Variant.Filled"
+                                    Min="@(DataCenter.INV.BAT_Recharge_Min_Display)" Max="@(Battery_recharge_dynamic_upperBound)" Step="0.1" Size="Size.Large" />
                         </div>
                     </div>
                 </div>
@@ -155,21 +177,25 @@
                     <div class="alarm-row">
                         <div class="alarm-label">Battery capacity</div>
                         <div class="alarm-input">
-                            <MudTextField T="int" Value="@Battery_capacity_value" ValueChanged="OnBatteryCapacityChanged" ValueExpression="() => Battery_capacity_value" Label="Battery capacity" Variant="Variant.Outlined" Class="small-textField" />
+                            <MudTextField @ref="_capacityFieldRef" T="int" Value="@Battery_capacity_value" ValueChanged="OnBatteryCapacityChanged" ValueExpression="() => Battery_capacity_value" Label="Battery capacity" Variant="Variant.Outlined" Class="small-textField" 
+                                            Min="0" Max="@(DataCenter.INV.BAT_Capacity_Max)" step="1" Validation="@((int value) => ValidateHint<int>(value, DataCenter.INV.BAT_Capacity_Max, 0))"
+                                            OnBlur="@(() => FixValue<int>(_capacityFieldRef, Battery_capacity_value, 0, DataCenter.INV.BAT_Capacity_Max))"/>
                         </div>
                         <div class="alarm-slider">
-                            <MudSlider T="int" Value="@Battery_capacity_value" ValueChanged="OnBatteryCapacityChanged" ValueExpression="() => Battery_capacity_value" ValueLabel="true" Variant="Variant.Filled"
+                            <MudSlider T="int" Value="@Battery_capacity_value" ValueChanged="OnBatteryCapacityChanged" ValueExpression="() => Battery_capacity_value"   Variant="Variant.Filled"
                                     Min="0" Max="@DataCenter.INV.BAT_Capacity_Max" Step="1" Size="Size.Large" />
                         </div>
                     </div>
                     <div class="alarm-row">
                         <div class="alarm-label">Battery OV alarm</div>
                         <div class="alarm-input">
-                            <MudTextField T="double" Value="@Battery_OV_alarm_value" ValueChanged="OnBatteryOVAlarmChanged" ValueExpression="() => Battery_OV_alarm_value" Label="Battery OV alarm" Variant="Variant.Outlined" Class="small-textField" />
+                            <MudTextField @ref="_OV_alarmFieldRef" T="double" Value="@Battery_OV_alarm_value" ValueChanged="OnBatteryOVAlarmChanged" ValueExpression="() => Battery_OV_alarm_value" Label="Battery OV alarm" Variant="Variant.Outlined" Class="small-textField" 
+                                            Min="@(DataCenter.INV.BAT_OV_Alarm_Min_Display)" Max="@(DataCenter.INV.BAT_OV_Alarm_Max_Display)" step="0.1" Validation="@((double value) => ValidateHint<double>(value, DataCenter.INV.BAT_OV_Alarm_Max_Display, DataCenter.INV.BAT_OV_Alarm_Min_Display))"
+                                            OnBlur="@(() => FixValue<double>(_OV_alarmFieldRef, Battery_OV_alarm_value, DataCenter.INV.BAT_OV_Alarm_Min_Display, DataCenter.INV.BAT_OV_Alarm_Max_Display))" />
                         </div>
                         <div class="alarm-slider">
-                            <MudSlider T="double" Value="@Battery_OV_alarm_value" ValueChanged="OnBatteryOVAlarmChanged" ValueExpression="() => Battery_OV_alarm_value" ValueLabel="true" Variant="Variant.Filled"
-                                    Min="@DataCenter.INV.BAT_OV_Alarm_Min_Dispaly" Max="@DataCenter.INV.BAT_OV_Alarm_Max_Display" Step="0.1" Size="Size.Large" />
+                            <MudSlider T="double" Value="@Battery_OV_alarm_value" ValueChanged="OnBatteryOVAlarmChanged" ValueExpression="() => Battery_OV_alarm_value"   Variant="Variant.Filled"
+                                    Min="@DataCenter.INV.BAT_OV_Alarm_Min_Display" Max="@DataCenter.INV.BAT_OV_Alarm_Max_Display" Step="0.1" Size="Size.Large" />
                         </div>
                     </div>
                 </div>
@@ -180,6 +206,16 @@
 
 @code
 {
+    private bool isMobile;
+    private DotNetObjectReference<Inverter_setting> dotNetRef;
+    
+    bool modal_IsOpen = false;
+    string AlertMessage_parent = null;
+    string ConfirmBtn_Text_parent = null;
+    string CancelBtn_Text_parent = null;
+    public EventCallback ConfirmBtn_Func_parent {get; set;}
+    public EventCallback CancelBtn_Func_parent {get; set;}
+
     //DataCenter紀錄共用的資料，只有多個user中的某個user按下儲存設定的時候，才會去寫到DataCenter的資料，然後用DataHub去推送到其他User的頁面
     private string selectedFreqType = null;
     private string selectedVoltType = null;
@@ -191,17 +227,18 @@
     private bool Grid_tied_power_feeding_touchable = true;
     private bool Output_priority_touchable = true;
     private bool Charge_priority_touchable = true; 
+
     private bool AC_mode_charging_enable = false;
     private bool Grid_tied_power_feeding_enable = false;
     private OUTPUT_PRIORITY selectedOutputPriority = OUTPUT_PRIORITY.Utility;
     private CHARGING_PRIORITY selectedChargingPriority = CHARGING_PRIORITY.Utility;
     
 
-    private MudTextField<double>? _alarmFieldRef;
-    private MudTextField<double>? _shutdownFieldRef;
-    private MudTextField<double>? _rechargeFieldRef;
-    private MudTextField<double>? _capacityFieldRef;
-    private MudTextField<double>? _OV_alarmFieldRef;
+    private MudTextField<double>?   _alarmFieldRef;
+    private MudTextField<double>?   _shutdownFieldRef;
+    private MudTextField<double>?   _rechargeFieldRef;
+    private MudTextField<int>?      _capacityFieldRef;
+    private MudTextField<double>?   _OV_alarmFieldRef;
 
     private double  Battery_alarm_value = 0;
     private double  Battery_shutdown_value = 0;
@@ -210,6 +247,8 @@
     private double  Battery_OV_alarm_value = 0;
     private const double BAT_ALARM_SHDN_DIFF = 0.2;
 
+    private double Battery_shutdown_dynamic_upperBound => Math.Min(ScalingComputer.AutoSnapToDecimal_doubleVer(Battery_alarm_value - BAT_ALARM_SHDN_DIFF), DataCenter.INV.BAT_Shutdown_Max_Display);
+    private double Battery_recharge_dynamic_upperBound => ScalingComputer.AutoSnapToDecimal_doubleVer(DataCenter.Battery.FV_Display);
 
     private async Task OnBatteryAlarmChanged(double newValue)   {AlarmValueChange_validation(newValue, "alarm");}
     private async Task OnBatteryShutdownChanged(double newValue){AlarmValueChange_validation(newValue, "shutdown");}
@@ -236,7 +275,7 @@
                 Console.WriteLine($"Battery_alarm_value = {Battery_alarm_value}");
 
                 //check BAT_shutdown (這裡的Battery_alarm_value已是更新過的)
-                upperBound = Math.Min(Battery_alarm_value - BAT_ALARM_SHDN_DIFF * 10, DataCenter.INV.BAT_Shutdown_Max_Display);
+                upperBound = Battery_shutdown_dynamic_upperBound;
                 lowerBound = DataCenter.INV.BAT_Shutdown_Min_Display;
                 Console.WriteLine($"[alarm changed][Shutdown] upperBound = {upperBound}, lowerBound = {lowerBound}");
                 if(Battery_shutdown_value > upperBound){Battery_shutdown_value = upperBound;}
@@ -244,7 +283,7 @@
 
                 break;
             case "shutdown":
-                upperBound = Math.Min(Battery_alarm_value - BAT_ALARM_SHDN_DIFF * 10, DataCenter.INV.BAT_Shutdown_Max_Display);
+                upperBound = Battery_shutdown_dynamic_upperBound;
                 lowerBound = DataCenter.INV.BAT_Shutdown_Min_Display;
                 if(value > upperBound){Battery_shutdown_value = upperBound;}
                 else if(value < lowerBound){Battery_shutdown_value = lowerBound;}
@@ -261,7 +300,7 @@
                 break;
             case "OV_alarm":
                 upperBound = DataCenter.INV.BAT_OV_Alarm_Max_Display;
-                lowerBound = DataCenter.INV.BAT_OV_Alarm_Min_Dispaly;
+                lowerBound = DataCenter.INV.BAT_OV_Alarm_Min_Display;
                 if(value > upperBound){Battery_OV_alarm_value = upperBound;}
                 else if(value < lowerBound){Battery_OV_alarm_value = lowerBound;}
                 else{Battery_OV_alarm_value = value;}
@@ -302,9 +341,16 @@
     private void FixValue<T>(MudTextField<T>? field, T val, T min, T max) where T : IComparable<T>
     {
         T corrected = val;
+        
 
-        if(val.CompareTo(min) < 0){corrected = min;}
-        else if(val.CompareTo(max) > 0){corrected = max;}
+        if(val.CompareTo(min) < 0)
+        {
+            corrected = min;
+        }
+        else if(val.CompareTo(max) > 0)
+        {
+            corrected = max;
+        }
 
         if(!EqualityComparer<T>.Default.Equals(val, corrected))
         {
@@ -316,6 +362,11 @@
 
     protected override void OnInitialized()
     {
+        DataCenter.INV.OnUpdated += OnINVChanged;
+
+        var newInit = new INV_InitData();
+        DataCenter.INV.UpdateFrom(newInit);
+
         selectedFreqType = DataCenter.INV.ACF_Display_str;
         selectedVoltType = DataCenter.INV.ACV_Display_str;
 
@@ -341,8 +392,19 @@
         Console.WriteLine($"Grid_touchable = {Grid_tied_power_feeding_touchable}, AC_mode_touchable = {AC_mode_charging_touchable}");
     }
 
+    private void OnINVChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        DataCenter.INV.OnUpdated -= OnINVChanged;
+    }
+
     private void OnOutputPriorityChanged()
     {
+        
         Console.WriteLine($"Output Priority : {selectedOutputPriority}");
     }
 
@@ -390,8 +452,12 @@
     {
         if (firstRender)
         {
+            dotNetRef = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("startINVHub", dotNetRef);
+
             OnChartTypeChanged();
             await DrawChart();
+            
         }
     }
 
@@ -410,4 +476,163 @@
         });
     }
     
+    private async Task ReceiveFrom_TopRow_SaveINVSetting()
+    {
+        TriggerAlert("Save");
+    }
+
+    private async Task ReceiveFrom_TopRow_ApplyDefaultValue()
+    {
+        TriggerAlert("DefaultVal");
+    }
+
+    private void TriggerAlert(string _alertMessage_FromOtherFunc)
+    {
+        modal_IsOpen = true;
+
+        AlertMessage_parent     = "";
+        ConfirmBtn_Text_parent  = "";
+        CancelBtn_Text_parent   = "";
+        ConfirmBtn_Func_parent  = EventCallback.Empty;
+        CancelBtn_Func_parent   = EventCallback.Empty;
+        switch(_alertMessage_FromOtherFunc)
+        {
+            case "Save":
+                AlertMessage_parent     = "是否確定要保存？";
+                ConfirmBtn_Text_parent  = "確定";
+                CancelBtn_Text_parent   = "取消";
+                ConfirmBtn_Func_parent  = EventCallback.Factory.Create(this, ConfirmSave);
+                CancelBtn_Func_parent   = EventCallback.Factory.Create(this, CancelSave);
+                break;
+            case "DefaultVal":
+                AlertMessage_parent     = "確定要還原預設？";
+                ConfirmBtn_Text_parent  = "確定";
+                CancelBtn_Text_parent   = "取消";
+                ConfirmBtn_Func_parent  = EventCallback.Factory.Create(this, ConfirmDefault);
+                CancelBtn_Func_parent   = EventCallback.Factory.Create(this, CancelDefault);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void CloseAlert()
+    {
+        AlertMessage_parent = null;
+    }
+    private void CloseModal()
+    {   
+        //close modal
+        modal_IsOpen = false;
+        //Close Alert
+        AlertMessage_parent = null;
+    }
+    
+    private async Task ConfirmSave()
+    {
+        
+        INVSetting Data = new INVSetting()
+        {
+            new_ACF_Display_str = selectedFreqType,
+            new_ACV_Display_str = selectedVoltType,
+
+            new_AC_mode_charging_enable = AC_mode_charging_enable,
+            new_Grid_tied_feeding_enable = Grid_tied_power_feeding_touchable,
+            new_Output_priority = (byte)selectedOutputPriority,
+            new_Charge_priority = (byte)selectedChargingPriority,
+
+            new_BAT_Alarm_Display = Battery_alarm_value,
+            new_BAT_Shutdown_Display = Battery_shutdown_value,
+            new_BAT_Recharge_Display = Battery_recharge_value,
+            new_BAT_OV_Alarm_Value = Battery_OV_alarm_value,
+            new_BAT_Capacity_Value = Battery_capacity_value
+        };
+
+        Console.WriteLine($"new_BAT_Recharge_Display = {Data.new_BAT_Recharge_Display}");
+        Console.WriteLine($"new_BAT_Recharge_Display = {Data.new_BAT_OV_Alarm_Value}");
+        if(DataCenter.INV.SaveSettingData(Data))
+        {
+            await DataCenter.BroadcastINVChangeAsync();
+        }
+
+        CloseAlert();
+        CloseModal();
+        Console.WriteLine("[ConfirmSave]");
+    }
+
+    private async Task CancelSave()
+    {
+        CloseAlert();
+        CloseModal();
+    }
+
+    private async Task ConfirmDefault()
+    {
+        DataCenter.INV.UpdateFrom(new INV_InitData()); //這邊已經把Default值存入DataCenter
+        await DataCenter.BroadcastINVChangeAsync();
+        CloseAlert();
+        CloseModal();
+
+        @* INVSetting DefaultVal = new INVSetting()
+        {
+            new_ACF_Display_str = DataCenter.INV.ACF_Display_str;
+            new_ACV_Display_str = DataCenter.INV.ACV_Display_str;
+
+            new_AC_mode_charging_enable = DataCenter.INV.AC_mode_charging_enable;
+            new_Grid_tied_feeding_enable = DataCenter.INV.Grid_tied_power_feeding_enable;
+            new_Output_priority = DataCenter.INV.Output_priority;
+            new_Charge_priority = DataCenter.INV.Charging_priority;
+
+            new_BAT_Alarm_Display = DataCenter.INV.BAT_Alarm_Display;
+            new_BAT_Shutdown_Display = DataCenter.INV.BAT_Shutdown_Display;
+            new_BAT_Recharge_Display = DataCenter.INV.BAT_Recharge_Display;
+            new_BAT_OV_Alarm_Value = DataCenter.INV.BAT_OV_Alarm_Display;
+            new_BAT_Capacity_Value = DataCenter.INV.BAT_Capacity_Display;
+        } *@
+
+        
+    }
+
+    private async Task CancelDefault()
+    {
+        CloseAlert();
+        CloseModal();
+    }
+
+
+    [JSInvokable("OnINVUpdated")]
+    public void OnINVUpdated(JsonElement INVData)
+    {
+        // 解析 INVData → 更新 UI
+        // 然後刷新畫面
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        var ReceiveData_FromSignalR = INVData.Deserialize<INVSetting_To_JS>(options);
+        if (ReceiveData_FromSignalR == null)
+        {
+            Console.WriteLine("❌ 無法反序列化 BatterySetting_To_JS");
+            return;
+        }
+        Console.WriteLine("🔁 收到 INV資料 更新");
+
+
+        selectedFreqType = ReceiveData_FromSignalR.acf_display_str;
+        selectedVoltType = ReceiveData_FromSignalR.acv_display_str;
+
+        AC_mode_charging_enable = ReceiveData_FromSignalR.ac_mode_charging_enable;
+        Grid_tied_power_feeding_touchable = ReceiveData_FromSignalR.grid_tied_feeding_enable;
+        selectedOutputPriority = (OUTPUT_PRIORITY)ReceiveData_FromSignalR.output_priority;
+        selectedChargingPriority = (CHARGING_PRIORITY)ReceiveData_FromSignalR.charge_priority;
+
+        Battery_alarm_value = ReceiveData_FromSignalR.bat_alarm_display;
+        Battery_shutdown_value = ReceiveData_FromSignalR.bat_shutdown_display;
+        Battery_recharge_value = ReceiveData_FromSignalR.bat_recharge_display;
+        Battery_OV_alarm_value = ReceiveData_FromSignalR.bat_ov_alarm_display;
+        Battery_capacity_value = ReceiveData_FromSignalR.bat_capacity_value;
+        
+        InvokeAsync(StateHasChanged);
+    }
 }

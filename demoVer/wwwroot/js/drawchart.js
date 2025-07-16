@@ -750,7 +750,7 @@ window.drawChart_Sin = function(config)
                 },
                 y: {
                     title: {
-                        display: true,
+                        display: false,
                         text: config.yLabel || "值"
                     },
                     min: config.yMin !== undefined ? config.yMin : -peak,
