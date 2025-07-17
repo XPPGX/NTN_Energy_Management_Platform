@@ -1,7 +1,7 @@
 
 let connection_Battery_Hub;
 let connection_INV_Hub;
-
+let connection_READ_DATA_Hub;
 
 /**
  * @abstract Battery_setting page's dataHub and some helpful functions
@@ -149,4 +149,62 @@ window.drawSinChart_Helper = function(INV_setting)
 
     drawChart_Sin(config);
     
+}
+
+/**
+ * @abstract READ_DATA_Hub
+ * @param connection_READ_DATA_Hub
+ */
+
+window.startSignalR = async function()
+{
+    connection_READ_DATA_Hub = new signalR.HubConnectionBuilder()
+        .withUrl("/datahub")
+        .build();
+    
+    connection_READ_DATA_Hub.on("UpdateCommandValue", (addr, cmd, value) =>{
+        console.log(`[SignalR] ${cmd}@${addr} = ${value}`);
+
+        if (cmd === "READ_VIN") {
+            document.getElementById("vin-display").textContent = value;
+        }
+        if (cmd === "READ_IIN"){
+            document.getElementById("iin-display").textContent = value;
+        }
+    });
+
+    await connection_READ_DATA_Hub.start();
+    return true;
+}
+
+window.subscribeCommand = async function (addr, cmd)
+{
+    if(connection_READ_DATA_Hub)
+    {
+        await connection_READ_DATA_Hub.invoke("SubscribeCommand", cmd, addr);
+    }
+}
+window.subscribeCommands = async function(commandList)
+{
+    if(!connection_READ_DATA_Hub) return;
+
+    if(!Array.isArray(commandList))
+    {
+        console.error("commandList is not an array:", commandList);
+        return;
+    }
+
+    for(const item of commandList)
+    {
+        await connection_READ_DATA_Hub.invoke("SubscribeCommand", item.cmd, item.addr);
+    }
+}
+
+window.unsubscribeAllCommands = async function()
+{
+    if(connection_READ_DATA_Hub)
+    {
+        await connection_READ_DATA_Hub.stop();
+        console.log("🔌 SignalR connection stopped and unsubscribed all.");
+    }
 }

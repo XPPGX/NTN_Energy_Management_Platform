@@ -65,7 +65,7 @@
     },
     {
       "commandName": "MFR_MODEL_B0B5",
-      "data": [0, 0, 0, 0, 0, 0],
+      "data": [78, 84, 78, 45, 53, 75],
       "scaling": 1,
       "baseUnit": null,
       "dataFormat": "ASCII",
@@ -73,7 +73,7 @@
     },
     {
       "commandName": "MFR_MODEL_B6B11",
-      "data": [0, 0, 0, 0, 0, 0],
+      "data": [45, 49, 52, 56, 0, 0],
       "scaling": 1,
       "baseUnit": null,
       "dataFormat": "ASCII",

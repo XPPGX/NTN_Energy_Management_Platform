@@ -3,12 +3,12 @@
 // 2. INVs 統整後的 Data
 
 using System.Threading.Tasks;
-using demoVer.Models; // or wherever INV_MOD_READ.CommandData is
+using demoVer.Models; // or wherever INV_MOD_READ.ModCommandData is
 
 namespace demoVer.Interfaces
 {
     // public interface ICommandSubscriber
     // {
-    //     Task OnCommandDataChanged(string commandName, INV_MOD_READ.CommandData data);
+    //     Task OnCommandDataChanged(string commandName, INV_MOD_READ.ModCommandData data);
     // }
 }

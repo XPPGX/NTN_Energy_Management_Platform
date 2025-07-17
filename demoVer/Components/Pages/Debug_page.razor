@@ -3,41 +3,60 @@
 @inject IJSRuntime JS
 @inject DataCenter DataCenter
 @inject HeartbeatService Heartbeat
-@using demoVer.Components.Layout
-@using System.Text.Json
-@using System.IO
-@using demoVer.Utils
 @using demoVer.Models
 
-<p>電壓：@DataCenter.INV_MOD_READ_Data["READ_VIN"].DisplayValue</p>
+<p>電壓: <span id="vin-display">N/A</span></p>
+<p>電流: <span id="iin-display">N/A</span></p>
 
-@code
-{
+<MudButton OnClick="CancelAllSubscriptions">取消訂閱</MudButton>
 
-    private CommandData? vinData;
+@code {
+    private string vinValue = "N/A";
+    private string ModelName = "N/A";
+    private bool _signalRStarted = false;
 
     protected override async Task OnInitializedAsync()
     {
         await SimulateJsonInputAsync();
-        Heartbeat.OnTick += OnHeartbeatTick;   
     }
 
-    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_signalRStarted)
+        {
+            _signalRStarted = true;
+
+
+            await JS.InvokeVoidAsync("startSignalR");
+
+            
+            var batch = new List<object>
+            {
+                new {addr = 0, cmd = "READ_VIN"},
+                new {addr = 0, cmd = "READ_IIN"}
+            };
+
+            await JS.InvokeVoidAsync("subscribeCommands", batch); // 測試訂閱 READ_VIN
+        }
+    }
+
     public async Task SimulateJsonInputAsync()
     {
         var filePath = "test_INVData.json";
-        var rawList = await DataCenter.LoadMockJsonAsync(filePath);
-        DataCenter.LoadSingleDeviceINVData(rawList);
+        var fake_JsonData_list = await DataCenter.LoadMockJsonAsync(filePath);
+        uint fake_ID = 0;
+
+        DataCenter.MOD_DATA.Read_oneDevice_ModData(fake_ID, fake_JsonData_list);
+
+        var ModelNameB0B5 = (string?)DataCenter.MOD_DATA.GetCommandData(fake_ID, "MFR_MODEL_B0B5")?.DisplayValue ?? "";
+        var ModelNameB6B11 = (string?)DataCenter.MOD_DATA.GetCommandData(fake_ID, "MFR_MODEL_B6B11")?.DisplayValue ?? "";
+        ModelName = ModelNameB0B5 + ModelNameB6B11;
+
+        StateHasChanged();
     }
 
-    private Task OnHeartbeatTick()
+    public async Task CancelAllSubscriptions()
     {
-        InvokeAsync(StateHasChanged);
-        return Task.CompletedTask;
-    }
-
-    public void Dispose()
-    {
-        Heartbeat.OnTick -= OnHeartbeatTick;
+        await JS.InvokeVoidAsync("unsubscribeAllCommands");
     }
 }
