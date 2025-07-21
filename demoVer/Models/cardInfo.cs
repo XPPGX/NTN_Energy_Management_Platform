@@ -1,3 +1,4 @@
+using MudBlazor;
 namespace demoVer.Models
 {
     public enum PAGE
@@ -211,4 +212,19 @@ namespace demoVer.Models
         Reserved = 2,
     }
 
+
+    public class RunningStateTimelineItem
+    {
+        public uint Address { get; set; }
+        public string Message { get; set; } = "";
+        public DateTime Timestamp { get; set; }
+        public Severity  Severity { get; set; }
+        public Color  Color { get; set; }
+    }
+
+    public class RunningStateTimelineGroup
+    {
+        public string StateName { get; set; } = "";
+        public List<RunningStateTimelineItem> Items { get; set; } = new();
+    }
 }

@@ -1,0 +1,28 @@
+@namespace demoVer.Shared
+@using MudBlazor
+@using demoVer.Models
+<MudTimeline TimelineOrientation="TimelineOrientation.Horizontal"
+             TimelinePosition="TimelinePosition.Alternate"
+             Reverse="true">
+    @foreach (var item in Items)
+    {
+        <MudTimelineItem Color="@item.Color">
+            <ItemContent>
+                <MudAlert Severity="@item.Severity">@item.Message</MudAlert>
+            </ItemContent>
+            <ItemOpposite>
+                <MudText Color="@item.Color">@item.Timestamp.ToString("HH:mm")</MudText>
+            </ItemOpposite>
+        </MudTimelineItem>
+    }
+</MudTimeline>
+
+@code {
+    [Parameter]
+    public List<RunningStateTimelineItem> Items { get; set; } = new();
+    
+    protected override void OnParametersSet()
+    {
+        Console.WriteLine("Timeline!");
+    }
+}

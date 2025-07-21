@@ -37,16 +37,39 @@ namespace demoVer.Models
         public event Action? OnChanged;
 
         /// 給 UI 顯示用的屬性，根據 Data, Scaling, DataFormat 等轉換後的字串
-        public object? DisplayValue => ParseByteData();
+        // public object? DisplayValue => ParseByteData();
 
         private object? ParseByteData()
         {
             try
             {
-                if (DataFormat == "Numeric" && Data.Count >= 2)
-                {
-                    float value = (float)((Data[0] << 8) | Data[1]); // Big Endian
-                    return ScalingComputer.MultOperation(value, Scaling);
+                if (DataFormat == "Numeric")
+                {   
+
+                    if(Scaling < 1)
+                    {
+                        if(Data.Count == 2)
+                        {   //不解碼，留到js去解碼，因為還有組合命令 : 例如 => (READ_OP_VA_HI << 16 | READ_OP_VA_LO)
+                            uint value = (uint)((Data[0] << 8) | Data[1]);
+                            return value;
+                        }
+
+                        if(Data.Count == 6)
+                        {
+                            ulong value = (uint)((Data[0] << 5 | Data[1] << 4 | Data[2] << 3 | Data[3] << 2 | Data[4] << 1 | Data[5]));
+                            return value;
+                        }
+                    }
+
+                    if(Scaling == 1)
+                    {
+                        if(Data.Count == 2)
+                        {
+                            uint value = (uint)((Data[0] << 8) | Data[1]); //Big Endian
+                            return value;
+                        }
+                    }
+                    
                 }
                 else if (DataFormat == "ASCII")
                 {
@@ -68,6 +91,11 @@ namespace demoVer.Models
             BaseUnit = other.BaseUnit;
             DataFormat = other.DataFormat;
             Split = other.Split;
+        }
+
+        public void toDTO_Json()
+        {
+            
         }
     }
 }

@@ -7,6 +7,16 @@
 
 <p>電壓: <span id="vin-display">N/A</span></p>
 <p>電流: <span id="iin-display">N/A</span></p>
+<p>ModelName : <span id="modelname-display">N/A</span></p>
+<p>INV Status : <span id="InvSetting-display">N/A</span></p>
+<p>Revision : <span id="Revision-display">N/A</span></p>
+<p>FAN_SPEED_1 : <span id="FAN_SPEED_1">N/A</span></p>
+<p>FAN_SPEED_2 : <span id="FAN_SPEED_2">N/A</span></p>
+<p>V_BAT : <span id="V_BAT">N/A</span></p>
+<p>Load Current : <span id="Load_Current">N/A</span></p>
+<p>Load Power : <span id="Load_Power">N/A</span></p>
+<p>DC Current : <span id="DC_Current">N/A</span></p>
+<p>Temperature : <span id="Temperature_display">N/A</span></p>
 
 <MudButton OnClick="CancelAllSubscriptions">取消訂閱</MudButton>
 
@@ -32,11 +42,26 @@
             
             var batch = new List<object>
             {
-                new {addr = 0, cmd = "READ_VIN"},
-                new {addr = 0, cmd = "READ_IIN"}
+                @* new {addr = 0, cmd = "READ_VIN"},
+                new {addr = 0, cmd = "READ_IIN"}, *@
+                new {addr = 0, cmd = "MFR_MODEL_B0B5"},
+                new {addr = 0, cmd = "MFR_MODEL_B6B11"},
+                new {addr = 0, cmd = "INV_STATUS"},
+                new {addr = 0, cmd = "INV_FAULT"},
+                new {addr = 0, cmd = "MFR_REVISION_B0B5"},
+
+                new {addr = 0, cmd = "READ_FAN_SPEED_1"},
+                new {addr = 0, cmd = "READ_FAN_SPEED_2"},
+                new {addr = 0, cmd = "READ_AC_VOUT"},
+                new {addr = 0, cmd = "READ_OP_VA_HI"},
+                new {addr = 0, cmd = "READ_OP_VA_LO"},
+                new {addr = 0, cmd = "READ_CHG_CURR"},
+                new {addr = 0, cmd = "READ_VBAT"},
+                new {addr = 0, cmd = "READ_TEMPERATURE_1"},
             };
 
             await JS.InvokeVoidAsync("subscribeCommands", batch); // 測試訂閱 READ_VIN
+            
         }
     }
 
@@ -47,10 +72,6 @@
         uint fake_ID = 0;
 
         DataCenter.MOD_DATA.Read_oneDevice_ModData(fake_ID, fake_JsonData_list);
-
-        var ModelNameB0B5 = (string?)DataCenter.MOD_DATA.GetCommandData(fake_ID, "MFR_MODEL_B0B5")?.DisplayValue ?? "";
-        var ModelNameB6B11 = (string?)DataCenter.MOD_DATA.GetCommandData(fake_ID, "MFR_MODEL_B6B11")?.DisplayValue ?? "";
-        ModelName = ModelNameB0B5 + ModelNameB6B11;
 
         StateHasChanged();
     }

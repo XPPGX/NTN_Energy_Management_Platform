@@ -59,6 +59,9 @@ namespace demoVer.Services
             {
                 commandData.OnChanged += () => OnDataChanged(deviceAddr, commandName, commandData);
             }
+
+            //4. 第一次訂閱的時候，主動推送一次目前值
+            OnDataChanged(deviceAddr, commandName, commandData);
         }
 
         private bool IsAlreadyHooked(ModCommandData cmdData, (uint addr, string cmd) key)
@@ -73,11 +76,9 @@ namespace demoVer.Services
 
             if (_dataSubscribers.TryGetValue(key, out var connList))
             {
-                var value = data.DisplayValue?.ToString() ?? "N/A";
-
                 foreach (var connId in connList)
                 {
-                    _hubContext.Clients.Client(connId).SendAsync("UpdateCommandValue", addr, cmd, value);
+                    _hubContext.Clients.Client(connId).SendAsync("UpdateCommandValue", addr, cmd, data);
                 }
             }
         }

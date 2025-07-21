@@ -1,0 +1,134 @@
+.content-container{
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    padding: 1rem;
+    height: 100%;
+    width: 100%;
+}
+
+.table-wrapper{
+    grid-column: span 12;
+    overflow-x: auto;;
+}
+
+.card-grid {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    margin: -2.5px;
+    margin-right: 0px;
+    grid-template-columns: repeat(12, 1fr); /* 12格網格 */
+    gap: 0.5rem;
+}
+
+
+.card-wrapper {
+    box-sizing: border-box;
+    /* cursor: grab; */
+}
+
+.w25 {
+    grid-column: span 3; /* 25% → 3格 */
+}
+
+.cell4{
+    grid-column: span 4; /* 33% → 4格 */
+}
+
+.cell8{
+    grid-column: span 8; /* 66% → 8格 */
+}
+
+.w50 {
+    grid-column: span 6; /* 50% → 6格 */
+}
+
+.w100 {
+    grid-column: span 12; /* 滿版（選用） */
+}
+
+
+.card-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 0%;
+    background-color: white;
+    border-radius: 8px;
+    width: 100%;
+    /* width: 300px; */
+    height: 30vh;
+    align-items: center;
+}
+
+.card-container-stage{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: white;
+    border-radius: 8px;
+    width: 100%;
+    height: calc(50vh - 5px);
+    align-items: center;
+}
+
+.selected{
+    background-color: #1E88E5 !important;
+}
+.selected > td{
+    color: white !important;
+}
+.selected > td .mud-input{
+    color: white !important;
+}
+
+
+@media(max-width: 1200px)
+{
+    .content-container{
+        padding-top: 60px; /*same length as ".top-row" in the TopRow.razor.css*/
+
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding-top: 70px;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        padding-bottom: 1rem;
+        box-sizing: border-box;
+
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
+    .card-grid {
+        display: grid;
+        width: 100%;
+        margin: -2.5px;
+        margin-right: 0px;
+        grid-template-columns: repeat(3, 1fr); /* 12格網格 */
+        gap: 0.5rem;
+    }
+
+    .w25 {
+        grid-column: span 3;
+    }
+    
+    .cell4{
+        grid-column: span 3;
+    }
+    
+    .cell8{
+        grid-column: span 3;
+    }
+    
+    .w50 {
+        grid-column: span 3;
+    }
+    
+    .w100 {
+        grid-column: span 3; 
+    }
+}

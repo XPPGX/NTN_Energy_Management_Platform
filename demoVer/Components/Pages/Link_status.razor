@@ -1,1 +1,194 @@
 @page "/Link_status"
+
+@inject IDialogService DialogService
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+@inject DataCenter DataCenter
+@using demoVer.Components.Layout
+@using System.Text.Json
+@using demoVer.Models
+@using demoVer.Utils
+<MudPopoverProvider/>
+<PageTitle>Link Status</PageTitle>
+<TopRow />
+
+<div class="content-container">
+    <div class="card-grid">
+        <div class="w50">
+            <div class="card-container">
+                <MudChart ChartType="ChartType.Donut" Width="250px" Height="250px" LegendPosition="Position.Left" InputData="@data" InputLabels="@labels">
+                    <CustomGraphics>
+                        <text class="donut-inner-text" x="50%" y="35%" dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Helvetica" font-size="20">Total</text>
+                        <text class="donut-inner-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Helvetica" font-size="50">@data.Sum().ToString()</text>
+                    </CustomGraphics>
+                </MudChart>
+            </div>
+        </div>
+
+        <div class="w50">
+            <div class="card-container">
+                <MudTabs Rounded="true" Centered="false" @bind-ActivePanelIndex="@activeTabIndex" Class="mud-width-full">
+                    @foreach (var group in TimelineGroups)
+                    {
+                        Console.WriteLine($"[Group] {group.StateName}: {group.Items?.Count} items");
+                        foreach (var item in group.Items)
+                        {
+                            Console.WriteLine($"--> {item.Address}, {item.Message}, {item.Severity}, {item.Color}");
+                        }
+                        <MudTabPanel Text="@group.StateName">
+                            <LinkStatusTimeline Items="@group.Items" />
+                        </MudTabPanel>
+                    }
+                </MudTabs>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <MudTable @ref="mudTable" Items="@Elements"
+                    Dense="true" Hover="true" Striped="true"
+                    RowClass="cursor-pointer" RowClassFunc="@SelectedRow_cssClassFunc" 
+                    OnRowClick="@((TableRowClickEventArgs<Element> e) => RowClickEvent(e))">
+                <HeaderContent>
+                    <MudTh>Address</MudTh>
+                    <MudTh>ModelName</MudTh>
+                    <MudTh>LinkStatus</MudTh>
+                    <MudTh>RunningState</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Address">@context.Address</MudTd>
+                    <MudTd DataLabel="ModelName">@context.ModelName</MudTd>
+                    <MudTd DataLabel="LinkStatus">
+                        <MudChip T="string" Color="@(context.LinkStatus == "Linked" ? Color.Success : Color.Error)" Size="Size.Small">
+                            @context.LinkStatus
+                        </MudChip>
+                    </MudTd>
+                    <MudTd DataLabel="RunningState">@context.RunningState</MudTd>
+                </RowTemplate>
+                <PagerContent>
+                    <MudTablePager />
+                </PagerContent>
+            </MudTable>
+        </div>
+    </div>
+
+    
+</div>
+
+
+
+@code
+{
+    
+    private MudTable<Element> mudTable;
+    private int activeTabIndex = 0;
+    private int selectedRowNumber = -1;
+    public class Element
+    {
+        public uint Address {get; set;}
+        public string ModelName {get; set;}
+        public string LinkStatus {get; set;}
+        public string RunningState {get; set;}
+    }
+    private List<Element> Elements = new List<Element>()
+    {
+        new Element() { Address = 0, ModelName = "NTN-5K-1481231", LinkStatus = "Linked", RunningState = "ByPass" },
+        new Element() { Address = 1, ModelName = "NTN-5K-149123", LinkStatus = "Offline", RunningState = "Idle" },
+        new Element() { Address = 2, ModelName = "NTN-5K-1530", LinkStatus = "Linked", RunningState = "Running" },
+        new Element() { Address = 3, ModelName = "NTN-5K-151", LinkStatus = "Linked", RunningState = "Error" },
+        new Element() { Address = 4, ModelName = "NTN-5K-152", LinkStatus = "Offline", RunningState = "Stopped" },
+        new Element() { Address = 0, ModelName = "NTN-5K-148", LinkStatus = "Linked", RunningState = "ByPass" },
+        new Element() { Address = 1, ModelName = "NTN-5K-1439", LinkStatus = "Offline", RunningState = "Idle" },
+        new Element() { Address = 2, ModelName = "NTN-5K-150", LinkStatus = "Linked", RunningState = "Running" },
+        new Element() { Address = 3, ModelName = "NTN-5K-1521", LinkStatus = "Linked", RunningState = "Error" },
+        new Element() { Address = 4, ModelName = "NTN-5K-1532", LinkStatus = "Offline", RunningState = "Stopped" },
+        new Element() { Address = 0, ModelName = "NTN-5K-148", LinkStatus = "Linked", RunningState = "ByPass" },
+        new Element() { Address = 1, ModelName = "NTN-5K-149", LinkStatus = "Offline", RunningState = "Idle" },
+        new Element() { Address = 2, ModelName = "NTN-5K-150", LinkStatus = "Linked", RunningState = "Running" },
+        new Element() { Address = 3, ModelName = "NTN-5K-151", LinkStatus = "Linked", RunningState = "Error" },
+        new Element() { Address = 4, ModelName = "NTN-5K-122222222252", LinkStatus = "Offline", RunningState = "Stopped" },
+        new Element() { Address = 0, ModelName = "NTN-5K-1438", LinkStatus = "Linked", RunningState = "ByPass" },
+        new Element() { Address = 1, ModelName = "NTN-5K-1439", LinkStatus = "Offline", RunningState = "Idle" },
+        new Element() { Address = 2, ModelName = "NTN-5K-15320", LinkStatus = "Linked", RunningState = "Running" },
+        new Element() { Address = 3, ModelName = "NTN-5K-1531", LinkStatus = "Linked", RunningState = "Error" },
+        new Element() { Address = 4, ModelName = "NTN-5K-152", LinkStatus = "Offline", RunningState = "Stopped" },
+    };
+    
+    public double[] data = { 25, 77, 28, 5 };
+    public string[] labels = { "Oil", "Coal", "Gas", "Biomass" };
+
+    private List<RunningStateTimelineGroup> TimelineGroups = new()
+    {
+        new()
+        {
+            StateName = "Running",
+            Items = new()
+            {
+                new() { Address = 1, Message = "設備 1 運行中", Timestamp = DateTime.Now.AddMinutes(-5), Severity = Severity.Success, Color = Color.Success },
+                new() { Address = 2, Message = "設備 2 正常", Timestamp = DateTime.Now.AddMinutes(-2), Severity = Severity.Info, Color = Color.Primary },
+                new() { Address = 3, Message = "設備 3 正常", Timestamp = DateTime.Now.AddMinutes(4), Severity = Severity.Info, Color = Color.Primary }
+            }
+        },
+        new()
+        {
+            StateName = "Error",
+            Items = new()
+            {
+                new() { Address = 3, Message = "設備 3 過熱", Timestamp = DateTime.Now.AddMinutes(-3), Severity = Severity.Error, Color = Color.Error },
+                new() { Address = 4, Message = "設備 4 通訊中斷", Timestamp = DateTime.Now.AddMinutes(-1), Severity = Severity.Warning, Color = Color.Warning }
+            }
+        }
+    };
+
+    private void RowClickEvent(TableRowClickEventArgs<Element> args)
+    {
+        @* Elements.Where(e => e.LinkStatus != "Linked" || e.RunningState == "Error") *@
+        Console.WriteLine($"Row clicked : {args.Item.Address}");
+        mudTable.SetSelectedItem(args.Item); // <-- 關鍵這一行
+    }
+
+
+    private string SelectedRow_cssClassFunc(Element element, int rowNumber)
+    {
+        var result = mudTable?.SelectedItem == element ? "selected" : string.Empty;
+        Console.WriteLine($"RowClassFunc → Address={element.Address}, Class={result}");
+        return result;
+
+        @* Color="Color.Success"Severity="Severity.Success" *@
+    }
+    
+
+    private readonly string[] SubscribeCommands = new[]
+    {
+        //Table Info
+        "MFR_MODEL_B0B5",
+        "MFR_MODEL_B6B11",
+        "INV_STATUS",
+        "INV_FAULT",
+        "MFR_REVISION_B0B5",
+        //Modal Info
+        "READ_FAN_SPEED_1",
+        "READ_FAN_SPEED_2",
+        "READ_AC_VOUT",
+        "READ_OP_VA_HI",
+        "READ_OP_VA_LO",
+        "READ_CHG_CURR",
+        "READ_VBAT",
+        "READ_TEMPERATURE_1",
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await SimulateJsonInputAsync();
+    }
+
+    public async Task SimulateJsonInputAsync()
+    {
+        var filePath = "test_INVData.json";
+        var fake_JsonData_list = await DataCenter.LoadMockJsonAsync(filePath);
+        uint fake_ID = 0;
+
+        DataCenter.MOD_DATA.Read_oneDevice_ModData(fake_ID, fake_JsonData_list);
+
+        StateHasChanged();
+    }
+}

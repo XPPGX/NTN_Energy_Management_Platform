@@ -25,7 +25,7 @@
     },
     {
       "commandName": "READ_TEMPERATURE_1",
-      "data": [0, 0],
+      "data": [0, 90],
       "scaling": 0.1,
       "baseUnit": "℃",
       "dataFormat": "Numeric",
@@ -41,7 +41,7 @@
     },
     {
       "commandName": "READ_FAN_SPEED_2",
-      "data": [0, 0],
+      "data": [0, 30],
       "scaling": 0.1,
       "baseUnit": null,
       "dataFormat": "Numeric",
@@ -81,7 +81,7 @@
     },
     {
       "commandName": "MFR_REVISION_B0B5",
-      "data": [0, 0, 0, 0, 0, 0],
+      "data": [15, 12, 12, 0, 0, 0],
       "scaling": 0.1,
       "baseUnit": null,
       "dataFormat": "Numeric",

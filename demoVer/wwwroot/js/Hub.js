@@ -162,14 +162,102 @@ window.startSignalR = async function()
         .withUrl("/datahub")
         .build();
     
-    connection_READ_DATA_Hub.on("UpdateCommandValue", (addr, cmd, value) =>{
-        console.log(`[SignalR] ${cmd}@${addr} = ${value}`);
+    connection_READ_DATA_Hub.on("UpdateCommandValue", (addr, cmd, rcv_data) =>{
+        console.log(`[SignalR] ${cmd}@${addr} : ` + JSON.stringify(rcv_data, null, 2));
+        console.log("[SignalR] typeof cmd = ", typeof(cmd));
+        let Translator = window.INV_Info_Translator.Single;
+        let decode_data = Translator.decode(rcv_data);
+        let temp_str = "";
+        
+        switch(cmd)
+        {
+            case "MFR_MODEL_B0B5" :
+                console.log("[SignalR][MFR_MODEL_B0B5] : decode_data = " + decode_data);
+                Translator.MFR_MODEL_B0B5_str = decode_data;
+                break;
+            case "MFR_MODEL_B6B11" :
+                console.log("[SignalR][MFR_MODEL_B6B11] : decode_data = " + decode_data);
+                Translator.MFR_MODEL_B6B11_str = decode_data;
+                if(Translator.MFR_MODEL_B0B5_str && Translator.MFR_MODEL_B6B11_str)
+                {
+                    console.log("MFR_MODEL = " + Translator.MFR_MODEL_B0B5_str + Translator.MFR_MODEL_B6B11_str);
+                }
+                
+                document.getElementById("modelname-display").textContent = Translator.MFR_MODEL_B0B5_str + Translator.MFR_MODEL_B6B11_str;
+                break;
+            case "INV_STATUS":
+                temp_str = Translator.Get_INV_Status();
 
-        if (cmd === "READ_VIN") {
-            document.getElementById("vin-display").textContent = value;
-        }
-        if (cmd === "READ_IIN"){
-            document.getElementById("iin-display").textContent = value;
+                console.log("[INV_STATUS] : " + temp_str);
+                document.getElementById("InvSetting-display").textContent = temp_str;
+                break;
+
+            case "INV_FAULT":
+                console.log("[INV_FAULT] : " + decode_data);
+                Translator.INV_FAULT_uint = Get_INV_Fault(decode_data);
+                break;
+
+            case "MFR_REVISION_B0B5":
+                temp_str = Translator.Get_INV_MFR_REV(rcv_data);
+                console.log("[MFR_REVISION_B0B5] : " + temp_str);
+                document.getElementById("Revision-display").textContent = temp_str;
+                break;
+
+            case "READ_FAN_SPEED_1":
+                temp_str = Translator.Get_INV_FAN_SPEED_1(decode_data);
+                console.log("[READ_FAN_SPEED_1] : " + temp_str);
+                document.getElementById("FAN_SPEED_1").textContent = temp_str;
+                break;
+            case "READ_FAN_SPEED_2":
+                temp_str = Translator.Get_INV_FAN_SPEED_2(decode_data);
+                console.log("[READ_FAN_SPEED_2] : " + temp_str);
+                document.getElementById("FAN_SPEED_2").textContent = temp_str; 
+                break;
+            case "READ_VBAT":
+                temp_str = Translator.Get_INV_BAT_V_Data(decode_data, rcv_data.scaling);
+                console.log("[READ_VBAT] : " + temp_str);
+                document.getElementById("V_BAT").textContent = temp_str;
+                break;
+
+            case "READ_AC_VOUT":
+                Translator.Save_AC_VOUT(decode_data, rcv_data.scaling);
+                if(Translator.OP_VA_HI_uint != 0 || Translator.OP_VA_LO_uint != 0)
+                {
+                    temp_str = Translator.Get_INV_Current_Data();
+                    document.getElementById("Load_Current").textContent = temp_str;
+                }
+                break;
+            case "READ_OP_VA_HI":
+                Translator.Save_OP_VA_HI(decode_data, rcv_data.scaling);
+                //get Load Power
+                temp_str = Translator.Get_INV_VA_Data();
+                document.getElementById("Load_Power").textContent = temp_str;
+                //get Load Current
+                temp_str = Translator.Get_INV_Current_Data();
+                document.getElementById("Load_Current").textContent = temp_str;
+                break;
+            case "READ_OP_VA_LO":
+                Translator.Save_OP_VA_LO(decode_data, rcv_data.scaling);
+                //get Load Power
+                temp_str = Translator.Get_INV_VA_Data();
+                document.getElementById("Load_Power").textContent = temp_str;
+                //get Load Current
+                temp_str = Translator.Get_INV_Current_Data();
+                document.getElementById("Load_Current").textContent = temp_str;
+                break;
+            case "READ_CHG_CURR":
+                temp_str = Translator.Get_INV_Current_DC_Data(decode_data, rcv_data.scaling);
+                document.getElementById("DC_Current").textContent = temp_str;
+                break;
+
+            case "READ_TEMPERATURE_1":
+                temp_str = Translator.Get_INV_Temperatures_Data(decode_data, rcv_data.scaling);
+                document.getElementById("Temperature_display").textContent = temp_str;
+                break;
+            default :
+                console.log(`[SignalR] Unknown command received: "${cmd}"`);
+                
+                break;
         }
     });
 
