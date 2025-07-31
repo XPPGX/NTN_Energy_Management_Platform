@@ -158,22 +158,25 @@ window.drawSinChart_Helper = function(INV_setting)
 
 window.startSignalR = async function()
 {
+    // let RcvQueue = [];
     connection_READ_DATA_Hub = new signalR.HubConnectionBuilder()
         .withUrl("/datahub")
         .build();
     
     // window.INV_Info_Translator.Single.clearTempData();
-    await connection_READ_DATA_Hub.start();
-    console.log("[SignalR] connection started");
+    
     connection_READ_DATA_Hub.off("UpdateCommandValue");
     connection_READ_DATA_Hub.on("UpdateCommandValue", (addr, cmd, rcv_data) =>{
         //show addr on the info card
-        document.getElementById("Address").textContent = "Address:" + addr;
+        // RcvQueue.push(cmd);
+        // console.log(RcvQueue);
+        
         try
         {
+            document.getElementById("Address").textContent = "Address:" + addr;
             console.log("=================================================");
             console.log(`[SignalR] ${cmd}@${addr} :`);
-            // console.log(`[SignalR] ${cmd}@${addr} : ` + JSON.stringify(rcv_data, null, 2));
+            console.log(`[SignalR] ${cmd}@${addr} : ` + JSON.stringify(rcv_data, null, 2));
             let Translator = window.INV_Info_Translator.Single;
             let decode_data = Translator.decode(rcv_data);
             let temp_str = "";
@@ -274,14 +277,15 @@ window.startSignalR = async function()
         {
             console.error(`Error decoding ${cmd}@${addr}`, err);
         }
-        
-        
-        
     });
 
     connection_READ_DATA_Hub.onclose(err => {
         console.warn("SignalR connection closed", err);
     })
+
+    await connection_READ_DATA_Hub.start();
+    console.log("[SignalR] connection started");
+
     return true;
 }
 

@@ -101,7 +101,7 @@
     </div>
     @if(modal_IsOpen)
     {
-        <div class="modal-overlay" @onclick="CloseModal">
+        <div @ref="jumpWindow" class="modal-overlay" @onclick="CloseModal">
             @if(InfoCard_isOpen)
             {
                 <div class="info-card" @onclick:stopPropagation>
@@ -173,14 +173,9 @@
 
     private bool InfoCard_isOpen = false;
     private bool modal_IsOpen = false;
-
-    private void CloseModal()
-    {   
-        //close modal
-        modal_IsOpen = false;
-        InfoCard_isOpen = false;
-        CancelAllSubscriptions();
-    }
+    private bool NotifyJS = false;
+    private uint selectedAddr = 0;
+    private ElementReference jumpWindow;
 
     public class Element
     {
@@ -188,6 +183,37 @@
         public string ModelName {get; set;}
         public string LinkStatus {get; set;}
         public string RunningState {get; set;}
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await SimulateJsonInputAsync();
+        getINVsLink();
+        UpdateDonutChart();
+        summarizeDevicesStatus_Timeline();
+        await InvokeAsync(StateHasChanged);     
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("startSignalR");
+            Heartbeat.OnTick += pageTimer;
+        }
+        if(modal_IsOpen && !NotifyJS && jumpWindow.Context != null)
+        {
+            NotifyJS = true;
+            await JS.InvokeVoidAsync("subscribeCommands_fixedCommand_dynamicAddr", SubscribeCommands, selectedAddr);
+        }
+    }
+
+    private void CloseModal()
+    {   
+        //close modal
+        modal_IsOpen = false;
+        InfoCard_isOpen = false;
+        CancelAllSubscriptions();
     }
 
     private void getINVsLink()
@@ -290,16 +316,17 @@
             return;
         }
 
-        var selectedAddr = args.Item.Address;
+        selectedAddr = args.Item.Address;
 
         Console.WriteLine($"Row clicked : {selectedAddr}");
         mudTable.SetSelectedItem(args.Item); // <-- 關鍵這一行
         
         modal_IsOpen = true;
         InfoCard_isOpen = true;
+        NotifyJS = false;
 
-        await JS.InvokeVoidAsync("startSignalR");
-        await JS.InvokeVoidAsync("subscribeCommands_fixedCommand_dynamicAddr", SubscribeCommands, selectedAddr);
+        @* await JS.InvokeVoidAsync("startSignalR"); *@
+        @* await JS.InvokeVoidAsync("subscribeCommands_fixedCommand_dynamicAddr", SubscribeCommands, selectedAddr); *@
         
     }
 
@@ -350,23 +377,7 @@
         data = new_data;
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await SimulateJsonInputAsync();
-        getINVsLink();
-        UpdateDonutChart();
-        summarizeDevicesStatus_Timeline();
-        await InvokeAsync(StateHasChanged);     
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            @* await JS.InvokeVoidAsync("startSignalR"); *@
-            Heartbeat.OnTick += pageTimer;
-        }
-    }
+    
 
     public async Task pageTimer()
     {
@@ -395,7 +406,8 @@
     public async Task CancelAllSubscriptions()
     {
         //主動關閉dataHub()
-        await JS.InvokeVoidAsync("hubDisconnect");
+        await JS.InvokeVoidAsync("unsubscribeAllCommands");
+        @* await JS.InvokeVoidAsync("hubDisconnect"); *@
     }
 
     public async Task SimulateJsonInputAsync()
