@@ -41,6 +41,11 @@ window.INV_Info_Translator.Single = {
     decode : function(rcv_data)
     {
         const data = rcv_data.data;
+        if(!data || data.length === 0 )
+        {
+            console.warn(`[decode] empty or undefined data for ${rcv_data}`);
+            return null;
+        }
         try
         {
             if(rcv_data.dataFormat == "Numeric")
@@ -59,14 +64,14 @@ window.INV_Info_Translator.Single = {
             }
             else if(rcv_data.dataFormat == "ASCII")
             {
-                var temp = String.fromCharCode(...data);
-                console.log("[decode][ASCII] : data = " + temp + data);
+                let temp = data.map(c => String.fromCharCode(c)).join('');
+                console.log("[decode][ASCII] : data = " + temp + ", raw_Data = " + data);
                 return temp;
             }
         }
-        catch
+        catch(error)
         {
-            console.error("[ERROR]:", error);
+            console.error("[ERROR in decode()]:", error);
         }
     },
     
@@ -85,26 +90,28 @@ window.INV_Info_Translator.Single = {
         return this.INV_FAULT_uint & 0xFEFF;
     },
 
-    Get_INV_Status : function()
+    Get_INV_Status : function(status)
     {
-
+        this.INV_STATUS_uint = status;
+        console.log("INV_Status.raw = " + this.INV_STATUS_uint);
         if(this.Get_INV_Fault() != 0)
         {   //Error
             return "Error";
         }
-        else if((this.INV_STATUS_uint & this.CONST.STATUS_BIT_INV != 0) && (this.INV_STATUS_uint & this.CONST.STATUS_BIT_SAVING))
+        else if(((this.INV_STATUS_uint & this.CONST.STATUS_BIT_INV) == 1) && ((this.INV_STATUS_uint & this.CONST.STATUS_BIT_SAVING) == 1))
         {   //Saving
             return "Saving";
         }
-        else if(this.INV_STATUS_uint & this.CONST.STATUS_BIT_INV != 0)
+        else if((this.INV_STATUS_uint & this.CONST.STATUS_BIT_INV )!= 0)
         {   //Inverter
+            console.log("Status = Inverter");
             return "Inverter";
         }
-        else if(this.INV_STATUS_uint & this.CONST.STATUS_BIT_BYP != 0)
+        else if((this.INV_STATUS_uint & this.CONST.STATUS_BIT_BYP) != 0)
         {   //Bypass
             return "Bypass";
         }
-        else if(this.INV_STATUS_uint & this.CONST.STATUS_BIT_CHG != 0)
+        else if((this.INV_STATUS_uint & this.CONST.STATUS_BIT_CHG) != 0)
         {   //Charger
             return "Charger";
         }
@@ -209,5 +216,22 @@ window.INV_Info_Translator.Single = {
     {
         this.OP_VA_LO_uint = OP_VA_LO_uint;
         this.OP_VA_LO_scaling = scaling;
+    },
+
+    clearTempData : function()
+    {
+        this.MFR_MODEL_B0B5_str = "";
+        this.MFR_MODEL_B6B11_str = "";
+        this.INV_FAULT_uint = 0;
+        this.INV_STATUS_uint = 0;
+        this.FAN_SPEED_1_uint = 0;
+        this.FAN_SPEED_2_uint = 0;
+        this.AC_VOUT_uint = 0;
+        this.AC_VOUT_scaling = 0;
+        this.OP_VA_HI_uint = 0;
+        this.OP_VA_HI_scaling = 0;
+        this.OP_VA_LO_uint = 0;
+        this.OP_VA_LO_scaling = 0;
+        this.CHG_CURR_display = 0;
     },
 }

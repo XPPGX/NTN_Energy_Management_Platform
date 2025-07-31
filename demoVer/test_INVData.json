@@ -73,7 +73,7 @@
     },
     {
       "commandName": "MFR_MODEL_B6B11",
-      "data": [45, 49, 52, 56, 0, 0],
+      "data": [45, 49, 52, 56, 20, 20],
       "scaling": 1,
       "baseUnit": null,
       "dataFormat": "ASCII",
@@ -353,7 +353,7 @@
     },
     {
       "commandName": "INV_STATUS",
-      "data": [0, 0],
+      "data": [0, 1],
       "scaling": 1,
       "baseUnit": null,
       "dataFormat": "Numeric",

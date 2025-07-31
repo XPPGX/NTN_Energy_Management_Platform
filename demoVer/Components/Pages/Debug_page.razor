@@ -78,6 +78,6 @@
 
     public async Task CancelAllSubscriptions()
     {
-        await JS.InvokeVoidAsync("unsubscribeAllCommands");
+        await JS.InvokeVoidAsync("hubDisconnect");
     }
 }

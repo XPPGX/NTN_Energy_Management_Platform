@@ -61,6 +61,7 @@ namespace demoVer.Models
                 }
 
                 _AllDevice_ModData[addr] = newDevice;
+                _linkedDeviceAddr.Add(addr);
                 Console.WriteLine("New DeviceData");
             }
         }
@@ -75,6 +76,11 @@ namespace demoVer.Models
                 }
             }
             return null;
+        }
+        
+        public IEnumerable<uint> GetLinkAddresses()
+        {
+            return _linkedDeviceAddr;
         }
     }
 

@@ -78,7 +78,17 @@ namespace demoVer.Services
             {
                 foreach (var connId in connList)
                 {
-                    _hubContext.Clients.Client(connId).SendAsync("UpdateCommandValue", addr, cmd, data);
+                    try
+                    {
+                        _hubContext.Clients.Client(connId).SendAsync("UpdateCommandValue", addr, cmd, data);
+
+                        Console.WriteLine($"connID = {connId}, addr = {addr}, cmd = {cmd}");
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine($"Push failed to {connId} for {cmd}@{addr}: {ex.Message}");
+                    }
+                    
                 }
             }
         }

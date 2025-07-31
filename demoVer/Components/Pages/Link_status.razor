@@ -8,6 +8,8 @@
 @using System.Text.Json
 @using demoVer.Models
 @using demoVer.Utils
+@inject HeartbeatService Heartbeat
+
 <MudPopoverProvider/>
 <PageTitle>Link Status</PageTitle>
 <TopRow />
@@ -30,11 +32,11 @@
                 <MudTabs Rounded="true" Centered="false" @bind-ActivePanelIndex="@activeTabIndex" Class="mud-width-full">
                     @foreach (var group in TimelineGroups)
                     {
-                        Console.WriteLine($"[Group] {group.StateName}: {group.Items?.Count} items");
+                        @* Console.WriteLine($"[Group] {group.StateName}: {group.Items?.Count} items");
                         foreach (var item in group.Items)
                         {
                             Console.WriteLine($"--> {item.Address}, {item.Message}, {item.Severity}, {item.Color}");
-                        }
+                        } *@
                         <MudTabPanel Text="@group.StateName">
                             <LinkStatusTimeline Items="@group.Items" />
                         </MudTabPanel>
@@ -55,33 +57,131 @@
                     <MudTh>RunningState</MudTh>
                 </HeaderContent>
                 <RowTemplate>
-                    <MudTd DataLabel="Address">@context.Address</MudTd>
+                    <MudTd DataLabel="Address">@((context.Address == 9999) ? "N/A" : context.Address)</MudTd>
                     <MudTd DataLabel="ModelName">@context.ModelName</MudTd>
                     <MudTd DataLabel="LinkStatus">
-                        <MudChip T="string" Color="@(context.LinkStatus == "Linked" ? Color.Success : Color.Error)" Size="Size.Small">
-                            @context.LinkStatus
-                        </MudChip>
+                        @{
+                            Color tempColor;
+                            switch(context.LinkStatus)
+                            {
+                                case "Linked" :
+                                    tempColor = Color.Success;
+                                    break;
+                                case "Error" :
+                                    tempColor = Color.Error;
+                                    break;
+                                default :
+                                    tempColor = Color.Default;
+                                    break;
+                            }
+                            <MudChip T="string" Color="@tempColor" Size="Size.Small">
+                                @context.LinkStatus
+                            </MudChip>
+                        }
+                        
                     </MudTd>
                     <MudTd DataLabel="RunningState">@context.RunningState</MudTd>
                 </RowTemplate>
+                @* <FooterContent>
+                    @if (Elements.Count < 10)
+                    {
+                        foreach (var _ in Enumerable.Range(0, 10 - Elements.Count))
+                        {
+                            <MudTr class="non-clickable-row">
+                                <MudTd colspan="4" style="height: 40px; width: 25%; background-color: transparent;"></MudTd>
+                            </MudTr>
+                        }
+                    }
+                </FooterContent> *@
                 <PagerContent>
                     <MudTablePager />
                 </PagerContent>
             </MudTable>
         </div>
     </div>
-
-    
+    @if(modal_IsOpen)
+    {
+        <div class="modal-overlay" @onclick="CloseModal">
+            @if(InfoCard_isOpen)
+            {
+                <div class="info-card" @onclick:stopPropagation>
+                    <div class="card-title" id="Address"></div>
+                    <div class="card-body">
+                        <div class="info-item">
+                            <span class="label">ModelName</span>
+                            <span class="value" id="modelname-display"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Revision:</span>
+                            <span class="value" id="Revision-display"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Status:</span>
+                            <span class="value" id="InvSetting-display"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Load Current:</span>
+                            <span class="value" id="Load_Current"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Load Power:</span>
+                            <span class="value" id="Load_Power"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">DC current:</span>
+                            <span class="value" id="DC_Current"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Battery Voltage:</span>
+                            <span class="value" id="V_BAT"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Temperature:</span>
+                            <span class="value" id="Temperature_display"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">FAN SPEED 1:</span>
+                            <span class="value" id="FAN_SPEED_1"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">FAN SPEED 2</span>
+                            <span class="value" id="FAN_SPEED_2"></span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
 </div>
-
 
 
 @code
 {
-    
+    const uint STATUS_INV       = 0x00000001 << 0;
+    const uint STATUS_BYP       = 0x00000001 << 1;
+    const uint STATUS_CHG       = 0x00000001 << 3;
+    const uint STATUS_SAVING    = 0x00000001 << 5;
+
+    Queue<(uint addr, string status, DateTime date_time)> recent_RunningStatus = new();
+    Queue<(uint addr, string status, DateTime date_time)> recent_ErrorStatus = new();
+
+    private Dictionary<uint, string> allDevicesRunningStatus = new();
+    private uint pageTimer_Cnt = 0;
     private MudTable<Element> mudTable;
     private int activeTabIndex = 0;
     private int selectedRowNumber = -1;
+
+    private bool InfoCard_isOpen = false;
+    private bool modal_IsOpen = false;
+
+    private void CloseModal()
+    {   
+        //close modal
+        modal_IsOpen = false;
+        InfoCard_isOpen = false;
+        CancelAllSubscriptions();
+    }
+
     public class Element
     {
         public uint Address {get; set;}
@@ -89,32 +189,75 @@
         public string LinkStatus {get; set;}
         public string RunningState {get; set;}
     }
+
+    private void getINVsLink()
+    {
+        //取得當前的有連線的addr Set
+        Console.Write("Current Linking Model addr : { ");
+        foreach(var addr in DataCenter.MOD_DATA.GetLinkAddresses())
+        {
+            Console.Write(addr + ", ");
+        }
+        Console.WriteLine("\n}");
+        //traverse MOD_DATA，取出各Addr對應的當前modelName跟Status
+        
+        Elements = new List<Element>();
+
+        foreach(var addr in DataCenter.MOD_DATA.GetLinkAddresses())
+        {
+            string modelName = decode_ModelName(addr);
+            string runningStatus = decode_INV_Status(addr);
+            Console.WriteLine($"Addr = {addr}, ModelName = {modelName}, LinkStatus = Linked, runningStatus = {runningStatus}");
+            
+            Elements.Add(new Element
+            {
+                Address = addr,
+                ModelName = modelName,
+                LinkStatus = "Linked",
+                RunningState = runningStatus,
+            });
+
+            if(!allDevicesRunningStatus.ContainsKey(addr))
+            {
+                allDevicesRunningStatus[addr] = runningStatus;
+                AddStatus(addr, runningStatus);
+            }
+            else if(allDevicesRunningStatus[addr] != runningStatus)
+            {
+                allDevicesRunningStatus[addr] = runningStatus;
+                AddStatus(addr, runningStatus);
+            }
+        }
+        
+        int paddingCount = 10 - (Elements.Count % 10);
+        Console.WriteLine($"Element.Count = {Elements.Count}, paddingCount = {paddingCount}");
+        for(int i = 0 ; i < paddingCount ; i ++)
+        {
+            Elements.Add(new Element{
+                Address = 9999,
+                ModelName = "N/A",
+                LinkStatus = "N/A",
+                RunningState = "N/A",
+            });
+        }
+    }
+
     private List<Element> Elements = new List<Element>()
     {
-        new Element() { Address = 0, ModelName = "NTN-5K-1481231", LinkStatus = "Linked", RunningState = "ByPass" },
-        new Element() { Address = 1, ModelName = "NTN-5K-149123", LinkStatus = "Offline", RunningState = "Idle" },
-        new Element() { Address = 2, ModelName = "NTN-5K-1530", LinkStatus = "Linked", RunningState = "Running" },
-        new Element() { Address = 3, ModelName = "NTN-5K-151", LinkStatus = "Linked", RunningState = "Error" },
-        new Element() { Address = 4, ModelName = "NTN-5K-152", LinkStatus = "Offline", RunningState = "Stopped" },
-        new Element() { Address = 0, ModelName = "NTN-5K-148", LinkStatus = "Linked", RunningState = "ByPass" },
-        new Element() { Address = 1, ModelName = "NTN-5K-1439", LinkStatus = "Offline", RunningState = "Idle" },
-        new Element() { Address = 2, ModelName = "NTN-5K-150", LinkStatus = "Linked", RunningState = "Running" },
-        new Element() { Address = 3, ModelName = "NTN-5K-1521", LinkStatus = "Linked", RunningState = "Error" },
-        new Element() { Address = 4, ModelName = "NTN-5K-1532", LinkStatus = "Offline", RunningState = "Stopped" },
-        new Element() { Address = 0, ModelName = "NTN-5K-148", LinkStatus = "Linked", RunningState = "ByPass" },
-        new Element() { Address = 1, ModelName = "NTN-5K-149", LinkStatus = "Offline", RunningState = "Idle" },
-        new Element() { Address = 2, ModelName = "NTN-5K-150", LinkStatus = "Linked", RunningState = "Running" },
-        new Element() { Address = 3, ModelName = "NTN-5K-151", LinkStatus = "Linked", RunningState = "Error" },
-        new Element() { Address = 4, ModelName = "NTN-5K-122222222252", LinkStatus = "Offline", RunningState = "Stopped" },
-        new Element() { Address = 0, ModelName = "NTN-5K-1438", LinkStatus = "Linked", RunningState = "ByPass" },
-        new Element() { Address = 1, ModelName = "NTN-5K-1439", LinkStatus = "Offline", RunningState = "Idle" },
-        new Element() { Address = 2, ModelName = "NTN-5K-15320", LinkStatus = "Linked", RunningState = "Running" },
-        new Element() { Address = 3, ModelName = "NTN-5K-1531", LinkStatus = "Linked", RunningState = "Error" },
-        new Element() { Address = 4, ModelName = "NTN-5K-152", LinkStatus = "Offline", RunningState = "Stopped" },
+        @* new Element() { Address = 0, ModelName = "NTN-5K-1481231", LinkStatus = "Linked", RunningState = "ByPass" }, *@
+        
     };
     
-    public double[] data = { 25, 77, 28, 5 };
-    public string[] labels = { "Oil", "Coal", "Gas", "Biomass" };
+    public double[] data = {};
+    public string[] labels = { "Error", "Saving", "Inverter", "Bypass", "Charger", "Standby" };
+    public Dictionary<string, int> mapLabelsToData = new Dictionary<string, int>{
+        {"Error",       0},
+        {"Saving",      1},
+        {"Inverter",    2},
+        {"Bypass",      3},
+        {"Charger",     4},
+        {"Standby",     5},
+    };
 
     private List<RunningStateTimelineGroup> TimelineGroups = new()
     {
@@ -123,9 +266,9 @@
             StateName = "Running",
             Items = new()
             {
-                new() { Address = 1, Message = "設備 1 運行中", Timestamp = DateTime.Now.AddMinutes(-5), Severity = Severity.Success, Color = Color.Success },
+                @* new() { Address = 1, Message = "設備 1 運行中", Timestamp = DateTime.Now.AddMinutes(-5), Severity = Severity.Success, Color = Color.Success },
                 new() { Address = 2, Message = "設備 2 正常", Timestamp = DateTime.Now.AddMinutes(-2), Severity = Severity.Info, Color = Color.Primary },
-                new() { Address = 3, Message = "設備 3 正常", Timestamp = DateTime.Now.AddMinutes(4), Severity = Severity.Info, Color = Color.Primary }
+                new() { Address = 3, Message = "設備 3 正常", Timestamp = DateTime.Now.AddMinutes(4), Severity = Severity.Info, Color = Color.Primary } *@
             }
         },
         new()
@@ -133,17 +276,31 @@
             StateName = "Error",
             Items = new()
             {
-                new() { Address = 3, Message = "設備 3 過熱", Timestamp = DateTime.Now.AddMinutes(-3), Severity = Severity.Error, Color = Color.Error },
-                new() { Address = 4, Message = "設備 4 通訊中斷", Timestamp = DateTime.Now.AddMinutes(-1), Severity = Severity.Warning, Color = Color.Warning }
+                @* new() { Address = 3, Message = "設備 3 過熱", Timestamp = DateTime.Now.AddMinutes(-3), Severity = Severity.Error, Color = Color.Error },
+                new() { Address = 4, Message = "設備 4 通訊中斷", Timestamp = DateTime.Now.AddMinutes(-1), Severity = Severity.Warning, Color = Color.Warning } *@
             }
         }
     };
 
-    private void RowClickEvent(TableRowClickEventArgs<Element> args)
+    private async void RowClickEvent(TableRowClickEventArgs<Element> args)
     {
         @* Elements.Where(e => e.LinkStatus != "Linked" || e.RunningState == "Error") *@
-        Console.WriteLine($"Row clicked : {args.Item.Address}");
+        if(args.Item == null)
+        {
+            return;
+        }
+
+        var selectedAddr = args.Item.Address;
+
+        Console.WriteLine($"Row clicked : {selectedAddr}");
         mudTable.SetSelectedItem(args.Item); // <-- 關鍵這一行
+        
+        modal_IsOpen = true;
+        InfoCard_isOpen = true;
+
+        await JS.InvokeVoidAsync("startSignalR");
+        await JS.InvokeVoidAsync("subscribeCommands_fixedCommand_dynamicAddr", SubscribeCommands, selectedAddr);
+        
     }
 
 
@@ -176,9 +333,69 @@
         "READ_TEMPERATURE_1",
     };
 
+    private void UpdateDonutChart()
+    {
+        Console.WriteLine($"[UpdateDonutChart]");
+        double[] new_data = new double[6];
+        foreach(var device in Elements)
+        {
+            Console.WriteLine($"addr = {device.Address}, status = {device.RunningState}");
+            if(device.RunningState == "N/A"){continue;}
+            new_data[mapLabelsToData[device.RunningState]] ++;
+        }
+        foreach(var val in new_data)
+        {
+            Console.Write(val + ",");
+        }
+        data = new_data;
+    }
+
     protected override async Task OnInitializedAsync()
     {
         await SimulateJsonInputAsync();
+        getINVsLink();
+        UpdateDonutChart();
+        summarizeDevicesStatus_Timeline();
+        await InvokeAsync(StateHasChanged);     
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            @* await JS.InvokeVoidAsync("startSignalR"); *@
+            Heartbeat.OnTick += pageTimer;
+        }
+    }
+
+    public async Task pageTimer()
+    {
+        if(!modal_IsOpen)
+        {
+            if(pageTimer_Cnt >= 3)
+            {
+                pageTimer_Cnt = 0;
+                getINVsLink();
+                UpdateDonutChart();
+                summarizeDevicesStatus_Timeline();
+                await InvokeAsync(StateHasChanged);
+            }
+            else
+            {
+                pageTimer_Cnt ++;
+            }
+        }
+    }
+    public void Dispose()
+    {
+        Heartbeat.OnTick -= pageTimer;
+        Console.WriteLine($"Heartbeat 註冊 : {this.GetHashCode()}");
+    }
+
+    public async Task CancelAllSubscriptions()
+    {
+        //主動關閉dataHub()
+        await JS.InvokeVoidAsync("hubDisconnect");
     }
 
     public async Task SimulateJsonInputAsync()
@@ -186,9 +403,114 @@
         var filePath = "test_INVData.json";
         var fake_JsonData_list = await DataCenter.LoadMockJsonAsync(filePath);
         uint fake_ID = 0;
-
         DataCenter.MOD_DATA.Read_oneDevice_ModData(fake_ID, fake_JsonData_list);
-
+        fake_ID = 1;
+        DataCenter.MOD_DATA.Read_oneDevice_ModData(fake_ID, fake_JsonData_list);
+        fake_ID = 2;
+        DataCenter.MOD_DATA.Read_oneDevice_ModData(fake_ID, fake_JsonData_list);
         StateHasChanged();
+    }
+
+    private string decode_ModelName(uint addr)
+    {
+        var Data1 = DataCenter.MOD_DATA.GetCommandData(addr, "MFR_MODEL_B0B5");
+        var Data2 = DataCenter.MOD_DATA.GetCommandData(addr, "MFR_MODEL_B6B11");
+        if(Data1 == null || Data2 == null){return "N/A";}
+
+        byte[] buffer = new byte[Data1.Data.Count + Data2.Data.Count];
+        Data1.Data.CopyTo(buffer, 0);
+        Data2.Data.CopyTo(buffer, Data1.Data.Count);
+
+        @* foreach(var val in buffer)
+        {
+            Console.Write($"{val}, ");
+        }
+        Console.WriteLine("\n"); *@
+
+        string temp_mdlName = System.Text.Encoding.ASCII.GetString(buffer.ToArray());
+
+        Console.WriteLine(temp_mdlName);
+
+        return temp_mdlName;
+    }
+
+    private string decode_INV_Status(uint addr)
+    {
+        var Data1 = DataCenter.MOD_DATA.GetCommandData(addr, "INV_FAULT");
+        var Data2 = DataCenter.MOD_DATA.GetCommandData(addr, "INV_STATUS");
+        if(Data1 == null || Data2 == null){return "N/A";}
+
+        uint INV_FAULT = (((uint)Data1.Data[0]) << 8) | ((uint)Data1.Data[1]);
+        if((INV_FAULT & 0xFEFF) != 0){return "Error";}
+
+        uint INV_STATUS = (((uint)Data2.Data[0]) << 8) | ((uint)Data2.Data[1]);
+
+        if(((INV_STATUS & STATUS_INV) != 0) && ((INV_STATUS & STATUS_SAVING) != 0)){return "Saving";}
+        else if((INV_STATUS & STATUS_INV) != 0){return "Inverter";}
+        else if((INV_STATUS & STATUS_BYP) != 0){return "Bypass";}
+        else if((INV_STATUS & STATUS_CHG) != 0){return "Charger";}
+        else{return "Stanby";}
+    }
+
+    private void AddStatus(uint addr, string status)
+    {
+        if(status == "Error")
+        {
+            recent_ErrorStatus.Enqueue((addr, status, DateTime.Now));
+            if(recent_ErrorStatus.Count > 3)
+            {
+                recent_ErrorStatus.Dequeue();
+            }
+        }
+        else
+        {
+            recent_RunningStatus.Enqueue((addr, status, DateTime.Now));
+            if(recent_RunningStatus.Count > 3)
+            {
+                recent_RunningStatus.Dequeue();
+            }
+        }
+    }
+
+
+    private void summarizeDevicesStatus_Timeline()
+    {
+        List<RunningStateTimelineItem> temp_TimelineItem_list_running   = new();
+        List<RunningStateTimelineItem> temp_TimelineItem_list_error     = new();
+        
+        foreach(var tempItem in recent_RunningStatus)
+        {
+            temp_TimelineItem_list_running.Add(new RunningStateTimelineItem()
+            {
+                Address = tempItem.Item1,
+                Message = $"device {tempItem.Item1} running in {tempItem.Item2} mode",
+                Timestamp = tempItem.Item3,
+                Severity = Severity.Info,
+                Color = Color.Primary,
+            });
+        }
+        var group_run = TimelineGroups.FirstOrDefault(g => g.StateName == "Running");
+        if(group_run != null)
+        {
+            group_run.Items = temp_TimelineItem_list_running;
+        }
+
+        foreach(var tempItem in recent_ErrorStatus)
+        {
+            temp_TimelineItem_list_error.Add(new RunningStateTimelineItem()
+            {
+                Address = tempItem.Item1,
+                Message = $"device {tempItem.Item1} got something wrong",
+                Timestamp = tempItem.Item3,
+                Severity = Severity.Info,
+                Color = Color.Primary,
+            });
+        }
+        
+        var group_err = TimelineGroups.FirstOrDefault(g => g.StateName == "Error");
+        if(group_err != null)
+        {
+            group_err.Items = temp_TimelineItem_list_error;
+        }
     }
 }

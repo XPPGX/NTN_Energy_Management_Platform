@@ -37,7 +37,7 @@ namespace demoVer.Models
         public event Action? OnChanged;
 
         /// 給 UI 顯示用的屬性，根據 Data, Scaling, DataFormat 等轉換後的字串
-        // public object? DisplayValue => ParseByteData();
+        public object? DisplayValue => ParseByteData();
 
         private object? ParseByteData()
         {

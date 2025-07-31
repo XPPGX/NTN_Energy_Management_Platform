@@ -27,6 +27,11 @@ namespace demoVer.Broadcast
             }
         }
 
+        public async Task UnsubscribeAllCommands()
+        {
+            _eventManager.UnsubscribeAll(Context.ConnectionId);
+        }
+
         public override async Task OnDisconnectedAsync(Exception? ex)
         {
             _eventManager.UnsubscribeAll(Context.ConnectionId);

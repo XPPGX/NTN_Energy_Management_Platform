@@ -57,7 +57,7 @@ namespace demoVer.Services
                 AddSimulatedData();
                 NotifyChartSubscribers();
 
-                Update_Read_Data();
+                // Update_Read_Data();
 
                 await RefreshAllAsync();
             };
@@ -144,7 +144,7 @@ namespace demoVer.Services
                 var rawJsonData_String = JsonSerializer.Serialize(rawJsonData, new JsonSerializerOptions{
                     WriteIndented = true
                 });
-                Console.WriteLine(rawJsonData_String);
+                // Console.WriteLine(rawJsonData_String);
                 return rawJsonData;
             }
             catch (Exception ex)
