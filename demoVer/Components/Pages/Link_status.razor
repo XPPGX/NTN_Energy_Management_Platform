@@ -29,16 +29,17 @@
 
         <div class="w50">
             <div class="card-container">
-                <MudTabs Rounded="true" Centered="false" @bind-ActivePanelIndex="@activeTabIndex" Class="mud-width-full">
+                <MudTabs Rounded="true" Centered="false" @bind-ActivePanelIndex="@activeTabIndex" Class="mud-width-full"
+                    PrevIcon="@Icons.Material.Filled.SkipPrevious" NextIcon="@Icons.Material.Filled.SkipNext">
                     @foreach (var group in TimelineGroups)
                     {
-                        @* Console.WriteLine($"[Group] {group.StateName}: {group.Items?.Count} items");
+                        Console.WriteLine($"[Group] {group.StateName}: {group.Items?.Count} items");
                         foreach (var item in group.Items)
                         {
                             Console.WriteLine($"--> {item.Address}, {item.Message}, {item.Severity}, {item.Color}");
-                        } *@
+                        }
                         <MudTabPanel Text="@group.StateName">
-                            <LinkStatusTimeline Items="@group.Items" />
+                            <LinkStatusTimeline Items="@group.Items" IsMobile = "@IsMobile" deviceCheckCompleted = "@checkMobile_complete"/>
                         </MudTabPanel>
                     }
                 </MudTabs>
@@ -176,7 +177,8 @@
     private bool NotifyJS = false;
     private uint selectedAddr = 0;
     private ElementReference jumpWindow;
-
+    private bool IsMobile = false;
+    private bool checkMobile_complete = false;
     public class Element
     {
         public uint Address {get; set;}
@@ -200,12 +202,32 @@
         {
             await JS.InvokeVoidAsync("startSignalR");
             Heartbeat.OnTick += pageTimer;
+            IsMobile = await JS.InvokeAsync<bool>("checkIsMobile");
+            checkMobile_complete = true;
+            await InvokeAsync(StateHasChanged);
         }
         if(modal_IsOpen && !NotifyJS && jumpWindow.Context != null)
         {
             NotifyJS = true;
             await JS.InvokeVoidAsync("subscribeCommands_fixedCommand_dynamicAddr", SubscribeCommands, selectedAddr);
         }
+    }
+
+    public async Task SimulateJsonInputAsync()
+    {
+        var filePath = "test_INVData.json";
+        var fake_JsonData_list = await DataCenter.LoadMockJsonAsync(filePath);
+        uint fake_ID = 0;
+        DataCenter.MOD_DATA.Read_oneDevice_ModData(fake_ID, fake_JsonData_list);
+        fake_ID = 1;
+        DataCenter.MOD_DATA.Read_oneDevice_ModData(fake_ID, fake_JsonData_list);
+        fake_ID = 2;
+        DataCenter.MOD_DATA.Read_oneDevice_ModData(fake_ID, fake_JsonData_list);
+        fake_ID = 3;
+        var filePath2 = "test_INVData_with_INV_FAULT.json";
+        var fake_JsonData_list_2 = await DataCenter.LoadMockJsonAsync(filePath2);
+        DataCenter.MOD_DATA.Read_oneDevice_ModData(fake_ID, fake_JsonData_list_2);
+        StateHasChanged();
     }
 
     private void CloseModal()
@@ -410,18 +432,7 @@
         @* await JS.InvokeVoidAsync("hubDisconnect"); *@
     }
 
-    public async Task SimulateJsonInputAsync()
-    {
-        var filePath = "test_INVData.json";
-        var fake_JsonData_list = await DataCenter.LoadMockJsonAsync(filePath);
-        uint fake_ID = 0;
-        DataCenter.MOD_DATA.Read_oneDevice_ModData(fake_ID, fake_JsonData_list);
-        fake_ID = 1;
-        DataCenter.MOD_DATA.Read_oneDevice_ModData(fake_ID, fake_JsonData_list);
-        fake_ID = 2;
-        DataCenter.MOD_DATA.Read_oneDevice_ModData(fake_ID, fake_JsonData_list);
-        StateHasChanged();
-    }
+    
 
     private string decode_ModelName(uint addr)
     {
@@ -440,7 +451,8 @@
         Console.WriteLine("\n"); *@
 
         string temp_mdlName = System.Text.Encoding.ASCII.GetString(buffer.ToArray());
-
+        temp_mdlName = temp_mdlName.TrimEnd(' ');
+        temp_mdlName = temp_mdlName.TrimEnd((char)0);
         Console.WriteLine(temp_mdlName);
 
         return temp_mdlName;
@@ -483,7 +495,26 @@
             }
         }
     }
-
+    
+    private string ShortenStatus(string status)
+    {
+        if(IsMobile)
+        {
+            return status switch
+            {
+                "Inverter" => "INV",
+                "Bypass" => "BYP",
+                "Charger" => "CHG",
+                "Saving" => "SAV",
+                "Standby" => "STB",
+                _ => status,
+            };
+        }
+        else
+        {
+            return status;
+        }
+    }
 
     private void summarizeDevicesStatus_Timeline()
     {
@@ -495,7 +526,7 @@
             temp_TimelineItem_list_running.Add(new RunningStateTimelineItem()
             {
                 Address = tempItem.Item1,
-                Message = $"device {tempItem.Item1} running in {tempItem.Item2} mode",
+                Message = $"device {tempItem.Item1} : {ShortenStatus(tempItem.Item2)}",
                 Timestamp = tempItem.Item3,
                 Severity = Severity.Info,
                 Color = Color.Primary,
@@ -512,10 +543,11 @@
             temp_TimelineItem_list_error.Add(new RunningStateTimelineItem()
             {
                 Address = tempItem.Item1,
-                Message = $"device {tempItem.Item1} got something wrong",
+                Message = $"device {tempItem.Item1} Error",
                 Timestamp = tempItem.Item3,
                 Severity = Severity.Info,
-                Color = Color.Primary,
+                Color = Color.Default,
+                @* Color = Color.Primary, *@
             });
         }
         

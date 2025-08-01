@@ -1,28 +1,87 @@
 @namespace demoVer.Shared
 @using MudBlazor
 @using demoVer.Models
-<MudTimeline TimelineOrientation="TimelineOrientation.Horizontal"
-             TimelinePosition="TimelinePosition.Alternate"
-             Reverse="true">
-    @foreach (var item in Items)
+
+
+@{
+    if(!deviceCheckCompleted)
     {
-        <MudTimelineItem Color="@item.Color">
-            <ItemContent>
-                <MudAlert Severity="@item.Severity">@item.Message</MudAlert>
-            </ItemContent>
-            <ItemOpposite>
-                <MudText Color="@item.Color">@item.Timestamp.ToString("HH:mm")</MudText>
-            </ItemOpposite>
-        </MudTimelineItem>
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background-color: rgba(255,255,255,0.8);"
+            class="d-flex align-center justify-center">
+            <MudProgressCircular Indeterminate="true" Color="Color.Primary" Size="Size.Large" />
+        </div>
     }
-</MudTimeline>
+    else
+    {
+        if(IsMobile)
+        {
+            <MudTimeline TimelineOrientation="TimelineOrientation.Vertical"
+                TimelinePosition="TimelinePosition.Start"
+                Reverse="true">
+                @foreach (var item in Items)
+                {
+                    <MudTimelineItem Color="@item.Color">
+                        <ItemContent>
+                            @{
+                                if(IsMobile)
+                                {
+                                    Console.WriteLine("HI123");
+                                    <MudAlert>@item.Message</MudAlert>
+                                }
+                                else
+                                {
+                                    Console.WriteLine("HI456");
+                                    <MudAlert Severity="@item.Severity">@item.Message</MudAlert>
+                                }
+                            }
+                        </ItemContent>
+                        <ItemOpposite>
+                            <MudText Color="@item.Color">@item.Timestamp.ToString("HH:mm")</MudText>
+                        </ItemOpposite>
+                    </MudTimelineItem>
+                }
+            </MudTimeline>
+        }
+        else
+        {
+            <MudTimeline TimelineOrientation="TimelineOrientation.Horizontal"
+                TimelinePosition="TimelinePosition.Alternate"
+                Reverse="true">
+                @foreach (var item in Items)
+                {
+                    <MudTimelineItem Color="@item.Color">
+                        <ItemContent>
+                            @{
+                                if(IsMobile)
+                                {
+                                    Console.WriteLine("HI123");
+                                    <MudAlert>@item.Message</MudAlert>
+                                }
+                                else
+                                {
+                                    Console.WriteLine("HI456");
+                                    <MudAlert Severity="@item.Severity">@item.Message</MudAlert>
+                                }
+                            }
+                        </ItemContent>
+                        <ItemOpposite>
+                            <MudText Color="@item.Color">@item.Timestamp.ToString("HH:mm")</MudText>
+                        </ItemOpposite>
+                    </MudTimelineItem>
+                }
+            </MudTimeline>
+        }
+    }
+    
+}
 
 @code {
-    [Parameter]
-    public List<RunningStateTimelineItem> Items { get; set; } = new();
-    
+    [Parameter] public List<RunningStateTimelineItem> Items { get; set; } = new();
+    [Parameter] public bool IsMobile {get; set;}
+    [Parameter] public bool deviceCheckCompleted {get; set;}
     protected override void OnParametersSet()
     {
-        Console.WriteLine("Timeline!");
+        Console.WriteLine($"Timeline");
     }
 }

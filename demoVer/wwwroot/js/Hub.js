@@ -175,7 +175,7 @@ window.startSignalR = async function()
         {
             document.getElementById("Address").textContent = "Address:" + addr;
             console.log("=================================================");
-            console.log(`[SignalR] ${cmd}@${addr} :`);
+            // console.log(`[SignalR] ${cmd}@${addr} :`);
             console.log(`[SignalR] ${cmd}@${addr} : ` + JSON.stringify(rcv_data, null, 2));
             let Translator = window.INV_Info_Translator.Single;
             let decode_data = Translator.decode(rcv_data);

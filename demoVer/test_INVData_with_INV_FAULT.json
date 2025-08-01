@@ -361,7 +361,7 @@
     },
     {
       "commandName": "INV_FAULT",
-      "data": [0, 0],
+      "data": [0, 1],
       "scaling": 1,
       "baseUnit": null,
       "dataFormat": "Numeric",
