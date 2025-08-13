@@ -9,7 +9,8 @@
 @using demoVer.Models
 @using demoVer.Utils
 @inject HeartbeatService Heartbeat
-
+@using demoVer.Interfaces
+@inject IGroupsDataDecoder Decoder
 <MudPopoverProvider/>
 <PageTitle>Link Status</PageTitle>
 <TopRow />
@@ -158,10 +159,13 @@
 
 @code
 {
-    const uint STATUS_INV       = 0x00000001 << 0;
-    const uint STATUS_BYP       = 0x00000001 << 1;
-    const uint STATUS_CHG       = 0x00000001 << 3;
-    const uint STATUS_SAVING    = 0x00000001 << 5;
+    @* const uint STATUS_INV           = 0x00000001 << 0;
+    const uint STATUS_BYP           = 0x00000001 << 1;
+    const uint STATUS_UTI_OK        = 0x00000001 << 2;
+    const uint STATUS_CHG           = 0x00000001 << 3;
+    const uint STATUS_SOLAR_EN      = 0x00000001 << 4;
+    const uint STATUS_SAVING        = 0x00000001 << 5;
+    const uint STATUS_BAT_LOW_ALM   = 0x00000001 << 6; *@
 
     Queue<(uint addr, string status, DateTime date_time)> recent_RunningStatus = new();
     Queue<(uint addr, string status, DateTime date_time)> recent_ErrorStatus = new();
@@ -189,7 +193,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await SimulateJsonInputAsync();
         getINVsLink();
         UpdateDonutChart();
         summarizeDevicesStatus_Timeline();
@@ -200,7 +203,7 @@
     {
         if (firstRender)
         {
-            await JS.InvokeVoidAsync("startSignalR");
+            @* await JS.InvokeVoidAsync("startSignalR"); *@
             Heartbeat.OnTick += pageTimer;
             IsMobile = await JS.InvokeAsync<bool>("checkIsMobile");
             checkMobile_complete = true;
@@ -209,25 +212,8 @@
         if(modal_IsOpen && !NotifyJS && jumpWindow.Context != null)
         {
             NotifyJS = true;
-            await JS.InvokeVoidAsync("subscribeCommands_fixedCommand_dynamicAddr", SubscribeCommands, selectedAddr);
+            @* await JS.InvokeVoidAsync("subscribeCommands_fixedCommand_dynamicAddr", SubscribeCommands, selectedAddr); *@
         }
-    }
-
-    public async Task SimulateJsonInputAsync()
-    {
-        var filePath = "test_INVData.json";
-        var fake_JsonData_list = await DataCenter.LoadMockJsonAsync(filePath);
-        uint fake_ID = 0;
-        DataCenter.MOD_DATA.Read_oneDevice_ModData(fake_ID, fake_JsonData_list);
-        fake_ID = 1;
-        DataCenter.MOD_DATA.Read_oneDevice_ModData(fake_ID, fake_JsonData_list);
-        fake_ID = 2;
-        DataCenter.MOD_DATA.Read_oneDevice_ModData(fake_ID, fake_JsonData_list);
-        fake_ID = 3;
-        var filePath2 = "test_INVData_with_INV_FAULT.json";
-        var fake_JsonData_list_2 = await DataCenter.LoadMockJsonAsync(filePath2);
-        DataCenter.MOD_DATA.Read_oneDevice_ModData(fake_ID, fake_JsonData_list_2);
-        StateHasChanged();
     }
 
     private void CloseModal()
@@ -242,7 +228,7 @@
     {
         //取得當前的有連線的addr Set
         Console.Write("Current Linking Model addr : { ");
-        foreach(var addr in DataCenter.MOD_DATA.GetLinkAddresses())
+        foreach(var addr in DataCenter.Device_ReadData.GetLinkAddresses())
         {
             Console.Write(addr + ", ");
         }
@@ -251,16 +237,21 @@
         
         Elements = new List<Element>();
 
-        foreach(var addr in DataCenter.MOD_DATA.GetLinkAddresses())
+
+        foreach(var addr in DataCenter.Device_ReadData.GetLinkAddresses())
         {
-            string modelName = decode_ModelName(addr);
+            //string modelName = decode_ModelName(addr);
+            //string runningStatus = decode_INV_Status(addr);
+            Group_CommandRawData tmp_Group = DataCenter.Device_ReadData.GetCommandGroups(addr, "MFR_MODEL"); 
+            var modelName = Decoder.Decode(tmp_Group, "MFR_MODEL");
             string runningStatus = decode_INV_Status(addr);
+
             Console.WriteLine($"Addr = {addr}, ModelName = {modelName}, LinkStatus = Linked, runningStatus = {runningStatus}");
             
             Elements.Add(new Element
             {
                 Address = addr,
-                ModelName = modelName,
+                ModelName = modelName.ToString(),
                 LinkStatus = "Linked",
                 RunningState = runningStatus,
             });
@@ -337,16 +328,28 @@
         {
             return;
         }
-
-        selectedAddr = args.Item.Address;
-
-        Console.WriteLine($"Row clicked : {selectedAddr}");
-        mudTable.SetSelectedItem(args.Item); // <-- 關鍵這一行
         
-        modal_IsOpen = true;
-        InfoCard_isOpen = true;
-        NotifyJS = false;
+        try
+        {
+            AppLogger.Log_To_File_txt($"[Link_status.razor][RowClickEvent] : selectedAddr = {args.Item.Address}");
+            selectedAddr = args.Item.Address;
 
+            Console.WriteLine($"Row clicked : {selectedAddr}");
+            mudTable.SetSelectedItem(args.Item); // <-- 關鍵這一行
+            
+            modal_IsOpen = true;
+            InfoCard_isOpen = true;
+            NotifyJS = false;
+
+            await JS.InvokeVoidAsync("DataSocket");
+            await JS.InvokeVoidAsync("subscribeGroup_fixedCommands_dynamicAddr", SubscribeCommands, selectedAddr);
+        }
+        catch(Exception ex)
+        {
+            AppLogger.Log_To_File_txt($"[Link_status.razor][RowClickEvent] : Error, {ex}");
+        }
+        
+        
         @* await JS.InvokeVoidAsync("startSignalR"); *@
         @* await JS.InvokeVoidAsync("subscribeCommands_fixedCommand_dynamicAddr", SubscribeCommands, selectedAddr); *@
         
@@ -366,8 +369,7 @@
     private readonly string[] SubscribeCommands = new[]
     {
         //Table Info
-        "MFR_MODEL_B0B5",
-        "MFR_MODEL_B6B11",
+        "MFR_MODEL",
         "INV_STATUS",
         "INV_FAULT",
         "MFR_REVISION_B0B5",
@@ -375,8 +377,7 @@
         "READ_FAN_SPEED_1",
         "READ_FAN_SPEED_2",
         "READ_AC_VOUT",
-        "READ_OP_VA_HI",
-        "READ_OP_VA_LO",
+        "READ_OP_VA",
         "READ_CHG_CURR",
         "READ_VBAT",
         "READ_TEMPERATURE_1",
@@ -428,13 +429,13 @@
     public async Task CancelAllSubscriptions()
     {
         //主動關閉dataHub()
-        await JS.InvokeVoidAsync("unsubscribeAllCommands");
+        await JS.InvokeVoidAsync("unsubscribeAllGroups");
         @* await JS.InvokeVoidAsync("hubDisconnect"); *@
     }
 
     
 
-    private string decode_ModelName(uint addr)
+    @* private string decode_ModelName(uint addr)
     {
         var Data1 = DataCenter.MOD_DATA.GetCommandData(addr, "MFR_MODEL_B0B5");
         var Data2 = DataCenter.MOD_DATA.GetCommandData(addr, "MFR_MODEL_B6B11");
@@ -444,11 +445,11 @@
         Data1.Data.CopyTo(buffer, 0);
         Data2.Data.CopyTo(buffer, Data1.Data.Count);
 
-        @* foreach(var val in buffer)
+        foreach(var val in buffer)
         {
             Console.Write($"{val}, ");
         }
-        Console.WriteLine("\n"); *@
+        Console.WriteLine("\n"); 
 
         string temp_mdlName = System.Text.Encoding.ASCII.GetString(buffer.ToArray());
         temp_mdlName = temp_mdlName.TrimEnd(' ');
@@ -456,24 +457,27 @@
         Console.WriteLine(temp_mdlName);
 
         return temp_mdlName;
-    }
+    } *@
 
     private string decode_INV_Status(uint addr)
     {
-        var Data1 = DataCenter.MOD_DATA.GetCommandData(addr, "INV_FAULT");
-        var Data2 = DataCenter.MOD_DATA.GetCommandData(addr, "INV_STATUS");
-        if(Data1 == null || Data2 == null){return "N/A";}
+        var Group1 = DataCenter.Device_ReadData.GetCommandGroups(addr, "INV_FAULT");
+        var Group2 = DataCenter.Device_ReadData.GetCommandGroups(addr, "INV_STATUS");
+        if(Group1 == null || Group2 == null){return "N/A";}
 
-        uint INV_FAULT = (((uint)Data1.Data[0]) << 8) | ((uint)Data1.Data[1]);
-        if((INV_FAULT & 0xFEFF) != 0){return "Error";}
+        uint INV_FAULT = (((uint)Group1.Groups[0].Data[1]) << 8) | ((uint)Group1.Groups[0].Data[0]);
+        @* if(VarTranslator.Get_INV_Fault(INV_FAULT) != 0){return "Error";} *@
 
-        uint INV_STATUS = (((uint)Data2.Data[0]) << 8) | ((uint)Data2.Data[1]);
+        uint INV_STATUS = (((uint)Group2.Groups[0].Data[1]) << 8) | ((uint)Group2.Groups[0].Data[0]);
+        string INV_STATUS_str = VarTranslator.Get_INV_Status(INV_FAULT, INV_STATUS);
 
-        if(((INV_STATUS & STATUS_INV) != 0) && ((INV_STATUS & STATUS_SAVING) != 0)){return "Saving";}
+        return INV_STATUS_str;
+        
+        @* if(((INV_STATUS & STATUS_INV) != 0) && ((INV_STATUS & STATUS_SAVING) != 0)){return "Saving";}
         else if((INV_STATUS & STATUS_INV) != 0){return "Inverter";}
         else if((INV_STATUS & STATUS_BYP) != 0){return "Bypass";}
         else if((INV_STATUS & STATUS_CHG) != 0){return "Charger";}
-        else{return "Stanby";}
+        else{return "Standby";} *@
     }
 
     private void AddStatus(uint addr, string status)

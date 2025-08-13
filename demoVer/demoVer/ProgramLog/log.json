@@ -1,0 +1,2164 @@
+[2025-08-08 08:45:31.450] {
+  "READ_VIN": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "V",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_IIN": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "A",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_FREQ": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.01,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_TEMPERATURE_1": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "\u2103",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_FAN_SPEED_1": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_FAN_SPEED_2": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "MFR_ID": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "ASCII",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 0,
+        "BitFields": null,
+        "isSNnumber": null
+      },
+      "1": {
+        "Data": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "ASCII",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 1,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "MFR_MODEL": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "ASCII",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 0,
+        "BitFields": null,
+        "isSNnumber": null
+      },
+      "1": {
+        "Data": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "ASCII",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 1,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "MFR_REVISION_B0B5": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": "1,",
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "MFR_LOCATION_B0B2": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "ASCII",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "MFR_DATE_B0B5": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "ASCII",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "MFR_SERIAL": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "ASCII",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 0,
+        "BitFields": null,
+        "isSNnumber": true
+      },
+      "1": {
+        "Data": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "ASCII",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 1,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "CURVE_CC": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.01,
+        "BaseUnit": "A",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "CURVE_CV": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.01,
+        "BaseUnit": "V",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "CURVE_FV": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.01,
+        "BaseUnit": "V",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "CURVE_TC": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.01,
+        "BaseUnit": "A",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "CURVE_CONFIG": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "CURVE_CC_TIMEOUT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": "Sec",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "CURVE_CV_TIMEOUT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": "Sec",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "CURVE_FV_TIMEOUT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": "Sec",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "CHG_STATUS": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.01,
+        "BaseUnit": "V",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "BAT_ALM_VOLT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.01,
+        "BaseUnit": "V",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "BAT_SHDN_VOLT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.01,
+        "BaseUnit": "V",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "BAT_RCHG_VOLT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.01,
+        "BaseUnit": "V",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "BAT_OV_ALM_VOLT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.01,
+        "BaseUnit": "V",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "SCALING_FACTOR": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "SYSTEM_CONFIG": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "INV_OPERATION": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "INV_CONFIG": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "Output_ACV_Set": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "Output_ACF_Set": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_AC_FOUT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.01,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_AC_VOUT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "V",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_OP_LD_PCNT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_OP_WATT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "W",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 0,
+        "BitFields": null,
+        "isSNnumber": null
+      },
+      "1": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "W",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 1,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_OP_VA": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "W",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 0,
+        "BitFields": null,
+        "isSNnumber": null
+      },
+      "1": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "W",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 1,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_VBAT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.01,
+        "BaseUnit": "V",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_CHG_CURR": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "INV_STATUS": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": [
+          {
+            "bit": 8,
+            "length": 2,
+            "loggable": true,
+            "valueMap": {
+              "0": "Phase 0\u00B0",
+              "1": "Phase 180\u00B0",
+              "2": "Phase 120\u00B0",
+              "3": "Phase 240\u00B0"
+            }
+          }
+        ],
+        "isSNnumber": null
+      }
+    }
+  },
+  "INV_FAULT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": [
+          {
+            "bit": 0,
+            "length": 1,
+            "loggable": true,
+            "valueMap": {
+              "0": "",
+              "1": "OLP100"
+            }
+          },
+          {
+            "bit": 1,
+            "length": 1,
+            "loggable": true,
+            "valueMap": {
+              "0": "",
+              "1": "OLP115"
+            }
+          },
+          {
+            "bit": 2,
+            "length": 1,
+            "loggable": true,
+            "valueMap": {
+              "0": "",
+              "1": "OLP150"
+            }
+          },
+          {
+            "bit": 3,
+            "length": 1,
+            "loggable": true,
+            "valueMap": {
+              "0": "",
+              "1": "OTP"
+            }
+          },
+          {
+            "bit": 4,
+            "length": 1,
+            "loggable": true,
+            "valueMap": {
+              "0": "",
+              "1": "INV_UVP"
+            }
+          },
+          {
+            "bit": 5,
+            "length": 1,
+            "loggable": true,
+            "valueMap": {
+              "0": "",
+              "1": "INV_OVP"
+            }
+          },
+          {
+            "bit": 6,
+            "length": 1,
+            "loggable": true,
+            "valueMap": {
+              "0": "",
+              "1": "INV_FAULT"
+            }
+          },
+          {
+            "bit": 7,
+            "length": 1,
+            "loggable": true,
+            "valueMap": {
+              "0": "",
+              "1": "EEP_Err"
+            }
+          },
+          {
+            "bit": 8,
+            "length": 1,
+            "loggable": true,
+            "valueMap": {
+              "0": "",
+              "1": "SHDN"
+            }
+          },
+          {
+            "bit": 9,
+            "length": 1,
+            "loggable": true,
+            "valueMap": {
+              "0": "",
+              "1": "FanFail"
+            }
+          },
+          {
+            "bit": 10,
+            "length": 1,
+            "loggable": true,
+            "valueMap": {
+              "0": "",
+              "1": "BAT_UVP"
+            }
+          },
+          {
+            "bit": 11,
+            "length": 1,
+            "loggable": true,
+            "valueMap": {
+              "0": "",
+              "1": "BAT_OVP"
+            }
+          }
+        ],
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_BP_WATT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "W",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 0,
+        "BitFields": null,
+        "isSNnumber": null
+      },
+      "1": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "W",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 1,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_BP_VA": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "W",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 0,
+        "BitFields": null,
+        "isSNnumber": null
+      },
+      "1": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "W",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 1,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_AC_IOUT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "W",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  }
+}
+[2025-08-08 08:46:21.314] {
+  "READ_VIN": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "V",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_IIN": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "A",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_FREQ": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.01,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_TEMPERATURE_1": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "\u2103",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_FAN_SPEED_1": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_FAN_SPEED_2": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "MFR_ID": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "ASCII",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 0,
+        "BitFields": null,
+        "isSNnumber": null
+      },
+      "1": {
+        "Data": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "ASCII",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 1,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "MFR_MODEL": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "ASCII",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 0,
+        "BitFields": null,
+        "isSNnumber": null
+      },
+      "1": {
+        "Data": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "ASCII",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 1,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "MFR_REVISION_B0B5": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": "1,",
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "MFR_LOCATION_B0B2": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "ASCII",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "MFR_DATE_B0B5": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "ASCII",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "MFR_SERIAL": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "ASCII",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 0,
+        "BitFields": null,
+        "isSNnumber": true
+      },
+      "1": {
+        "Data": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "ASCII",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 1,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "CURVE_CC": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.01,
+        "BaseUnit": "A",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "CURVE_CV": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.01,
+        "BaseUnit": "V",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "CURVE_FV": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.01,
+        "BaseUnit": "V",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "CURVE_TC": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.01,
+        "BaseUnit": "A",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "CURVE_CONFIG": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "CURVE_CC_TIMEOUT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": "Sec",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "CURVE_CV_TIMEOUT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": "Sec",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "CURVE_FV_TIMEOUT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": "Sec",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "CHG_STATUS": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.01,
+        "BaseUnit": "V",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "BAT_ALM_VOLT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.01,
+        "BaseUnit": "V",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "BAT_SHDN_VOLT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.01,
+        "BaseUnit": "V",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "BAT_RCHG_VOLT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.01,
+        "BaseUnit": "V",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "BAT_OV_ALM_VOLT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.01,
+        "BaseUnit": "V",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "SCALING_FACTOR": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "SYSTEM_CONFIG": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "INV_OPERATION": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "INV_CONFIG": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "Output_ACV_Set": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "Output_ACF_Set": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_AC_FOUT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.01,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_AC_VOUT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "V",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_OP_LD_PCNT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_OP_WATT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "W",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 0,
+        "BitFields": null,
+        "isSNnumber": null
+      },
+      "1": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "W",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 1,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_OP_VA": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "W",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 0,
+        "BitFields": null,
+        "isSNnumber": null
+      },
+      "1": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "W",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 1,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_VBAT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.01,
+        "BaseUnit": "V",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_CHG_CURR": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "INV_STATUS": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": [
+          {
+            "bit": 8,
+            "length": 2,
+            "loggable": true,
+            "valueMap": {
+              "0": "Phase 0\u00B0",
+              "1": "Phase 180\u00B0",
+              "2": "Phase 120\u00B0",
+              "3": "Phase 240\u00B0"
+            }
+          }
+        ],
+        "isSNnumber": null
+      }
+    }
+  },
+  "INV_FAULT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 1,
+        "BaseUnit": null,
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": [
+          {
+            "bit": 0,
+            "length": 1,
+            "loggable": true,
+            "valueMap": {
+              "0": "",
+              "1": "OLP100"
+            }
+          },
+          {
+            "bit": 1,
+            "length": 1,
+            "loggable": true,
+            "valueMap": {
+              "0": "",
+              "1": "OLP115"
+            }
+          },
+          {
+            "bit": 2,
+            "length": 1,
+            "loggable": true,
+            "valueMap": {
+              "0": "",
+              "1": "OLP150"
+            }
+          },
+          {
+            "bit": 3,
+            "length": 1,
+            "loggable": true,
+            "valueMap": {
+              "0": "",
+              "1": "OTP"
+            }
+          },
+          {
+            "bit": 4,
+            "length": 1,
+            "loggable": true,
+            "valueMap": {
+              "0": "",
+              "1": "INV_UVP"
+            }
+          },
+          {
+            "bit": 5,
+            "length": 1,
+            "loggable": true,
+            "valueMap": {
+              "0": "",
+              "1": "INV_OVP"
+            }
+          },
+          {
+            "bit": 6,
+            "length": 1,
+            "loggable": true,
+            "valueMap": {
+              "0": "",
+              "1": "INV_FAULT"
+            }
+          },
+          {
+            "bit": 7,
+            "length": 1,
+            "loggable": true,
+            "valueMap": {
+              "0": "",
+              "1": "EEP_Err"
+            }
+          },
+          {
+            "bit": 8,
+            "length": 1,
+            "loggable": true,
+            "valueMap": {
+              "0": "",
+              "1": "SHDN"
+            }
+          },
+          {
+            "bit": 9,
+            "length": 1,
+            "loggable": true,
+            "valueMap": {
+              "0": "",
+              "1": "FanFail"
+            }
+          },
+          {
+            "bit": 10,
+            "length": 1,
+            "loggable": true,
+            "valueMap": {
+              "0": "",
+              "1": "BAT_UVP"
+            }
+          },
+          {
+            "bit": 11,
+            "length": 1,
+            "loggable": true,
+            "valueMap": {
+              "0": "",
+              "1": "BAT_OVP"
+            }
+          }
+        ],
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_BP_WATT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "W",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 0,
+        "BitFields": null,
+        "isSNnumber": null
+      },
+      "1": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "W",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 1,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_BP_VA": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "W",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 0,
+        "BitFields": null,
+        "isSNnumber": null
+      },
+      "1": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "W",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": 1,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  },
+  "READ_AC_IOUT": {
+    "Groups": {
+      "0": {
+        "Data": [
+          0,
+          0
+        ],
+        "Scaling": 0.1,
+        "BaseUnit": "W",
+        "DataFormat": "Numeric",
+        "Split": null,
+        "Signed": false,
+        "Mask": null,
+        "GroupIndex": null,
+        "BitFields": null,
+        "isSNnumber": null
+      }
+    }
+  }
+}

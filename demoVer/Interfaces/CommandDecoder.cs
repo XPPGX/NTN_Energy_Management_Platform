@@ -1,7 +1,9 @@
+using demoVer.Models;
+
 namespace demoVer.Interfaces
 {
-    public interface CommandDecoder
+    public interface IGroupsDataDecoder
     {
-        object? Decode(List<byte> data, float scaling);
+        object? Decode(Group_CommandRawData groups, string cmdName = "");
     }
 }

@@ -16,10 +16,19 @@ namespace demoVer.Services
 
     public class DataCenter
     {
+        //[Injection] services instances
         private readonly HeartbeatService _heartbeat;
         private readonly IHubContext<DataHub> _hubContext; //SignalR Hub
         private readonly CommonData _commonData;
         private readonly DataChangeEventManager _eventManager;
+        private readonly ApiManager _apiManager;
+
+        //[Declare] variables shared in whole process
+        public Battery_DataSetting_Module Battery {get; set;}
+        public INV_DataSetting_Module INV{get; set;}
+        public allDevice_ModData MOD_DATA{get; set;}
+        public allDevice_Data Device_ReadData {get; set;} //Get from framework via READ_API
+
 
         //[DEBUG]模擬資料
         private List<string> _labels = new();
@@ -28,40 +37,103 @@ namespace demoVer.Services
         //[DEBUG]外部元件可訂閱此事件來接收圖表刷新通知
         public event Func<Task>? OnChartDataUpdated;
 
-        public Battery_DataSetting_Module Battery {get; set;}
-        public INV_DataSetting_Module INV{get; set;}
-        public allDevice_ModData MOD_DATA{get; set;}
-        public Dictionary<string, ModCommandData> INV_MOD_READ_Data {get;} = new();
+        
 
+        // public bool ApiSendFlag = false;
+        
         public DataCenter(  CommonData commonData, 
                             HeartbeatService heartbeat, 
                             IHubContext<DataHub> hubContext,
-                            DataChangeEventManager eventManager)
+                            DataChangeEventManager eventManager,
+                            ApiManager apiManager)
         {
             _heartbeat  = heartbeat;
             _hubContext = hubContext;
             _commonData = commonData;
             _eventManager = eventManager;
-            
-            MOD_DATA = new allDevice_ModData(_eventManager);
+            _apiManager = apiManager;
 
+            MOD_DATA = new allDevice_ModData(_eventManager);
+            Device_ReadData = new allDevice_Data();
             Battery     = new Battery_DataSetting_Module(_commonData);
             Battery.UpdateFrom(new Battery_InitData()); //接收初始值
             INV         = new INV_DataSetting_Module(_commonData);
             INV.UpdateFrom(new INV_InitData()); //接收初始值
 
-
-
+            bool ApiReadFlag = false;
+            uint counter = 0;
+            bool counterEnable = true;
             _heartbeat.OnTick += async () => 
             {
-                AddSimulatedData();
-                NotifyChartSubscribers();
+                // AddSimulatedData();
+                // NotifyChartSubscribers();
 
+                if(ApiReadFlag == false)
+                {
+                    // var result = await _apiManager.ReadSingleINV("CAN1", 0);
+                    // string parsedJson = JsonSerializer.Serialize(result, new JsonSerializerOptions {WriteIndented = true});
+                    // Console.WriteLine("[Parsed Result] = " + parsedJson);
+                    // MOD_DATA.Read_oneDevice_ModData(0, result);
+
+                    READ_API_TEST();
+                    
+                    
+                    ApiReadFlag = true;
+                }
+
+                if(counter == 3)
+                {
+                    counter = 0;
+                    LocalDataChange_Test();
+                }
+                counter ++;
                 // Update_Read_Data();
-
                 await RefreshAllAsync();
             };
         }
+
+        public async Task READ_API_TEST()
+        {
+            var result = await _apiManager.apiRead_OneDeviceData("CAN1", 0);
+            string parsedJson = JsonSerializer.Serialize(result, new JsonSerializerOptions {WriteIndented = true});
+            Device_ReadData.Read_oneDevice_Data(0, result);
+        }
+        public async Task LocalDataChange_Test()
+        {
+            //CURVE_CV
+            var tmp_groups = Device_ReadData.GetCommandGroups(0, "CURVE_CV");
+            
+            var rnd = new Random();
+            var randomBytes = new List<byte>();
+
+            for (int i = 0 ; i < 2 ; i ++)randomBytes.Add((byte)rnd.Next(0, 256));
+            tmp_groups.Groups[0].Data = randomBytes;
+
+            //MFR_MODEL
+            tmp_groups = Device_ReadData.GetCommandGroups(0, "MFR_MODEL");
+            randomBytes = new List<byte>();
+            for(int i = 0 ; i < 6 ; i ++)randomBytes.Add((byte)rnd.Next(65, 90));
+            tmp_groups.Groups[0].Data = randomBytes;
+            randomBytes = new List<byte>();
+            for(int i = 0 ; i < 6 ; i ++)randomBytes.Add((byte)rnd.Next(65, 90));
+            tmp_groups.Groups[1].Data = randomBytes;
+
+            //READ_AC_VOUT
+            tmp_groups = Device_ReadData.GetCommandGroups(0, "READ_AC_VOUT");
+            randomBytes = new List<byte>();
+            for(int i = 0 ; i < 2 ; i ++)randomBytes.Add((byte)rnd.Next(1, 10));
+            tmp_groups.Groups[0].Data = randomBytes;
+            
+            //READ_OP_VA
+            tmp_groups = Device_ReadData.GetCommandGroups(0, "READ_OP_VA");
+            randomBytes = new List<byte>();
+            for(int i = 0 ; i < 2 ; i ++)randomBytes.Add((byte)rnd.Next(1, 10));
+            tmp_groups.Groups[0].Data = randomBytes; 
+            randomBytes = new List<byte>();
+            for(int i = 0 ; i < 2 ; i ++)randomBytes.Add((byte)rnd.Next(1, 10));
+            tmp_groups.Groups[1].Data = randomBytes;           
+        }
+
 
         public async Task BroadcastBatteryChangeAsync()
         {
@@ -153,29 +225,6 @@ namespace demoVer.Services
                 return new List<ModSingleRawCommandFormat>();
             }
         }
-
-        public void LoadSingleDeviceINVData(List<ModSingleRawCommandFormat> rawList)
-        {
-            INV_MOD_READ_Data.Clear();
-
-            foreach (var cmd in rawList)
-            {
-                if (string.IsNullOrEmpty(cmd.commandName)) continue;
-
-                var data = new ModCommandData()
-                {
-                    Data = cmd.data,
-                    Scaling = cmd.scaling,
-                    BaseUnit = cmd.baseUnit,
-                    DataFormat = cmd.dataFormat,
-                    Split = cmd.split
-                };
-
-                INV_MOD_READ_Data[cmd.commandName] = data;
-            }
-        }
-
-        
 
         private void Update_Read_Data()
         {

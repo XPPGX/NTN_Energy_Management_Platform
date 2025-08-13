@@ -89,7 +89,7 @@ namespace demoVer.Models
         // public string ModelName_cache;
         // public string LinkStatus_cache;
         public Dictionary<string, ModCommandData> AllCommandData = new();
-
+        
         public bool LoadSingleDeviceINVData(List<ModSingleRawCommandFormat> oneDevice_ModData_json)
         {
             bool isModelNameCmdExist = false;
@@ -120,19 +120,3 @@ namespace demoVer.Models
     }
 
 }
-
-// if(TargetDevice_Data.AllCommandData.TryGetValue("MFR_MODEL_B0B5", out List<byte> ModelNameData_ori))
-// {
-//     if(ModelNameData_ori.SequenceEqual(oneDeviceReader_Reuse.AllCommandData["MFR_MODEL_B0B5"]))
-//     {
-//         Console.WriteLine($"ModelName remains the same : {TargetDevice_Data.ModelName_cache}, use cache");
-//     }
-//     else
-//     {
-//         Console.WriteLine($"cache_old = {TargetDevice_Data.ModelName_cache}");
-//         //Update Raw
-//         TargetDevice_Data.AllCommandData["MFR_MODEL_B0B5"] = oneDeviceReader_Reuse.AllCommandData["MFR_MODEL_B0B5"].ToList();
-//         TargetDevice_Data.AllCommandData["MFR_MODEL_B6B11"] = oneDeviceReader_Reuse.AllCommandData["MFR_MODEL_B6B11"].ToList();
-
-//     }
-// }

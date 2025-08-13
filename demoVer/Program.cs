@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Components.Server.Circuits;
 using demoVer.Services;
 using demoVer.Models;
 using demoVer.Broadcast;
+using demoVer.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
 // builder.WebHost.UseUrls("http://127.0.0.1:5070");
 builder.WebHost.UseUrls("http://0.0.0.0:5042");
@@ -21,6 +23,14 @@ builder.Services.AddHostedService(provider => provider.GetRequiredService<Heartb
 builder.Services.AddSingleton<CommonData>(); //預計是整個專案共享一個CommonData
 builder.Services.AddSingleton<DataCenter>();
 builder.Services.AddSingleton<DataChangeEventManager>();
+builder.Services.AddSingleton<IGroupsDataDecoder, GroupsDataDecoder>();
+
+
+builder.Services.AddHttpClient("ApiClient", client =>
+{
+    client.BaseAddress = new Uri("http://192.168.102.201:5039/");
+});
+builder.Services.AddSingleton<ApiManager>();
 
 
 var app = builder.Build();

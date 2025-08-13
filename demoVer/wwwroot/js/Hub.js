@@ -352,3 +352,147 @@ window.hubDisconnect = async function()
         console.log("🔌 SignalR connection stopped and unsubscribed all.");
     }
 }
+
+window.DataSocket = async function()
+{
+    connection_READ_DATA_Hub = new signalR.HubConnectionBuilder()
+        .withUrl("/datahub")
+        .build();
+        
+    connection_READ_DATA_Hub.on("UpdateDecodedVal", (addr, cmd, rcv_data, rcv_byteList) =>{
+        try
+        {
+            console.log("=================================================");
+            // console.log(`[SignalR] ${cmd}@${addr} :`);
+            console.log(`[SignalR] ${cmd}@${addr} : ` + JSON.stringify(rcv_data, null, 2));
+            console.log(`rcv_data = ${rcv_data}, rcv_byteList = ${rcv_byteList}`);
+            document.getElementById("Address").textContent = "Address:" + addr;
+            let Translator = window.INV_Info_Translator.Single;
+            let temp_str = "";
+            
+            switch(cmd)
+            {
+                case "MFR_MODEL" :
+                    console.log("[SignalR][MFR_MODEL_B0B5] : rcv_data = " + rcv_data);
+                    document.getElementById("modelname-display").textContent = rcv_data;
+                    break;
+                    
+                case "INV_STATUS":
+                    let status = rcv_byteList[1] << 8 | rcv_byteList[0];
+                    temp_str = Translator.Get_INV_Status(status);
+
+                    console.log("[INV_STATUS] : " + temp_str);
+                    document.getElementById("InvSetting-display").textContent = temp_str;
+                    break;
+
+                case "INV_FAULT":
+                    console.log("[INV_FAULT] : " + rcv_data);
+                    if(rcv_data == "")
+                    {
+                        Translator.INV_FAULT_str = "";
+                    }
+                    else
+                    {
+                        Translator.INV_FAULT_str = rcv_data;
+                    }
+                    break;
+
+                case "MFR_REVISION_B0B5":
+                    console.log("[MFR_REVISION_B0B5] : " + rcv_data);
+                    document.getElementById("Revision-display").textContent = rcv_data;
+                    break;
+
+                case "READ_FAN_SPEED_1":
+                    temp_str = Translator.Get_INV_FAN_SPEED_1(rcv_data);
+                    console.log("[READ_FAN_SPEED_1] : " + temp_str);
+                    document.getElementById("FAN_SPEED_1").textContent = temp_str;
+                    break;
+                case "READ_FAN_SPEED_2":
+                    temp_str = Translator.Get_INV_FAN_SPEED_2(rcv_data);
+                    console.log("[READ_FAN_SPEED_2] : " + temp_str);
+                    document.getElementById("FAN_SPEED_2").textContent = temp_str; 
+                    break;
+
+                case "READ_VBAT":
+                    temp_str = Translator.Get_INV_BAT_V_Data(rcv_data);
+                    console.log("[READ_VBAT] : " + temp_str);
+                    document.getElementById("V_BAT").textContent = temp_str;
+                    break;
+
+                case "READ_AC_VOUT": 
+                    Translator.Save_AC_VOUT(rcv_data);
+                    temp_str = Translator.Get_INV_Current_Data();
+                    document.getElementById("Load_Current").textContent = temp_str;
+                    break;
+
+                case "READ_OP_VA":
+                    Translator.Save_OP_VA(rcv_data);
+                    //get Load Power
+                    temp_str = Translator.Get_INV_VA_Data();
+                    document.getElementById("Load_Power").textContent = temp_str;
+                    //get Load Current
+                    temp_str = Translator.Get_INV_Current_Data();
+                    document.getElementById("Load_Current").textContent = temp_str;
+                    break;
+
+                case "READ_CHG_CURR":
+                    temp_str = Translator.Get_INV_Current_DC_Data(rcv_data);
+                    document.getElementById("DC_Current").textContent = temp_str;
+                    break;
+
+                case "READ_TEMPERATURE_1":
+                    temp_str = Translator.Get_INV_Temperatures_Data(rcv_data);
+                    document.getElementById("Temperature_display").textContent = temp_str;
+                    break;
+                default :
+                    console.log(`[SignalR] Unknown command received: "cmd = ${cmd}", "rcv_data = ${rcv_data}"`);
+                    break;
+            }
+        }
+        catch(err)
+        {
+            console.error(`Error passing ${cmd}@${addr}`, err);
+        }
+    });
+
+    connection_READ_DATA_Hub.onclose(err => {
+        console.warn("SignalR connection closed", err);
+    })
+
+    await connection_READ_DATA_Hub.start();
+    console.log("[SignalR] connection started");
+    return true;
+}
+
+window.subscribeGroup = async function(addr, cmd)
+{
+    if(connection_READ_DATA_Hub)
+    {
+        return connection_READ_DATA_Hub.invoke("SubscribeGroup", addr, cmd);
+    }
+}
+
+window.subscribeGroup_fixedCommands_dynamicAddr = async function(commandArray, addr)
+{
+    if(!connection_READ_DATA_Hub) return;
+
+    if(!Array.isArray(commandArray))
+    {
+        console.error("commandList is not an array:", commandArray);
+        return;
+    }
+
+    for(const cmdName of commandArray)
+    {
+        await connection_READ_DATA_Hub.invoke("SubscribeGroup", addr, cmdName);
+    }
+}
+
+window.unsubscribeAllGroups = async function()
+{
+    if(connection_READ_DATA_Hub)
+    {
+        await connection_READ_DATA_Hub.invoke("unsubscribeAllGroups");
+        console.log("📭 All command subscriptions removed.");
+    }
+}

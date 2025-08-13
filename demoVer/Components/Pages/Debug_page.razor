@@ -5,6 +5,7 @@
 @inject HeartbeatService Heartbeat
 @using demoVer.Models
 
+<p>Addr : <span id="Address"> N/A </span></p>
 <p>電壓: <span id="vin-display">N/A</span></p>
 <p>電流: <span id="iin-display">N/A</span></p>
 <p>ModelName : <span id="modelname-display">N/A</span></p>
@@ -18,7 +19,7 @@
 <p>DC Current : <span id="DC_Current">N/A</span></p>
 <p>Temperature : <span id="Temperature_display">N/A</span></p>
 
-<MudButton OnClick="CancelAllSubscriptions">取消訂閱</MudButton>
+@* <MudButton OnClick="CancelAllSubscriptions">取消訂閱</MudButton> *@
 
 @code {
     private string vinValue = "N/A";
@@ -27,7 +28,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await SimulateJsonInputAsync();
+        @* await SimulateJsonInputAsync(); *@
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -44,8 +45,7 @@
             {
                 @* new {addr = 0, cmd = "READ_VIN"},
                 new {addr = 0, cmd = "READ_IIN"}, *@
-                new {addr = 0, cmd = "MFR_MODEL_B0B5"},
-                new {addr = 0, cmd = "MFR_MODEL_B6B11"},
+                new {addr = 0, cmd = "MFR_MODEL"},
                 new {addr = 0, cmd = "INV_STATUS"},
                 new {addr = 0, cmd = "INV_FAULT"},
                 new {addr = 0, cmd = "MFR_REVISION_B0B5"},
@@ -71,7 +71,7 @@
         var fake_JsonData_list = await DataCenter.LoadMockJsonAsync(filePath);
         uint fake_ID = 0;
 
-        DataCenter.MOD_DATA.Read_oneDevice_ModData(fake_ID, fake_JsonData_list);
+        @* DataCenter.MOD_DATA.Read_oneDevice_ModData(fake_ID, fake_JsonData_list); *@
 
         StateHasChanged();
     }

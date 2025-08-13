@@ -7,7 +7,10 @@ namespace demoVer.Utils
     public static class AppLogger
     {
         public static bool DEBUG_MODE = true;
-
+        
+        private static readonly string LogDirectory = Path.GetFullPath("ProgramLog");
+        private static readonly string LogFilePath = Path.Combine(LogDirectory, "log.json");
+        private static readonly string LogFilePath_txt = Path.Combine(LogDirectory, "log.txt");
         public static void Log(string message, bool local_debug)
         {
             if (DEBUG_MODE && local_debug)
@@ -15,7 +18,57 @@ namespace demoVer.Utils
                 Console.WriteLine($"[Debug] {message}");
             }
         }
+        
+        public static void Log_To_File_Json(object instance)
+        {
+            try
+            {
+                var options = new JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                    IncludeFields = true
+                };
+
+                string tmp_json = JsonSerializer.Serialize(instance, options);
+
+                Console.WriteLine($"LogDirectory = {LogDirectory}");
+                Console.WriteLine($"LogFilePath = {LogFilePath}");
+                // 確保資料夾存在
+                if (!Directory.Exists(LogDirectory))
+                    Directory.CreateDirectory(LogDirectory);
+
+                string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                string logEntry = $"[{timestamp}]\n{tmp_json}{Environment.NewLine}";
+                File.WriteAllText(LogFilePath, logEntry);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"[Logger] Failed to write log: {ex.Message}");
+            }
+        }
+        
+        public static void Log_To_File_txt(string message)
+        {
+            try
+            {
+                // Console.WriteLine($"LogDirectory = {LogDirectory}");
+                // Console.WriteLine($"LogFilePath = {LogFilePath_txt}");
+                // 確保資料夾存在
+                if (!Directory.Exists(LogDirectory))
+                    Directory.CreateDirectory(LogDirectory);
+
+                string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                string logEntry = $"[{timestamp}] {message}{Environment.NewLine}";
+                File.AppendAllText(LogFilePath_txt, logEntry);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"[Logger] Failed to write log: {ex.Message}");
+            }
+        }
     }
+
+    
 
     public static class ScalingComputer
     {

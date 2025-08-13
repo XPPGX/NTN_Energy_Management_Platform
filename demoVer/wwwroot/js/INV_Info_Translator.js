@@ -19,12 +19,14 @@ window.INV_Info_Translator = window.INV_Info_Translator || {};
 window.INV_Info_Translator.Single = {
     MFR_MODEL_B0B5_str  : "",
     MFR_MODEL_B6B11_str : "",
-    INV_FAULT_uint      : 0,
+    INV_FAULT_str       : "",
     INV_STATUS_uint     : 0,
     FAN_SPEED_1_uint    : 0,
     FAN_SPEED_2_uint    : 0,
+    AC_VOUT_val         : 0,
     AC_VOUT_uint        : 0,
     AC_VOUT_scaling     : 0,
+    OP_VA_val           : 0,
     OP_VA_HI_uint       : 0,
     OP_VA_HI_scaling    : 0,
     OP_VA_LO_uint       : 0,
@@ -94,7 +96,7 @@ window.INV_Info_Translator.Single = {
     {
         this.INV_STATUS_uint = status;
         console.log("INV_Status.raw = " + this.INV_STATUS_uint);
-        if(this.Get_INV_Fault() != 0)
+        if(this.INV_FAULT_str != "")
         {   //Error
             return "Error";
         }
@@ -123,6 +125,7 @@ window.INV_Info_Translator.Single = {
 
     Get_INV_MFR_REV : function(rcv_data)
     {
+
         const data = rcv_data.data;
         let chip_versions = "";
 
@@ -142,80 +145,81 @@ window.INV_Info_Translator.Single = {
         return chip_versions;
     },
 
-    Get_INV_FAN_SPEED_1 : function(FAN_SPEED_1_uint)
+    Get_INV_FAN_SPEED_1 : function(FAN_SPEED_1_str)
     {
-        return String(FAN_SPEED_1_uint) + " RPM";
+        return FAN_SPEED_1_str + " RPM";
     },
 
 
-    Get_INV_FAN_SPEED_2 : function(FAN_SPEED_2_uint)
+    Get_INV_FAN_SPEED_2 : function(FAN_SPEED_2_str)
     {
-        return String(FAN_SPEED_2_uint) + " RPM";
+        return FAN_SPEED_2_str + " RPM";
     },
 
     Get_INV_Current_Data : function()
     {   
         var Aout = 0;
-        if(this.AC_VOUT_uint != 0)
-        {   //Using OP_VA_HI_scaling or OP_VA_LO_scaling brings the same effect.
-            var OP_VA_Combine = (multOperation((this.OP_VA_HI_uint << 16 + this.OP_VA_LO_uint), this.OP_VA_HI_scaling));
-            var Aout = OP_VA_Combine / (multOperation(this.AC_VOUT_uint, this.AC_VOUT_scaling));
+        // if(this.AC_VOUT_uint != 0)
+        // {   //Using OP_VA_HI_scaling or OP_VA_LO_scaling brings the same effect.
+        //     var OP_VA_Combine = (multOperation((this.OP_VA_HI_uint << 16 + this.OP_VA_LO_uint), this.OP_VA_HI_scaling));
+        //     var Aout = OP_VA_Combine / (multOperation(this.AC_VOUT_uint, this.AC_VOUT_scaling));
 
-        }
-        
-        if(Aout < 0.5)
+        // }
+        if(this.AC_VOUT_val != 0)
         {
-            Aout = 0;
+            Aout = autoSnapToDecimal(this.OP_VA_val / this.AC_VOUT_val);
+            console.log(`Aout = ${Aout}, OP_VA_val = ${this.OP_VA_val}, AC_VOUT_val = ${this.AC_VOUT_val}`);
+            if(Aout < 0.5)
+            {
+                Aout = 0;
+            }
         }
         return String(Aout) + " A";
     },
 
     Get_INV_VA_Data : function()
     {
-        var OP_VA_byte = (this.OP_VA_HI_uint << 16 + this.OP_VA_LO_uint);
-        if(OP_VA_byte < 500)
-        {
-            OP_VA_byte = 0;
-        }
+        // var OP_VA_byte = (this.OP_VA_HI_uint << 16 + this.OP_VA_LO_uint);
+        // if(OP_VA_byte < 500)
+        // {
+        //     OP_VA_byte = 0;
+        // }
 
-        return String(multOperation(OP_VA_byte, this.OP_VA_HI_scaling)) + " W";
+        // return String(multOperation(OP_VA_byte, this.OP_VA_HI_scaling)) + " W";
+        return String(this.OP_VA_val) + "W";
     },
     
-    Get_INV_Current_DC_Data : function(CHG_CURR_uint, CHG_CURR_scaling)
+    Get_INV_Current_DC_Data : function(A_DC_out)
     {
-        var A_DC_out = multOperation(CHG_CURR_uint, CHG_CURR_scaling);
+        // var A_DC_out = multOperation(CHG_CURR_uint, CHG_CURR_scaling);
         
         return String(A_DC_out) + " A"; //!! json 裡面沒寫單位
     },
 
-    Get_INV_BAT_V_Data : function(VBAT_uint, VBAT_scaling)
+    Get_INV_BAT_V_Data : function(VBAT_val)
     {
-        var Vout = multOperation(VBAT_uint, VBAT_scaling);
-        return String(Vout) + " V";
+        // var Vout = multOperation(VBAT_uint, VBAT_scaling);
+        return String(VBAT_val) + " V";
     },
     
-    Get_INV_Temperatures_Data : function(Temperture_uint, Temperture_scaling)
+    Get_INV_Temperatures_Data : function(Temp_out)
     {
-        var Temp_out = multOperation(Temperture_uint, Temperture_scaling);
+        // var Temp_out = multOperation(Temperture_uint, Temperture_scaling);
         return String(Temp_out) + " ℃";
     },
     
-    Save_AC_VOUT : function(AC_VOUT_uint, scaling)
+    Save_AC_VOUT : function(AC_VOUT_val)
     {
-        this.AC_VOUT_uint = AC_VOUT_uint;
-        this.AC_VOUT_scaling = scaling;
+        // this.AC_VOUT_uint = AC_VOUT_uint;
+        // this.AC_VOUT_scaling = scaling;
+        this.AC_VOUT_val = AC_VOUT_val;
     },
 
-    Save_OP_VA_HI : function(OP_VA_HI_uint, scaling)
+    Save_OP_VA : function(OP_VA_val)
     {
-        this.OP_VA_HI_uint = OP_VA_HI_uint;
-        this.OP_VA_HI_scaling = scaling;
-    },
-
-    Save_OP_VA_LO : function(OP_VA_LO_uint, scaling)
-    {
-        this.OP_VA_LO_uint = OP_VA_LO_uint;
-        this.OP_VA_LO_scaling = scaling;
+        // this.OP_VA_HI_uint = OP_VA_HI_uint;
+        // this.OP_VA_HI_scaling = scaling;
+        this.OP_VA_val = OP_VA_val;
     },
 
     clearTempData : function()
