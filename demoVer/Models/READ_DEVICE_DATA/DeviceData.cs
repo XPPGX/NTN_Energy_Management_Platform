@@ -72,7 +72,7 @@ namespace demoVer.Models
                 }
                 _AllDevice_Data[addr] = newDevice;
                 _linkedDeviceAddr.Add(addr);
-                AppLogger.Log_To_File_txt($"New DeviceData, addr = {addr}");
+                AppLogger.Log_To_File_log($"New DeviceData, addr = {addr}");
             }
         }
         

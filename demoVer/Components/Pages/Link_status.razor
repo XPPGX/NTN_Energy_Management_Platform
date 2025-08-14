@@ -4,6 +4,7 @@
 @rendermode InteractiveServer
 @inject IJSRuntime JS
 @inject DataCenter DataCenter
+@inject GlobalVar globalVar
 @using demoVer.Components.Layout
 @using System.Text.Json
 @using demoVer.Models
@@ -228,7 +229,7 @@
     {
         //取得當前的有連線的addr Set
         Console.Write("Current Linking Model addr : { ");
-        foreach(var addr in DataCenter.Device_ReadData.GetLinkAddresses())
+        foreach(var addr in globalVar.Device_ReadData.GetLinkAddresses())
         {
             Console.Write(addr + ", ");
         }
@@ -238,11 +239,11 @@
         Elements = new List<Element>();
 
 
-        foreach(var addr in DataCenter.Device_ReadData.GetLinkAddresses())
+        foreach(var addr in globalVar.Device_ReadData.GetLinkAddresses())
         {
             //string modelName = decode_ModelName(addr);
             //string runningStatus = decode_INV_Status(addr);
-            Group_CommandRawData tmp_Group = DataCenter.Device_ReadData.GetCommandGroups(addr, "MFR_MODEL"); 
+            Group_CommandRawData tmp_Group = globalVar.Device_ReadData.GetCommandGroups(addr, "MFR_MODEL"); 
             var modelName = Decoder.Decode(tmp_Group, "MFR_MODEL");
             string runningStatus = decode_INV_Status(addr);
 
@@ -331,7 +332,7 @@
         
         try
         {
-            AppLogger.Log_To_File_txt($"[Link_status.razor][RowClickEvent] : selectedAddr = {args.Item.Address}");
+            AppLogger.Log_To_File_log($"[Link_status.razor][RowClickEvent] : selectedAddr = {args.Item.Address}");
             selectedAddr = args.Item.Address;
 
             Console.WriteLine($"Row clicked : {selectedAddr}");
@@ -346,7 +347,7 @@
         }
         catch(Exception ex)
         {
-            AppLogger.Log_To_File_txt($"[Link_status.razor][RowClickEvent] : Error, {ex}");
+            AppLogger.Log_To_File_log($"[Link_status.razor][RowClickEvent] : Error, {ex}");
         }
         
         
@@ -461,8 +462,8 @@
 
     private string decode_INV_Status(uint addr)
     {
-        var Group1 = DataCenter.Device_ReadData.GetCommandGroups(addr, "INV_FAULT");
-        var Group2 = DataCenter.Device_ReadData.GetCommandGroups(addr, "INV_STATUS");
+        var Group1 = globalVar.Device_ReadData.GetCommandGroups(addr, "INV_FAULT");
+        var Group2 = globalVar.Device_ReadData.GetCommandGroups(addr, "INV_STATUS");
         if(Group1 == null || Group2 == null){return "N/A";}
 
         uint INV_FAULT = (((uint)Group1.Groups[0].Data[1]) << 8) | ((uint)Group1.Groups[0].Data[0]);

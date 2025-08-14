@@ -4,6 +4,7 @@
 @inject DataCenter DataCenter
 @inject HeartbeatService Heartbeat
 @inject ApiManager apiManager
+@inject GlobalVar globalVar
 @using demoVer.Models
 @using demoVer.Interfaces
 @using System.Text.Json
@@ -46,7 +47,7 @@
             @* var result = await apiManager.apiRead_OneDeviceData("CAN1", 0);
             string parsedJson = JsonSerializer.Serialize(result, new JsonSerializerOptions {WriteIndented = true});
             allDevice_Data tmp_allDeviceData = new allDevice_Data();
-            DataCenter.Device_ReadData.Read_oneDevice_Data(0, result); *@
+            globalVar.Device_ReadData.Read_oneDevice_Data(0, result); *@
 
             @* await JS.InvokeAsync<object>("subscribeGroup", 0, "CURVE_CV");
             await JS.InvokeAsync<object>("subscribeGroup", 0, "MFR_MODEL"); *@
@@ -54,7 +55,7 @@
             
             @* tmp_allDeviceData.Read_oneDevice_Data(1, result);
             tmp_allDeviceData.Read_oneDevice_Data(2, result); *@
-            DataCenter.Device_ReadData.debug_PrintAllDeviceData();
+            globalVar.Device_ReadData.debug_PrintAllDeviceData();
 
             
 

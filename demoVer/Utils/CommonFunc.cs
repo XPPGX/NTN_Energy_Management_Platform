@@ -10,7 +10,7 @@ namespace demoVer.Utils
         
         private static readonly string LogDirectory = Path.GetFullPath("ProgramLog");
         private static readonly string LogFilePath = Path.Combine(LogDirectory, "log.json");
-        private static readonly string LogFilePath_txt = Path.Combine(LogDirectory, "log.txt");
+        private static readonly string LogFilePath_log = Path.Combine(LogDirectory, "log.log");
         public static void Log(string message, bool local_debug)
         {
             if (DEBUG_MODE && local_debug)
@@ -47,19 +47,19 @@ namespace demoVer.Utils
             }
         }
         
-        public static void Log_To_File_txt(string message)
+        public static void Log_To_File_log(string message)
         {
             try
             {
                 // Console.WriteLine($"LogDirectory = {LogDirectory}");
-                // Console.WriteLine($"LogFilePath = {LogFilePath_txt}");
+                // Console.WriteLine($"LogFilePath = {LogFilePath_log}");
                 // 確保資料夾存在
                 if (!Directory.Exists(LogDirectory))
                     Directory.CreateDirectory(LogDirectory);
 
                 string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
                 string logEntry = $"[{timestamp}] {message}{Environment.NewLine}";
-                File.AppendAllText(LogFilePath_txt, logEntry);
+                File.AppendAllText(LogFilePath_log, logEntry);
             }
             catch(Exception ex)
             {

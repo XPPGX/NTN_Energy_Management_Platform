@@ -7,11 +7,15 @@ namespace demoVer.Broadcast
     {
         private readonly DataCenter _dataCenter;
         private readonly DataChangeEventManager _eventManager;
-
-        public DataHub(DataCenter dataCenter, DataChangeEventManager eventManager)
+        private readonly GlobalVar _globalVar;
+        
+        public DataHub( DataCenter dataCenter,
+                        DataChangeEventManager eventManager,
+                        GlobalVar globalVar)
         {
             _dataCenter = dataCenter;
             _eventManager = eventManager;
+            _globalVar = globalVar;
         }
 
         // public async Task SubscribeCommand(string commandName, uint addr)
@@ -45,7 +49,7 @@ namespace demoVer.Broadcast
         /// </summary>
         public async Task SubscribeGroup(uint addr, string commandName)
         {
-            var groups = _dataCenter.Device_ReadData.GetCommandGroups(addr, commandName);
+            var groups = _globalVar.Device_ReadData.GetCommandGroups(addr, commandName);
             if(groups is null)
             {
                 Console.WriteLine($"無法訂閱 {commandName}@{addr}, 資料不存在");

@@ -22,9 +22,11 @@ builder.Services.AddSingleton<HeartbeatService>();
 builder.Services.AddHostedService(provider => provider.GetRequiredService<HeartbeatService>());
 builder.Services.AddSingleton<CommonData>(); //預計是整個專案共享一個CommonData
 builder.Services.AddSingleton<DataCenter>();
+builder.Services.AddSingleton<GlobalVar>();
 builder.Services.AddSingleton<DataChangeEventManager>();
 builder.Services.AddSingleton<IGroupsDataDecoder, GroupsDataDecoder>();
-
+builder.Services.AddSingleton<CircuitsWatcher>();
+builder.Services.AddHostedService<PollingRead>();
 
 builder.Services.AddHttpClient("ApiClient", client =>
 {

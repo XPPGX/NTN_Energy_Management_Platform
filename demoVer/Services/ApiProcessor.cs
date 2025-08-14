@@ -19,6 +19,10 @@ namespace demoVer.Services
                 string url = $"api/memory/read-memory?type={type}&addr={addr}";
                 var result = await _http.GetFromJsonAsync<List<SingleRawCommand_JsonFormat>>(url);
                 
+                if(result == null)
+                {
+                     throw new Exception($"[apiRead_OneDeviceData] Read_API_Json == null");
+                }
                 return result;
 
             }
@@ -28,6 +32,5 @@ namespace demoVer.Services
                 return null;
             }
         }
-        
     }
 }

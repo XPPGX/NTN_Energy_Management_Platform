@@ -64,27 +64,27 @@ namespace demoVer.Services
             //3)綁定事件：綁在CommandRawData.OnChanged，只綁一次，以Groups判斷
             if(_alreadyHooked.Add(groups))
             {
-                AppLogger.Log_To_File_txt($"[SubscribeGroup] connectionId = {connectionId}, addr = {addr}, cmdName = {commandName}");
+                AppLogger.Log_To_File_log($"[SubscribeGroup] connectionId = {connectionId}, addr = {addr}, cmdName = {commandName}");
                 foreach(var Raw in groups.Groups.Values)
                 {
-                    AppLogger.Log_To_File_txt($"[SubscribeGroup] groupIndex = {Raw.GroupIndex}");
+                    AppLogger.Log_To_File_log($"[SubscribeGroup] groupIndex = {Raw.GroupIndex}");
                     Raw.OnChanged += () =>
                     {
-                        AppLogger.Log_To_File_txt($"[Raw.OnChanged] groupIndex = {Raw.GroupIndex}");
+                        AppLogger.Log_To_File_log($"[Raw.OnChanged] groupIndex = {Raw.GroupIndex}");
                         OnGroupDataChanged(addr, commandName, groups);
                     };
                 }
             }
 
             //4)第一次訂閱，主動推送一次目前值
-            AppLogger.Log_To_File_txt($"[SubscribeGroup] First Push Data");
+            AppLogger.Log_To_File_log($"[SubscribeGroup] First Push Data");
             OnGroupDataChanged(addr, commandName, groups);
         }
 
         private void OnGroupDataChanged(uint addr, string cmdName, Group_CommandRawData groups)
         {
             var key = (addr, cmdName);
-            AppLogger.Log_To_File_txt($"[OnGroupDataChanged] {cmdName}@{addr}");
+            AppLogger.Log_To_File_log($"[OnGroupDataChanged] {cmdName}@{addr}");
             if(_groupsSubscribers.TryGetValue(key, out var subscribers) && subscribers.Count > 0)
             {
                 try
@@ -97,11 +97,11 @@ namespace demoVer.Services
                         data_byteList.AddRange(Raw.Data);
                     }
 
-                    AppLogger.Log_To_File_txt($"[OnGroupDataChanged] cmdName = {cmdName}, DecodeData = {tmpDecodedData}");
+                    AppLogger.Log_To_File_log($"[OnGroupDataChanged] cmdName = {cmdName}, DecodeData = {tmpDecodedData}");
                     //2.signalR批量發送 decode後的data
-                    AppLogger.Log_To_File_txt($"[OnGroupDataChanged] transfer...");
+                    AppLogger.Log_To_File_log($"[OnGroupDataChanged] transfer...");
                     _hubContext.Clients.Clients(subscribers).SendAsync("UpdateDecodedVal", addr, cmdName, tmpDecodedData, data_byteList);
-                    AppLogger.Log_To_File_txt($"[OnGroupDataChanged] done."); 
+                    AppLogger.Log_To_File_log($"[OnGroupDataChanged] done."); 
                 }
                 catch(Exception ex)
                 {
@@ -112,7 +112,7 @@ namespace demoVer.Services
 
         public void UnsubscribeAll(string connectionId)
         {
-            AppLogger.Log_To_File_txt($"[UnsubscribeAll] connectionId = {connectionId}...");
+            AppLogger.Log_To_File_log($"[UnsubscribeAll] connectionId = {connectionId}...");
             if(_clientSubscriptions.TryRemove(connectionId, out var subs))
             {
                 foreach (var sub in subs)
@@ -120,14 +120,14 @@ namespace demoVer.Services
                     var key = (sub.DeviceAddr, sub.CommandName);
                     if(_groupsSubscribers.TryGetValue(key, out var connSet))
                     {
-                        AppLogger.Log_To_File_txt($"(Addr, CmdName) = {key}, found connectionId = {connectionId}");
+                        AppLogger.Log_To_File_log($"(Addr, CmdName) = {key}, found connectionId = {connectionId}");
                         connSet.Remove(connectionId);
                         if(connSet.Count == 0)
                             _groupsSubscribers.TryRemove(key, out _);
                     }
                 }
             }
-            AppLogger.Log_To_File_txt($"[UnsubscribeAll] done.");
+            AppLogger.Log_To_File_log($"[UnsubscribeAll] done.");
         }
 
         // // 每筆資料要通知哪些連線 (一筆資料可被多人訂閱)

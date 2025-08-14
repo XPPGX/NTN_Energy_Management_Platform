@@ -22,12 +22,12 @@ namespace demoVer.Services
         private readonly CommonData _commonData;
         private readonly DataChangeEventManager _eventManager;
         private readonly ApiManager _apiManager;
-
+        private readonly GlobalVar _globalVar;
         //[Declare] variables shared in whole process
         public Battery_DataSetting_Module Battery {get; set;}
         public INV_DataSetting_Module INV{get; set;}
         public allDevice_ModData MOD_DATA{get; set;}
-        public allDevice_Data Device_ReadData {get; set;} //Get from framework via READ_API
+        // public allDevice_Data Device_ReadData {get; set;} //Get from framework via READ_API
 
 
         //[DEBUG]模擬資料
@@ -45,16 +45,18 @@ namespace demoVer.Services
                             HeartbeatService heartbeat, 
                             IHubContext<DataHub> hubContext,
                             DataChangeEventManager eventManager,
-                            ApiManager apiManager)
+                            ApiManager apiManager,
+                            GlobalVar globalVar)
         {
             _heartbeat  = heartbeat;
             _hubContext = hubContext;
             _commonData = commonData;
             _eventManager = eventManager;
             _apiManager = apiManager;
+            _globalVar = globalVar;
 
             MOD_DATA = new allDevice_ModData(_eventManager);
-            Device_ReadData = new allDevice_Data();
+            // Device_ReadData = new allDevice_Data();
             Battery     = new Battery_DataSetting_Module(_commonData);
             Battery.UpdateFrom(new Battery_InitData()); //接收初始值
             INV         = new INV_DataSetting_Module(_commonData);
@@ -75,7 +77,7 @@ namespace demoVer.Services
                     // Console.WriteLine("[Parsed Result] = " + parsedJson);
                     // MOD_DATA.Read_oneDevice_ModData(0, result);
 
-                    READ_API_TEST();
+                    // READ_API_TEST();
                     
                     
                     ApiReadFlag = true;
@@ -84,7 +86,7 @@ namespace demoVer.Services
                 if(counter == 3)
                 {
                     counter = 0;
-                    LocalDataChange_Test();
+                    // LocalDataChange_Test();
                 }
                 counter ++;
                 // Update_Read_Data();
@@ -96,12 +98,12 @@ namespace demoVer.Services
         {
             var result = await _apiManager.apiRead_OneDeviceData("CAN1", 0);
             string parsedJson = JsonSerializer.Serialize(result, new JsonSerializerOptions {WriteIndented = true});
-            Device_ReadData.Read_oneDevice_Data(0, result);
+            _globalVar.Device_ReadData.Read_oneDevice_Data(0, result);
         }
         public async Task LocalDataChange_Test()
         {
             //CURVE_CV
-            var tmp_groups = Device_ReadData.GetCommandGroups(0, "CURVE_CV");
+            var tmp_groups = _globalVar.Device_ReadData.GetCommandGroups(0, "CURVE_CV");
             
             var rnd = new Random();
             var randomBytes = new List<byte>();
@@ -110,7 +112,7 @@ namespace demoVer.Services
             tmp_groups.Groups[0].Data = randomBytes;
 
             //MFR_MODEL
-            tmp_groups = Device_ReadData.GetCommandGroups(0, "MFR_MODEL");
+            tmp_groups = _globalVar.Device_ReadData.GetCommandGroups(0, "MFR_MODEL");
             randomBytes = new List<byte>();
             for(int i = 0 ; i < 6 ; i ++)randomBytes.Add((byte)rnd.Next(65, 90));
             tmp_groups.Groups[0].Data = randomBytes;
@@ -119,13 +121,13 @@ namespace demoVer.Services
             tmp_groups.Groups[1].Data = randomBytes;
 
             //READ_AC_VOUT
-            tmp_groups = Device_ReadData.GetCommandGroups(0, "READ_AC_VOUT");
+            tmp_groups = _globalVar.Device_ReadData.GetCommandGroups(0, "READ_AC_VOUT");
             randomBytes = new List<byte>();
             for(int i = 0 ; i < 2 ; i ++)randomBytes.Add((byte)rnd.Next(1, 10));
             tmp_groups.Groups[0].Data = randomBytes;
             
             //READ_OP_VA
-            tmp_groups = Device_ReadData.GetCommandGroups(0, "READ_OP_VA");
+            tmp_groups = _globalVar.Device_ReadData.GetCommandGroups(0, "READ_OP_VA");
             randomBytes = new List<byte>();
             for(int i = 0 ; i < 2 ; i ++)randomBytes.Add((byte)rnd.Next(1, 10));
             tmp_groups.Groups[0].Data = randomBytes; 
