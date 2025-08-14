@@ -24,6 +24,7 @@ namespace demoVer.Models
         }
     }
 
+    // The element format of the Json from READ_API
     public class SingleRawCommand_JsonFormat
     {
         [JsonPropertyName("commandName")]
@@ -102,6 +103,8 @@ namespace demoVer.Models
             BitFields   = other.BitFields?.Select(bit => bit.deepClone()).ToList();
             isSNnumber  = other.isSNnumber;
         }
+
+        public void ClearAllActions() => OnChanged = null;
     }
 
     public class GroupChangedEventArgs : EventArgs

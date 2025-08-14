@@ -168,6 +168,8 @@
     const uint STATUS_SAVING        = 0x00000001 << 5;
     const uint STATUS_BAT_LOW_ALM   = 0x00000001 << 6; *@
 
+    private uint[] _linkedSnapshot = Array.Empty<uint>();
+
     Queue<(uint addr, string status, DateTime date_time)> recent_RunningStatus = new();
     Queue<(uint addr, string status, DateTime date_time)> recent_ErrorStatus = new();
 
@@ -194,11 +196,22 @@
 
     protected override async Task OnInitializedAsync()
     {
+        _linkedSnapshot = globalVar.LinkedDevices.SnapshotSorted();
+
+        globalVar.LinkedDevices.linkChanged += OnLinksChanged;
+
         getINVsLink();
         UpdateDonutChart();
         summarizeDevicesStatus_Timeline();
         await InvokeAsync(StateHasChanged);     
     }
+
+    private void OnLinksChanged()
+    {
+        _linkedSnapshot = globalVar.LinkedDevices.SnapshotSorted();
+    }
+
+
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -227,24 +240,34 @@
 
     private void getINVsLink()
     {
+        var addrs = _linkedSnapshot;
+
         //取得當前的有連線的addr Set
         Console.Write("Current Linking Model addr : { ");
-        foreach(var addr in globalVar.Device_ReadData.GetLinkAddresses())
+        @* foreach(var addr in globalVar.Device_ReadData.GetLinkAddressesSnapShot())
+        {
+            Console.Write(addr + ", ");
+        }
+        Console.WriteLine("\n}"); *@
+        
+        foreach (var addr in addrs)
         {
             Console.Write(addr + ", ");
         }
         Console.WriteLine("\n}");
+
         //traverse MOD_DATA，取出各Addr對應的當前modelName跟Status
         
         Elements = new List<Element>();
 
 
-        foreach(var addr in globalVar.Device_ReadData.GetLinkAddresses())
+        @* foreach(var addr in globalVar.Device_ReadData.GetLinkAddressesSnapShot()) *@
+        foreach(var addr in addrs)
         {
             //string modelName = decode_ModelName(addr);
             //string runningStatus = decode_INV_Status(addr);
             Group_CommandRawData tmp_Group = globalVar.Device_ReadData.GetCommandGroups(addr, "MFR_MODEL"); 
-            var modelName = Decoder.Decode(tmp_Group, "MFR_MODEL");
+            var modelName = Decoder.Decode(tmp_Group, "MFR_MODEL")?.ToString() ?? "N/A";
             string runningStatus = decode_INV_Status(addr);
 
             Console.WriteLine($"Addr = {addr}, ModelName = {modelName}, LinkStatus = Linked, runningStatus = {runningStatus}");
@@ -405,25 +428,28 @@
 
     public async Task pageTimer()
     {
-        if(!modal_IsOpen)
+        if(modal_IsOpen) return;
+
+        if(pageTimer_Cnt >= 3)
         {
-            if(pageTimer_Cnt >= 3)
+            pageTimer_Cnt = 0;
+            await InvokeAsync(() => 
             {
-                pageTimer_Cnt = 0;
                 getINVsLink();
                 UpdateDonutChart();
                 summarizeDevicesStatus_Timeline();
-                await InvokeAsync(StateHasChanged);
-            }
-            else
-            {
-                pageTimer_Cnt ++;
-            }
+                StateHasChanged();
+            });
+        }
+        else
+        {
+            pageTimer_Cnt ++;
         }
     }
     public void Dispose()
     {
         Heartbeat.OnTick -= pageTimer;
+        globalVar.LinkedDevices.linkChanged -= OnLinksChanged;
         Console.WriteLine($"Heartbeat 註冊 : {this.GetHashCode()}");
     }
 

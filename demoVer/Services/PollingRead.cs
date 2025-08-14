@@ -5,8 +5,8 @@ namespace demoVer.Services
 {
     public class PollingOptions
     {
-        public int PerRequestDelayMs {get; set;} = 100;
-        public int RequestTimeoutMs {get; set;} = 500;
+        public int PerRequestDelayMs {get; set;} = 5;
+        public int RequestTimeoutMs {get; set;} = 100;
     }
 
     public class PollingWave
@@ -29,15 +29,16 @@ namespace demoVer.Services
     {
         private readonly GlobalVar _globalVar;
         private readonly ApiManager _apiManager;
-
+    
         private List<PollingWave> _pollingWave = new List<PollingWave>();
         private PollingOptions _opt = new PollingOptions();
+        private const uint portMaxDeviceNum = 64;
 
         private int waveIndex           = 0;
         private string nowPollingPort   = "";
         private uint nowPollingAddr     = 0;
         private int nowPollingCount     = 0;
-
+        private uint nowStoringAddr     = 0;
         public PollingRead(GlobalVar globalVar, ApiManager apiManager)
         {
             _globalVar  = globalVar;
@@ -55,7 +56,9 @@ namespace demoVer.Services
                 try
                 {
                     nowPollingPort  = _pollingWave[waveIndex].port;
-                    nowPollingAddr  = (uint)(_globalVar.getPortStartAddr(nowPollingPort) + _pollingWave[waveIndex].startAddr + nowPollingCount);
+                    // nowPollingAddr  = (uint)(_globalVar.getPortStartAddr(nowPollingPort) + _pollingWave[waveIndex].startAddr + nowPollingCount);
+                    nowPollingAddr = (uint)(_pollingWave[waveIndex].startAddr + nowPollingCount);
+                    nowStoringAddr = (uint)waveIndex * portMaxDeviceNum + nowPollingAddr;
                     AppLogger.Log_To_File_log($"[PollingRead][ExecuteAsync] nowPollingPort = {nowPollingPort}, nowPollingAddr = {nowPollingAddr}");
 
                     //用READ_API取得 單台INV的資料 （建議 ApiManager 方法支援 CancellationToken）
@@ -63,11 +66,22 @@ namespace demoVer.Services
                     if(res == null)
                     {
                         AppLogger.Log_To_File_log($"[PollingRead][ExecuteAsync] : {nowPollingPort}@{nowPollingAddr} ReadAPI return null");
+                    
+
+                        _globalVar.LinkedDevices.Unlink(nowStoringAddr);
+                        
+                        //刪除Device_ReadData裡面，nowStoringAddr的資料
+                        _globalVar.Device_ReadData.Remove_oneDevice_Data(nowStoringAddr);
                     }
                     else
                     {
                         //儲存 單台INV的資料到記憶體中 
-                        _globalVar.Device_ReadData.Read_oneDevice_Data(nowPollingAddr, res);
+                        if(waveIndex >= 0)
+                        {
+                            _globalVar.LinkedDevices.Link(nowStoringAddr);
+
+                            _globalVar.Device_ReadData.Read_oneDevice_Data(nowStoringAddr, res);
+                        }
                     }
                 }
                 catch (OperationCanceledException e)

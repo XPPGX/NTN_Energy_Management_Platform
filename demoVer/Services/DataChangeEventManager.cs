@@ -112,7 +112,7 @@ namespace demoVer.Services
 
         public void UnsubscribeAll(string connectionId)
         {
-            AppLogger.Log_To_File_log($"[UnsubscribeAll] connectionId = {connectionId}...");
+            AppLogger.Log_To_File_log($"[UnsubscribeAll] connectionId = {connectionId} ...");
             if(_clientSubscriptions.TryRemove(connectionId, out var subs))
             {
                 foreach (var sub in subs)

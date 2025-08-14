@@ -1,14 +1,54 @@
 using demoVer.Services;
 using demoVer.Utils;
 using System.Text.Json;
+using System.Collections.Concurrent;
+
 namespace demoVer.Models
 {
+    public class LinkedDeviceStore
+    {
+        //記錄連線Device，以ConcurrentDictionary當集合
+        private readonly ConcurrentDictionary<uint, byte> _links = new();
+        public event Action? linkChanged;
+
+        public bool Link(uint addr)
+        {
+            if(_links.TryAdd(addr, 0))
+            {
+                linkChanged?.Invoke();
+                return true;
+            }
+            return false;
+        }
+
+        public bool Unlink(uint addr)
+        {
+            if(_links.TryRemove(addr, out _))
+            {
+                linkChanged?.Invoke();
+                return true;
+            }
+            return false;
+        }
+
+        public uint[] Snapshot() => _links.Keys.ToArray();
+
+
+        public uint[] SnapshotSorted()
+        {
+            var arr = _links.Keys.ToArray();
+            Array.Sort(arr);
+            return arr;
+        }
+    }
+
     public class allDevice_Data
     {
         private Dictionary<uint, oneDevice_Data> _AllDevice_Data = new(); //uint addr 對應每一個oneDevice_Data
-        private HashSet<uint> _linkedDeviceAddr = new(); //紀錄
-
+        
+        // private readonly HashSet<uint> _linkedDeviceAddr = new(); //紀錄
         private oneDevice_Data oneDeviceData_reuseReader = new();
+
         public void Read_oneDevice_Data(uint addr, List<SingleRawCommand_JsonFormat> oneDevice_JsonData)
         {
             Console.WriteLine($"目前已有裝置 : {string.Join(", ", _AllDevice_Data.Keys)}");
@@ -71,11 +111,21 @@ namespace demoVer.Models
                     newDevice.AllCommandData[cmdName] = newGroup;
                 }
                 _AllDevice_Data[addr] = newDevice;
-                _linkedDeviceAddr.Add(addr);
+                // _linkedDeviceAddr.Add(addr);
                 AppLogger.Log_To_File_log($"New DeviceData, addr = {addr}");
             }
         }
         
+        public void Remove_oneDevice_Data(uint addr)
+        {
+            if(_AllDevice_Data.ContainsKey(addr) == false) return;
+
+            if(_AllDevice_Data.TryGetValue(addr, out var deviceData))
+            {
+                deviceData.ReleaseMemory();
+            }
+        }
+
         public Group_CommandRawData? GetCommandGroups(uint addr, string cmd)
         {
             if(_AllDevice_Data.TryGetValue(addr, out var deviceData))
@@ -88,10 +138,10 @@ namespace demoVer.Models
             return null;
         }
 
-        public IEnumerable<uint> GetLinkAddresses()
-        {
-            return _linkedDeviceAddr;
-        }
+        // public IEnumerable<uint> GetLinkAddresses()
+        // {
+        //     return _linkedDeviceAddr;
+        // }
 
         public void debug_PrintAllDeviceData()
         {
@@ -153,12 +203,14 @@ namespace demoVer.Models
         {
             foreach(var cmdData in AllCommandData)
             {
-                foreach(var group in cmdData.Value.Groups.Values)
+                foreach(var oneCmdData in cmdData.Value.Groups.Values)
                 {
                     //解掛OnChanged
-                    // group.OnChanged = null;
-                    group.Data.Clear();
-                    group.BitFields?.Clear();
+                    oneCmdData.ClearAllActions();
+                    oneCmdData.Data.Clear();
+                    oneCmdData.Data.TrimExcess(); //縮小capacity
+                    oneCmdData.BitFields?.Clear();
+                    oneCmdData.BitFields = null;
                 }
             }
             AllCommandData.Clear();
