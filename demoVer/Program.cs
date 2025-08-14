@@ -26,7 +26,19 @@ builder.Services.AddSingleton<GlobalVar>();
 builder.Services.AddSingleton<DataChangeEventManager>();
 builder.Services.AddSingleton<IGroupsDataDecoder, GroupsDataDecoder>();
 builder.Services.AddSingleton<CircuitsWatcher>();
-builder.Services.AddHostedService<PollingRead>();
+
+
+builder.Services.AddServerSideBlazor().AddCircuitOptions(o =>
+{
+    o.DisconnectedCircuitRetentionPeriod = TimeSpan.FromSeconds(10); //關閉網頁後10秒認為該user斷線，清除該user掛的所有action
+});
+// builder.Services.AddHostedService<PollingRead>();
+builder.Services.AddSingleton<PollingRead>();
+builder.Services.AddSingleton<PausableWorker>(sp => sp.GetRequiredService<PollingRead>());
+builder.Services.AddHostedService(sp => sp.GetRequiredService<PollingRead>());
+
+builder.Services.AddSingleton<CircuitsWatcher>();
+builder.Services.AddSingleton<CircuitHandler>(sp => sp.GetRequiredService<CircuitsWatcher>());
 
 builder.Services.AddHttpClient("ApiClient", client =>
 {

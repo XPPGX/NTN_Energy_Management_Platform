@@ -1,6 +1,8 @@
 using demoVer.Models;
 using demoVer.Utils;
-
+using System.Threading;
+using System.Threading.Tasks;
+using demoVer.Interfaces;
 namespace demoVer.Services
 {
     public class PollingOptions
@@ -25,8 +27,12 @@ namespace demoVer.Services
         public int length;
     }
 
-    public class PollingRead : BackgroundService
+    public class PollingRead : BackgroundService, PausableWorker
     {
+
+        private volatile bool _enabled;
+        private readonly SemaphoreSlim _startGate = new(0, 1);
+
         private readonly GlobalVar _globalVar;
         private readonly ApiManager _apiManager;
     
@@ -46,78 +52,111 @@ namespace demoVer.Services
             initPollingWave();
         }
 
+        public Task EnableAsync()
+        {
+            _enabled = true;
+            if(_startGate.CurrentCount == 0) _startGate.Release();
+            return Task.CompletedTask;
+        }
+
+        public async Task DisableAsync(TimeSpan? delay = null)
+        {
+            if(delay.HasValue) await Task.Delay(delay.Value);
+            _enabled = false;
+        }
+
+        //Background service 的 進入點
         protected override async Task ExecuteAsync(CancellationToken ct)
         {
             while(!ct.IsCancellationRequested)
             {
-                using var reqCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
-                reqCts.CancelAfter(_opt.RequestTimeoutMs);        
-
                 try
                 {
-                    nowPollingPort  = _pollingWave[waveIndex].port;
-                    // nowPollingAddr  = (uint)(_globalVar.getPortStartAddr(nowPollingPort) + _pollingWave[waveIndex].startAddr + nowPollingCount);
-                    nowPollingAddr = (uint)(_pollingWave[waveIndex].startAddr + nowPollingCount);
-                    nowStoringAddr = (uint)waveIndex * portMaxDeviceNum + nowPollingAddr;
-                    AppLogger.Log_To_File_log($"[PollingRead][ExecuteAsync] nowPollingPort = {nowPollingPort}, nowPollingAddr = {nowPollingAddr}");
-
-                    //用READ_API取得 單台INV的資料 （建議 ApiManager 方法支援 CancellationToken）
-                    var res = await _apiManager.apiRead_OneDeviceData(nowPollingPort, nowPollingAddr);
-                    if(res == null)
+                    while(!_enabled && !ct.IsCancellationRequested)
                     {
-                        AppLogger.Log_To_File_log($"[PollingRead][ExecuteAsync] : {nowPollingPort}@{nowPollingAddr} ReadAPI return null");
+                        await _startGate.WaitAsync(TimeSpan.FromSeconds(10), ct);
+                    }
+
+                    while(_enabled && !ct.IsCancellationRequested)
+                    {
+                       await PollOneStepAsync(ct);
+                    }
                     
+                }
+                catch(OperationCanceledException)
+                {
 
-                        _globalVar.LinkedDevices.Unlink(nowStoringAddr);
-                        
-                        //刪除Device_ReadData裡面，nowStoringAddr的資料
-                        _globalVar.Device_ReadData.Remove_oneDevice_Data(nowStoringAddr);
-                    }
-                    else
-                    {
-                        //儲存 單台INV的資料到記憶體中 
-                        if(waveIndex >= 0)
-                        {
-                            _globalVar.LinkedDevices.Link(nowStoringAddr);
-
-                            _globalVar.Device_ReadData.Read_oneDevice_Data(nowStoringAddr, res);
-                        }
-                    }
-                }
-                catch (OperationCanceledException e)
-                {
-                    AppLogger.Log_To_File_log($"[PollingRead][ExecuteAsync] : Timeout, {e}");
-                }
-                catch (HttpRequestException ex)
-                {
-                    AppLogger.Log_To_File_log($"[PollingRead][ExecuteAsync] : Read {nowPollingAddr} HTTP failed, {ex}");
-                }
-                catch (System.Exception ex)
-                {
-                    AppLogger.Log_To_File_log($"[PollingRead][ExecuteAsync] : Read {nowPollingAddr} SYS failed, {ex}");
-                }
-
-                //遞增Index
-                if(nowPollingCount >= (_pollingWave[waveIndex].length - 1))
-                {
-                    waveIndex = (waveIndex + 1) % _pollingWave.Count;
-                    nowPollingCount = 0;
-                }
-                else
-                {
-                    nowPollingCount ++;
-                }
-
-                if(_opt.PerRequestDelayMs > 0)
-                {
-                    await Task.Delay(_opt.PerRequestDelayMs, ct);
                 }
                 
             }
         }
 
 
+        private async Task PollOneStepAsync(CancellationToken ct)
+        {
+            try
+            {
+                using var reqCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                reqCts.CancelAfter(_opt.RequestTimeoutMs);        
+                
+                nowPollingPort  = _pollingWave[waveIndex].port;
+                // nowPollingAddr  = (uint)(_globalVar.getPortStartAddr(nowPollingPort) + _pollingWave[waveIndex].startAddr + nowPollingCount);
+                nowPollingAddr = (uint)(_pollingWave[waveIndex].startAddr + nowPollingCount);
+                nowStoringAddr = (uint)waveIndex * portMaxDeviceNum + nowPollingAddr;
+                AppLogger.Log_To_File_log($"[PollingRead][ExecuteAsync] nowPollingPort = {nowPollingPort}, nowPollingAddr = {nowPollingAddr}");
 
+                //用READ_API取得 單台INV的資料 （建議 ApiManager 方法支援 CancellationToken）
+                var res = await _apiManager.apiRead_OneDeviceData(nowPollingPort, nowPollingAddr);
+                if(res == null)
+                {
+                    AppLogger.Log_To_File_log($"[PollingRead][ExecuteAsync] : {nowPollingPort}@{nowPollingAddr} ReadAPI return null");
+                
+
+                    _globalVar.LinkedDevices.Unlink(nowStoringAddr);
+                    
+                    //刪除Device_ReadData裡面，nowStoringAddr的資料
+                    _globalVar.Device_ReadData.Remove_oneDevice_Data(nowStoringAddr);
+                }
+                else
+                {
+                    //儲存 單台INV的資料到記憶體中 
+                    if(waveIndex >= 0)
+                    {
+                        _globalVar.LinkedDevices.Link(nowStoringAddr);
+
+                        _globalVar.Device_ReadData.Read_oneDevice_Data(nowStoringAddr, res);
+                    }
+                }
+            }
+            catch (OperationCanceledException e)
+            {
+                AppLogger.Log_To_File_log($"[PollingRead][ExecuteAsync] : Timeout, {e}");
+            }
+            catch (HttpRequestException ex)
+            {
+                AppLogger.Log_To_File_log($"[PollingRead][ExecuteAsync] : Read {nowPollingAddr} HTTP failed, {ex}");
+            }
+            catch (System.Exception ex)
+            {
+                AppLogger.Log_To_File_log($"[PollingRead][ExecuteAsync] : Read {nowPollingAddr} SYS failed, {ex}");
+            }
+
+            //遞增Index
+            if(nowPollingCount >= (_pollingWave[waveIndex].length - 1))
+            {
+                waveIndex = (waveIndex + 1) % _pollingWave.Count;
+                nowPollingCount = 0;
+            }
+            else
+            {
+                nowPollingCount ++;
+            }
+
+            if(_opt.PerRequestDelayMs > 0)
+            {
+                await Task.Delay(_opt.PerRequestDelayMs, ct);
+            }
+        }
         
         
         public void initPollingWave()
