@@ -8,6 +8,7 @@ using demoVer.Broadcast;
 using demoVer.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
+
 // builder.WebHost.UseUrls("http://127.0.0.1:5070");
 builder.WebHost.UseUrls("http://0.0.0.0:5042");
 // Add services to the container.

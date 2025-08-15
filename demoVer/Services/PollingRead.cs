@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using demoVer.Interfaces;
 namespace demoVer.Services
-{
+{   
     public class PollingOptions
     {
         public int PerRequestDelayMs {get; set;} = 5;
@@ -12,7 +12,7 @@ namespace demoVer.Services
     }
 
     public class PollingWave
-    {   //記錄這次polling的port(CAN1, ...)，起始Addr(startAddr), 有多少連續的device(length)
+    {   //記錄這段連續的addr，其polling的port(CAN1, ...)，起始Addr(startAddr), 有多少連續的device(length)
         //e.g.
         /*
             e.g. port = "CAN1"
@@ -26,29 +26,45 @@ namespace demoVer.Services
         public int startAddr;
         public int length;
     }
-
+    
+    // 目前是先全部addr polling
+    // 之後要改成針對不同wave polling
     public class PollingRead : BackgroundService, PausableWorker
     {
+        //injections
+        private readonly GlobalVar _globalVar;
+        private readonly ApiManager _apiManager;
 
+        //控制PollingRead的啟動時機    
         private volatile bool _enabled;
         private readonly SemaphoreSlim _startGate = new(0, 1);
 
-        private readonly GlobalVar _globalVar;
-        private readonly ApiManager _apiManager;
-    
+        //Variables
+        private string _category;
         private List<PollingWave> _pollingWave = new List<PollingWave>();
         private PollingOptions _opt = new PollingOptions();
         private const uint portMaxDeviceNum = 64;
 
-        private int waveIndex           = 0;
-        private string nowPollingPort   = "";
-        private uint nowPollingAddr     = 0;
-        private int nowPollingCount     = 0;
-        private uint nowStoringAddr     = 0;
-        public PollingRead(GlobalVar globalVar, ApiManager apiManager)
+        private int waveIndex           = 0;    //紀錄 當前是那個wave
+        private string nowPollingPort   = "";   //紀錄 當前wave的port
+        private uint nowPollingAddr     = 0;    //紀錄 發送API發送的addr(每個port只有0~63)
+        private int nowPollingCount     = 0;    //紀錄 當前wave的polling到第幾addr
+        private uint nowStoringAddr     = 0;    //紀錄 從API收到的資料要存進 Device_ReadData 對應 位置
+        //儲存addr(模組端) 與 API發送addr(framework端) 差異如下：
+        // Port         |模組            |framework
+        // =======================================
+        // CAN1         |0~63            |0~63 
+        // CAN2         |64~127          |0~63
+        // MOD1         |128~191         |0~63
+        // MOD2         |191~255         |0~63
+
+
+        public PollingRead( GlobalVar globalVar,
+                            ApiManager apiManager)
         {
             _globalVar  = globalVar;
             _apiManager = apiManager;
+            _category = GetType().FullName!;
             initPollingWave();
         }
 
@@ -103,13 +119,13 @@ namespace demoVer.Services
                 // nowPollingAddr  = (uint)(_globalVar.getPortStartAddr(nowPollingPort) + _pollingWave[waveIndex].startAddr + nowPollingCount);
                 nowPollingAddr = (uint)(_pollingWave[waveIndex].startAddr + nowPollingCount);
                 nowStoringAddr = (uint)waveIndex * portMaxDeviceNum + nowPollingAddr;
-                AppLogger.Log_To_File_log($"[PollingRead][ExecuteAsync] nowPollingPort = {nowPollingPort}, nowPollingAddr = {nowPollingAddr}");
+                AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] nowPollingPort = {nowPollingPort}, nowPollingAddr = {nowPollingAddr}", AppLogLevel.Trace);
 
                 //用READ_API取得 單台INV的資料 （建議 ApiManager 方法支援 CancellationToken）
                 var res = await _apiManager.apiRead_OneDeviceData(nowPollingPort, nowPollingAddr);
                 if(res == null)
                 {
-                    AppLogger.Log_To_File_log($"[PollingRead][ExecuteAsync] : {nowPollingPort}@{nowPollingAddr} ReadAPI return null");
+                    AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : {nowPollingPort}@{nowPollingAddr} ReadAPI return null", AppLogLevel.Trace);
                 
 
                     _globalVar.LinkedDevices.Unlink(nowStoringAddr);
@@ -130,15 +146,15 @@ namespace demoVer.Services
             }
             catch (OperationCanceledException e)
             {
-                AppLogger.Log_To_File_log($"[PollingRead][ExecuteAsync] : Timeout, {e}");
+                AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : Timeout, {e}", AppLogLevel.Warning);
             }
             catch (HttpRequestException ex)
             {
-                AppLogger.Log_To_File_log($"[PollingRead][ExecuteAsync] : Read {nowPollingAddr} HTTP failed, {ex}");
+                AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : Read {nowPollingAddr} HTTP failed, {ex}", AppLogLevel.Debug);
             }
             catch (System.Exception ex)
             {
-                AppLogger.Log_To_File_log($"[PollingRead][ExecuteAsync] : Read {nowPollingAddr} SYS failed, {ex}");
+                AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : Read {nowPollingAddr} SYS failed, {ex}", AppLogLevel.Error);
             }
 
             //遞增Index

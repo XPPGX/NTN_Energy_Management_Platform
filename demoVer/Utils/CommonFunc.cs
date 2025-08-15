@@ -1,11 +1,62 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.IO;
+using System.Collections.ObjectModel;
+using System.Collections.Concurrent;
+using demoVer.Models;
+
 
 namespace demoVer.Utils
 {
     public static class AppLogger
-    {
+    {   
+        public static readonly ConcurrentDictionary<string, int> CategoryLevels = 
+            new ConcurrentDictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        
+        public class LogLevelJsonFormat
+        {
+            string category {get; set;}
+            int level {get; set;}
+        }
+
+        private static readonly string LogLevelSetting_Directory = Path.GetFullPath("StartupSetting");
+        private static readonly string LogLevel_FilePath = Path.Combine(LogLevelSetting_Directory, "logLevels.json");
+        public static void readLogLevelSettings()
+        {
+            try
+            {
+                string json = File.ReadAllText(LogLevel_FilePath);
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+
+                Dictionary<string, int> rawJsonData = new Dictionary<string, int>();
+
+                rawJsonData = JsonSerializer.Deserialize<Dictionary<string, int>>(json, options) ?? new();
+
+                var rawJsonData_String = JsonSerializer.Serialize(rawJsonData, new JsonSerializerOptions{
+                    WriteIndented = true
+                });
+
+                Console.WriteLine(rawJsonData_String);
+
+                foreach(var pair in rawJsonData)
+                {
+                    
+                    CategoryLevels[pair.Key] = pair.Value;
+                }
+
+                Console.WriteLine($"[readLogLevelSettings] CategoryLevels.Count = {CategoryLevels.Count}");
+                Console.WriteLine("[readLogLevelSettings] done...");
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine($"[readLogLevelSettings] Error : {e}");
+            }
+        }
+
+
         public static bool DEBUG_MODE = true;
         
         private static readonly string LogDirectory = Path.GetFullPath("ProgramLog");
@@ -47,8 +98,14 @@ namespace demoVer.Utils
             }
         }
         
-        public static void Log_To_File_log(string message)
+        public static void Log_To_File_log(string category, string message, AppLogLevel level = AppLogLevel.Trace)
         {
+            if(CategoryLevels.Count == 0) readLogLevelSettings();
+            
+            if(!CategoryLevels.ContainsKey(category)) return;
+            
+            if(level < (AppLogLevel)CategoryLevels[category]) return;
+
             try
             {
                 // Console.WriteLine($"LogDirectory = {LogDirectory}");

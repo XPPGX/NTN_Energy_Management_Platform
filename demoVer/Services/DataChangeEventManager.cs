@@ -25,6 +25,8 @@ namespace demoVer.Services
 
     public class DataChangeEventManager
     {
+        private string _category;
+
         private readonly IHubContext<DataHub> _hubContext;
         private readonly IGroupsDataDecoder _decoder;
         // 每個連線connectionId  → 訂閱了哪些 (addr, cmd)
@@ -40,6 +42,7 @@ namespace demoVer.Services
         {
             _hubContext = hubContext;
             _decoder = decoder;
+            _category = GetType().FullName!;
         }
 
         public void SubscribeGroup(string connectionId, uint addr, string commandName, Group_CommandRawData groups)
@@ -64,27 +67,27 @@ namespace demoVer.Services
             //3)綁定事件：綁在CommandRawData.OnChanged，只綁一次，以Groups判斷
             if(_alreadyHooked.Add(groups))
             {
-                AppLogger.Log_To_File_log($"[SubscribeGroup] connectionId = {connectionId}, addr = {addr}, cmdName = {commandName}");
+                AppLogger.Log_To_File_log(_category, $"[SubscribeGroup] connectionId = {connectionId}, addr = {addr}, cmdName = {commandName}", AppLogLevel.Trace);
                 foreach(var Raw in groups.Groups.Values)
                 {
-                    AppLogger.Log_To_File_log($"[SubscribeGroup] groupIndex = {Raw.GroupIndex}");
+                    AppLogger.Log_To_File_log(_category, $"[SubscribeGroup] groupIndex = {Raw.GroupIndex}", AppLogLevel.Trace);
                     Raw.OnChanged += () =>
                     {
-                        AppLogger.Log_To_File_log($"[Raw.OnChanged] groupIndex = {Raw.GroupIndex}");
+                        AppLogger.Log_To_File_log(_category, $"[Raw.OnChanged] groupIndex = {Raw.GroupIndex}", AppLogLevel.Trace);
                         OnGroupDataChanged(addr, commandName, groups);
                     };
                 }
             }
 
             //4)第一次訂閱，主動推送一次目前值
-            AppLogger.Log_To_File_log($"[SubscribeGroup] First Push Data");
+            AppLogger.Log_To_File_log(_category, $"[SubscribeGroup] First Push Data", AppLogLevel.Debug);
             OnGroupDataChanged(addr, commandName, groups);
         }
 
         private void OnGroupDataChanged(uint addr, string cmdName, Group_CommandRawData groups)
         {
             var key = (addr, cmdName);
-            AppLogger.Log_To_File_log($"[OnGroupDataChanged] {cmdName}@{addr}");
+            AppLogger.Log_To_File_log(_category, $"[OnGroupDataChanged] {cmdName}@{addr}", AppLogLevel.Trace);
             if(_groupsSubscribers.TryGetValue(key, out var subscribers) && subscribers.Count > 0)
             {
                 try
@@ -96,12 +99,13 @@ namespace demoVer.Services
                     {
                         data_byteList.AddRange(Raw.Data);
                     }
-
-                    AppLogger.Log_To_File_log($"[OnGroupDataChanged] cmdName = {cmdName}, DecodeData = {tmpDecodedData}");
+                    AppLogger.Log_To_File_log(_category, $"[OnGroupDataChanged] cmdName = {cmdName}, DecodeData = {tmpDecodedData}", AppLogLevel.Trace);
                     //2.signalR批量發送 decode後的data
-                    AppLogger.Log_To_File_log($"[OnGroupDataChanged] transfer...");
+                    AppLogger.Log_To_File_log(_category, $"[OnGroupDataChanged] transfer...", AppLogLevel.Trace);
+
                     _hubContext.Clients.Clients(subscribers).SendAsync("UpdateDecodedVal", addr, cmdName, tmpDecodedData, data_byteList);
-                    AppLogger.Log_To_File_log($"[OnGroupDataChanged] done."); 
+                   
+                    AppLogger.Log_To_File_log(_category, $"[OnGroupDataChanged] done.", AppLogLevel.Trace); 
                 }
                 catch(Exception ex)
                 {
@@ -112,7 +116,7 @@ namespace demoVer.Services
 
         public void UnsubscribeAll(string connectionId)
         {
-            AppLogger.Log_To_File_log($"[UnsubscribeAll] connectionId = {connectionId} ...");
+            AppLogger.Log_To_File_log(_category, $"[UnsubscribeAll] connectionId = {connectionId} ...", AppLogLevel.Debug);
             if(_clientSubscriptions.TryRemove(connectionId, out var subs))
             {
                 foreach (var sub in subs)
@@ -120,14 +124,14 @@ namespace demoVer.Services
                     var key = (sub.DeviceAddr, sub.CommandName);
                     if(_groupsSubscribers.TryGetValue(key, out var connSet))
                     {
-                        AppLogger.Log_To_File_log($"(Addr, CmdName) = {key}, found connectionId = {connectionId}");
+                        AppLogger.Log_To_File_log(_category, $"(Addr, CmdName) = {key}, found connectionId = {connectionId}", AppLogLevel.Trace);
                         connSet.Remove(connectionId);
                         if(connSet.Count == 0)
                             _groupsSubscribers.TryRemove(key, out _);
                     }
                 }
             }
-            AppLogger.Log_To_File_log($"[UnsubscribeAll] done.");
+            AppLogger.Log_To_File_log(_category, $"[UnsubscribeAll] done.", AppLogLevel.Debug);
         }
 
         // // 每筆資料要通知哪些連線 (一筆資料可被多人訂閱)

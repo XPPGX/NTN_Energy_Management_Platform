@@ -7,10 +7,12 @@ namespace demoVer.Services
     
     public class ApiManager
     {
+        private string _category;
         private readonly HttpClient _http;
         public ApiManager(IHttpClientFactory factory)
         {
             _http = factory.CreateClient("ApiClient");
+            _category = GetType().FullName!;
         }
 
 
@@ -29,9 +31,14 @@ namespace demoVer.Services
                 return result;
 
             }
+            catch (HttpRequestException ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[ApiManager][ReadSingleINV] Http_Error: {ex}", AppLogLevel.Debug);
+                return null;
+            }
             catch(Exception ex)
             {
-                AppLogger.Log_To_File_log($"[ApiManager][ReadSingleINV] Error : {ex.Message}");
+                AppLogger.Log_To_File_log(_category, $"[ApiManager][ReadSingleINV] Error : {ex.Message}", AppLogLevel.Error);
                 return null;
             }
         }

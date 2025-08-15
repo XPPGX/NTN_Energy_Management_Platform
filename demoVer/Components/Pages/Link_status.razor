@@ -167,6 +167,9 @@
     const uint STATUS_SOLAR_EN      = 0x00000001 << 4;
     const uint STATUS_SAVING        = 0x00000001 << 5;
     const uint STATUS_BAT_LOW_ALM   = 0x00000001 << 6; *@
+    
+    //for log
+    private string _category;
 
     private uint[] _linkedSnapshot = Array.Empty<uint>();
 
@@ -196,6 +199,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        _category = GetType().FullName!;
+
         _linkedSnapshot = globalVar.LinkedDevices.SnapshotSorted();
 
         globalVar.LinkedDevices.linkChanged += OnLinksChanged;
@@ -355,7 +360,8 @@
         
         try
         {
-            AppLogger.Log_To_File_log($"[Link_status.razor][RowClickEvent] : selectedAddr = {args.Item.Address}");
+            AppLogger.Log_To_File_log(_category, $"[Link_status.razor][RowClickEvent] : selectedAddr = {args.Item.Address}", AppLogLevel.Debug);
+
             selectedAddr = args.Item.Address;
 
             Console.WriteLine($"Row clicked : {selectedAddr}");
@@ -370,7 +376,7 @@
         }
         catch(Exception ex)
         {
-            AppLogger.Log_To_File_log($"[Link_status.razor][RowClickEvent] : Error, {ex}");
+            AppLogger.Log_To_File_log(_category, $"[Link_status.razor][RowClickEvent] : Error, {ex}", AppLogLevel.Error);
         }
         
         

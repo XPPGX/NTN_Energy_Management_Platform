@@ -6,18 +6,25 @@ namespace demoVer.Services
 {
     public class GroupsDataDecoder : IGroupsDataDecoder
     {
+        private string _category;
+
+        public GroupsDataDecoder()
+        {
+            _category = GetType().FullName!;
+        }
+
         public object? Decode(Group_CommandRawData groupData, string cmdName = "")
         {
             try
             {
                 if (groupData.Groups.TryGetValue(0, out var cmdRawData))
                 {
-                    AppLogger.Log_To_File_log($"[Decode][cmd : {cmdName}][Get group (0)] exist");
+                    AppLogger.Log_To_File_log(_category, $"[Decode][cmd : {cmdName}][Get group (0)] exist", AppLogLevel.Trace);
 
                     // 1. 處理 bitField -> output : string
                     if (cmdRawData.BitFields != null && cmdRawData.BitFields.Any())
                     {
-                        AppLogger.Log_To_File_log($"[Decode : BitFields] processing...");
+                        AppLogger.Log_To_File_log(_category, $"[Decode : BitFields] processing...", AppLogLevel.Trace);
                         int rawValue = BytesToInt(cmdRawData.Data, cmdRawData.Signed.GetValueOrDefault());
                         // AppLogger.Log_To_File_log($"rawValue = {rawValue}");
                         var activeFields = new List<string>();
@@ -39,19 +46,19 @@ namespace demoVer.Services
                             }
                         }
                         var return_val = (activeFields.Count > 0) ? string.Join(",", activeFields) : null;
-                        AppLogger.Log_To_File_log($"return val = {return_val}");
-                        AppLogger.Log_To_File_log($"[Decode : BitFields] done.");
+                        AppLogger.Log_To_File_log(_category, $"return val = {return_val}", AppLogLevel.Trace);
+                        AppLogger.Log_To_File_log(_category, $"[Decode : BitFields] done.", AppLogLevel.Trace);
                         return return_val.ToString();
                     }
                     // 2. 處理 Mask -> 暫時不處理
                     else if (cmdRawData.Mask != null && cmdRawData.Mask.Any())
                     {
-                        AppLogger.Log_To_File_log($"[Decode][cmd : {cmdName}] Mask not implemented");
+                        AppLogger.Log_To_File_log(_category, $"[Decode][cmd : {cmdName}] Mask not implemented", AppLogLevel.Trace);
                     }
                     // 3. 處理 split
                     else if (!string.IsNullOrEmpty(cmdRawData.Split))
                     {
-                        AppLogger.Log_To_File_log($"[Decode : split] processing...");
+                        AppLogger.Log_To_File_log(_category, $"[Decode : split] processing...", AppLogLevel.Trace);
 
                         int size = int.Parse(cmdRawData.Split[0].ToString());
                         string seperator = cmdRawData.Split.Substring(1); // comma
@@ -77,14 +84,14 @@ namespace demoVer.Services
                             results.Add(decoded?.ToString() ?? "");
                         }
                         string return_val = string.Join(seperator, results);
-                        AppLogger.Log_To_File_log($"return_val = {return_val}");
-                        AppLogger.Log_To_File_log($"[Decode : split] done...");
+                        AppLogger.Log_To_File_log(_category, $"return_val = {return_val}", AppLogLevel.Trace);
+                        AppLogger.Log_To_File_log(_category, $"[Decode : split] done...", AppLogLevel.Trace);
                         return return_val;
                     }
                     // 4. 處理 Group (Group 內的 count > 1)
                     else if (groupData.Groups.Count > 1)
                     {
-                        AppLogger.Log_To_File_log($"[Decode : group] processing...");
+                        AppLogger.Log_To_File_log(_category, $"[Decode : group] processing...", AppLogLevel.Trace);
                         // 先對group內部依照index排序(同一塊記憶體只是sorted看見的記憶體順序不同)
                         var sorted = groupData.Groups.OrderBy(pair => pair.Key);
                         List<byte> tmpConcatByteData_List = new List<byte>();
@@ -100,22 +107,22 @@ namespace demoVer.Services
                         }
 
                         var formatAppliedData = ApplyFormat(tmpConcatByteData_List, cmdRawData);
-                        AppLogger.Log_To_File_log($"return_val = {formatAppliedData}");
-                        AppLogger.Log_To_File_log($"[Decode : group] done...");
+                        AppLogger.Log_To_File_log(_category, $"return_val = {formatAppliedData}", AppLogLevel.Trace);
+                        AppLogger.Log_To_File_log(_category, $"[Decode : group] done...", AppLogLevel.Trace);
                         return formatAppliedData; // return string for ASCII, double for numeric
                     }
 
                     // 5. 處理基本 ASCII / Numeric
-                    AppLogger.Log_To_File_log($"[Decode : Format] processing...");
+                    AppLogger.Log_To_File_log(_category, $"[Decode : Format] processing...", AppLogLevel.Trace);
                     var temp_return_val = ApplyFormat(cmdRawData.Data, cmdRawData);
-                    AppLogger.Log_To_File_log($"temp_return_val = {temp_return_val}");
-                    AppLogger.Log_To_File_log($"[Decode : Format] done...");
+                    AppLogger.Log_To_File_log(_category, $"temp_return_val = {temp_return_val}", AppLogLevel.Trace);
+                    AppLogger.Log_To_File_log(_category, $"[Decode : Format] done...", AppLogLevel.Trace);
                     return temp_return_val;
                 }
                 else
                 {
 
-                    AppLogger.Log_To_File_log($"[Decode][cmd : {cmdName}][Get group (0)] not exist");
+                    AppLogger.Log_To_File_log(_category, $"[Decode][cmd : {cmdName}][Get group (0)] not exist", AppLogLevel.Trace);
                     return null;
                 }
 
@@ -123,7 +130,7 @@ namespace demoVer.Services
             }
             catch (Exception ex)
             {
-                AppLogger.Log_To_File_log($"[Decode Error] : {ex.Message}");
+                AppLogger.Log_To_File_log(_category, $"[Decode Error] : {ex.Message}", AppLogLevel.Trace);
                 return null;
             }
         }

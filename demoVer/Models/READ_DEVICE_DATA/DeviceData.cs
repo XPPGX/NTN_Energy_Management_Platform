@@ -44,10 +44,17 @@ namespace demoVer.Models
 
     public class allDevice_Data
     {
+        private string _category;
+        
         private Dictionary<uint, oneDevice_Data> _AllDevice_Data = new(); //uint addr 對應每一個oneDevice_Data
         
         // private readonly HashSet<uint> _linkedDeviceAddr = new(); //紀錄
         private oneDevice_Data oneDeviceData_reuseReader = new();
+
+        public allDevice_Data()
+        {
+            _category = GetType().FullName!;
+        }
 
         public void Read_oneDevice_Data(uint addr, List<SingleRawCommand_JsonFormat> oneDevice_JsonData)
         {
@@ -112,7 +119,7 @@ namespace demoVer.Models
                 }
                 _AllDevice_Data[addr] = newDevice;
                 // _linkedDeviceAddr.Add(addr);
-                AppLogger.Log_To_File_log($"New DeviceData, addr = {addr}");
+                AppLogger.Log_To_File_log(_category, $"New DeviceData, addr = {addr}", AppLogLevel.Trace);
             }
         }
         
