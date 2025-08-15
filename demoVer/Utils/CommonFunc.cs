@@ -21,6 +21,12 @@ namespace demoVer.Utils
 
         private static readonly string LogLevelSetting_Directory = Path.GetFullPath("StartupSetting");
         private static readonly string LogLevel_FilePath = Path.Combine(LogLevelSetting_Directory, "logLevels.json");
+        public static bool DEBUG_MODE = true;
+        
+        private static readonly string LogDirectory = Path.GetFullPath("ProgramLog");
+        private static readonly string LogFilePath = Path.Combine(LogDirectory, "log.json");
+        private static readonly string LogFilePath_log = Path.Combine(LogDirectory, "log.log");
+        
         public static void readLogLevelSettings()
         {
             try
@@ -57,11 +63,7 @@ namespace demoVer.Utils
         }
 
 
-        public static bool DEBUG_MODE = true;
         
-        private static readonly string LogDirectory = Path.GetFullPath("ProgramLog");
-        private static readonly string LogFilePath = Path.Combine(LogDirectory, "log.json");
-        private static readonly string LogFilePath_log = Path.Combine(LogDirectory, "log.log");
         public static void Log(string message, bool local_debug)
         {
             if (DEBUG_MODE && local_debug)

@@ -159,7 +159,7 @@ namespace demoVer.Models
             // };
 
             // string tmp_json = JsonSerializer.Serialize(_AllDevice_Data, options);
-            AppLogger.Log_To_File_Json(_AllDevice_Data);
+            // AppLogger.Log_To_File_Json(_AllDevice_Data);
         }
     }
 
@@ -232,7 +232,7 @@ namespace demoVer.Models
             // };
 
             // string tmp_json = JsonSerializer.Serialize(AllCommandData, options);
-            AppLogger.Log_To_File_Json(AllCommandData);
+            // AppLogger.Log_To_File_Json(AllCommandData);
         }
     }
     

@@ -373,7 +373,7 @@ window.DataSocket = async function()
             switch(cmd)
             {
                 case "MFR_MODEL" :
-                    console.log("[SignalR][MFR_MODEL_B0B5] : rcv_data = " + rcv_data);
+                    console.log("[SignalR][MFR_MODEL] : rcv_data = " + rcv_data);
                     document.getElementById("modelname-display").textContent = rcv_data;
                     break;
                     
@@ -387,7 +387,7 @@ window.DataSocket = async function()
 
                 case "INV_FAULT":
                     console.log("[INV_FAULT] : " + rcv_data);
-                    if(rcv_data == "")
+                    if(rcv_data == "" || rcv_data == null)
                     {
                         Translator.INV_FAULT_str = "";
                     }
