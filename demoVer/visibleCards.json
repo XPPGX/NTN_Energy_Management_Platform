@@ -102,16 +102,24 @@
     "card_Type": 1,
     "widthClass": "w25",
     "showSequence": 2,
-    "cardName": "CCCC",
+    "cardName": "Address(4) Info",
     "Info_DataItems": [
       {
         "iconPath": "images/user_selections/fridge.png",
         "status": 3,
         "INFO_DataFormats": [
           {
-            "MachineName": "\u7B2C\u4E8C\u884C\u8CC7\u6599",
-            "Cmd": "Voltage",
-            "ValueName": "ASDASD",
+            "MachineName": "[4] : ",
+            "Addr": 4,
+            "Cmd": "READ_TEMPERATURE_1",
+            "ValueName": "addr(4)_temp",
+            "Unit": "\u2103"
+          },
+          {
+            "MachineName": "[4] : ",
+            "Addr": 4,
+            "Cmd": "READ_VIN",
+            "ValueName": "addr(4)_VIN",
             "Unit": "V"
           }
         ]
@@ -121,21 +129,10 @@
         "status": 3,
         "INFO_DataFormats": [
           {
-            "MachineName": "\u7B2C\u4E8C\u884C\u8CC7\u6599",
-            "Cmd": "Current",
-            "ValueName": "ZDXCX",
-            "Unit": "A"
-          }
-        ]
-      },
-      {
-        "iconPath": "images/user_selections/transmission-tower.png",
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "\u7B2C\u4E8C\u884C\u8CC7\u6599",
-            "Cmd": "Current",
-            "ValueName": "CZXCZX",
+            "MachineName": "[4] : ",
+            "Addr": 4,
+            "Cmd": "READ_IIN",
+            "ValueName": "addr(4)_IIN",
             "Unit": "A"
           }
         ]

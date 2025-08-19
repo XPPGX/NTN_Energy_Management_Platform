@@ -7,7 +7,9 @@
 @using System
 @using System.IO
 @using System.Text.Json
+@using demoVer.Utils
 
+@inject GlobalVar globalVar
 @inject IJSRuntime JS
 @inject CardUpdateNotifier Notifier
 @inject IDialogService DialogService
@@ -29,26 +31,6 @@
         ConfirmBtn_Func = "ConfirmBtn_Func_parent"
         CancelBtn_Func  = "CancelBtn_Func_parent"
         />
-    @* <div class="custom-alert">
-        <div class="custom-alert-row">
-            <span class="alert-text">⚠️ @AlertMessage_parent</span>
-        </div>
-        
-        <div class="custom-btn-col">
-            <MudButton OnClick="ConfirmDelete"
-                    Variant="Variant.Filled"
-                    Style="background-color: #f8d7da; color: #721c24; border: 1px solid #e2aeb2; margin: 4px;">
-                確定
-            </MudButton>
-
-            <MudButton OnClick="CancelDelete"
-                    Variant="Variant.Outlined"
-                    Style="background-color: #fefefe; color: #333333; border: 1px solid #e0e0e0; margin: 4px;">
-                取消
-            </MudButton>
-        </div>
-        
-    </div> *@
 }
 
 @if(modal_IsOpen)
@@ -182,10 +164,6 @@
                 }))
                 
             </div>
-
-            //store information in CardInfos
-            //card.showSequence = cardRenderCounter;
-            //cardRenderCounter++;
         }
     </div>
 </div>
@@ -193,6 +171,8 @@
 
 @code
 {
+    //For Log Control
+    private string _category            = "";
 
     //UI control code
     private bool showEditBtn_Flag       = false;
@@ -201,7 +181,7 @@
     private bool editMenu_IsOpen        = false;
     private bool afterAddCard_Flag      = false;
     private bool editCard_IsOpen        = false;
-    private string editingCard_ID     = "";
+    private string editingCard_ID       = "";
     private byte cardRenderCounter      = 0;
     private TopRow refChild_TopRow;
 
@@ -266,7 +246,7 @@
     
         if (firstRender)
         {   
-            Console.WriteLine("First Render");
+            AppLogger.Log_To_File_log(_category, "[NTN_Home][OnAfterRenderAsync] First Rendered", AppLogLevel.Trace);
             try{
                 //[Debug] try drag function
                 // var dotNetRef = DotNetObjectReference.Create(this);
@@ -305,12 +285,14 @@
     protected override bool ShouldRender()
     {
         cardRenderCounter = 0;
-        Console.WriteLine(cardRenderCounter);
+        AppLogger.Log_To_File_log(_category, $"[NTN_Home][ShouldRender] cardRenderCounter = {cardRenderCounter}, before re-render", AppLogLevel.Trace);
         return true;
     }
 
     protected override async Task OnInitializedAsync()
     {
+        _category = GetType().FullName!;
+
         await Read_CardInfos_FromJsonFile();
     }
     #endregion //Render_Flow_Control

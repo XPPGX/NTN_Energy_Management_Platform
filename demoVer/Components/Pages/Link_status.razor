@@ -502,7 +502,7 @@
         @* if(VarTranslator.Get_INV_Fault(INV_FAULT) != 0){return "Error";} *@
 
         uint INV_STATUS = (((uint)Group2.Groups[0].Data[1]) << 8) | ((uint)Group2.Groups[0].Data[0]);
-        string INV_STATUS_str = VarTranslator.Get_INV_Status(INV_FAULT, INV_STATUS);
+        string INV_STATUS_str = globalVar.Get_INV_Status(INV_FAULT, INV_STATUS);
 
         return INV_STATUS_str;
         

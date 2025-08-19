@@ -5,12 +5,13 @@
         <img src="@IconPath" style="width:48px; height:48px" />
     </div>
     <div class="overview-inner-card rightPart">
-        @foreach(var pair in DataPairs)
+        @foreach(var cell in Cells)
         {
             <div class="overview-inner-card valueBlock">
-                <div>@pair.Label</div>
+                <div>@cell.Label</div>
                 <div>:</div>
-                <div>@pair.Unit</div>
+                <div>@(cell.Value ?? "--")</div> 
+                <div>@cell.Unit</div>
             </div>
         }
     </div>
@@ -18,8 +19,10 @@
 
 @code
 {
+    public record InfoCell(string Label, string? Value, string Unit);
+
     [Parameter] public string IconPath {get; set;}
-    [Parameter] public List<(string Label, string Unit)> DataPairs {get; set;} = new();
+    [Parameter] public List<InfoCell> Cells {get; set;} = new();
 
     protected override void OnInitialized()
     {

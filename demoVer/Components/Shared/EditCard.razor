@@ -1,15 +1,21 @@
 @namespace demoVer.Shared
 @inherits LayoutComponentBase
+
+@implements IDisposable
+
 @using demoVer.Models
 @using System
 @using System.IO
 @using System.Text.Json
 @using Newtonsoft.Json.Linq
+@using demoVer.Utils
+@using System.Globalization
 
 @inject IWebHostEnvironment WebHostEnvironment
 @inject IJSRuntime JS
 @inject IDialogService DialogService
-
+@inject GlobalVar globalVar
+@inject HeartbeatService Heartbeat
 @*每個要用MudBlazor的razor元件，都要引入如下元件*@
 @*這邊還要引用MudBlazor可能是因為 _Imports.razor的引用不會給Shared內的razor檔案*@
 @using MudBlazor
@@ -30,7 +36,7 @@ edit-container是用來綁以下javascript事件的 id :
     case CardType.Info:
         @if(showMenu)
         {
-            <div class="custom-menu" style="top:@($"{menuY}px"); left:@($"{menuX}px");" @onclick:stopPropagation>
+            <div class="custom-menu" style="top:@($"{menuY}px"); left:@($"{menuX}px");" @onclick:stopPropagation="true">
                 <div class="custom-menu-item" @onclick="Edit_inCorrespondingStage">編輯</div>
                 <div class="custom-menu-item" @onclick="Delete_inCorrespondingStage">刪除</div>
             </div>
@@ -167,10 +173,11 @@ edit-container是用來綁以下javascript事件的 id :
                             </tr>
                             <tr>
                                 <th>單位</th>
-                                <td class="clickable-td" @onclick="() => selectUnit()" style="text-align: center;">
+                                <td style="text-align: center;">
                                     @{
                                         string Uint_To_show = "";
-                                        if(string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Cmd))
+                                        Uint_To_show = string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Unit) ? "Please select a CMD" : currentEdit_INFO_DataFormat_ref.Unit;
+                                        @* if(string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Cmd))
                                         {
                                             Uint_To_show = "請先選擇命令";
                                         }
@@ -184,7 +191,7 @@ edit-container是用來綁以下javascript事件的 id :
                                             {
                                                 Uint_To_show = currentEdit_INFO_DataFormat_ref.Unit;
                                             }
-                                        }
+                                        } *@
                                     }
                                     @Uint_To_show
                                 </td>
@@ -202,41 +209,35 @@ edit-container是用來綁以下javascript事件的 id :
                 </div>
                 break;
             case INFO_SETTING_STAGE.MACHINE_SELECTION_STAGE:
-                <MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 200px; max-height: 240px; overflow-y: auto;">
+                <MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 250px; max-height: 240px; overflow-y: auto;">
                     <MudList T="string" Dense="true" Hover="true">
-                        @foreach (var item in machineNameLists)
+                        @foreach (var (addr, modelName) in deviceAddr_List)
                         {
                             <MudListItem T="string"
-                                        @onclick="() => clickMachineName(item)"
+                                        @onclick="() => clickMachineName(addr, modelName)"
                                         Style="cursor: pointer;">
                                 <MudListItemIcon>
                                     <MudIcon Icon="@Icons.Material.Filled.KeyboardCommandKey" />
                                 </MudListItemIcon>
-                                <MudText Class="ml-2">@item</MudText>
+                                <MudText Class="ml-2">@($"[{addr}]: {modelName}")</MudText>
                             </MudListItem>
                         }
                     </MudList>
                 </MudPaper>
                 
-                @* <div class="scrollable-list">
-                    @foreach (var item in machineNameLists)
-                    {
-                        <div class="list-item" @onclick="() => clickMachineName(item)">@item</div>
-                    }
-                </div> *@
                 break;
             case INFO_SETTING_STAGE.CMD_SELECTION_STAGE:
-                <MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 200px; max-height: 240px; overflow-y: auto;">
+                <MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 300px; max-height: 240px; overflow-y: auto;">
                     <MudList T="string" Dense="true" Hover="true">
-                        @foreach (var item in cmdDict)
+                        @foreach (var (cmd, unit) in show_cmd_unit_Dict_ref)
                         {
                             <MudListItem T="string"
-                                        @onclick="() => clickCmd(item.Key)"
+                                        @onclick="() => clickCmd(cmd, unit)"
                                         Style="cursor: pointer;">
                                 <MudListItemIcon>
                                     <MudIcon Icon="@Icons.Material.Filled.Code" />
                                 </MudListItemIcon>
-                                <MudText Class="ml-2">@item.Key</MudText>
+                                <MudText Class="ml-2">@cmd</MudText>
                             </MudListItem>
                         }
                     </MudList>
@@ -268,7 +269,7 @@ edit-container是用來綁以下javascript事件的 id :
                             <th>數值名稱</th>
                             <th>單位</th>
                         </thead>
-                        <tbody @onclick:stopPropagation>
+                        <tbody @onclick:stopPropagation="true">
                             @for(int i = 0 ; i < currentEdit_INFO_DataItem_ref.INFO_DataFormats.Count ; i ++)
                             {
                                 var tempDataFormat = currentEdit_INFO_DataItem_ref.INFO_DataFormats[i];
@@ -308,7 +309,7 @@ edit-container是用來綁以下javascript事件的 id :
     case CardType.Chart:
         @if(showMenu)
         {
-            <div class="custom-menu" style="top:@($"{menuY}px"); left:@($"{menuX}px");" @onclick:stopPropagation>
+            <div class="custom-menu" style="top:@($"{menuY}px"); left:@($"{menuX}px");" @onclick:stopPropagation="true">
                 <div class="custom-menu-item" @onclick="Edit_inCorrespondingStage">編輯</div>
                 <div class="custom-menu-item" @onclick="Delete_inCorrespondingStage">刪除</div>
             </div>   
@@ -566,40 +567,66 @@ edit-container是用來綁以下javascript事件的 id :
 
 
 @code{
-    //DEBUG
-    private List<string> machineNameLists = new List<string>()
-    {
-         "第一行資料", "第二行資料", "第三行資料", "第四行資料",
-        "第五行資料", "第六行資料", "第七行資料", "第八行資料"
-    };
+    
+    //For log
+    private string _category = "";
+    //HeartbeatCounter
+    private int HeartBeatCounter = 0;
+    
 
     #region Common_Variables_and_Functions
     [Parameter] public CardInfo currentCardInfo {get; set;}
     [Parameter] public EventCallback<CardInfo> OnCardInfoUpdated {get; set;}
-    private DotNetObjectReference<EditCard>? objRef;
+    private DotNetObjectReference<object>? objRef;
 
     private bool _isFirstParameterSet = true;
     private string imgFolderPath = "";
     private List<string> imgRelativePaths = new List<string>();
     private bool isMobile = false;
+    private Dictionary<string, string> oneDevice_cmd_unit_Dict = new Dictionary<string, string>();
+    private Dictionary<string, string> Summary_cmd_unit_Dict = new Dictionary<string, string>();
+    private Dictionary<string, string> show_cmd_unit_Dict_ref;
     private JObject cmdDict;
     string Cmd_filePath = "CMD_and_Unit.json";
     private List<string> UnitLists;
 
+    
+    
+    private async Task OnHeartbeatTick()
+    {
+        if(HeartBeatCounter == 0)
+        {
+            refreshDevicesList();
+        }
+        HeartBeatCounter = (HeartBeatCounter + 1) % 3;
+    }
+
     protected override void OnInitialized()
     {
+        _category = GetType().FullName!;
+
+        Heartbeat.OnTick += OnHeartbeatTick;
+
         Console.WriteLine("🚀 元件初始化：OnInitialized 被呼叫");
         // 初始化邏輯，例如建立預設值、讀取 localStorage、設定變數等
         imgFolderPath = Path.Combine(WebHostEnvironment.WebRootPath, "images/user_selections");
-        getCMDs();
+        //getCMDs();
+        InitSummaryCMDs();
         getImgFiles();
     }
+
+    public void Dispose()
+    {
+        Heartbeat.OnTick -= OnHeartbeatTick;
+        objRef?.Dispose();
+    }
+
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if(firstRender)
         {
-            objRef = DotNetObjectReference.Create(this);
+            objRef = DotNetObjectReference.Create<object>(this);
             await JS.InvokeVoidAsync("registerGroupedTableTouchAndRightClick", "edit-container", objRef);
             isMobile = await JS.InvokeAsync<bool>("checkIsMobile");
         }
@@ -668,20 +695,65 @@ edit-container是用來綁以下javascript事件的 id :
         }
     }
 
+    private void InitSummaryCMDs()
+    {
+        Summary_cmd_unit_Dict["Number of INV"]      = "Unit";
+        Summary_cmd_unit_Dict["Input Voltage"]      = "VAC";
+        Summary_cmd_unit_Dict["Input Frequency"]    = "Hz";
+        Summary_cmd_unit_Dict["Output Voltage"]     = "VAC";
+        Summary_cmd_unit_Dict["Output Frequency"]   = "Hz";
+        Summary_cmd_unit_Dict["Output Current"]     = "A";
+        Summary_cmd_unit_Dict["Load Percentage"]    = "%";
+        Summary_cmd_unit_Dict["Battery Voltage"]    = "V";
+        Summary_cmd_unit_Dict["Battery Level"]      = "%";
+        Summary_cmd_unit_Dict["Battery Time Left"]  = "H";
+    }
+
     private async Task getCMDs()
     {
-        if(File.Exists(Cmd_filePath))
+        //oneDevice_cmd_unit_Dict //Dictionary <string, string>
+        try
+        {
+            //清空 cmd_uint_Dict 的內容
+            
+            if(currentSelected_Addr == 9999) // Selecting "Summary"
+            {
+                show_cmd_unit_Dict_ref = Summary_cmd_unit_Dict;
+
+                AppLogger.Log_To_File_log(_category, $"[EditCard][getCMDs] Select : addr = {currentSelected_Addr}, mdlName = Summary", AppLogLevel.Trace);
+            }
+            else if(currentSelected_Addr < 256)
+            {
+                oneDevice_cmd_unit_Dict.Clear();
+                oneDevice_cmd_unit_Dict = globalVar.Get_oneDevice_Cmd_unit_Dict(currentSelected_Addr);
+
+                show_cmd_unit_Dict_ref = oneDevice_cmd_unit_Dict;
+                
+                AppLogger.Log_To_File_log(_category, $"[EditCard][getCMDs] Select : addr = {currentSelected_Addr}, mdlName = {currentEdit_INFO_DataFormat_ref.MachineName}", AppLogLevel.Trace);
+            }
+            else
+            {
+                AppLogger.Log_To_File_log(_category, $"[EditCard][getCMDs] Got wrong addr : {currentSelected_Addr}", AppLogLevel.Information);
+            }
+        }
+        catch(Exception e)
+        {
+            AppLogger.Log_To_File_log(_category, $"[EditCard][getCMDs] Error : {e}", AppLogLevel.Error);
+        }
+        
+
+        @* if(File.Exists(Cmd_filePath))
         {
             string json = File.ReadAllText(Cmd_filePath);
             cmdDict = JObject.Parse(json);
 
-            @* var json = await File.ReadAllTextAsync(Cmd_filePath);
+            var json = await File.ReadAllTextAsync(Cmd_filePath);
             cmdDict = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
 
             var jsonString = JsonSerializer.Serialize(cmdDict, new JsonSerializerOptions { WriteIndented = true });
-            Console.WriteLine(jsonString); *@
+            Console.WriteLine(jsonString); 
 
-        }
+        } *@
     }
     #endregion Common_Variables_and_Functions
 
@@ -692,6 +764,7 @@ edit-container是用來綁以下javascript事件的 id :
     private INFO_DataItem currentEdit_INFO_DataItem_ref; //reference, modify in memory
     private INFO_DataItem temp_INFO_DataItem_Backend;
     private INFO_DataFormat currentEdit_INFO_DataFormat_ref; //This is point to the one DataFormat of temp_INFO_DataItem_Backend.INFO_DataFormats
+    private uint currentSelected_Addr;
     private string edit_CardName;
     private bool showMenu = false;
     private double menuX;
@@ -702,10 +775,31 @@ edit-container是用來綁以下javascript事件的 id :
     private string AlertMessage = "";
     private Action? ConfirmCallback;
 
+    private List<(uint, string)> deviceAddr_List = new List<(uint, string)>()
+    {
+        
+    };
+
     private List<INFO_DataItem> edit_INFO_DataItems = new List<INFO_DataItem>
     {
 
     };
+
+    private void refreshDevicesList()
+    {
+
+        try
+        {
+            deviceAddr_List = globalVar.Get_addr_and_ModelNames_List();
+            deviceAddr_List.Add((9999, "Summary"));
+        }
+        catch(Exception e)
+        {
+            AppLogger.Log_To_File_log(_category, $"[EditCard][refreshDevicesList] Error : {e}", AppLogLevel.Error);
+        }
+        
+        
+    }
 
     [JSInvokable]
     public void OnShowContextMenu(string table, int index, double x, double y)
@@ -897,6 +991,31 @@ edit-container是用來綁以下javascript事件的 id :
     {
         Console.WriteLine("setValueAndCmd");
         currentEdit_INFO_DataFormat_ref = _temp_DataFormat;
+        try
+        {
+            if(!string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.MachineName))
+            {
+                AppLogger.Log_To_File_log(_category, $"[EditCard][setValueAndCmd] ModelName = {currentEdit_INFO_DataFormat_ref.MachineName}", AppLogLevel.Trace);
+                if(TryParseAddr_fromAddrModelName(currentEdit_INFO_DataFormat_ref.MachineName, out uint addr))
+                {
+                    AppLogger.Log_To_File_log(_category, $"[EditCard][setValueAndCmd] ModelName = {currentEdit_INFO_DataFormat_ref.MachineName}, addr = {addr}", AppLogLevel.Trace);
+                    
+                    currentSelected_Addr = addr;
+
+                    getCMDs();
+                }
+            }
+            else
+            {
+                AppLogger.Log_To_File_log(_category, $"[EditCard][setValueAndCmd] ModelName = null", AppLogLevel.Trace);
+            }
+        }
+        catch(Exception e)
+        {
+            AppLogger.Log_To_File_log(_category, $"[EditCard][setValueAndCmd] Error : {e}");
+        }
+        
+
         INFO_setting_stage = INFO_SETTING_STAGE.SETTING_VALUE_AND_CMD_STAGE;
     }
 
@@ -909,6 +1028,11 @@ edit-container是用來綁以下javascript事件的 id :
     private void selectCMD()
     {
         Console.WriteLine("selectCMD");
+        if(string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.MachineName)) return; 
+
+        
+
+        getCMDs();
         INFO_setting_stage = INFO_SETTING_STAGE.CMD_SELECTION_STAGE;
     }
 
@@ -934,17 +1058,46 @@ edit-container是用來綁以下javascript事件的 id :
         }
     }
 
-    private void clickMachineName(string _selectedMachineName)
+    private bool TryParseAddr_fromAddrModelName(string _addrModelName, out uint value)
     {
-        currentEdit_INFO_DataFormat_ref.MachineName = _selectedMachineName;
+        value = 0;
+        if(string.IsNullOrEmpty(_addrModelName)) return false;
+        AppLogger.Log_To_File_log(_category, $"[EditCard][TryParseAddr_fromAddrModelName] _addrModelName not null or empty", AppLogLevel.Trace);
+
+        int l = _addrModelName.IndexOf('[');
+        if(l < 0) return false;
+        AppLogger.Log_To_File_log(_category, $"[EditCard][TryParseAddr_fromAddrModelName] [ found", AppLogLevel.Trace);
+
+        int r = _addrModelName.IndexOf(']', l +1);
+        if(r < 0 || r == l + 1) return false;
+        AppLogger.Log_To_File_log(_category, $"[EditCard][TryParseAddr_fromAddrModelName] ] found", AppLogLevel.Trace);
+
+        ReadOnlySpan<char> span = _addrModelName.AsSpan(l + 1, r - l - 1).Trim();
+        var tmp_return_val = uint.TryParse(span, out value);
+        AppLogger.Log_To_File_log(_category, $"[EditCard][TryParseAddr_fromAddrModelName] tmp_return_val = {tmp_return_val}", AppLogLevel.Trace);
+        return tmp_return_val;
+    }
+
+    private void clickMachineName(uint addr, string _selectedMachineName)
+    {
+        string tmp_modelName = $"[{addr}] : {_selectedMachineName}";
+        if(!(string.Equals(currentEdit_INFO_DataFormat_ref.MachineName, tmp_modelName, StringComparison.Ordinal)))
+        {
+            currentEdit_INFO_DataFormat_ref.MachineName = tmp_modelName;
+            currentEdit_INFO_DataFormat_ref.Addr = addr;
+            currentEdit_INFO_DataFormat_ref.Cmd = "";
+            currentEdit_INFO_DataFormat_ref.Unit = "";
+        }
+        currentSelected_Addr = addr;
+
         INFO_setting_stage = INFO_SETTING_STAGE.SETTING_VALUE_AND_CMD_STAGE;
     }
-    private void clickCmd(string _cmd)
+    private void clickCmd(string _cmd, string _unit)
     {
         if(currentEdit_INFO_DataFormat_ref.Cmd != _cmd)
         {
             currentEdit_INFO_DataFormat_ref.Cmd = _cmd;
-            currentEdit_INFO_DataFormat_ref.Unit = "";
+            currentEdit_INFO_DataFormat_ref.Unit = _unit;
         }
         
 
@@ -960,9 +1113,9 @@ edit-container是用來綁以下javascript事件的 id :
     {
         if( string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.MachineName)      ||
             string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Cmd)              ||
-            string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.ValueName)        ||
-            string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Unit)             ) 
+            string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.ValueName)) 
         {
+            //string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Unit) 
             Console.WriteLine("有數值沒有設定");
             return;
         }

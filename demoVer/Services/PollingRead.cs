@@ -7,7 +7,7 @@ namespace demoVer.Services
 {   
     public class PollingOptions
     {
-        public int PerRequestDelayMs {get; set;} = 5;
+        public int PerRequestDelayMs {get; set;} = 0;
         public int RequestTimeoutMs {get; set;} = 100;
     }
 

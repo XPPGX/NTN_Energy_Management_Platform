@@ -74,10 +74,11 @@ namespace demoVer.Models
 
     public class INFO_DataFormat
     {
-        public string MachineName {get; set;}
-        public string Cmd {get; set;}
-        public string ValueName {get; set;}
-        public string Unit  {get; set;} 
+        public string? MachineName {get; set;}
+        public uint? Addr {get; set;}
+        public string? Cmd {get; set;}
+        public string? ValueName {get; set;}
+        public string? Unit  {get; set;} 
 
         public INFO_DataFormat DeepClone()
         {

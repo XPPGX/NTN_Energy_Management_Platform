@@ -102,25 +102,56 @@ namespace demoVer.Utils
         
         public static void Log_To_File_log(string category, string message, AppLogLevel level = AppLogLevel.Trace)
         {
-            if(CategoryLevels.Count == 0) readLogLevelSettings();
-            
-            if(!CategoryLevels.ContainsKey(category)) return;
-            
-            if(level < (AppLogLevel)CategoryLevels[category]) return;
+            // 用 TryGetValue 避免兩次查表
+            if (CategoryLevels.Count == 0) readLogLevelSettings();
+            if (!CategoryLevels.TryGetValue(category, out var minLevel)) return;
+            if (level < (AppLogLevel)minLevel) return;
 
             try
             {
-                // Console.WriteLine($"LogDirectory = {LogDirectory}");
-                // Console.WriteLine($"LogFilePath = {LogFilePath_log}");
-                // 確保資料夾存在
-                if (!Directory.Exists(LogDirectory))
-                    Directory.CreateDirectory(LogDirectory);
+                Directory.CreateDirectory(LogDirectory); // 多次呼叫也安全
 
                 string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
                 string logEntry = $"[{timestamp}] {message}{Environment.NewLine}";
-                File.AppendAllText(LogFilePath_log, logEntry);
+
+                // 跨行程命名 Mutex，序列化所有寫入
+                // 建議名字帶上產品名稱，避免跟別的程式衝突
+                using var mutex = new System.Threading.Mutex(false, @"Global\NTN_Energy_Management_LogMutex");
+
+                // 最長等 200ms，避免卡死；你可依需求調整
+                bool lockTaken = mutex.WaitOne(200);
+                if (!lockTaken)
+                {
+                    // 拿不到鎖就放棄或改成丟例外／重試
+                    return;
+                }
+
+                try
+                {
+                    // 用 FileStream 明確指定 Share 模式
+                    using var fs = new FileStream(
+                        LogFilePath_log,
+                        FileMode.Append,
+                        FileAccess.Write,
+                        FileShare.ReadWrite // 允許其他行程讀/寫同檔案（我們靠 Mutex 保證順序）
+                    );
+                    using var sw = new StreamWriter(fs, System.Text.Encoding.UTF8);
+                    sw.Write(logEntry);
+                    sw.Flush(); // 需要時可省略
+                }
+                finally
+                {
+                    mutex.ReleaseMutex();
+                }
             }
-            catch(Exception ex)
+            catch (IOException ioEx)
+            {
+                // 可選：加入退避重試
+                // for (int i=0; i<3; i++) { Thread.Sleep(10 << i); ... }
+
+                Console.WriteLine($"[Logger][IO] Failed to write log: {ioEx.Message}");
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine($"[Logger] Failed to write log: {ex.Message}");
             }

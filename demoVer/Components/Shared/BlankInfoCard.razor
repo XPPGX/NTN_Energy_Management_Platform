@@ -1,6 +1,13 @@
 @namespace demoVer.Shared
+
 @inherits LayoutComponentBase
 @using demoVer.Models
+@using demoVer.Utils
+@using demoVer.Services
+@inject DataChangeEventManager EventMgr
+@inject GlobalVar globalVar
+@implements IDisposable
+@inject HeartbeatService heartbeat
 <div class="infoCard-container @CssClass" @attributes="AdditionalAttributes">
     <div class="infoCard-container top">
         <h4>@(string.IsNullOrEmpty(currentCard.cardName) ? "請編輯卡片" : currentCard.cardName)</h4>
@@ -18,18 +25,19 @@
     <div class="infoCard-container bottom">
         @if(currentCard?.Info_DataItems != null)
         {
-             @foreach (var Info_DataItems_iterator in currentCard.Info_DataItems)
+            @foreach (var Info_DataItems_iterator in currentCard.Info_DataItems)
             {
                 string temp_iconPath = string.IsNullOrEmpty(Info_DataItems_iterator.iconPath) ? "images/square.png" : Info_DataItems_iterator.iconPath;
-                
-                List<(string valueName, string unit)> temp_DataPairs = new List<(string valueName, string unit)>();
+                var cells = BuildCells(Info_DataItems_iterator);
+
+                @* List<(string valueName, string unit)> temp_DataPairs = new List<(string valueName, string unit)>();
                 foreach (var Info_DataFormat_iter in Info_DataItems_iterator.INFO_DataFormats)
                 {
                     temp_DataPairs.Add((Info_DataFormat_iter.ValueName, Info_DataFormat_iter.Unit));   
-                }
+                } *@
 
                 <InfoDataItem IconPath="@temp_iconPath"
-                                DataPairs="@temp_DataPairs" />
+                                Cells="@cells" />
             }
         }
        
@@ -38,19 +46,184 @@
 
 @code
 {
+    public string _category = "";
+
     [Parameter] public string CssClass {get; set; }
     [Parameter(CaptureUnmatchedValues  = true)] public Dictionary<string, object> AdditionalAttributes {get; set; }
     [Parameter] public bool showEditButton {get; set; }
     [Parameter] public EventCallback<string> Inform_Home_openEditMenu {get; set;}
     [Parameter] public CardInfo currentCard {get; set;}
 
+    // 最新值快取：用 (addr, cmd) 當 key
+    private readonly Dictionary<(uint addr, string cmd), object?> _latest = new();
+    private readonly List<IDisposable> _subs = new();
+    private string? _lastCardId;
+
+    private List<(uint, string)> noExistence_addrCmdPair_list = new List<(uint, string)>();
+    
+    protected override void OnInitialized()
+    {
+        _category = GetType().FullName!;
+
+
+        heartbeat.OnTick += TickTask;
+    }
+
+    public async Task TickTask()
+    {
+        checkSubscribeCommandExist();
+    }
+    
+    private void checkSubscribeCommandExist()
+    {
+        if(noExistence_addrCmdPair_list.Count == 0) return;
+
+        for(int index = 0 ; index < noExistence_addrCmdPair_list.Count ; index ++)
+        {
+            var (addr, cmd) = noExistence_addrCmdPair_list[index];
+            
+            var targetGroups = globalVar.Device_ReadData.GetCommandGroups(addr, cmd);
+            
+            if(targetGroups is null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[BlankInfoCard][checkSubscribeCommandExist] {cmd}@{addr} target groups is still not exist", AppLogLevel.Trace);
+                continue;
+            }
+            AppLogger.Log_To_File_log(_category, $"[BlankInfoCard][checkSubscribeCommandExist] {cmd}@{addr} target groups found, start subscription", AppLogLevel.Trace);
+            //targetGroup存在了，把pair從List中移除
+            noExistence_addrCmdPair_list.RemoveAt(index);
+
+            //開始訂閱流程
+            var key = (addr, cmd);
+            var sub = EventMgr.SubscribeGroupCs(addr, cmd, targetGroups, args =>
+            {
+                InvokeAsync(() =>
+                {
+                    _latest[key] = args.DecodedValue;
+                    StateHasChanged();
+                });
+            });
+            _subs.Add(sub);
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // 確保在互動渲染階段才做（避免 pre-render 階段白掛）
+        if (firstRender)
+        {
+            ResubscribeAll();          // 你的訂閱邏輯
+            await InvokeAsync(StateHasChanged); // 讓初次值立即顯示
+            AppLogger.Log_To_File_log(_category, $"[BlankInfoCard][OnAfterRenderAsync] : refresh UI ran out", AppLogLevel.Trace);
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        
+        // 卡片更新（或內容可能變了）→ 重新掛訂閱
+        if (currentCard?.ID != _lastCardId)
+        {
+            AppLogger.Log_To_File_log(_category, $"[BlankInfoCard][OnParametersSet] Card update", AppLogLevel.Trace);
+            ResubscribeAll();
+            _lastCardId = currentCard?.ID;
+        }
+        else
+        {
+            // 如果你想更精細也可比對內容；簡化起見直接重掛
+            ResubscribeAll();
+        }
+    }
+
     private async Task openEditMenu()
     {
-        if(Inform_Home_openEditMenu.HasDelegate)
+        if(Inform_Home_openEditMenu.HasDelegate && currentCard is not null)
         {
             //Pass the razor component name to HOME, the name can be found definition in the HOME CardInfos List.
             await Inform_Home_openEditMenu.InvokeAsync(currentCard.ID);
             Console.WriteLine("[BlankInfoCard] Current edit Card (from card) : " + currentCard.ID);
         }
     }
+
+    public void Dispose()
+    {
+        foreach(var s in _subs) s.Dispose();
+        _subs.Clear();
+        noExistence_addrCmdPair_list.Clear();
+
+        heartbeat.OnTick -= TickTask;
+    }
+
+    private void ResubscribeAll()
+    {
+        foreach (var s in _subs) s.Dispose();
+        _subs.Clear();
+        _latest.Clear();
+        noExistence_addrCmdPair_list.Clear();
+        
+        if (currentCard?.Info_DataItems == null) return;
+        AppLogger.Log_To_File_log(_category, $"[BlankInfoCard][ResubscribeAll] Info_DataItems != null", AppLogLevel.Trace);
+        
+        foreach (var dataItem in currentCard.Info_DataItems)
+        {
+            foreach (var df in dataItem.INFO_DataFormats)
+            {
+                if (df.Addr is not uint addr) continue;
+                AppLogger.Log_To_File_log(_category, $"[BlankInfoCard][ResubscribeAll] df.Addr = {df.Addr}", AppLogLevel.Trace);
+                
+                if (string.IsNullOrWhiteSpace(df.Cmd)) continue;
+                AppLogger.Log_To_File_log(_category, $"[BlankInfoCard][ResubscribeAll] df.Cmd = {df.Cmd}", AppLogLevel.Trace);
+
+                var groups = globalVar.Device_ReadData.GetCommandGroups(addr, df.Cmd);   // 需提供此方法
+                
+                //如果這批 (addr, cmd) pairs裡面，有某個pair的group目前不存在，就放入List內，待後續心跳持續30秒偵測該pair的group是否存在'
+                //1. 目前polling尚未取得該pair的group就開始訂閱。
+                //2. addr沒有連接設備
+                if (groups is null)
+                {
+                    noExistence_addrCmdPair_list.Add((addr, df.Cmd));
+                    AppLogger.Log_To_File_log(_category, $"[BlankInfoCard][ResubscribeAll] addr = {df.Addr}, cmd = {df.Cmd}, group is null, add ({df.Addr}, {df.Cmd}) to noExistence_addrCmdPair_list", AppLogLevel.Trace);
+                    continue;
+                }
+
+                AppLogger.Log_To_File_log(_category, $"[BlankInfoCard][ResubscribeAll] groups != null", AppLogLevel.Trace);
+                
+                var key = (addr, df.Cmd);
+                var sub = EventMgr.SubscribeGroupCs(addr, df.Cmd, groups, args =>
+                {
+                    InvokeAsync(() =>
+                    {
+                        _latest[key] = args.DecodedValue;
+                        StateHasChanged();
+                    });
+                });
+                _subs.Add(sub);
+            }
+        }
+    }
+
+    private List<InfoDataItem.InfoCell> BuildCells(INFO_DataItem item)
+    {
+        var list = new List<InfoDataItem.InfoCell>();
+        foreach (var df in item.INFO_DataFormats)
+        {
+            string? value = null;
+            if (df.Addr is uint addr && !string.IsNullOrWhiteSpace(df.Cmd) &&
+                _latest.TryGetValue((addr, df.Cmd), out var v) && v is not null)
+            {
+                value = FormatValue(v);
+            }
+            list.Add(new InfoDataItem.InfoCell(df.ValueName ?? "", value, df.Unit ?? ""));
+        }
+        return list;
+    }
+
+    private static string FormatValue(object v) => v switch
+    {
+        double d   => d.ToString("0.###"),
+        float f    => f.ToString("0.###"),
+        decimal m  => m.ToString("0.###"),
+        IFormattable fmt => fmt.ToString(null, System.Globalization.CultureInfo.InvariantCulture),
+        _ => v.ToString() ?? ""
+    };
 }
