@@ -7,7 +7,9 @@
     <div class="overview-inner-card rightPart">
         @foreach(var cell in Cells)
         {
+            @* var ADDR = cell.addr?.ToString() ?? ""; *@
             <div class="overview-inner-card valueBlock">
+                <div>@cell.UserSettingName</div>
                 <div>@cell.Label</div>
                 <div>:</div>
                 <div>@(cell.Value ?? "--")</div> 
@@ -19,7 +21,7 @@
 
 @code
 {
-    public record InfoCell(string Label, string? Value, string Unit);
+    public record InfoCell(string UserSettingName, uint? addr, string Label, string? Value, string Unit);
 
     [Parameter] public string IconPath {get; set;}
     [Parameter] public List<InfoCell> Cells {get; set;} = new();

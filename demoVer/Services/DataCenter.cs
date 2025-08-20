@@ -61,7 +61,7 @@ namespace demoVer.Services
             Battery.UpdateFrom(new Battery_InitData()); //接收初始值
             INV         = new INV_DataSetting_Module(_commonData);
             INV.UpdateFrom(new INV_InitData()); //接收初始值
-
+            uint pollingCounter = 0;
             bool ApiReadFlag = false;
             uint counter = 0;
             bool counterEnable = true;
@@ -89,6 +89,15 @@ namespace demoVer.Services
                     // LocalDataChange_Test();
                 }
                 counter ++;
+                
+                if(pollingCounter == 10)
+                {
+                    _globalVar.Debug_Flag = false;
+                    pollingCounter = 0;
+                }
+                
+                pollingCounter ++;
+
                 Update_Read_Data();
                 await RefreshAllAsync();
             };
@@ -237,6 +246,7 @@ namespace demoVer.Services
                 cmds.Add("READ_TEMPERATURE_1");
                 cmds.Add("READ_VIN");
                 cmds.Add("READ_IIN");
+                cmds.Add("READ_FREQ");
                 // cmds.Add("READ_IIN");
                 
                 foreach(var cmd_str in cmds)

@@ -160,6 +160,12 @@ edit-container是用來綁以下javascript事件的 id :
                                 </td>
                             </tr>
                             <tr>
+                                <th>設備名稱</th>
+                                <td>
+                                    <input @bind="currentEdit_INFO_DataFormat_ref.UserSettingName" class="td-input"  style="text-align: center;"/>
+                                </td>
+                            </tr>
+                            <tr>
                                 <th>命令選擇</th>
                                 <td class="clickable-td" @onclick="() => selectCMD()">
                                     @(string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Cmd) ? "設定" : currentEdit_INFO_DataFormat_ref.Cmd)
@@ -709,7 +715,7 @@ edit-container是用來綁以下javascript事件的 id :
         Summary_cmd_unit_Dict["Battery Time Left"]  = "H";
     }
 
-    private async Task getCMDs()
+    private bool getCMDs()
     {
         //oneDevice_cmd_unit_Dict //Dictionary <string, string>
         try
@@ -735,10 +741,12 @@ edit-container是用來綁以下javascript事件的 id :
             {
                 AppLogger.Log_To_File_log(_category, $"[EditCard][getCMDs] Got wrong addr : {currentSelected_Addr}", AppLogLevel.Information);
             }
+            return true;
         }
         catch(Exception e)
         {
             AppLogger.Log_To_File_log(_category, $"[EditCard][getCMDs] Error : {e}", AppLogLevel.Error);
+            return false;
         }
         
 
@@ -791,7 +799,7 @@ edit-container是用來綁以下javascript事件的 id :
         try
         {
             deviceAddr_List = globalVar.Get_addr_and_ModelNames_List();
-            deviceAddr_List.Add((9999, "Summary"));
+            @* deviceAddr_List.Add((9999, "Summary")); *@
         }
         catch(Exception e)
         {
@@ -984,6 +992,10 @@ edit-container是用來綁以下javascript事件的 id :
 
     private void AddRow_ValueAndCmd()
     {
+        if(currentEdit_INFO_DataItem_ref.INFO_DataFormats.Count >= 2)
+        {
+            return;
+        }
         currentEdit_INFO_DataItem_ref.INFO_DataFormats.Add(new INFO_DataFormat());
     }
 
@@ -1002,7 +1014,7 @@ edit-container是用來綁以下javascript事件的 id :
                     
                     currentSelected_Addr = addr;
 
-                    getCMDs();
+                    var Flag = getCMDs();
                 }
             }
             else
@@ -1032,8 +1044,10 @@ edit-container是用來綁以下javascript事件的 id :
 
         
 
-        getCMDs();
-        INFO_setting_stage = INFO_SETTING_STAGE.CMD_SELECTION_STAGE;
+        if(getCMDs())
+        {
+            INFO_setting_stage = INFO_SETTING_STAGE.CMD_SELECTION_STAGE;
+        }
     }
 
     private void selectUnit()
@@ -1113,7 +1127,8 @@ edit-container是用來綁以下javascript事件的 id :
     {
         if( string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.MachineName)      ||
             string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Cmd)              ||
-            string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.ValueName)) 
+            string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.ValueName)        ||
+            string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.UserSettingName)) 
         {
             //string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Unit) 
             Console.WriteLine("有數值沒有設定");

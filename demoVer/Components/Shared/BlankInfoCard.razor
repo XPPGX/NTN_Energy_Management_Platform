@@ -59,6 +59,7 @@
     private readonly List<IDisposable> _subs = new();
     private string? _lastCardId;
 
+    //後續要將這個持續檢查groups存在與否的機制寫進DataChangeEventManager
     private List<(uint, string)> noExistence_addrCmdPair_list = new List<(uint, string)>();
     
     protected override void OnInitialized()
@@ -72,6 +73,7 @@
     public async Task TickTask()
     {
         checkSubscribeCommandExist();
+        @* var tmp = globalVar.Get_INV_Phase(4); *@
     }
     
     private void checkSubscribeCommandExist()
@@ -213,7 +215,8 @@
             {
                 value = FormatValue(v);
             }
-            list.Add(new InfoDataItem.InfoCell(df.ValueName ?? "", value, df.Unit ?? ""));
+
+            list.Add(new InfoDataItem.InfoCell(df.UserSettingName, df.Addr, df.ValueName ?? "", value, df.Unit ?? ""));
         }
         return list;
     }

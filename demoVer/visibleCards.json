@@ -31,12 +31,12 @@
     "card_Type": 2,
     "widthClass": "w50",
     "showSequence": 1,
-    "cardName": "\u4E09\u76F8\u96FB\u6D41\u8207\u529F\u7387\u5716(FAKE)",
+    "cardName": "\u96FB\u58D3\u96FB\u6D41\u5716\u8868",
     "Info_DataItems": null,
     "Link_STATUS_Pairs": null,
     "Chart_Setting": {
       "canvasID": "chart1",
-      "ChartTitle": "\u4E09\u76F8\u96FB\u6D41\u8207\u529F\u7387\u5716(FAKE)",
+      "ChartTitle": "\u96FB\u58D3\u96FB\u6D41\u5716\u8868",
       "XTitle": "\u6642\u9593",
       "timeGap_selection": 2,
       "Labels": [
@@ -102,7 +102,7 @@
     "card_Type": 1,
     "widthClass": "w25",
     "showSequence": 2,
-    "cardName": "Address(4) Info",
+    "cardName": "NTN\u8CC7\u8A0A",
     "Info_DataItems": [
       {
         "iconPath": "images/user_selections/fridge.png",
@@ -111,15 +111,17 @@
           {
             "MachineName": "[4] : ",
             "Addr": 4,
+            "UserSettingName": "\u6A5F\u623F",
             "Cmd": "READ_TEMPERATURE_1",
-            "ValueName": "addr(4)_temp",
+            "ValueName": "\u6EAB\u5EA6",
             "Unit": "\u2103"
           },
           {
             "MachineName": "[4] : ",
             "Addr": 4,
+            "UserSettingName": "\u6A5F\u623F",
             "Cmd": "READ_VIN",
-            "ValueName": "addr(4)_VIN",
+            "ValueName": "\u96FB\u58D3",
             "Unit": "V"
           }
         ]
@@ -131,8 +133,9 @@
           {
             "MachineName": "[4] : ",
             "Addr": 4,
+            "UserSettingName": "\u6A5F\u623F",
             "Cmd": "READ_IIN",
-            "ValueName": "addr(4)_IIN",
+            "ValueName": "\u96FB\u6D41",
             "Unit": "A"
           }
         ]

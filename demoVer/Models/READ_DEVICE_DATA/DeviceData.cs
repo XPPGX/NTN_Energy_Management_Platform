@@ -146,6 +146,8 @@ namespace demoVer.Models
                 {
                     deviceData.ReleaseMemory();
                 }
+                //移除斷開連線的資料 !!!! 
+                _AllDevice_Data.TryRemove(addr, out var remove_oneDevice_Data);
             }
         }
 

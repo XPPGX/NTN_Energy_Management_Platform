@@ -3,6 +3,7 @@ using demoVer.Utils;
 using System.Threading;
 using System.Threading.Tasks;
 using demoVer.Interfaces;
+
 namespace demoVer.Services
 {   
     public class PollingOptions
@@ -112,6 +113,10 @@ namespace demoVer.Services
         {
             try
             {
+                //debug
+                if(!_globalVar.Debug_Flag) return;
+
+                //release
                 using var reqCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
                 reqCts.CancelAfter(_opt.RequestTimeoutMs);        
                 
@@ -127,9 +132,11 @@ namespace demoVer.Services
                 {
                     AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : {nowPollingPort}@{nowPollingAddr} ReadAPI return null", AppLogLevel.Trace);
                 
-
+                    //移除 link
                     _globalVar.LinkedDevices.Unlink(nowStoringAddr);
-                    
+                    //移除 Phase字典中的addr
+                    _globalVar.INVs_Phase.TryRemove(nowPollingAddr, out var removed);
+
                     //刪除Device_ReadData裡面，nowStoringAddr的資料
                     _globalVar.Device_ReadData.Remove_oneDevice_Data(nowStoringAddr);
                 }

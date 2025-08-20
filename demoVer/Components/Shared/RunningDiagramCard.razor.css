@@ -121,7 +121,7 @@
     opacity: 1;
 }
 
-.arrows-cotainer-downward{
+.arrows-container-downward{
     position: absolute;
     top: 0;
     left: 50%;               /* 水平中心點 */
@@ -140,7 +140,7 @@
     border-right: 12px solid transparent;
     border-top: 20px solid gray;
     opacity: 0.3;
-    transition: opacity 0.4s, border-left-color 0.4s;
+    transition: opacity 0.4s, border-top-color .4s;
 }
 
 .triangle-downward.active{
@@ -161,6 +161,46 @@
     z-index: 999;
 }
 
+.arrows-in-cell{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    justify-content:center;
+    pointer-events:none;
+}
+
+
+/* 讓右箭頭翻成左箭頭 */
+.triangle.left { 
+transform: rotate(180deg); 
+}
+
+/* 讓下箭頭翻成上箭頭 */
+.triangle-downward.up { 
+transform: rotate(180deg); 
+}
+
+.arrows-in-cell.dir-h{
+    display:flex;
+    flex-direction: row;
+    gap:8px;
+    align-items:center;
+    justify-content:center;
+    pointer-events:none;
+    z-index:2;
+  }
+  
+  /* 垂直排列（↓ 或 ↑） */
+  .arrows-in-cell.dir-v{
+    display:flex;
+    flex-direction: column;
+    gap:8px;
+    align-items:center;
+    justify-content:center;
+    pointer-events:none;
+    z-index:2;
+  }
+.arrows-in-cell.is-invisible{visibility: hidden;}
 /***************************/
 
 @media(max-width:1200px){
