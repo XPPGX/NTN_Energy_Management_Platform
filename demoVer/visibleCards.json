@@ -114,7 +114,7 @@
             "UserSettingName": "Factory",
             "Cmd": "READ_AC_IOUT",
             "ValueName": "AC_IOUT",
-            "Unit": "W"
+            "Unit": "A"
           },
           {
             "MachineName": "[0] : ",
@@ -136,7 +136,7 @@
             "UserSettingName": "Facotry",
             "Cmd": "READ_FREQ",
             "ValueName": "Freq",
-            "Unit": null
+            "Unit": "Hz"
           }
         ]
       }
