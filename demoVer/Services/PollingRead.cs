@@ -8,7 +8,7 @@ namespace demoVer.Services
 {   
     public class PollingOptions
     {
-        public int PerRequestDelayMs {get; set;} = 0;
+        public int PerRequestDelayMs {get; set;} = 10;
         public int RequestTimeoutMs {get; set;} = 100;
     }
 
@@ -114,7 +114,11 @@ namespace demoVer.Services
             try
             {
                 //debug
-                if(!_globalVar.Debug_Flag) return;
+                if(!_globalVar.Debug_Flag)
+                {
+                    await Task.Delay(50, ct);
+                    return;
+                }
 
                 //release
                 using var reqCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
@@ -124,13 +128,14 @@ namespace demoVer.Services
                 // nowPollingAddr  = (uint)(_globalVar.getPortStartAddr(nowPollingPort) + _pollingWave[waveIndex].startAddr + nowPollingCount);
                 nowPollingAddr = (uint)(_pollingWave[waveIndex].startAddr + nowPollingCount);
                 nowStoringAddr = (uint)waveIndex * portMaxDeviceNum + nowPollingAddr;
-                AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] nowPollingPort = {nowPollingPort}, nowPollingAddr = {nowPollingAddr}", AppLogLevel.Trace);
+                
+                // AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] nowPollingPort = {nowPollingPort}, nowPollingAddr = {nowPollingAddr}", AppLogLevel.Trace);
 
                 //用READ_API取得 單台INV的資料 （建議 ApiManager 方法支援 CancellationToken）
                 var res = await _apiManager.apiRead_OneDeviceData(nowPollingPort, nowPollingAddr);
                 if(res == null)
                 {
-                    AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : {nowPollingPort}@{nowPollingAddr} ReadAPI return null", AppLogLevel.Trace);
+                    // AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : {nowPollingPort}@{nowPollingAddr} ReadAPI return null", AppLogLevel.Trace);
                 
                     //移除 link
                     _globalVar.LinkedDevices.Unlink(nowStoringAddr);
@@ -153,15 +158,15 @@ namespace demoVer.Services
             }
             catch (OperationCanceledException e)
             {
-                AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : Timeout, {e}", AppLogLevel.Warning);
+                // AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : Timeout, {e}", AppLogLevel.Warning);
             }
             catch (HttpRequestException ex)
             {
-                AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : Read {nowPollingAddr} HTTP failed, {ex}", AppLogLevel.Debug);
+                // AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : Read {nowPollingAddr} HTTP failed, {ex}", AppLogLevel.Debug);
             }
             catch (System.Exception ex)
             {
-                AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : Read {nowPollingAddr} SYS failed, {ex}", AppLogLevel.Error);
+                // AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : Read {nowPollingAddr} SYS failed, {ex}", AppLogLevel.Error);
             }
 
             //遞增Index
@@ -190,10 +195,10 @@ namespace demoVer.Services
             nowPollingAddr  = 0;
             nowPollingCount = 0;
 
-            _pollingWave.Add(new PollingWave{port="CAN1", startAddr=0, length=64});
-            _pollingWave.Add(new PollingWave{port="CAN2", startAddr=0, length=64});
-            _pollingWave.Add(new PollingWave{port="MOD1", startAddr=0, length=64});
-            _pollingWave.Add(new PollingWave{port="MOD2", startAddr=0, length=64});
+            _pollingWave.Add(new PollingWave{port="CAN1", startAddr=0, length=1});
+            // _pollingWave.Add(new PollingWave{port="CAN2", startAddr=0, length=64});
+            // _pollingWave.Add(new PollingWave{port="MOD1", startAddr=0, length=64});
+            // _pollingWave.Add(new PollingWave{port="MOD2", startAddr=0, length=64});
         }
     }
 }

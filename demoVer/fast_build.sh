@@ -1,13 +1,13 @@
 #!/bin/bash
 set -e
 
-export DOTNET_ROOT=/home/arthur/dotnet
+export DOTNET_ROOT=/opt/dotnet
 export PATH=$DOTNET_ROOT:$PATH
 VERSION="1.0.0" 
 ##################################################################
 APP_NAME="NTN_module-aarch64.AppImage"
-APP_DIR="/home/arthur/Remote_Repo"
-SRC_DIR="/home/arthur/CMU3_apps/pages/NTN_Energy_Management_Platform/demoVer"
+APP_DIR="/home/linaro/Remote_Repo"
+SRC_DIR=~/cmu3_page/NTN_module/NTN_Energy_Management_Platform/demoVer
 ##################################################################
 PUBLISH_DIR="$SRC_DIR/publish"
 TEMP_NAME="NEW_$APP_NAME"
@@ -37,11 +37,28 @@ echo "$VERSION" > usr/share/version.txt
 # 建立 AppRun
 cat > AppRun << 'EOF'
 #!/bin/bash
-export DOTNET_ROOT=/home/arthur/dotnet
-export PATH=/home/arthur/dotnet:$PATH
-export ASPNETCORE_URLS=http://0.0.0.0:5043
-cd "$(dirname "$0")"
-exec /home/arthur/dotnet/dotnet demoVer.dll
+set -euo pipefail
+
+HERE="$(CDPATH= cd -- "$(dirname "$0")" && pwd)"
+
+if [[ -n "${DOTNET_ROOT:-}" && -x "${DOTNET_ROOT%/}/dotnet" ]]; then
+DOTNET="${DOTNET_ROOT%/}/dotnet"
+elif DOTNET_BIN="$(command -v dotnet 2>/dev/null)"; then
+DOTNET="$DOTNET_BIN"
+elif [[ -x "/opt/dotnet/dotnet" ]]; then
+DOTNET="/opt/dotnet/dotnet"
+else
+echo "ERROR: dotnet runtime not found. Set DOTNET_ROOT or install dotnet." >&2
+exit 127
+fi
+
+export DOTNET_ROOT="${DOTNET%/dotnet}"
+export PATH="$DOTNET_ROOT:$PATH"
+export APPDIR="${APPDIR:-$HERE}"
+export ASPNETCORE_CONTENTROOT="$HERE"
+cd "$HERE"
+
+exec "$DOTNET" "$HERE/demoVer.dll" "$@"
 EOF
 
 chmod +x AppRun
@@ -75,7 +92,7 @@ echo "[Step 5-2] 移除舊 AppImage 並替換..."
 rm -f "$APP_DIR/$APP_NAME"
 mv "$APP_DIR/$TEMP_NAME" "$APP_DIR/$APP_NAME"
 
-chown arthur:arthur "$APP_DIR/$APP_NAME"
+chown linaro:linaro "$APP_DIR/$APP_NAME"
 chmod 755 "$APP_DIR/$APP_NAME"
 
 echo "[✔ Done] 已完成更新與替換：$APP_NAME"

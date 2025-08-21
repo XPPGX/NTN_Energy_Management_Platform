@@ -10,7 +10,7 @@ using demoVer.Interfaces;
 var builder = WebApplication.CreateBuilder(args);
 
 // builder.WebHost.UseUrls("http://127.0.0.1:5070");
-builder.WebHost.UseUrls("http://0.0.0.0:5042");
+builder.WebHost.UseUrls("http://0.0.0.0:5040");
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -48,7 +48,7 @@ builder.Services.AddSingleton<CircuitHandler>(sp => sp.GetRequiredService<Circui
 //[Migrate] IP : localhost
 builder.Services.AddHttpClient("ApiClient", client =>
 {
-    client.BaseAddress = new Uri("http://192.168.102.201:5039/");
+    client.BaseAddress = new Uri("http://127.0.0.1:5039/");
 });
 builder.Services.AddSingleton<ApiManager>();
 
