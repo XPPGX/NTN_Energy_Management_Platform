@@ -98,7 +98,7 @@ namespace demoVer.Services
                 
                 pollingCounter ++;
 
-                Update_Read_Data();
+                // Update_Read_Data();
                 await RefreshAllAsync();
             };
         }

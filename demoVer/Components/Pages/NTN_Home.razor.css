@@ -405,6 +405,73 @@
     gap: 2px;
 }
 
+/* ---- 基本佈局 ---- */
+.bulk-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+/* ---- 按鈕外觀 ---- */
+.action-btn {
+    --bg: #f6f7f9;
+    --fg: #1f2937;
+    --bd: #e5e7eb;
+    --hover: #eef2f7;
+    --accent: #6b7280;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--bd);
+    background: var(--bg);
+    color: var(--fg);
+    border-radius: 999px;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    transition: background .15s ease, box-shadow .15s ease, transform .02s ease;
+}
+
+.action-btn:hover { background: var(--hover); }
+.action-btn:active { transform: translateY(1px); }
+.action-btn:focus-visible {
+    outline: 2px solid transparent;
+    box-shadow: 0 0 0 3px rgba(59,130,246,.35);
+}
+
+/* 小圓點指示 */
+.action-btn .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: inset 0 0 0 2px rgba(255,255,255,.8);
+}
+
+/* ---- 主題色：On/Off ---- */
+.action-btn.on {
+    --bg: #edfdf4;
+    --hover: #e4fbef;
+    --bd: #c7f0d9;
+    --fg: #065f46;
+    --accent: #10b981; /* 綠 */
+}
+.action-btn.off {
+    --bg: #fff1f2;
+    --hover: #ffe8ea;
+    --bd: #ffccd1;
+    --fg: #7f1d1d;
+    --accent: #ef4444; /* 紅 */
+}
+
+/* 啟用(active)態更強烈一些 */
+.action-btn.active {
+    box-shadow: 0 6px 18px rgba(0,0,0,.06);
+    filter: saturate(1.1);
+}
+
+
 /*****************/
 
 @media(max-width: 1200px)

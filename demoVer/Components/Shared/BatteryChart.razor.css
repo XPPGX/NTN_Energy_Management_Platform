@@ -8,7 +8,7 @@
     background-color: white;
     border-radius: 8px;
     width: 100%;
-    height: 330px;
+    height: 360px;
     position: relative;
 }
 
@@ -23,6 +23,28 @@
     font-size: 16px;
     border-radius: 4px;
     z-index: 999;
+}
+
+/* 半透明遮罩，蓋住整個畫面 */
+.modal-backdrop {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* 保證在最上層 */
+}
+
+/* Modal 本體 */
+.modal-box {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    min-width: 300px;
+    max-width: 600px;
 }
 
 /**************************************************/

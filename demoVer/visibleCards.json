@@ -31,12 +31,12 @@
     "card_Type": 2,
     "widthClass": "w50",
     "showSequence": 1,
-    "cardName": "\u96FB\u58D3\u96FB\u6D41\u5716\u8868",
+    "cardName": "Volt_and_Current_Chart",
     "Info_DataItems": null,
     "Link_STATUS_Pairs": null,
     "Chart_Setting": {
       "canvasID": "chart1",
-      "ChartTitle": "\u96FB\u58D3\u96FB\u6D41\u5716\u8868",
+      "ChartTitle": "Volt_and_Current_Chart",
       "XTitle": "\u6642\u9593",
       "timeGap_selection": 2,
       "Labels": [
@@ -51,8 +51,8 @@
         "11:22:17",
         "11:22:18"
       ],
-      "Y_left_Title": "AA",
-      "Y_right_Title": "ASDASD",
+      "Y_left_Title": "TEST1",
+      "Y_right_Title": "TEST2",
       "YMin": 0,
       "YMax": 1000,
       "chart_single_data_lines": [
@@ -102,26 +102,26 @@
     "card_Type": 1,
     "widthClass": "w25",
     "showSequence": 2,
-    "cardName": "NTN\u8CC7\u8A0A",
+    "cardName": "NTN Info",
     "Info_DataItems": [
       {
         "iconPath": "images/user_selections/fridge.png",
         "status": 3,
         "INFO_DataFormats": [
           {
-            "MachineName": "[4] : ",
-            "Addr": 4,
-            "UserSettingName": "\u6A5F\u623F",
-            "Cmd": "READ_TEMPERATURE_1",
-            "ValueName": "\u6EAB\u5EA6",
-            "Unit": "\u2103"
+            "MachineName": "[0] : ",
+            "Addr": 0,
+            "UserSettingName": "Factory",
+            "Cmd": "READ_AC_IOUT",
+            "ValueName": "AC_IOUT",
+            "Unit": "W"
           },
           {
-            "MachineName": "[4] : ",
-            "Addr": 4,
-            "UserSettingName": "\u6A5F\u623F",
+            "MachineName": "[0] : ",
+            "Addr": 0,
+            "UserSettingName": "Factory",
             "Cmd": "READ_VIN",
-            "ValueName": "\u96FB\u58D3",
+            "ValueName": "Volt",
             "Unit": "V"
           }
         ]
@@ -131,12 +131,12 @@
         "status": 3,
         "INFO_DataFormats": [
           {
-            "MachineName": "[4] : ",
-            "Addr": 4,
-            "UserSettingName": "\u6A5F\u623F",
-            "Cmd": "READ_IIN",
-            "ValueName": "\u96FB\u6D41",
-            "Unit": "A"
+            "MachineName": "[0] : ",
+            "Addr": 0,
+            "UserSettingName": "Facotry",
+            "Cmd": "READ_FREQ",
+            "ValueName": "Freq",
+            "Unit": null
           }
         ]
       }

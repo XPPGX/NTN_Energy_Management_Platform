@@ -44,6 +44,59 @@ namespace demoVer.Services
         }
 
         
+        //簡易版Write_API :
+        public async Task<bool> apiSimpleWrite_allDeviceON()
+        {
+            try
+            {
+                string url = "api/ops/power-on-all";
+                var res = await _http.PostAsync(url, null);
+
+                if(res.IsSuccessStatusCode)
+                {
+                    string resText = await res.Content.ReadAsStringAsync();
+                    AppLogger.Log_To_File_log(_category, $"[ApiManager][apiSimpleWrite_allDeviceON]成功: {resText}", AppLogLevel.Trace);
+                    return true;
+                }
+                else
+                {
+                    AppLogger.Log_To_File_log(_category, $"[ApiManager][apiSimpleWrite_allDeviceON]失敗: {res.StatusCode}", AppLogLevel.Trace);
+                    return false;
+                }
+            }
+            catch(Exception ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[ApiManager][apiSimpleWrite_allDeviceON] Error : {ex.Message}", AppLogLevel.Error);
+                return false;
+            }
+        }
+
+        public async Task<bool> apiSimpleWrite_allDeviceOff()
+        {
+            try
+            {
+                string url = "api/ops/power-off-all";
+                var res = await _http.PostAsync(url, null);
+
+                if(res.IsSuccessStatusCode)
+                {
+                    string resText = await res.Content.ReadAsStringAsync();
+                    AppLogger.Log_To_File_log(_category, $"[ApiManager][apiSimpleWrite_allDeviceOff]成功: {resText}", AppLogLevel.Trace);
+                    return true;
+                }
+                else
+                {
+                    AppLogger.Log_To_File_log(_category, $"[ApiManager][apiSimpleWrite_allDeviceOff]失敗: {res.StatusCode}", AppLogLevel.Trace);
+                    return false;
+                }
+            }
+            catch(Exception ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[ApiManager][apiSimpleWrite_allDeviceOff] Error : {ex.Message}", AppLogLevel.Error);
+                return false;
+            }
+        }
+
         public List<string> GetProtocolFilesForPort(string port)
         {
             try

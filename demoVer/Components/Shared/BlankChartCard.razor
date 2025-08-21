@@ -6,6 +6,7 @@
 @implements IDisposable
 @inherits LayoutComponentBase
 <div class="Watt_diagram-container @CssClass" @attributes="AdditionalAttributes">
+    
     <canvas id="@currentCard.Chart_Setting.canvasID"></canvas>
     @if(showEditButton)
     {
@@ -18,6 +19,16 @@
             <MudIcon Icon="@Icons.Material.Filled.MoreHoriz" />
         </MudButton>
     }
+
+    @* @if(showModal)
+    {
+        <div class="modal-backdrop">
+            <div class="modal-box">
+                <h3>設定中...</h3>
+                <p>這個區域目前被鎖定，不能操作。</p>
+            </div>
+        </div>
+    } *@
 </div>
 
 @code
@@ -28,8 +39,12 @@
     [Parameter] public EventCallback<string> Inform_Home_openEditMenu {get; set;}
     [Parameter] public CardInfo currentCard {get; set;}
 
+    private bool showModal = true;
+
     private async Task openEditMenu()
     {
+        //For Demo
+        return;
         if(Inform_Home_openEditMenu.HasDelegate)
         {
             //Pass the razor component name to HOME, the name can be found definition in the HOME CardInfos List.

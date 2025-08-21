@@ -1,3 +1,8 @@
 {
-    "visibileCards" : "visibileCards.json"
+    "windows" : {
+        "UserSettingFolderPath" : ""
+    },
+    "linux" : {
+        "UserSettingFolderPath" : "/userdata/CMU3/UserSetting/5040"
+    }
 }

@@ -71,13 +71,13 @@ namespace demoVer.Services
                     }
                     catch(Exception e)
                     {
-                        AppLogger.Log_To_File_log(_category, $"[ArrowAnimationService][RunLoop] Error : {e}", AppLogLevel.Error);
+                        // AppLogger.Log_To_File_log(_category, $"[ArrowAnimationService][RunLoop] Error : {e}", AppLogLevel.Error);
                     }
                 }
             }
             catch (Exception e)
             {
-                AppLogger.Log_To_File_log(_category, $"[ArrowAnimationService][RunLoop] Error : {e} ", AppLogLevel.Error);
+                // AppLogger.Log_To_File_log(_category, $"[ArrowAnimationService][RunLoop] Error : {e} ", AppLogLevel.Error);
             }
         }
 

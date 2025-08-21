@@ -13,6 +13,7 @@
 @inject IJSRuntime JS
 @inject CardUpdateNotifier Notifier
 @inject IDialogService DialogService
+@inject ApiManager apiManager
 <PageTitle>NTN module</PageTitle>
 
 <TopRow OnSendToParent="ReceiveFrom_TopRow"
@@ -110,11 +111,27 @@
 <div class="column-container" @onclick="HandleGlobalClick">
     <div class="row1-container">
         <div class="row1-leftPart">
-            Inverter OFF/ON：
+            <div class="bulk-actions">
+                <button class="action-btn on @(isAllOn ? "active" : null)"
+                        @onclick="AllOn"
+                        aria-pressed="@(isAllOn.ToString().ToLower())">
+                    <span class="dot"></span>
+                    All INV On
+                </button>
+
+                <button class="action-btn off @(!isAllOn ? "active" : null)"
+                        @onclick="AllOff"
+                        aria-pressed="@((!isAllOn).ToString().ToLower())">
+                    <span class="dot"></span>
+                    All INV Off
+                </button>
+                @* <button class="btn cancel-btn" @onclick="Cancel">取消</button> *@
+            </div>
+            @* Inverter OFF/ON：
             <label class="switch">
                 <input type="checkbox" checked>
                 <span class="slider"></span>
-            </label>
+            </label> *@
         </div>
 
         <div class="row1-rightPart">
@@ -146,6 +163,9 @@
             }
 
             if(componentType_Temp == null){continue;}
+            
+            //把 chartcard BAN掉
+            //if(componentType_Temp == typeof(BlankChartCard)){continue;}
 
             //style="resize: horizontal; overflow: auto" //卡片可以調整寬度
             <div class="module-wrapper @card.widthClass" cardID_ForSorting="@card.ID" draggable="@showEditBtn_Flag" >
@@ -184,6 +204,8 @@
     private byte cardRenderCounter      = 0;
     private TopRow refChild_TopRow;
     private string local_modelName      = "";
+    private bool isAllOn                = true;
+
 
     private string AlertMessage_parent      = "";
     private string ConfirmBtn_Text_parent   = "";
@@ -518,6 +540,11 @@
         
         
         Console.WriteLine("[addCard][1]");
+        if(_selection == CardType.Chart)
+        {
+            CloseModal();
+            return;
+        }
         CardInfos.Add(newCard);
         Console.WriteLine("[addCard][2]");
         afterAddCard_Flag = true;
@@ -583,5 +610,20 @@
             Console.WriteLine($"JSON read fail: {ex.Message}");
             CardInfos = new();
         }
+    }
+
+    //Demo用
+    private async Task AllOn()
+    {
+        isAllOn = true;
+        bool isSuccess = await apiManager.apiSimpleWrite_allDeviceON();
+        AppLogger.Log_To_File_log(_category, $"[NTN_Home][AllOn] isAllOn = {isSuccess}", AppLogLevel.Trace);
+    }
+
+    private async Task AllOff()
+    {
+        isAllOn = false;
+        bool isSuccess = await apiManager.apiSimpleWrite_allDeviceOff();
+        AppLogger.Log_To_File_log(_category, $"[NTN_Home][AllOff] isAllOn = {isSuccess}", AppLogLevel.Trace);
     }
 }
