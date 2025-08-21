@@ -1,6 +1,6 @@
 {
-    "demoVer.Components.Pages.NTN_Home"         : 0,
-    "demoVer.Components.Pages.Link_status"      : 2,
+    "demoVer.Components.Pages.NTN_Home"         : 2,
+    "demoVer.Components.Pages.Link_status"      : 0,
     "demoVer.Shared.BlankInfoCard"              : 2,
     "demoVer.Shared.EditCard"                   : 2,
     "demoVer.Models.allDevice_Data"             : 2,
@@ -10,6 +10,6 @@
     "demoVer.Services.GroupsDataDecoder"        : 2,
     "demoVer.Services.PollingRead"              : 2,
     "demoVer.Services.HeartbeatService"         : 2,
-    "demoVer.Services.GlobalVar"                : 0,
-    "demoVer.Services.ArrowAnimationService"    : 0
+    "demoVer.Services.GlobalVar"                : 2,
+    "demoVer.Services.ArrowAnimationService"    : 2
 }

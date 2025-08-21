@@ -13,7 +13,6 @@
 @inject IJSRuntime JS
 @inject CardUpdateNotifier Notifier
 @inject IDialogService DialogService
-
 <PageTitle>NTN module</PageTitle>
 
 <TopRow OnSendToParent="ReceiveFrom_TopRow"
@@ -121,7 +120,7 @@
         <div class="row1-rightPart">
             Model Name：
             <div class="highlighted-content">
-                NTN-5K-248
+                @(globalVar.Sys_ModelName)
             </div>
         </div>
     </div>
@@ -184,6 +183,7 @@
     private string editingCard_ID       = "";
     private byte cardRenderCounter      = 0;
     private TopRow refChild_TopRow;
+    private string local_modelName      = "";
 
     private string AlertMessage_parent      = "";
     private string ConfirmBtn_Text_parent   = "";
@@ -292,10 +292,24 @@
     protected override async Task OnInitializedAsync()
     {
         _category = GetType().FullName!;
-
+        globalVar.Sys_ModelName_OnChanged += hookTask;
+        await hookTask();
         await Read_CardInfos_FromJsonFile();
     }
     #endregion //Render_Flow_Control
+
+
+    private async Task hookTask()
+    {
+        await InvokeAsync(() => {
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        globalVar.Sys_ModelName_OnChanged -= hookTask;
+    }
 
     [JSInvokable] public void UpdateCardOrderFromJS(List<string> newOrder)
     {

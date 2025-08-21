@@ -395,6 +395,7 @@ window.DataSocket = async function()
                     {
                         Translator.INV_FAULT_str = rcv_data;
                     }
+                    document.getElementById("ErrorMessage").textContent = Translator.INV_FAULT_str;
                     break;
 
                 case "MFR_REVISION_B0B5":

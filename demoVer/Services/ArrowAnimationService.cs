@@ -15,6 +15,7 @@ namespace demoVer.Services
         public triangle_group triGroup2 { get; } = new();
         public triangle_group triGroup3 { get; } = new();
 
+        private Task? _loopTask;
         public event Action? OnTick;
         
         
@@ -24,7 +25,7 @@ namespace demoVer.Services
             _category = GetType().FullName!;
             _globalVar = globalVar;
             _timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
-            _ = RunLoop(_cts.Token);
+            _loopTask = RunLoop(_cts.Token);
         }
 
         private async Task RunLoop(CancellationToken token)
@@ -64,8 +65,14 @@ namespace demoVer.Services
                     //     triGroup3.activeIndex = (triGroup3.activeIndex + 1) % 3;
                     //     AppLogger.Log("group3.index : " + triGroup3.activeIndex, local_debug_enable);
                     // }
-
-                    OnTick?.Invoke(); // 通知 UI 更新
+                    try
+                    {
+                        OnTick?.Invoke();
+                    }
+                    catch(Exception e)
+                    {
+                        AppLogger.Log_To_File_log(_category, $"[ArrowAnimationService][RunLoop] Error : {e}", AppLogLevel.Error);
+                    }
                 }
             }
             catch (Exception e)
@@ -85,7 +92,21 @@ namespace demoVer.Services
         public async ValueTask DisposeAsync()
         {
             _cts.Cancel();
+
+            if(_loopTask is not null)
+            {
+                try
+                {
+                    await _loopTask;
+                }
+                catch(OperationCanceledException)
+                {
+
+                }
+            }
+            _timer.Dispose();
             _cts.Dispose();
+            OnTick = null;
         }
     }
 }

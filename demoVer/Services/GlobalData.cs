@@ -72,10 +72,14 @@ namespace demoVer.Services
         //System variables(Heartbeat.OnTick)
         //如果計算速度很慢，可以把所有算式都放在某個foreach INVs_Phase裡面
         public byte Sys_PhaseStatus     = 0;
-        public byte Sys_INV_Mode        = 0;
+        public byte Sys_INV_Mode        = 0;        
+        public event Func<Task>? Sys_INV_Mode_OnChanged;
         public bool Sys_Charger_Enable  = false;
         public bool Sys_isAC_Standby    = false;
-        public string? ModelName        = "";
+        public string? Sys_ModelName    = "";
+        public event Func<Task>? Sys_ModelName_OnChanged;
+        public bool Sys_modelError      = false;
+        
         public ConcurrentDictionary<uint, byte?> INVs_Phase {get; set;} //紀錄連線中的所有INV的Phase(以數值紀錄，非字串)
         public double INV_IP_V_PHASE1               = 0; //Input     V      : max value in all INVs
         public double INV_IP_F_PHASE1               = 0; //Input     F      : sum value in all INVs
@@ -86,6 +90,7 @@ namespace demoVer.Services
         public double BAT_V                         = 0; //BAT_V            : max value in all INVs
         private bool INV_isCHG_Enable               = false;
         private bool INV_isAC_Standby               = false;
+        private string? INV_ModelName_tmp           = "";
 
 
         //READ API Data Structure
@@ -110,7 +115,6 @@ namespace demoVer.Services
 
             //[System Variable]
             INVs_Phase                  = new ConcurrentDictionary<uint, byte?>();
-
             //[data structure instances]
             Device_ReadData             = new allDevice_Data();
             LinkedDevices               = new LinkedDeviceStore();
@@ -129,6 +133,11 @@ namespace demoVer.Services
         {
             // updateSystemVar();
             ComputeOverallValues();
+
+            // await Sys_INV_Mode_OnChanged()?.Invoke();
+            // AppLogger.Log_To_File_log(_category, $"[GlobalData][Sys_INV_Mode_Assign]", AppLogLevel.Trace);
+            // await Sys_ModelName_OnChanged()?.Invoke();
+            // AppLogger.Log_To_File_log(_category, $"[GlobalData][Sys_ModelName_Assign]", AppLogLevel.Trace);
         }
 
 
@@ -369,6 +378,19 @@ namespace demoVer.Services
             {
                 INV_isCHG_Enable = false;
                 INV_isAC_Standby = false;
+                INV_ModelName_tmp = "";
+                //clear SysModelName
+                if(linkedAddr_array.Length == 0)
+                {
+                    Sys_ModelName = "";
+                }
+                else
+                {
+                    uint firstAddr = linkedAddr_array[0];
+                    INV_ModelName_tmp = Get_ModelName_ByAddr(firstAddr);
+                    AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] firstAddr = {firstAddr}, INV_ModelName_tmp = {INV_ModelName_tmp}", AppLogLevel.Trace);
+                }
+                
                 for(int index = 0 ; index < linkedAddr_array.Length ; index ++)
                 {
                     string? fault_str = "";
@@ -376,10 +398,23 @@ namespace demoVer.Services
                     byte? status_byte = 0;
                     
                     uint addr = linkedAddr_array[index];
+                    if(Sys_modelError is false)
+                    {
+                        string? Iter_ModelName = Get_ModelName_ByAddr(addr);
+                        if(!string.IsNullOrEmpty(Iter_ModelName))
+                        {
+                            if(!string.Equals(Iter_ModelName, INV_ModelName_tmp, StringComparison.Ordinal))
+                            {
+                                INV_ModelName_tmp = "Model_ERROR";
+                                Sys_modelError = true;
+                            }
+                        }
+                    }
+                    
+                    
                     
                     Parse_INV_FAULT(addr, out fault_str);
                     Parse_INV_Phase_Status(addr, fault_str, out phase_byte, out status_byte);
-                    
                     switch(status_byte)
                     {
                         case STATUS_INV_DISCON:
@@ -402,21 +437,92 @@ namespace demoVer.Services
                             break;
                     }
                 }
+
                 Sys_Charger_Enable  = INV_isCHG_Enable;
                 Sys_isAC_Standby    = INV_isAC_Standby;
-
-                if(INV > 0){Sys_INV_Mode = INV_MODE_INVERTER;}
-                else if(Saving > 0){Sys_INV_Mode = INV_MODE_SAVING;}
-                else if(ByPass > 0){Sys_INV_Mode = INV_MODE_BY_PASS;}
-                else if(Charging > 0){Sys_INV_Mode = INV_MODE_CHARGING;}
-                else if(Standby > 0){Sys_INV_Mode = INV_MODE_STANDBY;}
-                else {Sys_INV_Mode = INV_MODE_NONE;}
-                
+                Sys_ModelName_Assign();
+                AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] Sys_ModelName = {Sys_ModelName}", AppLogLevel.Trace);
+                Sys_INV_Mode_Assign(INV, Saving, ByPass, Charging, Standby);
                 AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] Sys_INV_Mode : {Sys_INV_Mode}", AppLogLevel.Trace);
             }
             catch(Exception e)
             {
                 AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] Error : {e}", AppLogLevel.Error);
+            }
+        }
+
+
+        private async Task Sys_ModelName_Assign()
+        {
+            if(!string.Equals("Model_ERROR", INV_ModelName_tmp, StringComparison.Ordinal))
+            {
+                Sys_modelError = false;
+            }
+            if(!string.Equals(Sys_ModelName, INV_ModelName_tmp, StringComparison.Ordinal))
+            {
+                //modelname changed
+                Sys_ModelName = INV_ModelName_tmp;
+                
+                //inform hooked Events
+                if(Sys_ModelName_OnChanged is not null)
+                {
+                    await Sys_ModelName_OnChanged?.Invoke();
+                    AppLogger.Log_To_File_log(_category, $"[GlobalData][Sys_ModelName_Assign]", AppLogLevel.Trace);
+                }
+            }
+        }
+
+        private async Task Sys_INV_Mode_Assign(uint INV, uint Saving, uint ByPass, uint Charging, uint Standby)
+        {
+            byte tmp_Mode;
+            if(INV > 0)
+            {
+                tmp_Mode = INV_MODE_INVERTER;
+            }
+            else if(Saving > 0)
+            {
+                tmp_Mode = INV_MODE_SAVING;
+            }
+            else if(ByPass > 0)
+            {
+                tmp_Mode = INV_MODE_BY_PASS;
+            }
+            else if(Charging > 0)
+            {
+                tmp_Mode = INV_MODE_CHARGING;
+            }
+            else if(Standby > 0)
+            {
+                tmp_Mode = INV_MODE_STANDBY;
+            }
+            else 
+            {
+                tmp_Mode = INV_MODE_NONE;
+            }
+            
+
+            if(tmp_Mode != Sys_INV_Mode)
+            {
+                Sys_INV_Mode = tmp_Mode;
+                if(Sys_INV_Mode_OnChanged is not null)
+                {
+                    await Sys_INV_Mode_OnChanged?.Invoke();
+                    AppLogger.Log_To_File_log(_category, $"[GlobalData][Sys_INV_Mode_Assign]", AppLogLevel.Trace);
+                }
+            }
+        }
+
+        public string INV_Status_translator()
+        {
+            switch(Sys_INV_Mode)
+            {
+                case INV_MODE_INVERTER: return "Inverter";
+                case INV_MODE_SAVING: return "Saving";
+                case INV_MODE_BY_PASS: return "Bypass";
+                case INV_MODE_CHARGING: return "Charger";
+                case INV_MODE_STANDBY: return "Standby";
+                case INV_MODE_SHUTDOWN: return "Shutdown";
+                default: return "";
             }
         }
 
@@ -455,11 +561,11 @@ namespace demoVer.Services
                 
                 //parse phase
                 phase = INV_STATUS_Phase_data;
-                AppLogger.Log_To_File_log(_category, $"[GlobalData][Parse_INV_Phase_Status] phase : {phase}", AppLogLevel.Trace);
+                AppLogger.Log_To_File_log(_category, $"[GlobalData][Parse_INV_Phase_Status] addr:{addr}, phase : {phase}", AppLogLevel.Trace);
 
                 //parse status
                 status = (byte?)Get_INV_Status(fault_str, INV_STATUS_Whole_data, false);
-                AppLogger.Log_To_File_log(_category, $"[GlobalData][Parse_INV_Phase_Status] status : {status}", AppLogLevel.Trace);
+                AppLogger.Log_To_File_log(_category, $"[GlobalData][Parse_INV_Phase_Status] addr:{addr}, status : {status}", AppLogLevel.Trace);
             }
             catch(Exception e)
             {

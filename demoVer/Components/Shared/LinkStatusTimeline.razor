@@ -26,12 +26,10 @@
                             @{
                                 if(IsMobile)
                                 {
-                                    Console.WriteLine("HI123");
                                     <MudAlert>@item.Message</MudAlert>
                                 }
                                 else
                                 {
-                                    Console.WriteLine("HI456");
                                     <MudAlert Severity="@item.Severity">@item.Message</MudAlert>
                                 }
                             }
@@ -55,12 +53,10 @@
                             @{
                                 if(IsMobile)
                                 {
-                                    Console.WriteLine("HI123");
                                     <MudAlert>@item.Message</MudAlert>
                                 }
                                 else
                                 {
-                                    Console.WriteLine("HI456");
                                     <MudAlert Severity="@item.Severity">@item.Message</MudAlert>
                                 }
                             }
@@ -82,6 +78,6 @@
     [Parameter] public bool deviceCheckCompleted {get; set;}
     protected override void OnParametersSet()
     {
-        Console.WriteLine($"Timeline");
+        @* Console.WriteLine($"Timeline"); *@
     }
 }

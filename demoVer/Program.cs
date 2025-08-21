@@ -45,6 +45,7 @@ builder.Services.AddHostedService(sp => sp.GetRequiredService<PollingRead>());
 builder.Services.AddSingleton<CircuitsWatcher>();
 builder.Services.AddSingleton<CircuitHandler>(sp => sp.GetRequiredService<CircuitsWatcher>());
 
+//[Migrate] IP : localhost
 builder.Services.AddHttpClient("ApiClient", client =>
 {
     client.BaseAddress = new Uri("http://192.168.102.201:5039/");

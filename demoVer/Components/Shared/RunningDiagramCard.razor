@@ -3,16 +3,15 @@
 @using demoVer.Models
 @using demoVer.Services
 @inject ArrowAnimationService ArrowService
-
+@inject GlobalVar globalVar
 <div class="running-diagram-container @CssClass" @attributes="AdditionalAttributes">
     <div class="running-diagram-container top">
         <div class="leftPart">
-            連接狀態：
-            <div id="link_status">已連接</div>
+            
         </div>
         <div class="rightPart">
             運行模式：
-            <div id="running_mode">ByPass</div>
+            <div id="running_mode">@local_INV_MODE_str</div>
         </div>
         @if(showEditButton)
         {
@@ -160,7 +159,8 @@
 
 @code{
     private bool DEBUG_MODE = true;
-    
+    private string local_INV_MODE_str = "";
+
     [Parameter] public string CssClass {get; set; }
     [Parameter(CaptureUnmatchedValues  = true)] public Dictionary<string, object> AdditionalAttributes {get; set; }
     [Parameter] public bool showEditButton {get; set; }
@@ -188,6 +188,8 @@
 
     protected override void OnInitialized()
     {
+        
+
         if(currentCard.Link_STATUS_Pairs == null)
         {
             currentCard.Link_STATUS_Pairs = new List<LINK_STATUS_Pair>
@@ -200,10 +202,19 @@
         }
     }
 
+    
 
     protected override async Task OnInitializedAsync()
     {
         ArrowService.OnTick += OnArrowTick;
+        globalVar.Sys_INV_Mode_OnChanged += Sys_INV_Mode_Change_Task;
+        await Sys_INV_Mode_Change_Task();
+    }
+
+    private async Task Sys_INV_Mode_Change_Task()
+    {
+        local_INV_MODE_str = globalVar.INV_Status_translator();
+        InvokeAsync(StateHasChanged);
     }
 
     private void OnArrowTick()
@@ -218,13 +229,13 @@
             //[Debug] show arrow animation
             @* await UpdateArrowPosition(); *@
             ArrowService.triGroup1.PlaceAt(1, 2);   // 第一列、第二欄
-            ArrowService.triGroup1.SetDirection(ArrowDirection.Left);
+            ArrowService.triGroup1.SetDirection(ArrowDirection.Hidden);
 
             ArrowService.triGroup2.PlaceAt(1, 4);
-            ArrowService.triGroup2.SetDirection(ArrowDirection.Right);
+            ArrowService.triGroup2.SetDirection(ArrowDirection.Hidden);
 
             ArrowService.triGroup3.PlaceAt(2, 3);
-            ArrowService.triGroup3.SetDirection(ArrowDirection.Down);
+            ArrowService.triGroup3.SetDirection(ArrowDirection.Hidden);
             
 
             // 顯示
@@ -296,6 +307,7 @@
     public void Dispose()
     {
         ArrowService.OnTick -= OnArrowTick;
+        globalVar.Sys_INV_Mode_OnChanged -= Sys_INV_Mode_Change_Task;
     }
     #endregion //arrowAnimation
 }

@@ -35,11 +35,11 @@
                     PrevIcon="@Icons.Material.Filled.SkipPrevious" NextIcon="@Icons.Material.Filled.SkipNext">
                     @foreach (var group in TimelineGroups)
                     {
-                        Console.WriteLine($"[Group] {group.StateName}: {group.Items?.Count} items");
-                        foreach (var item in group.Items)
+                        AppLogger.Log_To_File_log(_category, $"[LinkStatus][html] group = {group.StateName}: {group.Items?.Count} items", AppLogLevel.Trace);
+                        @* foreach (var item in group.Items)
                         {
-                            Console.WriteLine($"--> {item.Address}, {item.Message}, {item.Severity}, {item.Color}");
-                        }
+                            AppLogger.Log_To_File_log(_category, $"--> {item.Address}, {item.Message}, {item.Severity}, {item.Color}", AppLogLevel.Trace);
+                        } *@
                         <MudTabPanel Text="@group.StateName">
                             <LinkStatusTimeline Items="@group.Items" IsMobile = "@IsMobile" deviceCheckCompleted = "@checkMobile_complete"/>
                         </MudTabPanel>
@@ -121,6 +121,10 @@
                         <div class="info-item">
                             <span class="label">Status:</span>
                             <span class="value" id="InvSetting-display"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Error:</span>
+                            <span class="value" id="ErrorMessage"></span>
                         </div>
                         <div class="info-item">
                             <span class="label">Load Current:</span>
@@ -248,25 +252,12 @@
         var addrs = _linkedSnapshot;
 
         //取得當前的有連線的addr Set
-        Console.Write("Current Linking Model addr : { ");
-        @* foreach(var addr in globalVar.Device_ReadData.GetLinkAddressesSnapShot())
-        {
-            Console.Write(addr + ", ");
-        }
-        Console.WriteLine("\n}"); *@
-        
-        foreach (var addr in addrs)
-        {
-            Console.Write(addr + ", ");
-        }
-        Console.WriteLine("\n}");
+        AppLogger.Log_To_File_log(_category, $"[Link_status][getINVsLink] Current Linking Model addr :", AppLogLevel.Trace);
+        //AppLogger.Log_To_File_log(_category, $"{string.Join(", ", addrs)}", AppLogLevel.Trace);
 
         //traverse MOD_DATA，取出各Addr對應的當前modelName跟Status
         
         Elements = new List<Element>();
-
-
-        @* foreach(var addr in globalVar.Device_ReadData.GetLinkAddressesSnapShot()) *@
         foreach(var addr in addrs)
         {
             //string modelName = decode_ModelName(addr);
@@ -275,7 +266,14 @@
             var modelName = Decoder.Decode(tmp_Group, "MFR_MODEL")?.ToString() ?? "N/A";
             string runningStatus = decode_INV_Status(addr);
 
-            Console.WriteLine($"Addr = {addr}, ModelName = {modelName}, LinkStatus = Linked, runningStatus = {runningStatus}");
+            AppLogger.Log_To_File_log(_category, $"[Link_status][getINVsLink] : Addr = {addr}, ModelName = {modelName}, LinkStatus = Linked, runningStatus = {runningStatus}", AppLogLevel.Trace);
+            
+            if(!(mapLabelsToData.ContainsKey(runningStatus)))
+            {
+                runningStatus = "Error";
+            }
+
+           
             
             Elements.Add(new Element
             {
@@ -298,7 +296,7 @@
         }
         
         int paddingCount = 10 - (Elements.Count % 10);
-        Console.WriteLine($"Element.Count = {Elements.Count}, paddingCount = {paddingCount}");
+        AppLogger.Log_To_File_log(_category, $"[Link_status][getINVsLink] : Element.Count = {Elements.Count}, paddingCount = {paddingCount}", AppLogLevel.Trace);
         for(int i = 0 ; i < paddingCount ; i ++)
         {
             Elements.Add(new Element{
@@ -317,7 +315,7 @@
     };
     
     public double[] data = {};
-    public string[] labels = { "Error", "Saving", "Inverter", "Bypass", "Charger", "Standby" };
+    public string[] labels = { "Error", "Saving", "Inverter", "Bypass", "Charger", "Standby" }; 
     public Dictionary<string, int> mapLabelsToData = new Dictionary<string, int>{
         {"Error",       0},
         {"Saving",      1},
@@ -360,11 +358,9 @@
         
         try
         {
-            AppLogger.Log_To_File_log(_category, $"[Link_status.razor][RowClickEvent] : selectedAddr = {args.Item.Address}", AppLogLevel.Debug);
+            AppLogger.Log_To_File_log(_category, $"[Link_status][RowClickEvent] : selectedAddr = {args.Item.Address}", AppLogLevel.Trace);
 
             selectedAddr = args.Item.Address;
-
-            Console.WriteLine($"Row clicked : {selectedAddr}");
             mudTable.SetSelectedItem(args.Item); // <-- 關鍵這一行
             
             modal_IsOpen = true;
@@ -376,7 +372,7 @@
         }
         catch(Exception ex)
         {
-            AppLogger.Log_To_File_log(_category, $"[Link_status.razor][RowClickEvent] : Error, {ex}", AppLogLevel.Error);
+            AppLogger.Log_To_File_log(_category, $"[Link_status][RowClickEvent] : Error, {ex}", AppLogLevel.Error);
         }
         
         
@@ -389,7 +385,7 @@
     private string SelectedRow_cssClassFunc(Element element, int rowNumber)
     {
         var result = mudTable?.SelectedItem == element ? "selected" : string.Empty;
-        Console.WriteLine($"RowClassFunc → Address={element.Address}, Class={result}");
+        AppLogger.Log_To_File_log(_category, $"[LinkStatus][SelectedRow_cssClassFunc] RowClassFunc → Address={element.Address}, Class={result}", AppLogLevel.Trace);
         return result;
 
         @* Color="Color.Success"Severity="Severity.Success" *@
@@ -415,18 +411,17 @@
 
     private void UpdateDonutChart()
     {
-        Console.WriteLine($"[UpdateDonutChart]");
         double[] new_data = new double[6];
         foreach(var device in Elements)
         {
-            Console.WriteLine($"addr = {device.Address}, status = {device.RunningState}");
+            AppLogger.Log_To_File_log(_category, $"[LinkStatus][UpdateDonutChart] addr = {device.Address}, status = {device.RunningState}", AppLogLevel.Debug);
             if(device.RunningState == "N/A"){continue;}
             new_data[mapLabelsToData[device.RunningState]] ++;
         }
-        foreach(var val in new_data)
+        @* foreach(var val in new_data)
         {
             Console.Write(val + ",");
-        }
+        } *@
         data = new_data;
     }
 
@@ -466,32 +461,6 @@
         @* await JS.InvokeVoidAsync("hubDisconnect"); *@
     }
 
-    
-
-    @* private string decode_ModelName(uint addr)
-    {
-        var Data1 = DataCenter.MOD_DATA.GetCommandData(addr, "MFR_MODEL_B0B5");
-        var Data2 = DataCenter.MOD_DATA.GetCommandData(addr, "MFR_MODEL_B6B11");
-        if(Data1 == null || Data2 == null){return "N/A";}
-
-        byte[] buffer = new byte[Data1.Data.Count + Data2.Data.Count];
-        Data1.Data.CopyTo(buffer, 0);
-        Data2.Data.CopyTo(buffer, Data1.Data.Count);
-
-        foreach(var val in buffer)
-        {
-            Console.Write($"{val}, ");
-        }
-        Console.WriteLine("\n"); 
-
-        string temp_mdlName = System.Text.Encoding.ASCII.GetString(buffer.ToArray());
-        temp_mdlName = temp_mdlName.TrimEnd(' ');
-        temp_mdlName = temp_mdlName.TrimEnd((char)0);
-        Console.WriteLine(temp_mdlName);
-
-        return temp_mdlName;
-    } *@
-
     private string decode_INV_Status(uint addr)
     {
 
@@ -501,9 +470,17 @@
         //if(Group1 == null || Group2 == null){return "N/A";}
 
         string INV_FAULT_tmp = globalVar.Get_INV_Fault(addr);
-        uint INV_STATUS_data = (((uint)Group2.Groups[0].Data[1]) << 8) | ((uint)Group2.Groups[0].Data[0]);
-        bool returnStr_bool = true;
-        string INV_STATUS_str = (string)(globalVar.Get_INV_Status(INV_FAULT_tmp, INV_STATUS_data, returnStr_bool));
+        string INV_STATUS_str = "";
+        if(!string.IsNullOrEmpty(INV_FAULT_tmp))
+        {
+            INV_STATUS_str = INV_FAULT_tmp;
+        }
+        else
+        {
+            uint INV_STATUS_data = (((uint)Group2.Groups[0].Data[1]) << 8) | ((uint)Group2.Groups[0].Data[0]);
+            bool returnStr_bool = true;
+            INV_STATUS_str = (string)(globalVar.Get_INV_Status(INV_FAULT_tmp, INV_STATUS_data, returnStr_bool));
+        }
 
 
         @* uint INV_FAULT = (((uint)Group1.Groups[0].Data[1]) << 8) | ((uint)Group1.Groups[0].Data[0]); *@

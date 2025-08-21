@@ -96,11 +96,11 @@ window.INV_Info_Translator.Single = {
     {
         this.INV_STATUS_uint = status;
         console.log("INV_Status.raw = " + this.INV_STATUS_uint);
-        if(this.INV_FAULT_str != "")
-        {   //Error
-            return "Error";
-        }
-        else if(((this.INV_STATUS_uint & this.CONST.STATUS_BIT_INV) == 1) && ((this.INV_STATUS_uint & this.CONST.STATUS_BIT_SAVING) == 1))
+        // if(this.INV_FAULT_str != "")
+        // {   //Error
+        //     return this.INV_FAULT_str;
+        // }
+        if(((this.INV_STATUS_uint & this.CONST.STATUS_BIT_INV) == 1) && ((this.INV_STATUS_uint & this.CONST.STATUS_BIT_SAVING) == 1))
         {   //Saving
             return "Saving";
         }

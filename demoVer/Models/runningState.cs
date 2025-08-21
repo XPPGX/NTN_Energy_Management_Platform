@@ -11,7 +11,7 @@ namespace demoVer.Models
         public bool position_OK;
 
         public int Count {get; set;} = 3;
-        public ArrowDirection Direction {get; private set;} = ArrowDirection.Right;
+        public ArrowDirection Direction {get; private set;} = ArrowDirection.Hidden;
 
         private int _gridRow = 1;
         private int _gridCol = 1;
