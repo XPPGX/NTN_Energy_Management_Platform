@@ -90,13 +90,13 @@ namespace demoVer.Services
                 }
                 counter ++;
                 
-                if(pollingCounter == 10)
-                {
-                    _globalVar.Debug_Flag = false;
-                    pollingCounter = 0;
-                }
+                // if(pollingCounter == 10)
+                // {
+                //     _globalVar.Debug_Flag = false;
+                //     pollingCounter = 0;
+                // }
                 
-                pollingCounter ++;
+                // pollingCounter ++;
 
                 // Update_Read_Data();
                 await RefreshAllAsync();

@@ -114,11 +114,11 @@ namespace demoVer.Services
             try
             {
                 //debug
-                if(!_globalVar.Debug_Flag)
-                {
-                    await Task.Delay(50, ct);
-                    return;
-                }
+                // if(!_globalVar.Debug_Flag)
+                // {
+                //     await Task.Delay(50, ct);
+                //     return;
+                // }
 
                 //release
                 using var reqCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
