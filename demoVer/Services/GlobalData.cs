@@ -439,8 +439,8 @@ namespace demoVer.Services
                     }
                     
                     //Process tmpMaxValue of each phase corresponding the addr
-                    Compute_INV_IP_V(tmpMaxs_INV_IP_V, addr);
-                    Compute_INV_OP_V(tmpMaxs_INV_OP_V, addr);
+                    // Compute_INV_IP_V(tmpMaxs_INV_IP_V, addr);
+                    // Compute_INV_OP_V(tmpMaxs_INV_OP_V, addr);
                     //process IP/OP F of each phase corresponding the addr
 
                 }
@@ -451,9 +451,9 @@ namespace demoVer.Services
                 AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] Sys_ModelName = {Sys_ModelName}", AppLogLevel.Trace);
                 Sys_INV_Mode_Assign(INV, Saving, ByPass, Charging, Standby);
                 AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] Sys_INV_Mode : {Sys_INV_Mode}", AppLogLevel.Trace);
-                AssignMaxs_INV_IP_V(tmpMaxs_INV_IP_V);
+                // AssignMaxs_INV_IP_V(tmpMaxs_INV_IP_V);
                 AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] Sys_IP_V_Phases : {string.Join(", ", Sys_IP_V_Phases)}", AppLogLevel.Debug);
-                AssignMaxs_INV_OP_V(tmpMaxs_INV_OP_V);
+                // AssignMaxs_INV_OP_V(tmpMaxs_INV_OP_V);
                 AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] Sys_OP_V_Phases : {string.Join(", ", Sys_OP_V_Phases)}", AppLogLevel.Debug);
             }
             catch(Exception e)

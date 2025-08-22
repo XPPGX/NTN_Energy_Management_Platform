@@ -132,10 +132,12 @@ namespace demoVer.Services
                 // AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] nowPollingPort = {nowPollingPort}, nowPollingAddr = {nowPollingAddr}", AppLogLevel.Trace);
 
                 //用READ_API取得 單台INV的資料 （建議 ApiManager 方法支援 CancellationToken）
+                AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] nowPollingPort = {nowPollingPort}, nowPollingAddr = {nowPollingAddr} begin...", AppLogLevel.Trace);
                 var res = await _apiManager.apiRead_OneDeviceData(nowPollingPort, nowPollingAddr);
+                AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] nowPollingPort = {nowPollingPort}, nowPollingAddr = {nowPollingAddr} done...", AppLogLevel.Trace);
                 if(res == null)
                 {
-                    // AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : {nowPollingPort}@{nowPollingAddr} ReadAPI return null", AppLogLevel.Trace);
+                    AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : {nowPollingPort}@{nowPollingAddr} removing begin...", AppLogLevel.Trace);
                 
                     //移除 link
                     _globalVar.LinkedDevices.Unlink(nowStoringAddr);
@@ -144,15 +146,22 @@ namespace demoVer.Services
 
                     //刪除Device_ReadData裡面，nowStoringAddr的資料
                     _globalVar.Device_ReadData.Remove_oneDevice_Data(nowStoringAddr);
+
+                    AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : {nowPollingPort}@{nowPollingAddr} removing done...", AppLogLevel.Trace);
                 }
                 else
                 {
                     //儲存 單台INV的資料到記憶體中 
+                    
                     if(waveIndex >= 0)
-                    {
+                    {   
+                        AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : {nowPollingPort}@{nowPollingAddr} removing start...", AppLogLevel.Trace);
+
                         _globalVar.LinkedDevices.Link(nowStoringAddr);
 
                         _globalVar.Device_ReadData.Read_oneDevice_Data(nowStoringAddr, res);
+
+                        AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : {nowPollingPort}@{nowPollingAddr} removing done...", AppLogLevel.Trace);
                     }
                 }
             }
@@ -195,10 +204,10 @@ namespace demoVer.Services
             nowPollingAddr  = 0;
             nowPollingCount = 0;
 
-            _pollingWave.Add(new PollingWave{port="CAN1", startAddr=0, length=1});
-            // _pollingWave.Add(new PollingWave{port="CAN2", startAddr=0, length=64});
-            // _pollingWave.Add(new PollingWave{port="MOD1", startAddr=0, length=64});
-            // _pollingWave.Add(new PollingWave{port="MOD2", startAddr=0, length=64});
+            _pollingWave.Add(new PollingWave{port="CAN1", startAddr=0, length=64});
+            _pollingWave.Add(new PollingWave{port="CAN2", startAddr=0, length=64});
+            _pollingWave.Add(new PollingWave{port="MOD1", startAddr=0, length=64});
+            _pollingWave.Add(new PollingWave{port="MOD2", startAddr=0, length=64});
         }
     }
 }

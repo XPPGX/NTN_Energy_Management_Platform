@@ -1034,6 +1034,9 @@ edit-container是用來綁以下javascript事件的 id :
     private void selectMachine()
     {
         Console.WriteLine("selectMachine");
+        if(deviceAddr_List is null) return;
+        if(deviceAddr_List.Count <= 0) return;
+        
         INFO_setting_stage = INFO_SETTING_STAGE.MACHINE_SELECTION_STAGE;
     }
 

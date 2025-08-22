@@ -102,41 +102,94 @@
     "card_Type": 1,
     "widthClass": "w25",
     "showSequence": 2,
-    "cardName": "NTN Info",
+    "cardName": "NTN CAN1 addr0",
     "Info_DataItems": [
       {
         "iconPath": "images/user_selections/fridge.png",
         "status": 3,
         "INFO_DataFormats": [
           {
-            "MachineName": "[0] : ",
-            "Addr": 0,
-            "UserSettingName": "Factory",
-            "Cmd": "READ_AC_IOUT",
-            "ValueName": "AC_IOUT",
-            "Unit": "A"
-          },
-          {
-            "MachineName": "[0] : ",
+            "MachineName": "[0] : NTN-5K-248  ",
             "Addr": 0,
             "UserSettingName": "Factory",
             "Cmd": "READ_VIN",
-            "ValueName": "Volt",
+            "ValueName": "VIN",
             "Unit": "V"
           }
         ]
-      },
+      }
+    ],
+    "Link_STATUS_Pairs": null,
+    "Chart_Setting": null
+  },
+  {
+    "ID": "3fbaae3350fb434cabcd829fdcaf2e65",
+    "card_Type": 1,
+    "widthClass": "w25",
+    "showSequence": 3,
+    "cardName": "NTN CAN2 Addr0",
+    "Info_DataItems": [
       {
         "iconPath": "images/user_selections/car-battery.png",
         "status": 3,
         "INFO_DataFormats": [
           {
-            "MachineName": "[0] : ",
-            "Addr": 0,
-            "UserSettingName": "Facotry",
+            "MachineName": "[64] : NTN-5K-248  ",
+            "Addr": 64,
+            "UserSettingName": "TEMP",
+            "Cmd": "READ_IIN",
+            "ValueName": "IIN",
+            "Unit": "A"
+          }
+        ]
+      }
+    ],
+    "Link_STATUS_Pairs": null,
+    "Chart_Setting": null
+  },
+  {
+    "ID": "e714e8d575a24deb918b9154ed2f7b64",
+    "card_Type": 1,
+    "widthClass": "w25",
+    "showSequence": 4,
+    "cardName": "NTN MOD1 addr0",
+    "Info_DataItems": [
+      {
+        "iconPath": "images/user_selections/charge.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[128] : NTN-5K-248  ",
+            "Addr": 128,
+            "UserSettingName": "TEMP",
             "Cmd": "READ_FREQ",
             "ValueName": "Freq",
             "Unit": "Hz"
+          }
+        ]
+      }
+    ],
+    "Link_STATUS_Pairs": null,
+    "Chart_Setting": null
+  },
+  {
+    "ID": "4855e309dbd2465a8c4651c9981415c6",
+    "card_Type": 1,
+    "widthClass": "w25",
+    "showSequence": 5,
+    "cardName": "NTN MOD2 addr0",
+    "Info_DataItems": [
+      {
+        "iconPath": "images/user_selections/lighting.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[192] : NTN-5K-248  ",
+            "Addr": 192,
+            "UserSettingName": "TEMP",
+            "Cmd": "READ_FAN_SPEED_1",
+            "ValueName": "FAN1",
+            "Unit": "RPM"
           }
         ]
       }
