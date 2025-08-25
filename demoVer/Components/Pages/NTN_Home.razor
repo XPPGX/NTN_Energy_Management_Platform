@@ -466,9 +466,9 @@
     {
         string jsonString = JsonSerializer.Serialize(CardInfos, new JsonSerializerOptions { WriteIndented = true });
 
-        @* string linuxPath = "/userdata/CMU3/UserSetting/5040/visibleCards.json";
-        File.WriteAllText(linuxPath, jsonString); *@
-        File.WriteAllText("visibleCards.json", jsonString);
+        string linuxPath = "/userdata/CMU3/UserSetting/5040/visibleCards.json";
+        File.WriteAllText(linuxPath, jsonString);
+        @* File.WriteAllText("visibleCards.json", jsonString); *@
         
 
         Console.WriteLine("JSON 檔案已寫入完成。");
@@ -590,9 +590,9 @@
     private async Task Read_CardInfos_FromJsonFile()
     {
         
-        @* string linuxPath = "/userdata/CMU3/UserSetting/5040/visibleCards.json";
-        var filePath = linuxPath; *@
-        var filePath = "visibleCards.json";
+        string linuxPath = "/userdata/CMU3/UserSetting/5040/visibleCards.json";
+        var filePath = linuxPath;
+        @* var filePath = "visibleCards.json"; *@
         try
         {
             string json = File.ReadAllText(filePath);
