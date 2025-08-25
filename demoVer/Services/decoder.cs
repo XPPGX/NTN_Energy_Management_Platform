@@ -71,17 +71,20 @@ namespace demoVer.Services
                             if (slice.Count < size)
                                 break;
 
-                            var decoded = ApplyFormat(slice, cmdRawData);
+                            AppLogger.Log_To_File_log(_category, $"[Decode : split] {slice[0]}", AppLogLevel.Trace);
+                            if(slice[0] == 255 && string.Equals(cmdName, "MFR_REVISION_B0B5", StringComparison.Ordinal))
+                            {
+                                results.Add("X");
+                                continue;
+                            }
                             
-                            // if (decoded is double d)
-                            // {
-                            //     results.Add(d.ToString("G"));
-                            // }
-                            // else
-                            // {
-                            //     results.Add(decoded?.ToString() ?? "");
-                            // }
+                            var decoded = ApplyFormat(slice, cmdRawData);
+        
+                            //For Cmd : Revision
+                            
+                            
                             results.Add(decoded?.ToString() ?? "");
+                        
                         }
                         string return_val = string.Join(seperator, results);
                         AppLogger.Log_To_File_log(_category, $"return_val = {return_val}", AppLogLevel.Trace);
@@ -95,16 +98,39 @@ namespace demoVer.Services
                         // 先對group內部依照index排序(同一塊記憶體只是sorted看見的記憶體順序不同)
                         var sorted = groupData.Groups.OrderBy(pair => pair.Key);
                         List<byte> tmpConcatByteData_List = new List<byte>();
+                        
 
-                        foreach (var cmdData in groupData.Groups.Values) // 只traverse values
+                        
+                        // var values = groupData.Groups.Values.ToList();
+                        // for(int i = values.Count - 1 ; i >= 0 ; i ++)
+                        // {
+                        //     tmpConcatByteData_List.AddRange(values[i].Data);
+                        // }
+                        if(groupData.Groups[0].DataFormat == "ASCII")
                         {
-                            tmpConcatByteData_List.AddRange(cmdData.Data);
+                            foreach (var cmdData in groupData.Groups.Values) // 只traverse values
+                            {
+                                tmpConcatByteData_List.AddRange(cmdData.Data);
+                            }
+
+                        }
+                        else if(groupData.Groups[0].DataFormat == "Numeric")
+                        {
+                            foreach (var pair in groupData.Groups.OrderByDescending(pair => pair.Key))
+                            {
+                                var RawData = pair.Value;
+                                tmpConcatByteData_List.AddRange(RawData.Data);
+                            }
+                            
                         }
 
                         if (tmpConcatByteData_List.Count == 0)
                         {
                             return null;
                         }
+
+                        
+                        AppLogger.Log_To_File_log(_category, $"group_List = {string.Join(", ", tmpConcatByteData_List)}", AppLogLevel.Trace);
 
                         var formatAppliedData = ApplyFormat(tmpConcatByteData_List, cmdRawData);
                         AppLogger.Log_To_File_log(_category, $"return_val = {formatAppliedData}", AppLogLevel.Trace);
@@ -164,9 +190,13 @@ namespace demoVer.Services
             var effectiveData = (shiftBytes > 0 && shiftBytes < data.Count) ? data.Skip(shiftBytes).ToList() : data;
 
             int value = 0;
-            for (int i = 0; i < effectiveData.Count && i < 4; i++)
+            // for (int i = 0; i < effectiveData.Count && i < 4; i++)
+            // {
+            //     value |= effectiveData[i] << (8 * (effectiveData.Count - 1 - i));
+            // }
+            for(int i = effectiveData.Count - 1 ; i >= 0 && i < 4 ; i --)
             {
-                value |= effectiveData[i] << (8 * (effectiveData.Count - 1 - i));
+                value |= effectiveData[i] << (8 * i);
             }
 
             if (signed == true)

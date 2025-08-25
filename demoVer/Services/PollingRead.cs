@@ -8,8 +8,8 @@ namespace demoVer.Services
 {   
     public class PollingOptions
     {
-        public int PerRequestDelayMs {get; set;} = 10;
-        public int RequestTimeoutMs {get; set;} = 100;
+        public int PerRequestDelayMs {get; set;} = 1000;
+        public int RequestTimeoutMs {get; set;} = 2000;
     }
 
     public class PollingWave
@@ -193,6 +193,8 @@ namespace demoVer.Services
             {
                 await Task.Delay(_opt.PerRequestDelayMs, ct);
             }
+            // //delay 20ms
+            // await Task.Delay(1000);
         }
         
         
@@ -204,10 +206,10 @@ namespace demoVer.Services
             nowPollingAddr  = 0;
             nowPollingCount = 0;
 
-            _pollingWave.Add(new PollingWave{port="CAN1", startAddr=0, length=64});
-            _pollingWave.Add(new PollingWave{port="CAN2", startAddr=0, length=64});
-            _pollingWave.Add(new PollingWave{port="MOD1", startAddr=0, length=64});
-            _pollingWave.Add(new PollingWave{port="MOD2", startAddr=0, length=64});
+            _pollingWave.Add(new PollingWave{port="CAN1", startAddr=0, length=1});
+            // _pollingWave.Add(new PollingWave{port="CAN2", startAddr=0, length=64});
+            // _pollingWave.Add(new PollingWave{port="MOD1", startAddr=0, length=64});
+            // _pollingWave.Add(new PollingWave{port="MOD2", startAddr=0, length=64});
         }
     }
 }
