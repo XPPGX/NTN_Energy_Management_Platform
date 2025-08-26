@@ -151,8 +151,8 @@ namespace demoVer.Services
         public async Task TickTask()
         {
             // updateSystemVar();
-            Compute_SYS_Phase(); //foreach 256次
-            ComputeOverallValues(); // foreach 256次
+            Compute_SYS_Phase(); //for loop length = 256
+            ComputeOverallValues(); // for loop length = 256
 
             // await Sys_INV_Mode_OnChanged()?.Invoke();
             // AppLogger.Log_To_File_log(_category, $"[GlobalData][Sys_INV_Mode_Assign]", AppLogLevel.Trace);
@@ -439,8 +439,8 @@ namespace demoVer.Services
                     }
                     
                     //Process tmpMaxValue of each phase corresponding the addr
-                    // Compute_INV_IP_V(tmpMaxs_INV_IP_V, addr);
-                    // Compute_INV_OP_V(tmpMaxs_INV_OP_V, addr);
+                    Compute_INV_IP_V(tmpMaxs_INV_IP_V, addr);
+                    Compute_INV_OP_V(tmpMaxs_INV_OP_V, addr);
                     //process IP/OP F of each phase corresponding the addr
 
                 }

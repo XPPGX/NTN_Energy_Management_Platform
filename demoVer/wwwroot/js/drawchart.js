@@ -167,12 +167,19 @@ window.drawChart_Func = function(config, webFirstRend = false) {
         yAxisID: line.y_axis_selection ? 'y' : 'y1'  // true=右, false=左
     }));
 
+    const hasLeftData = datasets.some(ds => ds.yAxisID === "y");
+    const hasrightData = datasets.some(ds => ds.yAxisID === "y1");
+
     if(existingChart && webFirstRend == false)
     {   
         existingChart.options.plugins.title.text = config.chartTitle;
         existingChart.data.labels = config.labels;
         existingChart.data.datasets = datasets;
+
+        existingChart.options.scales.y.display = hasLeftData;
         existingChart.options.scales.y.title.text = config.y_left_Title;
+        
+        existingChart.options.scales.y1.display = hasrightData;
         existingChart.options.scales.y1.title.text = config.y_right_Title;
 
         existingChart.update();
@@ -215,18 +222,20 @@ window.drawChart_Func = function(config, webFirstRend = false) {
                     y: {
                         type: "linear",
                         position: "left",
+                        display: hasLeftData,
                         title:{
-                            display: !!config.y_left_Title,
-                            text: config.y_left_Title,
+                            display: hasLeftData && !!config.y_left_Title,
+                            text: hasLeftData ? config.y_left_Title : "",
                             font: {size : 16}
                         },
                     },
                     y1: {
                         type: "linear",
                         position: "right",
+                        display: hasrightData,
                         title: {
-                            display: !!config.y_right_Title,
-                            text: config.y_right_Title,
+                            display: hasrightData && !!config.y_right_Title,
+                            text: hasrightData ? config.y_right_Title : "",
                             font: {size: 16}
                         },
                     }

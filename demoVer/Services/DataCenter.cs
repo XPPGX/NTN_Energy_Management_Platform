@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 
 using System.IO;
 using System.Text.Json;
+using demoVer.Interfaces;
 
 namespace demoVer.Services
 {
@@ -23,6 +24,7 @@ namespace demoVer.Services
         private readonly DataChangeEventManager _eventManager;
         private readonly ApiManager _apiManager;
         private readonly GlobalVar _globalVar;
+        private readonly IGroupsDataDecoder _decoder;
         //[Declare] variables shared in whole process
         public Battery_DataSetting_Module Battery {get; set;}
         public INV_DataSetting_Module INV{get; set;}
@@ -46,7 +48,8 @@ namespace demoVer.Services
                             IHubContext<DataHub> hubContext,
                             DataChangeEventManager eventManager,
                             ApiManager apiManager,
-                            GlobalVar globalVar)
+                            GlobalVar globalVar,
+                            IGroupsDataDecoder decoder)
         {
             _heartbeat  = heartbeat;
             _hubContext = hubContext;
@@ -54,6 +57,7 @@ namespace demoVer.Services
             _eventManager = eventManager;
             _apiManager = apiManager;
             _globalVar = globalVar;
+            _decoder = decoder;
 
             MOD_DATA = new allDevice_ModData(_eventManager);
             // Device_ReadData = new allDevice_Data();
@@ -68,7 +72,7 @@ namespace demoVer.Services
             _heartbeat.OnTick += async () => 
             {
                 // AddSimulatedData();
-                // NotifyChartSubscribers();
+                NotifyChartSubscribers();
 
                 if(ApiReadFlag == false)
                 {
@@ -179,19 +183,83 @@ namespace demoVer.Services
             _values.Add(new Random().NextDouble() * 100);
             _values2.Add(new Random().NextDouble() * 100);
         }
-        public void ApplySimulatedDataToChart(CHART_SETTING chartSetting)
+        // public void ApplySimulatedDataToChart(CHART_SETTING chartSetting)
+        // {
+        //     chartSetting.Labels = _labels.ToArray();
+        //     if (chartSetting.chart_single_data_lines.Count == 1)
+        //     {
+        //         chartSetting.chart_single_data_lines[0].Data = _values.ToArray();
+        //     }
+        //     else if(chartSetting.chart_single_data_lines.Count == 2)
+        //     {
+        //         chartSetting.chart_single_data_lines[0].Data = _values.ToArray();
+        //         chartSetting.chart_single_data_lines[1].Data = _values2.ToArray();
+        //     }
+        // }
+        public void ApplyRealDataToChart(CHART_SETTING chartSetting, bool isMobile)
         {
-            chartSetting.Labels = _labels.ToArray();
-            if (chartSetting.chart_single_data_lines.Count == 1)
+            try
             {
-                chartSetting.chart_single_data_lines[0].Data = _values.ToArray();
+                Console.WriteLine($"[DataCenter][ApplyRealDataToChart] isMobile = {isMobile}, hash = {this.GetHashCode}");
+                int chartMaxDataCount = (isMobile == true) ? 10 : 30;
+                // 確保有線條
+                if (chartSetting.chart_single_data_lines == null || chartSetting.chart_single_data_lines.Count == 0)
+                    return;
+
+                //同步兩條線資料長度
+                int nowDataLength = 0;
+                nowDataLength = chartSetting.chart_single_data_lines[0].Data?.Length ?? 0;
+                Console.WriteLine($"[DataCenter][ApplyRealDataToChart] nowDataLength = {nowDataLength}");
+                
+
+                //更新每條線的資料
+                foreach (var line in chartSetting.chart_single_data_lines)
+                {
+                    if (string.IsNullOrEmpty(line.Cmd)) continue;
+
+                    // 從 Device_ReadData 抓這個 addr + Cmd 的資料
+                    var groups = _globalVar.Device_ReadData.GetCommandGroups(line.addr, line.Cmd);
+                    if (groups != null)
+                    {
+                        var decoded = _decoder.Decode(groups, line.Cmd);
+                        if (decoded != null && double.TryParse(decoded.ToString(), out var value))
+                        {
+                            // 把最新值 append 進 Data
+                            var newData = line.Data?.ToList() ?? new List<double?>();
+
+                            if(newData?.Count < nowDataLength)
+                            {
+                                for(int i = 0 ; i < nowDataLength ; i ++)
+                                {
+                                    newData.Add(null);
+                                }
+                            }
+
+                            if (newData?.Count >= chartMaxDataCount) // 保持最多 50 筆 (可自行調整)
+                                newData.RemoveAt(0);
+
+                            
+
+                            newData.Add(value);
+                            line.Data = newData.ToArray();
+                        }
+                    }
+                }
+
+                // 更新 X 軸標籤（時間戳）
+                var labels = chartSetting.Labels?.ToList() ?? new List<string>();
+                if (labels.Count >= chartMaxDataCount)
+                    labels.RemoveAt(0);
+
+                labels.Add(DateTime.Now.ToString("HH:mm:ss"));
+                chartSetting.Labels = labels.ToArray();
             }
-            else if(chartSetting.chart_single_data_lines.Count == 2)
+            catch (Exception ex)
             {
-                chartSetting.chart_single_data_lines[0].Data = _values.ToArray();
-                chartSetting.chart_single_data_lines[1].Data = _values2.ToArray();
+                Console.WriteLine($"[ApplyRealDataToChart] Error: {ex.Message}");
             }
         }
+
         // ✅ 通知 UI 重新繪製（例如透過 CardUpdateNotifier）
         private void NotifyChartSubscribers()
         {

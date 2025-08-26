@@ -187,6 +187,12 @@ table.table input {
     height: 100%;
 }
 
+.chart-machine-cmd-setting
+{
+    width: 100%;
+    height: 100%;
+}
+
 .display-show-setting
 {
     display: flex;
@@ -288,6 +294,40 @@ table.table input {
     background-color: #1976d2;
     color: white;
 }
+
+.responsive-paper
+{
+    width:100%;
+    max-width: 400px;
+}
+
+.custom-select-wrapper {
+    display: flex;
+    flex-direction: column;
+    margin: 8px 0;
+}
+
+.custom-select-wrapper label {
+    font-size: 14px;
+    margin-bottom: 4px;
+    color: #555;
+}
+
+.custom-select {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: #fff;
+    transition: border-color 0.2s;
+}
+
+.custom-select:focus {
+    border-color: #1976d2;
+    outline: none;
+}
+
+
 
 /* Animations */
 @keyframes fade-in {

@@ -155,13 +155,13 @@ namespace demoVer.Services
                     
                     if(waveIndex >= 0)
                     {   
-                        AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : {nowPollingPort}@{nowPollingAddr} removing start...", AppLogLevel.Trace);
+                        AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : {nowPollingPort}@{nowPollingAddr} saving start...", AppLogLevel.Trace);
 
                         _globalVar.LinkedDevices.Link(nowStoringAddr);
 
                         _globalVar.Device_ReadData.Read_oneDevice_Data(nowStoringAddr, res);
 
-                        AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : {nowPollingPort}@{nowPollingAddr} removing done...", AppLogLevel.Trace);
+                        AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : {nowPollingPort}@{nowPollingAddr} saving done...", AppLogLevel.Trace);
                     }
                 }
             }

@@ -60,9 +60,10 @@ namespace demoVer.Models
     {
         CLOSE_ALL                       = 0,
         OVERVIEW                        = 1,
-        DISPLAY_SETTING                 = 2,
-        SELECT_CMD_STAGE                = 3,
-        UNIT_SELECTION_STAGE            = 4
+        SELECT_MACHINE_CMD              = 2,
+        DISPLAY_SETTING                 = 3,
+        SELECT_CMD_STAGE                = 4,
+        UNIT_SELECTION_STAGE            = 5,
     }
 
     public enum SettingStatus
@@ -126,6 +127,15 @@ namespace demoVer.Models
         }
     }
 
+    public class CurveSetting
+    {
+        public uint Address { get; set; }
+        public string Cmd { get; set; }
+        public string Title { get; set; }
+        public string Axis { get; set; } = "Left";
+        public string Color { get; set; } = "#000000";
+    }
+
     public class CHART_SETTING
     {
         public string canvasID {get; set;}
@@ -158,6 +168,7 @@ namespace demoVer.Models
                     .Select(line => new CHART_SINGLE_DATA_LINE
                     {
                         status = line.status,
+                        mdlName = line.mdlName,
                         Cmd = line.Cmd,
                         Unit = line.Unit,
                         Y_axis_selection = line.Y_axis_selection,
@@ -181,11 +192,13 @@ namespace demoVer.Models
     public class CHART_SINGLE_DATA_LINE
     {
         public SettingStatus status {get; set; } = SettingStatus.YET;
+        public uint addr {get; set;}
+        public string mdlName {get; set;}
         public string Cmd{get; set;} = null;
         public string Unit{get; set;} = null;
         public bool? Y_axis_selection {get; set;} = null; //選擇要Y_left還是Y_right
         public string color {get; set;} = null;
-        public double[] Data{get; set;} //Y軸資料
+        public double?[] Data{get; set;} //Y軸資料
     }
 
     public class CHART_STAGE_CONFIG

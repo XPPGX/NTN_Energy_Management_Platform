@@ -1,5 +1,6 @@
 @namespace demoVer.Shared
 @using demoVer.Models
+@using demoVer.Utils
 @inject IJSRuntime JS
 @inject CardUpdateNotifier Notifier
 @inject DataCenter DataCenter
@@ -39,12 +40,12 @@
     [Parameter] public EventCallback<string> Inform_Home_openEditMenu {get; set;}
     [Parameter] public CardInfo currentCard {get; set;}
 
+    private string _category = "";
     private bool showModal = true;
+    private bool isMobile = false;
 
     private async Task openEditMenu()
     {
-        //For Demo
-        return;
         if(Inform_Home_openEditMenu.HasDelegate)
         {
             //Pass the razor component name to HOME, the name can be found definition in the HOME CardInfos List.
@@ -76,6 +77,9 @@
             {
                 Console.WriteLine("Error : " + ex.Message);
             }
+
+            isMobile = await JS.InvokeAsync<bool>("checkIsMobile");
+            AppLogger.Log_To_File_log(_category, $"isMobile = {isMobile}", AppLogLevel.Trace);
         }
     }
 
@@ -85,7 +89,9 @@
         {
             DataCenter.RegisterChartListener(UpdateData_OnChart);
             Notifier.Register(currentCard.ID, Refresh);
+            
         }
+        _category = GetType().FullName!;
     }
 
     private async Task Refresh()
@@ -98,7 +104,8 @@
     private async Task UpdateData_OnChart()
     {
         Console.WriteLine("[UpdateData_OnChart]");
-        DataCenter.ApplySimulatedDataToChart(currentCard.Chart_Setting);
+        @* DataCenter.ApplySimulatedDataToChart(currentCard.Chart_Setting); *@
+        DataCenter.ApplyRealDataToChart(currentCard.Chart_Setting, isMobile);
         await JS.InvokeVoidAsync("drawChart_Func", currentCard.Chart_Setting);
     }
 

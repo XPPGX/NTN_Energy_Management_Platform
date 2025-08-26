@@ -462,13 +462,118 @@
         
     }
 
+    private string StripLabelsAndData(string jsonString)
+    {
+        using var doc = JsonDocument.Parse(jsonString);
+        var root = doc.RootElement;
+
+        using var stream = new MemoryStream();
+        using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
+
+        writer.WriteStartArray();
+        foreach (var card in root.EnumerateArray())
+        {
+            writer.WriteStartObject();
+            foreach (var prop in card.EnumerateObject())
+            {
+                if (prop.Name == "Chart_Setting")
+                {
+                    if (prop.Value.ValueKind == JsonValueKind.Null)
+                    {
+                        // Chart_Setting 是 null → 原樣輸出 null
+                        writer.WriteNull("Chart_Setting");
+                        continue;
+                    }
+
+                    if (prop.Value.ValueKind == JsonValueKind.Object)
+                    {
+                        writer.WritePropertyName("Chart_Setting");
+                        writer.WriteStartObject();
+
+                        foreach (var chartProp in prop.Value.EnumerateObject())
+                        {
+                            if (chartProp.Name == "Labels") continue;
+
+                            if (chartProp.Name == "chart_single_data_lines")
+                            {
+                                if (chartProp.Value.ValueKind == JsonValueKind.Null)
+                                {
+                                    writer.WriteNull("chart_single_data_lines");
+                                    continue;
+                                }
+
+                                if (chartProp.Value.ValueKind == JsonValueKind.Array)
+                                {
+                                    writer.WritePropertyName("chart_single_data_lines");
+                                    writer.WriteStartArray();
+
+                                    foreach (var line in chartProp.Value.EnumerateArray())
+                                    {
+                                        if (line.ValueKind != JsonValueKind.Object)
+                                            continue; // 保護：不是 object 就跳過
+
+                                        writer.WriteStartObject();
+                                        foreach (var lineProp in line.EnumerateObject())
+                                        {
+                                            if (lineProp.Name == "Data") continue;
+                                            lineProp.WriteTo(writer);
+                                        }
+                                        writer.WriteEndObject();
+                                    }
+
+                                    writer.WriteEndArray();
+                                }
+                            }
+                            else
+                            {
+                                chartProp.WriteTo(writer);
+                            }
+                        }
+
+                        writer.WriteEndObject();
+                    }
+                }
+                else
+                {
+                    // 直接原樣寫出其他屬性
+                    prop.WriteTo(writer);
+                }
+            }
+            writer.WriteEndObject();
+        }
+        writer.WriteEndArray();
+
+        writer.Flush();
+        return System.Text.Encoding.UTF8.GetString(stream.ToArray());
+    }
+
+
     private async Task ConfirmSave_InfoData()
     {
-        string jsonString = JsonSerializer.Serialize(CardInfos, new JsonSerializerOptions { WriteIndented = true });
+        
+        //清除所有chartCard裡面的Data跟Labels
+        
 
+
+        @* foreach(var card in CardInfos)
+        {
+            if(card.Chart_Setting is not null)
+            {
+                card.Chart_Setting.Labels = Array.Empty<string>();
+
+                foreach(var line in card.Chart_Setting.chart_single_data_lines)
+                {
+                    line.Data = Array.Empty<double?>();
+                }
+            }
+        } *@
+
+        string jsonString = JsonSerializer.Serialize(CardInfos, new JsonSerializerOptions { WriteIndented = true });
+        string cleanedJson = StripLabelsAndData(jsonString);
+        
         @* string linuxPath = "/userdata/CMU3/UserSetting/5040/visibleCards.json"; *@
         @* File.WriteAllText(linuxPath, jsonString); *@
-        File.WriteAllText("visibleCards.json", jsonString);
+        File.WriteAllText("visibleCards.json", cleanedJson);
         
 
         Console.WriteLine("JSON 檔案已寫入完成。");
@@ -543,11 +648,11 @@
         
         
         Console.WriteLine("[addCard][1]");
-        if(_selection == CardType.Chart)
+        @* if(_selection == CardType.Chart)
         {
             CloseModal();
             return;
-        }
+        } *@
         CardInfos.Add(newCard);
         Console.WriteLine("[addCard][2]");
         afterAddCard_Flag = true;

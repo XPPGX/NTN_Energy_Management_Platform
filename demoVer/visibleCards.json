@@ -1,9 +1,34 @@
 [
   {
+    "ID": "0ae85b65c98a450b9629fecc7b3a4f75",
+    "card_Type": 1,
+    "widthClass": "w25",
+    "showSequence": 0,
+    "cardName": "NTN CAN1 addr0",
+    "Info_DataItems": [
+      {
+        "iconPath": "images/user_selections/fridge.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[0] : NTN-5K-248  ",
+            "Addr": 0,
+            "UserSettingName": "Factory",
+            "Cmd": "READ_VIN",
+            "ValueName": "VIN",
+            "Unit": "V"
+          }
+        ]
+      }
+    ],
+    "Link_STATUS_Pairs": null,
+    "Chart_Setting": null
+  },
+  {
     "ID": "0939ff5ddceb4bf1826f1aac8a583844",
     "card_Type": 3,
     "widthClass": "w50",
-    "showSequence": 0,
+    "showSequence": 1,
     "cardName": "RunningDiagram",
     "Info_DataItems": null,
     "Link_STATUS_Pairs": [
@@ -27,106 +52,10 @@
     "Chart_Setting": null
   },
   {
-    "ID": "983d0d3259cd4f5da3e804abb1ed82c6",
-    "card_Type": 2,
-    "widthClass": "w50",
-    "showSequence": 1,
-    "cardName": "Volt_and_Current_Chart",
-    "Info_DataItems": null,
-    "Link_STATUS_Pairs": null,
-    "Chart_Setting": {
-      "canvasID": "chart1",
-      "ChartTitle": "Volt_and_Current_Chart",
-      "XTitle": "\u6642\u9593",
-      "timeGap_selection": 2,
-      "Labels": [
-        "11:22:09",
-        "11:22:10",
-        "11:22:11",
-        "11:22:12",
-        "11:22:13",
-        "11:22:14",
-        "11:22:15",
-        "11:22:16",
-        "11:22:17",
-        "11:22:18"
-      ],
-      "Y_left_Title": "TEST1",
-      "Y_right_Title": "TEST2",
-      "YMin": 0,
-      "YMax": 1000,
-      "chart_single_data_lines": [
-        {
-          "status": 3,
-          "Cmd": "Voltage",
-          "Unit": "mv",
-          "Y_axis_selection": true,
-          "color": "#13b8e8",
-          "Data": [
-            39.29739630650919,
-            32.42944333923903,
-            94.50664156489252,
-            11.46194430924804,
-            47.432697384322154,
-            24.350549016900114,
-            11.74593162131793,
-            29.0532905408886,
-            43.455301523011954,
-            73.5846904871808
-          ]
-        },
-        {
-          "status": 3,
-          "Cmd": "Current",
-          "Unit": "mA",
-          "Y_axis_selection": false,
-          "color": "#127942",
-          "Data": [
-            23.973851584149553,
-            89.19961707362917,
-            73.533589521726,
-            68.04137122918578,
-            14.132252997841244,
-            71.3855363371356,
-            16.23749890783631,
-            74.26031906705106,
-            58.75653648213122,
-            32.360986894077556
-          ]
-        }
-      ]
-    }
-  },
-  {
-    "ID": "0ae85b65c98a450b9629fecc7b3a4f75",
-    "card_Type": 1,
-    "widthClass": "w25",
-    "showSequence": 2,
-    "cardName": "NTN CAN1 addr0",
-    "Info_DataItems": [
-      {
-        "iconPath": "images/user_selections/fridge.png",
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "[0] : NTN-5K-248  ",
-            "Addr": 0,
-            "UserSettingName": "Factory",
-            "Cmd": "READ_VIN",
-            "ValueName": "VIN",
-            "Unit": "V"
-          }
-        ]
-      }
-    ],
-    "Link_STATUS_Pairs": null,
-    "Chart_Setting": null
-  },
-  {
     "ID": "3fbaae3350fb434cabcd829fdcaf2e65",
     "card_Type": 1,
     "widthClass": "w25",
-    "showSequence": 3,
+    "showSequence": 2,
     "cardName": "NTN CAN2 Addr0",
     "Info_DataItems": [
       {
@@ -148,53 +77,72 @@
     "Chart_Setting": null
   },
   {
-    "ID": "e714e8d575a24deb918b9154ed2f7b64",
-    "card_Type": 1,
-    "widthClass": "w25",
+    "ID": "983d0d3259cd4f5da3e804abb1ed82c6",
+    "card_Type": 2,
+    "widthClass": "w50",
     "showSequence": 4,
-    "cardName": "NTN MOD1 addr0",
-    "Info_DataItems": [
-      {
-        "iconPath": "images/user_selections/charge.png",
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "[128] : NTN-5K-248  ",
-            "Addr": 128,
-            "UserSettingName": "TEMP",
-            "Cmd": "READ_FREQ",
-            "ValueName": "Freq",
-            "Unit": "Hz"
-          }
-        ]
-      }
-    ],
+    "cardName": "Chart",
+    "Info_DataItems": null,
     "Link_STATUS_Pairs": null,
-    "Chart_Setting": null
+    "Chart_Setting": {
+      "canvasID": "chart1",
+      "ChartTitle": "Chart",
+      "XTitle": "\u6642\u9593",
+      "timeGap_selection": 2,
+      "Y_left_Title": "FREQ",
+      "Y_right_Title": "FV",
+      "YMin": 0,
+      "YMax": 1000,
+      "chart_single_data_lines": [
+        {
+          "status": 3,
+          "addr": 0,
+          "mdlName": "NTN-5K-248  ",
+          "Cmd": "READ_FREQ",
+          "Unit": "Hz",
+          "Y_axis_selection": true,
+          "color": "#424242"
+        },
+        {
+          "status": 3,
+          "addr": 0,
+          "mdlName": "NTN-5K-248  ",
+          "Cmd": "CURVE_FV",
+          "Unit": "V",
+          "Y_axis_selection": false,
+          "color": "#f44336"
+        }
+      ]
+    }
   },
   {
-    "ID": "4855e309dbd2465a8c4651c9981415c6",
-    "card_Type": 1,
-    "widthClass": "w25",
-    "showSequence": 5,
-    "cardName": "NTN MOD2 addr0",
-    "Info_DataItems": [
-      {
-        "iconPath": "images/user_selections/lighting.png",
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "[192] : NTN-5K-248  ",
-            "Addr": 192,
-            "UserSettingName": "TEMP",
-            "Cmd": "READ_FAN_SPEED_1",
-            "ValueName": "FAN1",
-            "Unit": "RPM"
-          }
-        ]
-      }
-    ],
+    "ID": "234ffc4dda2e4d7cbcda29f0a88a1040",
+    "card_Type": 2,
+    "widthClass": "w50",
+    "showSequence": 4,
+    "cardName": "NewChart",
+    "Info_DataItems": null,
     "Link_STATUS_Pairs": null,
-    "Chart_Setting": null
+    "Chart_Setting": {
+      "canvasID": "Chart_beb30119f18640468986ad2ccd53ae6f",
+      "ChartTitle": "NewChart",
+      "XTitle": "\u6642\u9593",
+      "timeGap_selection": 0,
+      "Y_left_Title": null,
+      "Y_right_Title": "FAN2",
+      "YMin": 0,
+      "YMax": 0,
+      "chart_single_data_lines": [
+        {
+          "status": 3,
+          "addr": 0,
+          "mdlName": "NTN-5K-248  ",
+          "Cmd": "READ_FAN_SPEED_2",
+          "Unit": "RPM",
+          "Y_axis_selection": false,
+          "color": "#fe6800"
+        }
+      ]
+    }
   }
 ]

@@ -10,6 +10,8 @@ import time
 app = Flask(__name__)
 app.config["JSONIFY_PRETTYPRINT_REGULAR"] = False  # 少一點格式化開銷
 
+USE_RANDOM_DATA = True
+
 # 啟動時就把 JSON 讀進來，拆成「不含 data 的模板」+「各自 data 長度」
 with open("INV_DATA.json", "r", encoding="utf-8") as f:
     _base_data = json.load(f)
@@ -32,8 +34,10 @@ def read_memory():
         gix = tpl.get("groupIndex")
 
         # 預設：隨機 bytes
-        data = [random.getrandbits(8) for _ in range(dlen)]
-
+        if USE_RANDOM_DATA is True:
+            data = [random.getrandbits(8) for _ in range(dlen)]
+        else:
+            data = [0] * dlen
         # 特例：MFR_MODEL
         if cmd == "MFR_MODEL":
             if gix == 0:
