@@ -97,26 +97,26 @@ namespace demoVer.Services
             }
         }
 
-        public List<string> GetProtocolFilesForPort(string port)
-        {
-            try
-            {
-                return null;
-            }
-            catch(Exception e)
-            {
-                return null;
-            }
-        }
+        // public List<string> GetProtocolFilesForPort(string port)
+        // {
+        //     try
+        //     {
+        //         return null;
+        //     }
+        //     catch(Exception e)
+        //     {
+        //         return null;
+        //     }
+        // }
 
         
-        public async Task<List<SettingData>?> apiRead_SettingData(string type, string protocolFileName)
-        {
-            // foreach(var port in ports)
-            // {
+        // public async Task<List<SettingData>?> apiRead_SettingData(string type, string protocolFileName)
+        // {
+        //     // foreach(var port in ports)
+        //     // {
 
-            // }
-            return null;
-        }
+        //     // }
+        //     return null;
+        // }
     }
 }
