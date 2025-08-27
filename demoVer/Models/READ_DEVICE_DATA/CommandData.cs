@@ -24,7 +24,7 @@ namespace demoVer.Models
         }
     }
 
-    // The element format of the Json from READ_API
+    // The element format of the received Json from "Read Memory"
     public class SingleRawCommand_JsonFormat
     {
         [JsonPropertyName("commandName")]
@@ -61,6 +61,7 @@ namespace demoVer.Models
         public bool? isSNnumber {get; set;}
     }
 
+    //The structure that stored in the process memory, for "Read Memory in the framework"
     public class CommandRawData
     {
         private List<byte> _Data = new();
