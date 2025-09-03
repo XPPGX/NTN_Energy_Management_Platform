@@ -109,14 +109,64 @@ namespace demoVer.Services
         //     }
         // }
 
-        
-        // public async Task<List<SettingData>?> apiRead_SettingData(string type, string protocolFileName)
-        // {
-        //     // foreach(var port in ports)
-        //     // {
+        //讀回settingData的格式、當前數值
+        public async Task<List<SingleRawSettingCommand_JsonFormat>?> apiRead_SettingData(string type, string protocolFileName)
+        {
+            try
+            {
+                string url = $"api/memory/write-memory?type={type}&protocolFileName={protocolFileName}";
+                var result = await _http.GetFromJsonAsync<List<SingleRawSettingCommand_JsonFormat>>(url);
+                
+                if(result == null)
+                {
+                     throw new Exception($"[apiRead_SettingData] Read_API_Json == null");
+                }
+                return result;
 
-        //     // }
-        //     return null;
-        // }
+            }
+            catch (HttpRequestException ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[ApiManager][apiRead_SettingData] Http_Error: {ex}", AppLogLevel.Debug);
+                return null;
+            }
+            catch(Exception ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[ApiManager][apiRead_SettingData] Error : {ex.Message}", AppLogLevel.Error);
+                return null;
+            }
+            return null;
+        }
+
+        //按照讀回的格式、當前數值，寫入Framework的Write Memory
+        public async Task<bool> apiWrite_SettingData(string type, string protocolFileName, List<SingleRawSettingCommand_JsonFormat> body)
+        {
+            try
+            {
+                string url = $"api/memory/write-memory?type={type}&protocolFileName={protocolFileName}";
+
+                using var response = await _http.PostAsJsonAsync(url, body);
+                
+                if(response.IsSuccessStatusCode)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[ApiManager][apiWrite_SettingData]成功: {(int)response.StatusCode}", AppLogLevel.Trace);
+                    return true;
+                }
+                else
+                {
+                    AppLogger.Log_To_File_log(_category, $"[ApiManager][apiWrite_SettingData]失敗: {(int)response.StatusCode}", AppLogLevel.Trace);
+                    return false;
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"[WriteAPI] HttpRequestException: {ex.Message}");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[WriteAPI] Unexpected Error: {ex.Message}");
+                return false;
+            }
+        }
     }
 }

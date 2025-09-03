@@ -109,9 +109,13 @@ namespace demoVer.Services
 
         public async Task READ_API_TEST()
         {
-            var result = await _apiManager.apiRead_OneDeviceData("CAN1", 0);
-            string parsedJson = JsonSerializer.Serialize(result, new JsonSerializerOptions {WriteIndented = true});
-            _globalVar.Device_ReadData.Read_oneDevice_Data(0, result);
+            // var result = await _apiManager.apiRead_OneDeviceData("CAN1", 0);
+            // string parsedJson = JsonSerializer.Serialize(result, new JsonSerializerOptions {WriteIndented = true});
+            // _globalVar.Device_ReadData.Read_oneDevice_Data(0, result);
+
+            // var result = await _apiManager.apiRead_SettingData("CAN1", "NTN-5K_CAN.json");
+            // string parsedJson = JsonSerializer.Serialize(result, new JsonSerializerOptions {WriteIndented = true});
+            
         }
         public async Task LocalDataChange_Test()
         {

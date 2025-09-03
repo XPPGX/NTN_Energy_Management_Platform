@@ -46,7 +46,7 @@ namespace demoVer.Services
         private PollingOptions _opt = new PollingOptions();
         private const uint portMaxDeviceNum = 64;
 
-        private int waveIndex           = 0;    //紀錄 當前是那個wave
+        private int waveIndex           = 0;    //紀錄 當前是哪個wave
         private string nowPollingPort   = "";   //紀錄 當前wave的port
         private uint nowPollingAddr     = 0;    //紀錄 發送API發送的addr(每個port只有0~63)
         private int nowPollingCount     = 0;    //紀錄 當前wave的polling到第幾addr

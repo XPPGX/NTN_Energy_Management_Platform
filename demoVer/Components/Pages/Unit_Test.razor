@@ -10,12 +10,16 @@
 @using System.Diagnostics
 @using System.Text.Json
 @inject IGroupsDataDecoder Decoder
+@using demoVer.Utils
 <p>Addr : <span id="Address"> N/A </span></p>
 <p>ModelName : <span id="modelname-display">N/A</span></p>
-
+<button @onclick="getWriteMemory">Call R_WriteMemory</button>
+<button @onclick="postWriteMemory">Call W_WriteMemmory</button>
 @code{
     private bool _signalRStarted = false;
     private uint addr = 0;
+    string type = "CAN1";
+    string protocolFileName = "NTN-5K_CAN.json";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -128,6 +132,33 @@
     public async Task testFunc()
     {
         var ModelName_List = globalVar.Get_addr_and_ModelNames_List();
+    }
+
+    public async Task getWriteMemory()
+    {
+        Console.WriteLine("CALL WriteAPI");
+        
+        var result = await apiManager.apiRead_SettingData(type, protocolFileName);
+        AppLogger.Log_To_File_Json(result);
+        @* string result_json = JsonSerializer.Serialize(result, new JsonSerializerOptions
+        {
+            WriteIndented = true
+        }); *@
+
+
+        globalVar.Device_WriteData.saveSettingData_ToCheck(type, result);
+        globalVar.Device_WriteData.clone_CheckToWrite(type);
+    }
+
+    public async Task postWriteMemory()
+    {
+        var cmdData = globalVar.Device_WriteData.getCmdData_Ref(type, "CURVE_CC");
+        string json_str = JsonSerializer.Serialize(cmdData, new JsonSerializerOptions{WriteIndented = true});
+        Console.WriteLine(json_str);
+        cmdData.TargetValue = new List<byte> {0, 0, 0, 0};
+        @* var WriteBody = globalVar.Device_WriteData.Generate_WriteFormat(type);
+        Console.WriteLine(WriteBody);
+        bool success = await apiManager.apiWrite_SettingData(type, protocolFileName, WriteBody); *@
     }
 
     public long MeasureMs(Action action, int warmup = 3, int rounds = 10)

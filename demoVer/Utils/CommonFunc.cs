@@ -82,7 +82,13 @@ namespace demoVer.Utils
                     IncludeFields = true
                 };
 
-                string tmp_json = JsonSerializer.Serialize(instance, options);
+
+                var logObject = new
+                {
+                    timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
+                    data = instance
+                };
+                string tmp_json = JsonSerializer.Serialize(logObject, options);
 
                 Console.WriteLine($"LogDirectory = {LogDirectory}");
                 Console.WriteLine($"LogFilePath = {LogFilePath}");
@@ -90,9 +96,7 @@ namespace demoVer.Utils
                 if (!Directory.Exists(LogDirectory))
                     Directory.CreateDirectory(LogDirectory);
 
-                string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-                string logEntry = $"[{timestamp}]\n{tmp_json}{Environment.NewLine}";
-                File.WriteAllText(LogFilePath, logEntry);
+                File.WriteAllText(LogFilePath, tmp_json);
             }
             catch(Exception ex)
             {

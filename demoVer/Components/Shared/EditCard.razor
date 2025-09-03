@@ -1595,13 +1595,13 @@ edit-container是用來綁以下javascript事件的 id :
 
     private void ChartCmdChanged(ChangeEventArgs e)
     {
-        blank_singleDataLine.Cmd = e.Value?.ToString() ?? string.Empty;
-        if(show_cmd_unit_Dict_ref is not null)
-        {
-            blank_singleDataLine.Unit = show_cmd_unit_Dict_ref[blank_singleDataLine.Cmd];
-            Console.WriteLine($"[EditCard][ChartCmdChanged] : Cmd = {blank_singleDataLine.Cmd}, Unit = {blank_singleDataLine.Unit}");
-        }
+        if(show_cmd_unit_Dict_ref is null) return;
+
+        blank_singleDataLine.Cmd = e.Value?.ToString() ?? string.Empty;        
+        if(string.IsNullOrEmpty(blank_singleDataLine.Cmd)) return;
         
+        blank_singleDataLine.Unit = show_cmd_unit_Dict_ref[blank_singleDataLine.Cmd];
+        Console.WriteLine($"[EditCard][ChartCmdChanged] : Cmd = {blank_singleDataLine.Cmd}, Unit = {blank_singleDataLine.Unit}");
     }
 
     private void MachineChanged(ChangeEventArgs e)
