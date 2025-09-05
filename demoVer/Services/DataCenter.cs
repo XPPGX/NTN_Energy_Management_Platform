@@ -28,7 +28,6 @@ namespace demoVer.Services
         //[Declare] variables shared in whole process
         public Battery_DataSetting_Module Battery {get; set;}
         public INV_DataSetting_Module INV{get; set;}
-        public allDevice_ModData MOD_DATA{get; set;}
         // public allDevice_Data Device_ReadData {get; set;} //Get from framework via READ_API
 
 
@@ -59,7 +58,6 @@ namespace demoVer.Services
             _globalVar = globalVar;
             _decoder = decoder;
 
-            MOD_DATA = new allDevice_ModData(_eventManager);
             // Device_ReadData = new allDevice_Data();
             Battery     = new Battery_DataSetting_Module(_commonData);
             Battery.UpdateFrom(new Battery_InitData()); //接收初始值
@@ -79,7 +77,6 @@ namespace demoVer.Services
                     // var result = await _apiManager.ReadSingleINV("CAN1", 0);
                     // string parsedJson = JsonSerializer.Serialize(result, new JsonSerializerOptions {WriteIndented = true});
                     // Console.WriteLine("[Parsed Result] = " + parsedJson);
-                    // MOD_DATA.Read_oneDevice_ModData(0, result);
 
                     // READ_API_TEST();
                     
@@ -327,28 +324,6 @@ namespace demoVer.Services
                     byte val1 = (byte)(new Random().Next() * 10);
                     byte val2 = (byte)(new Random().Next() * 10);
                     oneDevice_groups.Groups[0].Data = new List<byte> {val1, val2};
-                    // var cmd = MOD_DATA.GetCommandData(targetAddr, cmd_str);
-                    // if (cmd != null)
-                    // {
-                    //     // 模擬數值，例如電壓 200~300V 間浮動
-                    //     float simulatedValue = 200f + (float)(new Random().NextDouble() * 100);
-
-                    //     // 將 float → ushort → byte[]
-                    //     ushort scaled = (ushort)(simulatedValue / cmd.Scaling);
-                    //     var bytes = BitConverter.GetBytes(scaled);
-
-                    //     if (!BitConverter.IsLittleEndian)
-                    //         Array.Reverse(bytes);
-
-                    //     Console.WriteLine($"模擬[{cmd_str}]變更為: {simulatedValue} → Bytes: [{bytes[0]}, {bytes[1]}]");
-
-                    //     // 寫入並觸發 OnChanged（如果不同的話）
-                    //     cmd.Data = new List<byte> { bytes[0], bytes[1] };
-                    // }
-                    // else
-                    // {
-                    //     Console.WriteLine($"找不到 addr = {targetAddr} 的 {cmd_str}");
-                    // }
                 }
             }
             catch(Exception e)

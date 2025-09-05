@@ -42,7 +42,7 @@ namespace demoVer.Services
 
         //Variables
         private string _category;
-        private List<PollingWave> _pollingWave = new List<PollingWave>();
+        private List<SubAppSystem> _pollingWave;
         private PollingOptions _opt = new PollingOptions();
         private const uint portMaxDeviceNum = 64;
 
@@ -66,7 +66,11 @@ namespace demoVer.Services
             _globalVar  = globalVar;
             _apiManager = apiManager;
             _category = GetType().FullName!;
+            
+            _pollingWave = _globalVar.SubSystems;
+            
             initPollingWave();
+            
         }
 
         public Task EnableAsync()
@@ -206,7 +210,7 @@ namespace demoVer.Services
             nowPollingAddr  = 0;
             nowPollingCount = 0;
 
-            _pollingWave.Add(new PollingWave{port="CAN1", startAddr=0, length=1});
+            // _pollingWave.Add(new PollingWave{port="CAN1", startAddr=0, length=1});
             // _pollingWave.Add(new PollingWave{port="CAN2", startAddr=0, length=64});
             // _pollingWave.Add(new PollingWave{port="MOD1", startAddr=0, length=64});
             // _pollingWave.Add(new PollingWave{port="MOD2", startAddr=0, length=64});

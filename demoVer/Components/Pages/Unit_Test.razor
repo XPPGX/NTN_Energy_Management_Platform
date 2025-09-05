@@ -11,6 +11,7 @@
 @using System.Text.Json
 @inject IGroupsDataDecoder Decoder
 @using demoVer.Utils
+@inject WriteProcess writeProcess
 <p>Addr : <span id="Address"> N/A </span></p>
 <p>ModelName : <span id="modelname-display">N/A</span></p>
 <button @onclick="getWriteMemory">Call R_WriteMemory</button>
@@ -122,6 +123,7 @@
     protected override void OnInitialized()
     {
         Heartbeat.OnTick += testFunc;
+        writeProcess.awake();
     }
 
     public void Dispose()
@@ -136,27 +138,27 @@
 
     public async Task getWriteMemory()
     {
-        Console.WriteLine("CALL WriteAPI");
+        @* Console.WriteLine("CALL WriteAPI");
         
         var result = await apiManager.apiRead_SettingData(type, protocolFileName);
         AppLogger.Log_To_File_Json(result);
-        @* string result_json = JsonSerializer.Serialize(result, new JsonSerializerOptions
+        string result_json = JsonSerializer.Serialize(result, new JsonSerializerOptions
         {
             WriteIndented = true
-        }); *@
+        });
 
 
         globalVar.Device_WriteData.saveSettingData_ToCheck(type, result);
-        globalVar.Device_WriteData.clone_CheckToWrite(type);
+        globalVar.Device_WriteData.clone_CheckToWrite(type); *@
     }
 
     public async Task postWriteMemory()
     {
-        var cmdData = globalVar.Device_WriteData.getCmdData_Ref(type, "CURVE_CC");
+        @* var cmdData = globalVar.Device_WriteData.getCmdData_Ref(type, "CURVE_CC");
         string json_str = JsonSerializer.Serialize(cmdData, new JsonSerializerOptions{WriteIndented = true});
         Console.WriteLine(json_str);
         cmdData.TargetValue = new List<byte> {0, 0, 0, 0};
-        @* var WriteBody = globalVar.Device_WriteData.Generate_WriteFormat(type);
+        var WriteBody = globalVar.Device_WriteData.Generate_WriteFormat(type);
         Console.WriteLine(WriteBody);
         bool success = await apiManager.apiWrite_SettingData(type, protocolFileName, WriteBody); *@
     }

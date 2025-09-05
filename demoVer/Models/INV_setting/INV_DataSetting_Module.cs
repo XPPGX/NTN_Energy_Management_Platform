@@ -378,4 +378,6 @@ namespace demoVer.Models
         public double bat_ov_alarm_display {get; set;}
         public int bat_capacity_value {get; set;}
     }
+
+
 }

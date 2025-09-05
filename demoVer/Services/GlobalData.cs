@@ -7,7 +7,23 @@ using System.Collections.Concurrent;
 
 namespace demoVer.Services
 {
-    
+    public class SubAppSystem
+    {
+        //記錄這段連續的addr，其polling的port(CAN1, ...)，起始Addr(startAddr), 有多少連續的device(length)
+        //e.g.
+        /*
+            e.g. port = "CAN1"
+            startAddr = 0
+            length = 2
+
+            這代表，在CAN1 port上從Addr 0 開始兩格有device連接，也就是Addr 0, Addr 1有device連接
+        */
+        public int subSystemID;
+        public string port; //CAN1, CAN2, MOD1, MOD2
+        public string protocolFileName; //NTN-5K_CAN.json
+        public uint startAddr;
+        public uint length;
+    }
 
     public class GlobalVar
     {
@@ -113,7 +129,8 @@ namespace demoVer.Services
         public allDevice_Data Device_ReadData {get; set;}                   //Polling讀取各Device資料
         public LinkedDeviceStore LinkedDevices {get;}                       //以concurrent字典記錄目前有連線的devices
         public WriteAPI_Datas Device_WriteData {get; set;}
-
+        public List<SubAppSystem> SubSystems {get; set;}
+        public int? ActiveSubAppSystemID {get; set;}
 
         public GlobalVar(   IGroupsDataDecoder decoder,
                             HeartbeatService heartbeats)
@@ -131,6 +148,8 @@ namespace demoVer.Services
             Device_ReadData             = new allDevice_Data();
             LinkedDevices               = new LinkedDeviceStore();
             Device_WriteData            = new WriteAPI_Datas();
+            SubSystems                  = new List<SubAppSystem>();
+            initSubAppSystem();
 
             //[just for computing]
             F_phase_Counters            = new IP_OP_F_count();
@@ -138,6 +157,34 @@ namespace demoVer.Services
             //Events(Actions)
             LinkedDevices.linkChanged   += Get_INV_ConnectNum;
             _heartbeat.OnTick           += TickTask;
+        }
+
+        public void initSubAppSystem()
+        {
+            SubSystems.Add(new SubAppSystem{subSystemID=0, port="CAN1", protocolFileName="NTN-5K_CAN.json", startAddr=0, length=1});
+            Device_WriteData.SubAppSystem_WriteMemorys.Add(new SubAppSystem_WriteMemory(0));
+            
+            // SubSystems.Add(new SubAppSystem{subSystemID=1, port="CAN2", protocolFileName="NTN-5K_CAN.json", startAddr=0, length=64});
+            // Device_WriteData.SubAppSystem_WriteMemory.Add(new SubAppSystem(1));
+            
+            // SubSystems.Add(new SubAppSystem{subSystemID=2, port="MOD1", protocolFileName="NTN-5K_MOD.json", startAddr=0, length=64});
+            // Device_WriteData.SubAppSystem_WriteMemory.Add(new SubAppSystem(2));
+            
+            // SubSystems.Add(new SubAppSystem{subSystemID=3, port="MOD2", protocolFileName="NTN-5K_MOD.json", startAddr=0, length=64});
+            // Device_WriteData.SubAppSystem_WriteMemory.Add(new SubAppSystem(3));
+        }
+
+        public string getActiveSubSysPort()
+        {
+            try
+            {
+                return SubSystems[(int)ActiveSubAppSystemID].port;
+            }
+            catch(Exception e)
+            {
+                AppLogger.Log_To_File_log(_category, $"[GlobalData][getActiveSubSysPort] Error : {e}", AppLogLevel.Error);
+                return "";
+            }
         }
 
         public async Task TickTask()
@@ -357,6 +404,28 @@ namespace demoVer.Services
             return return_val;
         }
 
+        private int? findActiveSubAppSys(uint firstAddr)
+        {
+            int? activeSubSysID = null;
+            
+            foreach(var subSys in SubSystems)
+            {
+                uint portStartAddr   = (uint)getPortStartAddr(subSys.port);
+                uint trueStartAddr   = (uint)portStartAddr + (uint)subSys.startAddr;
+                uint trueEndAddr     = (uint)trueStartAddr + (uint)subSys.length - 1;
+                
+                if(firstAddr < trueStartAddr) continue;
+                
+                if(firstAddr > trueEndAddr) continue;
+
+                activeSubSysID = subSys.subSystemID;
+
+                break;
+            }
+
+            return activeSubSysID;
+        }
+
         private void ComputeOverallValues()
         {
             uint[] linkedAddr_array = LinkedDevices.Snapshot();
@@ -386,8 +455,14 @@ namespace demoVer.Services
                 else
                 {
                     uint firstAddr = linkedAddr_array[0];
+
+                    //取得 temp ModelName 準備與舊ModelName進行比對
                     INV_ModelName_tmp = Get_ModelName_ByAddr(firstAddr);
-                    AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] firstAddr = {firstAddr}, INV_ModelName_tmp = {INV_ModelName_tmp}", AppLogLevel.Trace);
+
+                    //Assign 當前 Active的subAppSystem (後續應可動態調整，當前先以第一個linkedAddr 所在的範圍作為 Active subAppSystem
+                    ActiveSubAppSystemID = findActiveSubAppSys(firstAddr);
+
+                    AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] firstAddr = {firstAddr}, INV_ModelName_tmp = {INV_ModelName_tmp}, ActiveSubAppSystemID = {ActiveSubAppSystemID}", AppLogLevel.Trace);
                 }
                 
                 for(int index = 0 ; index < linkedAddr_array.Length ; index ++)
@@ -462,15 +537,31 @@ namespace demoVer.Services
                 Sys_modelError = false;
             }
             if(!string.Equals(Sys_ModelName, INV_ModelName_tmp, StringComparison.Ordinal))
-            {
-                //modelname changed
+            {//modelname changed
+
                 Sys_ModelName = INV_ModelName_tmp;
-                
+                Console.WriteLine($"[Sys_ModelName_Assign] mdlName Change");
                 //inform hooked Events
+                
                 if(Sys_ModelName_OnChanged is not null)
                 {
-                    await Sys_ModelName_OnChanged?.Invoke();
-                    AppLogger.Log_To_File_log(_category, $"[GlobalData][Sys_ModelName_Assign]", AppLogLevel.Trace);
+                    foreach (Func<Task> handler in Sys_ModelName_OnChanged.GetInvocationList())
+                    {
+                        try
+                        {
+                            await handler();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"[Sys_ModelName_Assign] Handler failed: {ex.Message}");
+                        }
+                    }
+
+                    AppLogger.Log_To_File_log(_category, $"[GlobalData][Sys_ModelName_Assign] have Hook", AppLogLevel.Trace);
+                }
+                else
+                {
+                    AppLogger.Log_To_File_log(_category, $"[GlobalData][Sys_ModelName_Assign] No Hook", AppLogLevel.Trace);
                 }
             }
         }

@@ -18,31 +18,6 @@ namespace demoVer.Broadcast
             _globalVar = globalVar;
         }
 
-        // public async Task SubscribeCommand(string commandName, uint addr)
-        // {
-        //     var cmdData = _dataCenter.MOD_DATA.GetCommandData(addr, commandName);
-        //     if (cmdData != null)
-        //     {
-        //         _eventManager.Subscribe(Context.ConnectionId, addr, commandName, cmdData);
-        //     }
-        //     else
-        //     {
-        //         Console.WriteLine($"無法訂閱 {commandName}@{addr}，資料不存在");
-        //     }
-        // }
-
-        // public async Task UnsubscribeAllCommands()
-        // {
-        //     _eventManager.UnsubscribeAll(Context.ConnectionId);
-        // }
-
-        // public override async Task OnDisconnectedAsync(Exception? ex)
-        // {
-        //     _eventManager.UnsubscribeAll(Context.ConnectionId);
-        //     await base.OnDisconnectedAsync(ex);
-        // }
-
-
         /// <summary>
         /// 訂閱整個 (addr, commandName) 的 Group_CommandRawData。
         /// 只要 group 內任一 CommandRawData.Data 變更，就重新解碼整包並推送一次。

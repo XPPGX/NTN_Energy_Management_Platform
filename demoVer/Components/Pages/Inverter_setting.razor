@@ -3,6 +3,7 @@
 @rendermode InteractiveServer
 @inject IJSRuntime JS
 @inject DataCenter DataCenter
+@inject WriteProcess writeProcess
 @using demoVer.Components.Layout
 @using System.Text.Json
 @using demoVer.Models
@@ -44,8 +45,7 @@
                                 <MudSelectItem Value="@(pair.Value)">@pair.Value</MudSelectItem>
                             }
 
-                            @* <MudSelectItem Value="@("50Hz")">50Hz</MudSelectItem>
-                            <MudSelectItem Value="@("60Hz")">60Hz</MudSelectItem> *@
+                            
                         </MudSelect>
                     </div>
                     <div class="single-selection">
@@ -54,9 +54,6 @@
                             {
                                 <MudSelectItem Value="@(pair.Value)">@pair.Value</MudSelectItem>
                             }
-                            
-                            @* <MudSelectItem Value="@("220V")">220V</MudSelectItem>
-                            <MudSelectItem Value="@("230V")">230V</MudSelectItem> *@
                         </MudSelect>
                     </div>
                 </div>
@@ -143,7 +140,7 @@
                         </div>
                         <div class="alarm-slider">
                             <MudSlider T="double" Value="@Battery_alarm_value" ValueChanged="OnBatteryAlarmChanged" ValueExpression="() => Battery_alarm_value"
-                                  Variant="Variant.Filled" Min="@(DataCenter.INV.BAT_Alarm_Min_Display)" Max="@(DataCenter.INV.BAT_Alarm_Max_Display)" Step="0.1" Size="Size.Large" />
+                                Variant="Variant.Filled" Min="@(DataCenter.INV.BAT_Alarm_Min_Display)" Max="@(DataCenter.INV.BAT_Alarm_Max_Display)" Step="0.1" Size="Size.Large" />
                         </div>
                     </div>
                     
@@ -206,6 +203,9 @@
 
 @code
 {
+    //For log
+    private string _category = "";
+
     private bool isMobile;
     private DotNetObjectReference<Inverter_setting> dotNetRef;
     
@@ -362,6 +362,11 @@
 
     protected override void OnInitialized()
     {
+        _category = GetType().FullName!;
+
+        //喚醒WriteProcess service
+        // writeProcess.awake();
+
         DataCenter.INV.OnUpdated += OnINVChanged;
 
         var newInit = new INV_InitData();
@@ -390,6 +395,8 @@
         Console.WriteLine($"[INV_Init] Battery_OV_alarm_value = {Battery_OV_alarm_value}");
         Console.WriteLine($"[INV_Init] Battery_capacity_value = {Battery_capacity_value}");
         Console.WriteLine($"Grid_touchable = {Grid_tied_power_feeding_touchable}, AC_mode_touchable = {AC_mode_charging_touchable}");
+        
+
     }
 
     private void OnINVChanged()
@@ -528,6 +535,137 @@
         AlertMessage_parent = null;
     }
     
+
+    private async Task<Dictionary<string, byte[]>> nowUIData_transformTo_apiWriteData()
+    {
+        Dictionary<string, byte[]> packedByteData = new();
+        byte[] Output_ACF_Set   = new byte[2];
+        byte[] Output_ACV_Set   = new byte[2];
+        byte[] INV_CONFIG       = new byte[2]; //Output_Prio, CHG_Prio
+        byte[] BAT_ALM_VOLT     = new byte[2];
+        byte[] BAT_SHDN_VOLT    = new byte[2];
+        byte[] BAT_RCHG_VOLT    = new byte[2];
+        byte[] BAT_OV_ALM_VOLT  = new byte[2];
+        byte[] INV_OPERATION    = new byte[2]; //GRID_Enable, AC_CHARGER_Enable
+        
+        //Output ACF_Set
+        switch(selectedFreqType?.ToLowerInvariant())
+        {
+            case "50hz": 
+                Output_ACF_Set[0] = 1;
+                break;
+            case "60hz":
+                Output_ACF_Set[0] = 2;
+                break;
+            default:
+                Output_ACF_Set[0] = 0;
+                break;
+        }
+        //Output ACV_Set
+        switch(selectedVoltType?.ToLowerInvariant())
+        {
+            case "100vac" : 
+            case "200vac" :
+                Output_ACV_Set[0] = 1;
+                break;
+            case "110vac":
+            case "220vac":
+                Output_ACV_Set[0] = 2;
+                break;
+            case "115vac":
+            case "230vac":
+                Output_ACV_Set[0] = 3;
+                break;
+            case "120vac":
+            case "240vac":
+                Output_ACV_Set[0] = 4;
+                break;
+            default:
+                Output_ACV_Set[0] = 0;
+                break;
+        }
+
+        //INV_CONFIG(Output_Prio)
+        switch(selectedOutputPriority)
+        {
+            case OUTPUT_PRIORITY.Utility:
+                INV_CONFIG[0] = (byte)(INV_CONFIG[0] & (byte)(0b_1111_1100));
+                break;
+            case OUTPUT_PRIORITY.Battery:
+                INV_CONFIG[0] = (byte)(INV_CONFIG[0] & (byte)(0b_1111_1100));
+                INV_CONFIG[0] = (byte)(INV_CONFIG[0] | (byte)(0b_0000_0001));
+                break;
+            case OUTPUT_PRIORITY.Solar:
+                INV_CONFIG[0] = (byte)(INV_CONFIG[0] & (byte)(0b_1111_1100));
+                INV_CONFIG[0] = (byte)(INV_CONFIG[0] | (byte)(0b_0000_0010));
+                break;
+            default:
+                INV_CONFIG[0] = (byte)(INV_CONFIG[0] & (byte)(0b_1111_1100));
+                break;
+        }
+        
+        //INV_CONFIG(CHG_PRIO)
+        switch(selectedChargingPriority)
+        {
+            case CHARGING_PRIORITY.Utility:
+                INV_CONFIG[0] = (byte)(INV_CONFIG[0] & (byte)(0b_1111_0011));
+                break;
+            case CHARGING_PRIORITY.Solar:
+                INV_CONFIG[0] = (byte)(INV_CONFIG[0] & (byte)(0b_1111_0011));
+                INV_CONFIG[0] = (byte)(INV_CONFIG[0] | (byte)(0b_0000_0100));
+                break;
+            default:
+                INV_CONFIG[0] = (byte)(INV_CONFIG[0] & (byte)(0b_1111_0011));
+                break;
+        }
+
+        //INV_OPERATION(CHG_EN) for all INV
+        if(AC_mode_charging_enable is true)
+        {
+            INV_OPERATION[0] = (byte)(INV_OPERATION[0] | (byte)(0b_0000_0100));
+        }
+        else
+        {
+            INV_OPERATION[0] = (byte)(INV_OPERATION[0] & (byte)(0b_1111_1011));
+        }
+
+        //INV_OPERATION(GRID_EN) for all INV
+        if(Grid_tied_power_feeding_enable is true)
+        {
+            INV_OPERATION[0] = (byte)(INV_OPERATION[0] | (byte)(0b_0000_1000));
+        }
+        else
+        {
+            INV_OPERATION[0] = (byte)(INV_OPERATION[0] & (byte)(0b_1111_0111));
+        }
+        
+        BAT_ALM_VOLT    = await writeProcess.UIvalueTransformToWriteFormat(Battery_alarm_value,     "BAT_ALM_VOLT");
+        BAT_SHDN_VOLT   = await writeProcess.UIvalueTransformToWriteFormat(Battery_shutdown_value,  "BAT_SHDN_VOLT");
+        BAT_RCHG_VOLT   = await writeProcess.UIvalueTransformToWriteFormat(Battery_recharge_value,  "BAT_RCHG_VOLT");
+        BAT_OV_ALM_VOLT = await writeProcess.UIvalueTransformToWriteFormat(Battery_OV_alarm_value,  "BAT_OV_ALM_VOLT");
+    
+        AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUIData_transformTo_apiWriteData] Output_ACF_Set    = {Output_ACF_Set[1]:X2} {Output_ACF_Set[0]:X2}",      AppLogLevel.Trace);
+        AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUIData_transformTo_apiWriteData] Output_ACV_Set    = {Output_ACV_Set[1]:X2} {Output_ACV_Set[0]:X2}",      AppLogLevel.Trace);
+        AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUIData_transformTo_apiWriteData] INV_CONFIG        = {INV_CONFIG[1]:X2} {INV_CONFIG[0]:X2}",              AppLogLevel.Trace);
+        AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUIData_transformTo_apiWriteData] BAT_ALM_VOLT      = {BAT_ALM_VOLT[1]:X2} {BAT_ALM_VOLT[0]:X2}",          AppLogLevel.Trace);
+        AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUIData_transformTo_apiWriteData] BAT_SHDN_VOLT     = {BAT_SHDN_VOLT[1]:X2} {BAT_SHDN_VOLT[0]:X2}",        AppLogLevel.Trace);
+        AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUIData_transformTo_apiWriteData] BAT_RCHG_VOLT     = {BAT_RCHG_VOLT[1]:X2} {BAT_RCHG_VOLT[0]:X2}",        AppLogLevel.Trace);
+        AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUIData_transformTo_apiWriteData] BAT_OV_ALM_VOLT   = {BAT_OV_ALM_VOLT[1]:X2} {BAT_OV_ALM_VOLT[0]:X2}",    AppLogLevel.Trace);
+        AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUIData_transformTo_apiWriteData] INV_OPERATION     = {INV_OPERATION[1]:X2} {INV_OPERATION[0]:X2}",        AppLogLevel.Trace);
+        
+        //packing
+        packedByteData["Output_ACF_Set"]    = Output_ACF_Set;
+        packedByteData["Output_ACV_Set"]    = Output_ACV_Set;
+        packedByteData["INV_CONFIG"]        = INV_CONFIG;
+        packedByteData["BAT_ALM_VOLT"]      = BAT_ALM_VOLT;
+        packedByteData["BAT_SHDN_VOLT"]     = BAT_SHDN_VOLT;
+        packedByteData["BAT_RCHG_VOLT"]     = BAT_RCHG_VOLT;
+        packedByteData["BAT_OV_ALM_VOLT"]   = BAT_OV_ALM_VOLT;
+        packedByteData["INV_OPERATION"]     = INV_OPERATION;
+
+        return packedByteData;
+    }
+
     private async Task ConfirmSave()
     {
         
@@ -537,7 +675,7 @@
             new_ACV_Display_str = selectedVoltType,
 
             new_AC_mode_charging_enable = AC_mode_charging_enable,
-            new_Grid_tied_feeding_enable = Grid_tied_power_feeding_touchable,
+            new_Grid_tied_feeding_enable = Grid_tied_power_feeding_enable,
             new_Output_priority = (byte)selectedOutputPriority,
             new_Charge_priority = (byte)selectedChargingPriority,
 
@@ -550,10 +688,22 @@
 
         Console.WriteLine($"new_BAT_Recharge_Display = {Data.new_BAT_Recharge_Display}");
         Console.WriteLine($"new_BAT_Recharge_Display = {Data.new_BAT_OV_Alarm_Value}");
-        if(DataCenter.INV.SaveSettingData(Data))
+        
+        //1. 轉 UI值 成 WriteAPI值
+        var _packedByteData_dict = await nowUIData_transformTo_apiWriteData();
+
+        //2. packedByteData 傳到 WriteProcess 發送
+        bool isWriteSuccess = await writeProcess.Write_To_Framework(_packedByteData_dict, 0); //當前 SubSys是寫死的，會直接 assign成 _globalVar.ActiveSubAppSystemID 
+        
+        //3. 成功發送的話，才同步值到其他頁面
+        if(isWriteSuccess)
         {
-            await DataCenter.BroadcastINVChangeAsync();
+            if(DataCenter.INV.SaveSettingData(Data))
+            {   
+                await DataCenter.BroadcastINVChangeAsync();
+            }
         }
+
 
         CloseAlert();
         CloseModal();
@@ -572,25 +722,6 @@
         await DataCenter.BroadcastINVChangeAsync();
         CloseAlert();
         CloseModal();
-
-        @* INVSetting DefaultVal = new INVSetting()
-        {
-            new_ACF_Display_str = DataCenter.INV.ACF_Display_str;
-            new_ACV_Display_str = DataCenter.INV.ACV_Display_str;
-
-            new_AC_mode_charging_enable = DataCenter.INV.AC_mode_charging_enable;
-            new_Grid_tied_feeding_enable = DataCenter.INV.Grid_tied_power_feeding_enable;
-            new_Output_priority = DataCenter.INV.Output_priority;
-            new_Charge_priority = DataCenter.INV.Charging_priority;
-
-            new_BAT_Alarm_Display = DataCenter.INV.BAT_Alarm_Display;
-            new_BAT_Shutdown_Display = DataCenter.INV.BAT_Shutdown_Display;
-            new_BAT_Recharge_Display = DataCenter.INV.BAT_Recharge_Display;
-            new_BAT_OV_Alarm_Value = DataCenter.INV.BAT_OV_Alarm_Display;
-            new_BAT_Capacity_Value = DataCenter.INV.BAT_Capacity_Display;
-        } *@
-
-        
     }
 
     private async Task CancelDefault()
@@ -623,7 +754,7 @@
         selectedVoltType = ReceiveData_FromSignalR.acv_display_str;
 
         AC_mode_charging_enable = ReceiveData_FromSignalR.ac_mode_charging_enable;
-        Grid_tied_power_feeding_touchable = ReceiveData_FromSignalR.grid_tied_feeding_enable;
+        Grid_tied_power_feeding_enable = ReceiveData_FromSignalR.grid_tied_feeding_enable;
         selectedOutputPriority = (OUTPUT_PRIORITY)ReceiveData_FromSignalR.output_priority;
         selectedChargingPriority = (CHARGING_PRIORITY)ReceiveData_FromSignalR.charge_priority;
 

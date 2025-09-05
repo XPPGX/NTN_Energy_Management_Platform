@@ -194,6 +194,7 @@ namespace demoVer.Services
             // {
             //     value |= effectiveData[i] << (8 * (effectiveData.Count - 1 - i));
             // }
+            //這邊可能要考慮 CAN、MOD的byte位移問題
             for(int i = effectiveData.Count - 1 ; i >= 0 && i < 4 ; i --)
             {
                 value |= effectiveData[i] << (8 * i);

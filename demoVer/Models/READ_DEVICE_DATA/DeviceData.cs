@@ -40,6 +40,32 @@ namespace demoVer.Models
             Array.Sort(arr);
             return arr;
         }
+
+        public uint? GetFirstLinkedAddr(uint? min, uint? max)
+        {
+            if(min is null){min = 0;}
+            if(max is null){max = 255;}
+            
+            uint? firstLinkedAddr = null;
+
+            foreach(var linkedAddr in _links.Keys)
+            {
+                if(linkedAddr <= max && linkedAddr >= min)
+                {
+                    firstLinkedAddr = linkedAddr;
+                    break;
+                }
+            }
+
+            if(firstLinkedAddr is null)
+            {
+                Console.WriteLine($"[LinkedDeviceStore][GetFirstLinkedAddr] firstLinkedAddr is null");
+                return null;
+            }
+
+            Console.WriteLine($"[LinkedDeviceStore][GetFirstLinkedAddr] firstLinkedAddr = {firstLinkedAddr}");
+            return firstLinkedAddr;
+        }
     }
 
     public class allDevice_Data
