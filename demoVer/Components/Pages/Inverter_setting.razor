@@ -4,14 +4,18 @@
 @inject IJSRuntime JS
 @inject DataCenter DataCenter
 @inject WriteProcess writeProcess
+@inject GlobalVar globalVar
 @using demoVer.Components.Layout
 @using System.Text.Json
 @using demoVer.Models
 @using demoVer.Utils
+@inject CommonData commonData
+@inject HeartbeatService Heartbeat
 
 <MudPopoverProvider/>
 @*Web Content*@
 <PageTitle>Inverter Setting</PageTitle>
+
 <TopRow InformParentTo_ApplySetting="ReceiveFrom_TopRow_SaveINVSetting"
         InformParentTo_UseDefaultValue="ReceiveFrom_TopRow_ApplyDefaultValue"/>
 
@@ -30,6 +34,13 @@
         }
     </div>
 }
+
+<MudOverlay Visible="_isLoading" DarkBackground="true" Class="d-flex justify-center align-center">
+    <MudPaper Class="pa-6 d-flex flex-column align-center" Elevation="4" Rounded="true">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Medium"/>
+        <MudText Typo="Typo.h6" Class="mt-4">Waiting for devices linking...</MudText>
+    </MudPaper>
+</MudOverlay>
 
 
 <div class="content-container">
@@ -208,7 +219,9 @@
 
     private bool isMobile;
     private DotNetObjectReference<Inverter_setting> dotNetRef;
-    
+    private bool _isLoading = true;
+    private bool oldScalingFactor_OK = false;
+
     bool modal_IsOpen = false;
     string AlertMessage_parent = null;
     string ConfirmBtn_Text_parent = null;
@@ -362,32 +375,34 @@
 
     protected override void OnInitialized()
     {
+        //For log
         _category = GetType().FullName!;
 
-        //喚醒WriteProcess service
-        // writeProcess.awake();
-
+        //Event Hook
         DataCenter.INV.OnUpdated += OnINVChanged;
+        _isLoading = !commonData.ScalingFactor_OK;
+        //這裡加入初始化頁面數值流程
+        // var newInit = new INV_InitData();
+        // DataCenter.INV.UpdateFrom(newInit);
 
-        var newInit = new INV_InitData();
-        DataCenter.INV.UpdateFrom(newInit);
+        oldScalingFactor_OK                 = commonData.ScalingFactor_OK;
 
-        selectedFreqType = DataCenter.INV.ACF_Display_str;
-        selectedVoltType = DataCenter.INV.ACV_Display_str;
+        selectedFreqType                    = DataCenter.INV.ACF_Display_str;
+        selectedVoltType                    = DataCenter.INV.ACV_Display_str;
 
-        AC_mode_charging_enable = DataCenter.INV.AC_mode_charging_enable;
-        Grid_tied_power_feeding_enable = DataCenter.INV.Grid_tied_power_feeding_enable;
+        AC_mode_charging_enable             = DataCenter.INV.AC_mode_charging_enable;
+        Grid_tied_power_feeding_enable      = DataCenter.INV.Grid_tied_power_feeding_enable;
         
-        AC_mode_charging_touchable = DataCenter.INV.AC_mode_charging_touchable;
-        Grid_tied_power_feeding_touchable = DataCenter.INV.Grid_tied_power_feeding_touchable;
-        Output_priority_touchable = DataCenter.INV.Output_priority_touchable;
-        Charge_priority_touchable = DataCenter.INV.Charge_priority_touchable;
+        AC_mode_charging_touchable          = DataCenter.INV.AC_mode_charging_touchable;
+        Grid_tied_power_feeding_touchable   = DataCenter.INV.Grid_tied_power_feeding_touchable;
+        Output_priority_touchable           = DataCenter.INV.Output_priority_touchable;
+        Charge_priority_touchable           = DataCenter.INV.Charge_priority_touchable;
 
-        Battery_alarm_value = DataCenter.INV.BAT_Alarm_Display;
-        Battery_shutdown_value = DataCenter.INV.BAT_Shutdown_Display;
-        Battery_recharge_value = DataCenter.INV.BAT_Recharge_Display;
-        Battery_OV_alarm_value = DataCenter.INV.BAT_OV_Alarm_Display;
-        Battery_capacity_value = DataCenter.INV.BAT_Capacity_Display;
+        Battery_alarm_value                 = DataCenter.INV.BAT_Alarm_Display;
+        Battery_shutdown_value              = DataCenter.INV.BAT_Shutdown_Display;
+        Battery_recharge_value              = DataCenter.INV.BAT_Recharge_Display;
+        Battery_OV_alarm_value              = DataCenter.INV.BAT_OV_Alarm_Display;
+        Battery_capacity_value              = DataCenter.INV.BAT_Capacity_Display;
 
         Console.WriteLine($"[INV_Init] Battery_alarm_value = {Battery_alarm_value}");
         Console.WriteLine($"[INV_Init] Battery_shutdown_value = {Battery_shutdown_value}");
@@ -395,8 +410,6 @@
         Console.WriteLine($"[INV_Init] Battery_OV_alarm_value = {Battery_OV_alarm_value}");
         Console.WriteLine($"[INV_Init] Battery_capacity_value = {Battery_capacity_value}");
         Console.WriteLine($"Grid_touchable = {Grid_tied_power_feeding_touchable}, AC_mode_touchable = {AC_mode_charging_touchable}");
-        
-
     }
 
     private void OnINVChanged()
@@ -407,6 +420,7 @@
     public void Dispose()
     {
         DataCenter.INV.OnUpdated -= OnINVChanged;
+        Heartbeat.OnTick -= Check_ScalingFactor_Status;
     }
 
     private void OnOutputPriorityChanged()
@@ -457,6 +471,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+
         if (firstRender)
         {
             dotNetRef = DotNetObjectReference.Create(this);
@@ -464,7 +479,50 @@
 
             OnChartTypeChanged();
             await DrawChart();
+            Heartbeat.OnTick += Check_ScalingFactor_Status;
+        }
+    }
+
+
+    public async Task Check_ScalingFactor_Status()
+    {
+        if(oldScalingFactor_OK != commonData.ScalingFactor_OK)
+        {
+            if(commonData.ScalingFactor_OK is true)
+            {
+                _isLoading = false;
+                AppLogger.Log_To_File_log(_category, $"[Inverter_setting][Check_ScalingFactor_Status] OK = {commonData.ScalingFactor_OK}, _isloding = {_isLoading}",      AppLogLevel.Trace);
+            }
+            else
+            {
+                _isLoading = true;
+                AppLogger.Log_To_File_log(_category, $"[Inverter_setting][Check_ScalingFactor_Status] OK = {commonData.ScalingFactor_OK}, _isloading = {_isLoading}",      AppLogLevel.Trace);
+            }
             
+
+            oldScalingFactor_OK = commonData.ScalingFactor_OK;
+            
+            //Update UI values
+            selectedFreqType                    = DataCenter.INV.ACF_Display_str;
+            selectedVoltType                    = DataCenter.INV.ACV_Display_str;
+
+            AC_mode_charging_enable             = DataCenter.INV.AC_mode_charging_enable;
+            Grid_tied_power_feeding_enable      = DataCenter.INV.Grid_tied_power_feeding_enable;
+            
+            AC_mode_charging_touchable          = DataCenter.INV.AC_mode_charging_touchable;
+            Grid_tied_power_feeding_touchable   = DataCenter.INV.Grid_tied_power_feeding_touchable;
+            Output_priority_touchable           = DataCenter.INV.Output_priority_touchable;
+            Charge_priority_touchable           = DataCenter.INV.Charge_priority_touchable;
+
+            Battery_alarm_value                 = DataCenter.INV.BAT_Alarm_Display;
+            Battery_shutdown_value              = DataCenter.INV.BAT_Shutdown_Display;
+            Battery_recharge_value              = DataCenter.INV.BAT_Recharge_Display;
+            Battery_OV_alarm_value              = DataCenter.INV.BAT_OV_Alarm_Display;
+            Battery_capacity_value              = DataCenter.INV.BAT_Capacity_Display;
+
+            OnChartTypeChanged();
+            await InvokeAsync(StateHasChanged);
+            AppLogger.Log_To_File_log(_category, $"[Inverter_setting][Check_ScalingFactor_Status] Refreshed UI", AppLogLevel.Trace);
         }
     }
 
@@ -693,21 +751,47 @@
         var _packedByteData_dict = await nowUIData_transformTo_apiWriteData();
 
         //2. packedByteData 傳到 WriteProcess 發送
-        bool isWriteSuccess = await writeProcess.Write_To_Framework(_packedByteData_dict, 0); //當前 SubSys是寫死的，會直接 assign成 _globalVar.ActiveSubAppSystemID 
-        
-        //3. 成功發送的話，才同步值到其他頁面
-        if(isWriteSuccess)
+        try
         {
-            if(DataCenter.INV.SaveSettingData(Data))
-            {   
-                await DataCenter.BroadcastINVChangeAsync();
+            bool isWriteSuccess = await writeProcess.Write_To_Framework(_packedByteData_dict, 0); //當前 SubSys是寫死的，會直接 assign成 _globalVar.ActiveSubAppSystemID 
+            if(isWriteSuccess is false)
+            {
+                AppLogger.Log_To_File_log(_category, $"[Inverter_setting][ConfirmSave] Writing To device failed", AppLogLevel.Trace);
+                return;
             }
+            
+            //成功寫值到Framework之後
+            //3. 將設定值存於記憶體、JsonFile
+            bool isSaveSettingToFile_Succ = await DataCenter.save_INVSetting(Data);
+            if(isSaveSettingToFile_Succ is false)
+            {
+                AppLogger.Log_To_File_log(_category, $"[Inverter_setting][ConfirmSave] save To memory or Json failed", AppLogLevel.Trace);
+                return;
+            }
+            //4. 同步INV setting值到其他Client端
+            await DataCenter.BroadcastINVChangeAsync();     
         }
+        finally
+        {
+            CloseAlert();
+            CloseModal();
+            Console.WriteLine("[ConfirmSave]");
+        }
+           
+        
+        //3. 成功設定的話
+        // if(isWriteSuccess)
+        // {
+        //     //4. 將設定值儲存於json檔案(待辦)
+        //     if(DataCenter.INV.SaveSettingData(Data))
+        //     {   
+        //         //5. 同步INV setting值到其他Client端
+        //         await DataCenter.BroadcastINVChangeAsync();
 
-
-        CloseAlert();
-        CloseModal();
-        Console.WriteLine("[ConfirmSave]");
+        //         //6. 將設定值儲存於 JSON 檔案
+        //         await DataCenter.save_INVSetting_To_JsonFile();
+        //     }
+        // }
     }
 
     private async Task CancelSave()
@@ -716,6 +800,7 @@
         CloseModal();
     }
 
+    //待辦(等API更新)
     private async Task ConfirmDefault()
     {
         DataCenter.INV.UpdateFrom(new INV_InitData()); //這邊已經把Default值存入DataCenter

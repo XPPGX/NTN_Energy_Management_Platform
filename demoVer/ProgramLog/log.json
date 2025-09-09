@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-09-05 15:09:02.055",
+  "timestamp": "2025-09-09 15:02:52.124",
   "data": [
     {
       "commandName": "CURVE_FV",
@@ -21,7 +21,7 @@
           "addr": 0,
           "value": [
             0,
-            0,
+            4,
             0,
             0
           ]
@@ -33,7 +33,7 @@
       "isPerAddr": false,
       "targetValue": [
         0,
-        1,
+        0,
         0,
         0
       ],
@@ -66,7 +66,7 @@
       "isPerAddr": false,
       "targetValue": [
         0,
-        3,
+        1,
         0,
         0
       ],
@@ -120,8 +120,8 @@
       "commandName": "BAT_RCHG_VOLT",
       "isPerAddr": false,
       "targetValue": [
-        14,
-        96,
+        21,
+        144,
         0,
         0
       ],
@@ -132,7 +132,7 @@
       "isPerAddr": false,
       "targetValue": [
         18,
-        242,
+        202,
         0,
         0
       ],
@@ -153,8 +153,8 @@
       "commandName": "BAT_SHDN_VOLT",
       "isPerAddr": false,
       "targetValue": [
-        15,
-        170,
+        16,
+        4,
         0,
         0
       ],
@@ -187,7 +187,7 @@
       "isPerAddr": false,
       "targetValue": [
         24,
-        136,
+        76,
         0,
         0
       ],

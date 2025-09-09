@@ -1,7 +1,11 @@
 using demoVer.Models;
 using demoVer.Broadcast;
+using demoVer.Utils;
 using Microsoft.AspNetCore.SignalR;
 
+using System;
+using System.Text.Json.Serialization;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Text.Json;
 using demoVer.Interfaces;
@@ -17,7 +21,10 @@ namespace demoVer.Services
 
     public class DataCenter
     {
+        //For log
+        private string _category = "";
         //[Injection] services instances
+
         private readonly HeartbeatService _heartbeat;
         private readonly IHubContext<DataHub> _hubContext; //SignalR Hub
         private readonly CommonData _commonData;
@@ -37,11 +44,12 @@ namespace demoVer.Services
         private List<double> _values2 = new();
         //[DEBUG]外部元件可訂閱此事件來接收圖表刷新通知
         public event Func<Task>? OnChartDataUpdated;
-
-        
-
         // public bool ApiSendFlag = false;
         
+        
+        private readonly SemaphoreSlim _DataCenter_SaveData_lock = new(1, 1);
+        public string oldMdlName = "";
+
         public DataCenter(  CommonData commonData, 
                             HeartbeatService heartbeat, 
                             IHubContext<DataHub> hubContext,
@@ -50,6 +58,8 @@ namespace demoVer.Services
                             GlobalVar globalVar,
                             IGroupsDataDecoder decoder)
         {
+            _category = GetType().FullName!;
+
             _heartbeat  = heartbeat;
             _hubContext = hubContext;
             _commonData = commonData;
@@ -59,14 +69,28 @@ namespace demoVer.Services
             _decoder = decoder;
 
             // Device_ReadData = new allDevice_Data();
+            
             Battery     = new Battery_DataSetting_Module(_commonData);
-            Battery.UpdateFrom(new Battery_InitData()); //接收初始值
+            // Battery.UpdateFrom(new Battery_InitData()); //接收初始值
             INV         = new INV_DataSetting_Module(_commonData);
-            INV.UpdateFrom(new INV_InitData()); //接收初始值
+            // INV.UpdateFrom(INV_InitData.LoadFromJsonFile()); //接收初始值
             uint pollingCounter = 0;
             bool ApiReadFlag = false;
             uint counter = 0;
             bool counterEnable = true;
+
+
+            bool initSysFromJson = initSys();
+            if(initSysFromJson is true)
+            {
+                _globalVar.nowInitStage = InitStage.Done;
+            }         
+            else
+            {
+                _globalVar.nowInitStage = InitStage.FromDevice;
+            }
+            // _globalVar.InitSysOK = initSys();
+
             _heartbeat.OnTick += async () => 
             {
                 // AddSimulatedData();
@@ -79,8 +103,6 @@ namespace demoVer.Services
                     // Console.WriteLine("[Parsed Result] = " + parsedJson);
 
                     // READ_API_TEST();
-                    
-                    
                     ApiReadFlag = true;
                 }
 
@@ -90,18 +112,248 @@ namespace demoVer.Services
                     // LocalDataChange_Test();
                 }
                 counter ++;
-                
-                // if(pollingCounter == 10)
-                // {
-                //     _globalVar.Debug_Flag = false;
-                //     pollingCounter = 0;
-                // }
-                
-                // pollingCounter ++;
 
-                // Update_Read_Data();
                 await RefreshAllAsync();
             };
+
+            //MdlName不一樣的時候會觸發這個Event
+            _globalVar.Sys_ModelName_OnChanged += DataCenter_MdlNameChange_Task;
+            _commonData.ScalingFactor_StateChanged += SettingValues;
+        }
+
+        public async Task SettingValues()
+        {
+            
+            Battery.UpdateFrom(new Battery_InitData()); //接收初始值
+
+            //INV設定值 初始化流程
+            INV.UpdateFrom(INV_InitData.LoadFromJsonFile()); //接收初始值
+        }
+
+        public bool initSys()
+        {
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] Start...", AppLogLevel.Trace);
+            //1. Read ModelName
+            bool read_mdlName_succ = read_OldMdlName_FromJson();
+            if(read_mdlName_succ is false)
+            {
+                AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] read_mdlName FAIL", AppLogLevel.Trace);
+                return false;
+            }
+
+            //2. Read Scaling Factor 
+            bool read_Scaling_succ = read_OldScaling_FromJson();
+            if(read_Scaling_succ is false)
+            {
+                AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] read Scaling FAIL", AppLogLevel.Trace);
+                return false;
+            }
+            
+            //3. Read INV setting
+            bool read_INV_Setting_succ = read_OldINVSetting_FromJson();
+            if(read_INV_Setting_succ is false)
+            {
+                AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] read INV_Setting FAIL", AppLogLevel.Trace);
+                return false;
+            }
+            //4. Read BAT setting(待辦)
+            Battery.UpdateFrom(new Battery_InitData());
+
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] Done...", AppLogLevel.Trace);
+            return true;
+        }
+
+        public bool read_OldMdlName_FromJson()
+        {            
+            string AppDataDirectory = Path.GetFullPath("App_Data");
+            string AppData_SysInfo = Path.Combine(AppDataDirectory, "LastTime_SysInfo.json");
+
+            if(!File.Exists(AppData_SysInfo))
+            {
+                AppLogger.Log_To_File_log(_category, $"[DataCenter][read_OldMdlName_FromJson]{AppData_SysInfo} 檔案不存在", AppLogLevel.Trace);
+                return false;
+            }
+
+            string json = File.ReadAllText(AppData_SysInfo);
+            var options = new JsonSerializerOptions{PropertyNameCaseInsensitive = true};
+
+            var sysInitData = JsonSerializer.Deserialize<Sys_InitData>(json, options) ?? new Sys_InitData();
+            if(string.IsNullOrEmpty(sysInitData.mdlName))
+            {
+                AppLogger.Log_To_File_log(_category, $"[DataCenter][read_OldMdlName_FromJson]{AppData_SysInfo} 內容不存在", AppLogLevel.Trace);
+                return false;
+            }
+
+            oldMdlName = sysInitData.mdlName;
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][read_OldMdlName_FromJson] oldMdlName = {oldMdlName}", AppLogLevel.Trace);
+            return true;
+        }
+
+        public bool read_OldScaling_FromJson()
+        {
+            string AppDataDirectory = Path.GetFullPath("App_Data");
+            string AppData_Scaling = Path.Combine(AppDataDirectory, "LastTime_ScalingFactors.json");
+
+            if(!File.Exists(AppData_Scaling))
+            {
+                AppLogger.Log_To_File_log(_category, $"[DataCenter][read_OldScaling_FromJson] {AppData_Scaling} 檔案不存在", AppLogLevel.Trace);
+                return false;
+            }
+
+            string json = File.ReadAllText(AppData_Scaling);
+            
+            var dict = JsonSerializer.Deserialize<Dictionary<string, double>>(json);
+            if(dict is null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[DataCenter][read_OldScaling_FromJson] {AppData_Scaling} 內容不存在", AppLogLevel.Trace);
+                return false;    
+            }
+
+            var tmpConcurrentDict = new ConcurrentDictionary<string, double>(dict);
+            _commonData.UpdateScalingFactors(tmpConcurrentDict);
+            
+            return true;
+        }
+
+        public bool read_OldINVSetting_FromJson()
+        {
+            string AppDataDirectory = Path.GetFullPath("App_Data");
+            string AppData_INVSetting = Path.Combine(AppDataDirectory, "INV_Setting_LastTime.json");
+
+            if(!File.Exists(AppData_INVSetting))
+            {
+                AppLogger.Log_To_File_log(_category, $"[DataCenter][read_OldINVSetting_FromJson] {AppData_INVSetting} 檔案不存在", AppLogLevel.Trace);
+                return false;
+            }
+
+            INV.UpdateFrom(INV_InitData.LoadFromJsonFile());
+            return true;
+        }
+
+
+        public async Task DataCenter_MdlNameChange_Task()
+        {
+            if(string.Equals(oldMdlName, _globalVar.Sys_ModelName, StringComparison.OrdinalIgnoreCase))
+            {
+                AppLogger.Log_To_File_log(_category, $"[DataCenter][DataCenter_MdlNameChange_Task] oldMdlName == _globalVar.Sys_ModelName", AppLogLevel.Trace);
+                
+                _commonData.ScalingFactor_OK = true;
+                
+                return;
+            }
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = {oldMdlName}, _globalVar.Sys_ModelName = {_globalVar.Sys_ModelName}", AppLogLevel.Trace);
+            
+            //重新 Loading
+            if(!string.IsNullOrEmpty(_globalVar.Sys_ModelName))
+            {
+                //1. SysInfo
+                saveSysInfo_To_JsonFile();
+                //2. ScalingFactor
+                await _commonData.modelNameChange_Task(); //讀新的 Scaling 到記憶體
+                saveScaling_To_JsonFile(); //把記憶體內新的 Scaling 存到Json file
+                //3. INV setting
+                //待辦(等上下限API開通)
+                //4. BAT setting
+                //待辦(等上下限API開通)
+            }
+            
+        }
+
+        public void saveSysInfo_To_JsonFile()
+        {
+            string AppDataDirectory = Path.GetFullPath("App_Data");
+            string sysInfo_FilePath = Path.Combine(AppDataDirectory, "LastTime_SysInfo.json");
+
+            oldMdlName = _globalVar.Sys_ModelName;
+
+            var sysInfo = new Sys_InitData();
+            sysInfo.mdlName = oldMdlName;
+
+            if(!Directory.Exists(AppDataDirectory))
+            {
+                Directory.CreateDirectory(AppDataDirectory);
+            }
+
+            var options = new JsonSerializerOptions{WriteIndented = true};
+            string json = JsonSerializer.Serialize(sysInfo, options);
+            
+            File.WriteAllText(sysInfo_FilePath, json);
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][saveSysInfo_To_JsonFile] save sysInfo to JsonFile, _globalVar.Sys_ModelName = {_globalVar.Sys_ModelName}", AppLogLevel.Trace);
+        }
+
+        public void saveScaling_To_JsonFile()
+        {
+            string AppDataDirectory = Path.GetFullPath("App_Data");
+            string scaling_FilePath = Path.Combine(AppDataDirectory, "LastTime_ScalingFactors.json");
+            
+            var scaling_factors = _commonData._ScalingFactors;
+            
+            if(!Directory.Exists(AppDataDirectory))
+            {
+                Directory.CreateDirectory(AppDataDirectory);
+            }
+
+            var options = new JsonSerializerOptions{WriteIndented = true};
+            string json = JsonSerializer.Serialize(scaling_factors, options);
+
+            File.WriteAllText(scaling_FilePath, json);
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][saveScaling_To_JsonFile] save Scaling to JsonFile", AppLogLevel.Trace);
+        }
+
+
+        public async Task<bool> save_INVSetting(INVSetting Data)
+        {
+            if(!_DataCenter_SaveData_lock.Wait(0))
+            {
+                AppLogger.Log_To_File_log(_category, $"[DataCenter][save_INVSetting] There are someone using this function, Skip", AppLogLevel.Trace);
+                return false;
+            }
+
+            try
+            {
+                //存到記憶體
+                AppLogger.Log_To_File_log(_category, $"[DataCenter][save_INVSetting] Saving to memory...", AppLogLevel.Trace);
+                bool memory_changed = INV.SaveSettingData(Data);
+                AppLogger.Log_To_File_log(_category, $"[DataCenter][save_INVSetting] Saving to memory...done", AppLogLevel.Trace);
+                if(memory_changed is true)
+                {
+                    //存到JsonFile
+                    AppLogger.Log_To_File_log(_category, $"[DataCenter][save_INVSetting] Saving to Json...", AppLogLevel.Trace);
+                    save_INVSetting_To_JsonFile();
+                    AppLogger.Log_To_File_log(_category, $"[DataCenter][save_INVSetting] Saving to Json...done", AppLogLevel.Trace);
+                    return true;
+                }
+                AppLogger.Log_To_File_log(_category, $"[DataCenter][save_INVSetting] Saving Failed, memory_changed = {memory_changed}", AppLogLevel.Trace);
+                return false;
+            }
+            catch(Exception e)
+            {
+                AppLogger.Log_To_File_log(_category, $"[DataCenter][save_INVSetting] Error : {e}", AppLogLevel.Warning);
+                return false;
+            }
+            finally
+            {
+                //釋放鎖
+                _DataCenter_SaveData_lock.Release();
+            }
+        }
+
+        public void save_INVSetting_To_JsonFile()
+        {
+            string AppDataDirectory = Path.GetFullPath("App_Data");
+            string INV_SettingFilePath = Path.Combine(AppDataDirectory, "INV_Setting_LastTime.json");
+            
+            var dataToJson = INV.ToINV_InitData();
+            
+            if(!Directory.Exists(AppDataDirectory))
+            {
+                Directory.CreateDirectory(AppDataDirectory);
+            }
+
+            var options = new JsonSerializerOptions{WriteIndented = true};
+            string json = JsonSerializer.Serialize(dataToJson, options);
+
+            File.WriteAllText(INV_SettingFilePath, json);   
         }
 
         public async Task READ_API_TEST()

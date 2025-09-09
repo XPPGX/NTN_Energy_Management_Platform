@@ -89,7 +89,8 @@ namespace demoVer.Services
 
         
         //Variable
-        private bool IsSteady {get; set;} = false;
+        public bool InitSysOK {get; set;} = false;
+        public InitStage nowInitStage = InitStage.FromJson; 
 
         private int _invConnectNum;
         public int INV_ConnectNum
@@ -149,15 +150,19 @@ namespace demoVer.Services
             LinkedDevices               = new LinkedDeviceStore();
             Device_WriteData            = new WriteAPI_Datas();
             SubSystems                  = new List<SubAppSystem>();
-            initSubAppSystem();
 
             //[just for computing]
             F_phase_Counters            = new IP_OP_F_count();
+
+            //Init
+            initSubAppSystem();
 
             //Events(Actions)
             LinkedDevices.linkChanged   += Get_INV_ConnectNum;
             _heartbeat.OnTick           += TickTask;
         }
+
+        
 
         public void initSubAppSystem()
         {
@@ -190,15 +195,38 @@ namespace demoVer.Services
         public async Task TickTask()
         {
             // updateSystemVar();
-            Compute_SYS_Phase(); //for loop length = 256
-            ComputeOverallValues(); // for loop length = 256
+            switch(nowInitStage)
+            {
+                case InitStage.FromJson:
+                    break;
+                case InitStage.FromDevice:
+                case InitStage.Done:
+                    //FromDevice 跟 Done，都一樣要從 Polling READ_API 那邊讀值
+                    Compute_SYS_Phase(); //for loop length = 256
+                    ComputeOverallValues(); // for loop length = 256
+                    break;
+                default:
+                    break;
+            }
 
+            // if(InitSysOK is true)
+            // {
+                
+            // }
+            // else
+            // {//從Read API讀 Sys Init資訊
+            //     //1. SysInfo
+            //     //2. INV Setting
+            //     //3. BAT Setting
+            //     // InitSysOK = true;
+            // }
             // await Sys_INV_Mode_OnChanged()?.Invoke();
             // AppLogger.Log_To_File_log(_category, $"[GlobalData][Sys_INV_Mode_Assign]", AppLogLevel.Trace);
             // await Sys_ModelName_OnChanged()?.Invoke();
             // AppLogger.Log_To_File_log(_category, $"[GlobalData][Sys_ModelName_Assign]", AppLogLevel.Trace);
         }
 
+        
 
         public void updateSystemVar()
         {

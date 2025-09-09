@@ -4,7 +4,7 @@ using demoVer.Interfaces;
 
 namespace demoVer.Services
 {
-    public class WriteProcess
+    public class WriteProcess : IDisposable
     {
         
         //For log
@@ -28,6 +28,11 @@ namespace demoVer.Services
             //Injections
             _globalVar = globalVar;
             _apiManager = apiManager;
+        }
+
+        public void Dispose()
+        {   
+
         }
 
         //[開發中] 目前只支援一個運行中的系統，待後續擴展
@@ -100,7 +105,7 @@ namespace demoVer.Services
             }
             finally
             {
-                 _lock.Release();
+                _lock.Release();
             }
         }
 
@@ -114,14 +119,14 @@ namespace demoVer.Services
             }
             targetSubSystem_WriteMem.saveSettingData_From_Framework_To_Check(result);
         }
-
+ 
         //只能在CHECK有資料的時候呼叫
-        private void assignScalingFactors_To_SubSysWriteMem(SubAppSystem subSysInfo, SubAppSystem_WriteMemory targetSubSystem_WriteMem)
+        public void assignScalingFactors_To_SubSysWriteMem(SubAppSystem subSysInfo, SubAppSystem_WriteMemory targetSubSystem_WriteMem)
         {
             uint portStartAddr =(uint)(_globalVar.getPortStartAddr(subSysInfo.port));
             uint subSys_trueStartAddr = portStartAddr + subSysInfo.startAddr;
             uint subSys_trueEndAddr = subSys_trueStartAddr + subSysInfo.length;
-
+        
             //0. 取範圍內，任一連線機器
             uint? firstLinkedAddr = _globalVar.LinkedDevices.GetFirstLinkedAddr(subSys_trueStartAddr, subSys_trueEndAddr);
             if(firstLinkedAddr is null)
@@ -321,9 +326,9 @@ namespace demoVer.Services
 
         // //service宣告在process.cs之後，要實際呼叫一次function或是使用內部變數，才會實際建立instance
         // //awake() function用於讓他實際建立instance
-        public void awake()
+        public bool isDeviceReady()
         {
-            Console.WriteLine("WriteAPI : awake");
+            return false;        
         }
     }
 }

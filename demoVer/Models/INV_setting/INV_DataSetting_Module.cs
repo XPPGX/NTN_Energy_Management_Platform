@@ -148,100 +148,318 @@ namespace demoVer.Models
         }
 
         //BAT_Alarm
-        private uint _BAT_Alarm;
+        private uint _BAT_Alarm = 0;
         public uint BAT_Alarm => _BAT_Alarm;
+        // public double BAT_Alarm_Display
+        // {
+        //     get => ScalingComputer.MultOperation_doubleVer((double)_BAT_Alarm, _commonData.VDC_Factor);
+        //     set => _BAT_Alarm = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, _commonData.VDC_Factor);
+        // }
         public double BAT_Alarm_Display
         {
-            get => ScalingComputer.MultOperation_doubleVer((double)_BAT_Alarm, _commonData.VDC_Factor * 10);
-            set => _BAT_Alarm = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, _commonData.VDC_Factor) / 10;
+            get
+            {
+                if(_commonData._ScalingFactors.TryGetValue("BAT_ALM_VOLT", out var factor))
+                {
+                    return ScalingComputer.MultOperation_doubleVer((double)_BAT_Alarm, factor);
+                }
+                else
+                {
+                    Console.WriteLine("BAT_ALM_VOLT : factor = 0");
+                    return 0;
+                }
+            }
+
+            set
+            {
+                if(_commonData._ScalingFactors.TryGetValue("BAT_ALM_VOLT", out var factor))
+                {
+                    _BAT_Alarm = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, factor);
+                }
+            }
         }
 
-        private uint _BAT_Alarm_Max;
+
+        private uint _BAT_Alarm_Max = 0;
         public uint BAT_Alarm_Max => _BAT_Alarm_Max;
         public double BAT_Alarm_Max_Display
         {
-            get => ScalingComputer.MultOperation_doubleVer((double)_BAT_Alarm_Max, _commonData.VDC_Factor * 10);
-            set => _BAT_Alarm_Max = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, _commonData.VDC_Factor) / 10;
+            // get => ScalingComputer.MultOperation_doubleVer((double)_BAT_Alarm_Max, _commonData.VDC_Factor * 10);
+            // set => _BAT_Alarm_Max = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, _commonData.VDC_Factor) / 10;
+
+            get
+            {
+                if(_commonData._ScalingFactors.TryGetValue("BAT_ALM_VOLT", out var factor))
+                {
+                    return ScalingComputer.MultOperation_doubleVer((double)_BAT_Alarm_Max, factor);
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+
+            set
+            {
+                if(_commonData._ScalingFactors.TryGetValue("BAT_ALM_VOLT", out var factor))
+                {
+                    _BAT_Alarm_Max = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, factor);
+                }
+            }
         }
 
-        private uint _BAT_Alarm_Min;
+        private uint _BAT_Alarm_Min = 0;
         public uint BAT_Alarm_Min => _BAT_Alarm_Min;
         public double BAT_Alarm_Min_Display
         {
-            get => ScalingComputer.MultOperation_doubleVer((double)_BAT_Alarm_Min, _commonData.VDC_Factor * 10);
-            set => _BAT_Alarm_Min = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, _commonData.VDC_Factor) / 10;
+            // get => ScalingComputer.MultOperation_doubleVer((double)_BAT_Alarm_Min, _commonData.VDC_Factor * 10);
+            // set => _BAT_Alarm_Min = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, _commonData.VDC_Factor) / 10;
+            get
+            {
+                if(_commonData._ScalingFactors.TryGetValue("BAT_ALM_VOLT", out var factor))
+                {
+                    return ScalingComputer.MultOperation_doubleVer((double)_BAT_Alarm_Min, factor);
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+
+            set
+            {
+                if(_commonData._ScalingFactors.TryGetValue("BAT_ALM_VOLT", out var factor))
+                {
+                    _BAT_Alarm_Min = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, factor);
+                }
+            }
         }
 
 
         //BAT_Shutdown
-        private uint _BAT_Shutdown;
+        private uint _BAT_Shutdown = 0;
         public uint BAT_Shutdown => _BAT_Shutdown;
         public double BAT_Shutdown_Display
         {
-            get => ScalingComputer.MultOperation_doubleVer((double)_BAT_Shutdown, _commonData.VDC_Factor * 10);
-            set => _BAT_Shutdown = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, _commonData.VDC_Factor) / 10;
+            // get => ScalingComputer.MultOperation_doubleVer((double)_BAT_Shutdown, _commonData.VDC_Factor * 10);
+            // set => _BAT_Shutdown = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, _commonData.VDC_Factor) / 10;
+            get
+            {
+                if(_commonData._ScalingFactors.TryGetValue("BAT_SHDN_VOLT", out var factor))
+                {
+                    return ScalingComputer.MultOperation_doubleVer((double)_BAT_Shutdown, factor);
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+
+            set
+            {
+                if(_commonData._ScalingFactors.TryGetValue("BAT_SHDN_VOLT", out var factor))
+                {
+                    _BAT_Shutdown = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, factor);
+                }
+            }
+            
         }
 
-        private uint _BAT_Shutdown_Max;
+        private uint _BAT_Shutdown_Max = 0;
         public uint BAT_Shutdown_Max => _BAT_Shutdown_Max;
         public double BAT_Shutdown_Max_Display
         {
-            get => ScalingComputer.MultOperation_doubleVer((double)_BAT_Shutdown_Max, _commonData.VDC_Factor * 10);
-            set => _BAT_Shutdown_Max = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, _commonData.VDC_Factor) / 10;
+            // get => ScalingComputer.MultOperation_doubleVer((double)_BAT_Shutdown_Max, _commonData.VDC_Factor * 10);
+            // set => _BAT_Shutdown_Max = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, _commonData.VDC_Factor) / 10;
+            get
+            {
+                if(_commonData._ScalingFactors.TryGetValue("BAT_SHDN_VOLT", out var factor))
+                {
+                    return ScalingComputer.MultOperation_doubleVer((double)_BAT_Shutdown_Max, factor);
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+
+            set
+            {
+                if(_commonData._ScalingFactors.TryGetValue("BAT_SHDN_VOLT", out var factor))
+                {
+                    _BAT_Shutdown_Max = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, factor);
+                }
+            }
         }
 
-        private uint _BAT_Shutdown_Min;
+        private uint _BAT_Shutdown_Min = 0;
         public uint BAT_Shutdown_Min => _BAT_Shutdown_Min;
         public double BAT_Shutdown_Min_Display
         {
-            get => ScalingComputer.MultOperation_doubleVer((double)_BAT_Shutdown_Min, _commonData.VDC_Factor * 10);
-            set => _BAT_Shutdown_Min = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, _commonData.VDC_Factor) / 10;
+            // get => ScalingComputer.MultOperation_doubleVer((double)_BAT_Shutdown_Min, _commonData.VDC_Factor * 10);
+            // set => _BAT_Shutdown_Min = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, _commonData.VDC_Factor) / 10;
+            get
+            {
+                if(_commonData._ScalingFactors.TryGetValue("BAT_SHDN_VOLT", out var factor))
+                {
+                    return ScalingComputer.MultOperation_doubleVer((double)_BAT_Shutdown_Min, factor);
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+
+            set
+            {
+                if(_commonData._ScalingFactors.TryGetValue("BAT_SHDN_VOLT", out var factor))
+                {
+                    _BAT_Shutdown_Min = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, factor);
+                }
+            }
         }
         
         //BAT_Recharge range
-        private uint _BAT_Recharge;
+        private uint _BAT_Recharge = 0;
         public uint BAT_Recharge => _BAT_Recharge;
         public double BAT_Recharge_Display
         {
-            get => ScalingComputer.MultOperation_doubleVer((double)_BAT_Recharge, _commonData.VDC_Factor * 10);
-            set => _BAT_Recharge = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, _commonData.VDC_Factor) / 10;
+            // get => ScalingComputer.MultOperation_doubleVer((double)_BAT_Recharge, _commonData.VDC_Factor * 10);
+            // set => _BAT_Recharge = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, _commonData.VDC_Factor) / 10;
+            get
+            {
+                if(_commonData._ScalingFactors.TryGetValue("BAT_RCHG_VOLT", out var factor))
+                {
+                    return ScalingComputer.MultOperation_doubleVer((double)_BAT_Recharge, factor);
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+
+            set
+            {
+                if(_commonData._ScalingFactors.TryGetValue("BAT_RCHG_VOLT", out var factor))
+                {
+                    _BAT_Recharge = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, factor);
+                }
+            }
         }
 
-        private uint _BAT_Recharge_Min;
+        private uint _BAT_Recharge_Min = 0;
         public uint BAT_Recharge_Min => _BAT_Recharge_Min;
         public double BAT_Recharge_Min_Display
         {
-            get => ScalingComputer.MultOperation_doubleVer((double)_BAT_Recharge_Min, _commonData.VDC_Factor * 10);
-            set => _BAT_Recharge_Min = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, _commonData.VDC_Factor) / 10;
+            // get => ScalingComputer.MultOperation_doubleVer((double)_BAT_Recharge_Min, _commonData.VDC_Factor * 10);
+            // set => _BAT_Recharge_Min = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, _commonData.VDC_Factor) / 10;
+            get
+            {
+                if(_commonData._ScalingFactors.TryGetValue("BAT_RCHG_VOLT", out var factor))
+                {
+                    return ScalingComputer.MultOperation_doubleVer((double)_BAT_Recharge_Min, factor);
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+
+            set
+            {
+                if(_commonData._ScalingFactors.TryGetValue("BAT_RCHG_VOLT", out var factor))
+                {
+                    _BAT_Recharge_Min = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, factor);
+                }
+            }
         }
         
         //BAT_OV_Alarm range
-        private uint _BAT_OV_Alarm;
+        private uint _BAT_OV_Alarm = 0;
         public uint BAT_OV_Alarm => _BAT_OV_Alarm;
         public double BAT_OV_Alarm_Display
         {
-            get => ScalingComputer.MultOperation_doubleVer((double)_BAT_OV_Alarm, _commonData.VDC_Factor * 10);
-            set => _BAT_OV_Alarm = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, _commonData.VDC_Factor) / 10;
+            // get => ScalingComputer.MultOperation_doubleVer((double)_BAT_OV_Alarm, _commonData.VDC_Factor * 10);
+            // set => _BAT_OV_Alarm = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, _commonData.VDC_Factor) / 10;
+            get
+            {
+                if(_commonData._ScalingFactors.TryGetValue("BAT_OV_ALM_VOLT", out var factor))
+                {
+                    return ScalingComputer.MultOperation_doubleVer((double)_BAT_OV_Alarm, factor);
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+
+            set
+            {
+                if(_commonData._ScalingFactors.TryGetValue("BAT_OV_ALM_VOLT", out var factor))
+                {
+                    _BAT_OV_Alarm = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, factor);
+                }
+            }
         }
 
-        private uint _BAT_OV_Alarm_Max;
+        private uint _BAT_OV_Alarm_Max = 0;
         public uint BAT_OV_Alarm_Max => _BAT_OV_Alarm_Max;
         public double BAT_OV_Alarm_Max_Display
         {
-            get => ScalingComputer.MultOperation_doubleVer((double)_BAT_OV_Alarm_Max, _commonData.VDC_Factor * 10);
-            set => _BAT_OV_Alarm_Max = (uint)ScalingComputer.DevideOperation_doubleVer((double) value, _commonData.VDC_Factor) / 10;
+            // get => ScalingComputer.MultOperation_doubleVer((double)_BAT_OV_Alarm_Max, _commonData.VDC_Factor * 10);
+            // set => _BAT_OV_Alarm_Max = (uint)ScalingComputer.DevideOperation_doubleVer((double) value, _commonData.VDC_Factor) / 10;
+
+            get
+            {
+                if(_commonData._ScalingFactors.TryGetValue("BAT_OV_ALM_VOLT", out var factor))
+                {
+                    return ScalingComputer.MultOperation_doubleVer((double)_BAT_OV_Alarm_Max, factor);
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+
+            set
+            {
+                if(_commonData._ScalingFactors.TryGetValue("BAT_OV_ALM_VOLT", out var factor))
+                {
+                    _BAT_OV_Alarm_Max = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, factor);
+                }
+            }
         }
 
-        private uint _BAT_OV_Alarm_Min;
+        private uint _BAT_OV_Alarm_Min = 0;
         public uint BAT_OV_Alarm_Min => _BAT_OV_Alarm_Min;
         public double BAT_OV_Alarm_Min_Display
         {
-            get => ScalingComputer.MultOperation_doubleVer((double)_BAT_OV_Alarm_Min, _commonData.VDC_Factor * 10);
-            set => _BAT_OV_Alarm_Min = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, _commonData.VDC_Factor) / 10;
+            // get => ScalingComputer.MultOperation_doubleVer((double)_BAT_OV_Alarm_Min, _commonData.VDC_Factor * 10);
+            // set => _BAT_OV_Alarm_Min = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, _commonData.VDC_Factor) / 10;
+
+            get
+            {
+                if(_commonData._ScalingFactors.TryGetValue("BAT_OV_ALM_VOLT", out var factor))
+                {
+                    return ScalingComputer.MultOperation_doubleVer((double)_BAT_OV_Alarm_Min, factor);
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+
+            set
+            {
+                if(_commonData._ScalingFactors.TryGetValue("BAT_OV_ALM_VOLT", out var factor))
+                {
+                    _BAT_OV_Alarm_Min = (uint)ScalingComputer.DevideOperation_doubleVer((double)value, factor);
+                }
+            }
         }
 
         //BAT_Capacity range
-        private uint _BAT_Capacity;
+        private uint _BAT_Capacity = 0;
         public uint BAT_Capacity => _BAT_Capacity;
         public int BAT_Capacity_Display
         {
@@ -276,6 +494,7 @@ namespace demoVer.Models
                 Grid_tied_power_feeding_enable = Data.new_Grid_tied_feeding_enable;
                 Output_priority = Data.new_Output_priority;
                 Charging_priority = Data.new_Charge_priority;
+
                 BAT_Alarm_Display = Data.new_BAT_Alarm_Display;
                 BAT_Shutdown_Display = Data.new_BAT_Shutdown_Display;
                 BAT_Recharge_Display = Data.new_BAT_Recharge_Display;
@@ -320,10 +539,36 @@ namespace demoVer.Models
 
             UpdateACV_DisplayMap();
 
-            Console.WriteLine($"AC_Series = {_AC_Series}, ACF = {_ACF}, ACV = {_ACV}");
+            Console.WriteLine($"[INV][UpdateFrom] _BAT_Alarm = {_BAT_Alarm}");
             NotifyChanged();
         }
         
+        public INV_InitData ToINV_InitData()
+        {
+            var Data = new INV_InitData();
+            
+            Data.AC_Series                  = AC_Series;
+            Data.ACF                        = ACF;
+            Data.ACV                        = ACV;
+            Data.Button_touchable_status    = Button_touchable_status;
+            Data.Output_priority            = Output_priority;
+            Data.Charge_priority            = Charging_priority;
+            Data.BAT_Alarm_Max              = BAT_Alarm_Max;
+            Data.BAT_Alarm_Min              = BAT_Alarm_Min;
+            Data.BAT_Alarm_Value            = BAT_Alarm;
+            Data.BAT_Shutdown_Max           = BAT_Shutdown_Max;
+            Data.BAT_Shutdown_Min           = BAT_Shutdown_Min;
+            Data.BAT_Shutdown_Value         = BAT_Shutdown;
+            Data.BAT_Recharge_Min           = BAT_Recharge_Min;
+            Data.BAT_Recharge_Value         = BAT_Recharge;
+            Data.BAT_OV_Alarm_Max           = BAT_OV_Alarm_Max;
+            Data.BAT_OV_Alarm_Min           = BAT_OV_Alarm_Min;
+            Data.BAT_OV_Alarm_Value         = BAT_OV_Alarm;
+            Data.BAT_Capacity_Value         = BAT_Capacity;
+
+            return Data;
+        }
+
         public INVSetting_To_JS ToDto()
         {
             return new INVSetting_To_JS

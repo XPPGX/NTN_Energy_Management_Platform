@@ -20,7 +20,6 @@ namespace demoVer.Models
 
         //The Scaling Factors got from globalVar.Device_ReadData
         public ConcurrentDictionary<string, double> ScalingFactors;
-        
 
         public SubAppSystem_WriteMemory(int subSysID)
         {   

@@ -16,6 +16,7 @@
     "demoVer.Services.WriteProcess"             : 0,
     "demoVer.Services.HeartbeatService"         : 2,
     "demoVer.Services.GlobalVar"                : 2,
-    "demoVer.Services.ArrowAnimationService"    : 2
-    
+    "demoVer.Services.ArrowAnimationService"    : 2,
+    "demoVer.Services.CommonData"               : 0,
+    "demoVer.Services.DataCenter"               : 0
 }

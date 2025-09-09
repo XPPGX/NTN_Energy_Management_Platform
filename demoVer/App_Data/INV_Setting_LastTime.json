@@ -1,0 +1,20 @@
+{
+  "ac_series": 0,
+  "acf": 0,
+  "acv": 0,
+  "btn_status": 351,
+  "out_prio": 0,
+  "chg_prio": 0,
+  "bat_alarm_max": 5000,
+  "bat_alarm_min": 3760,
+  "bat_alarm_val": 4810,
+  "bat_shutdown_max": 4800,
+  "bat_shutdown_min": 3680,
+  "bat_shutdown_val": 4100,
+  "bat_recharge_min": 3680,
+  "bat_recharge_val": 5520,
+  "bat_ov_alarm_max": 6600,
+  "bat_ov_alarm_min": 6000,
+  "bat_ov_alarm_val": 6220,
+  "bat_capacity_val": 932
+}
