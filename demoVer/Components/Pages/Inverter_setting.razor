@@ -35,15 +35,17 @@
     </div>
 }
 
-<MudOverlay Visible="_isLoading" DarkBackground="true" Class="d-flex justify-center align-center">
-    <MudPaper Class="pa-6 d-flex flex-column align-center" Elevation="4" Rounded="true">
-        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Medium"/>
-        <MudText Typo="Typo.h6" Class="mt-4">Waiting for devices linking...</MudText>
-    </MudPaper>
-</MudOverlay>
+
 
 
 <div class="content-container">
+    <MudOverlay DisablePortal="true" Visible="_isLoading" DarkBackground="true" Class="Mud-overlay d-flex justify-center align-center">
+        <MudPaper Class="pa-6 d-flex flex-column align-center" Elevation="4" Rounded="true">
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Medium"/>
+            <MudText Typo="Typo.h6" Class="mt-4">Waiting for devices linking...</MudText>
+        </MudPaper>
+    </MudOverlay>
+
     <div class="card-grid">
         <div class="w50">
             <div class="card-container">
