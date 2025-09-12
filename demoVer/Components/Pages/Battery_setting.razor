@@ -1,4 +1,5 @@
 @page "/Battery_setting"
+
 @rendermode InteractiveServer
 @inject IJSRuntime JS
 @inject DataCenter DataCenter
@@ -7,6 +8,9 @@
 @using System.Text.Json
 @using System.IO
 @using demoVer.Utils
+@inject WriteProcess writeProcess
+@inject CommonData commonData
+@inject HeartbeatService Heartbeat
 
 <MudPopoverProvider/>
 @*Web Content*@
@@ -44,9 +48,9 @@
                     var slider = Sliders[i];
                     <div class="slider-wrapper">
                         <div class="vue-vertical-slider"
-                            style="@(slider.Label == "FV" && !selectedStage ? "opacity: 0.5;" : "")"
-                            @onmousedown="@(e => (slider.Label == "FV" && !selectedStage) ? Task.CompletedTask : OnSliderMouseDown(e, localIndex, slider.Label))"
-                            @ontouchstart="@(e => (slider.Label == "FV" && !selectedStage) ? Task.CompletedTask : OnSliderTouchStart(e, localIndex, slider.Label))">
+                            style="@(slider.Label == "FV" && selectedStage ? "opacity: 0.5;" : "")"
+                            @onmousedown="@(e => (slider.Label == "FV" && selectedStage) ? Task.CompletedTask : OnSliderMouseDown(e, localIndex, slider.Label))"
+                            @ontouchstart="@(e => (slider.Label == "FV" && selectedStage) ? Task.CompletedTask : OnSliderTouchStart(e, localIndex, slider.Label))">
                             <div class="vue-vertical-fill" @ref="@FillRefs[localIndex]"></div>
                             <div class="vue-vertical-thumb" @ref="@ThumbRefs[localIndex]"></div>
                         </div>
@@ -57,7 +61,7 @@
                                 max=""
                                 class="slider-input"
                                 style="text-align: center;"
-                                disabled="@(slider.Label == "FV" && !selectedStage)"/>
+                                disabled="@(slider.Label == "FV" && selectedStage)"/>
                         @* <div class="slider-label">值: @slider.Value</div> *@
                         <label>@slider.Label</label>
                     </div>
@@ -72,8 +76,8 @@
                     <canvas id="stageChart" class="stage-chart"></canvas>
                     <div class="stage-controls">
                         <MudSelect T="bool" Label="選擇充電段數" Value="selectedStage" Immediate="true" Dense="true" Variant="Variant.Filled" ValueChanged="OnStageChanged">
-                            <MudSelectItem Value="@(false)">2階段</MudSelectItem>
-                            <MudSelectItem Value="@(true)">3階段</MudSelectItem>
+                            <MudSelectItem Value="@(true)">2階段</MudSelectItem>
+                            <MudSelectItem Value="@(false)">3階段</MudSelectItem>
                         </MudSelect>
                     </div>
                 </div>
@@ -179,6 +183,8 @@
 
 @code
 {
+    private string _category = "";
+
     bool modal_IsOpen = false;
     string AlertMessage_parent = null;
     string ConfirmBtn_Text_parent = null;
@@ -211,7 +217,7 @@
     private int CV_Timeout_value;
     private int FV_Timeout_value;
 
-    private bool selectedStage;
+    private bool selectedStage = false; //預設為 3段
 
     private string FormatToHourMin(double totalMin)
     {
@@ -234,6 +240,7 @@
 
     protected override void OnInitialized()
     {
+        _category = GetType().FullName!;
         DataCenter.Battery.OnUpdated += OnBatteryChanged;
 
         Sliders = new List<SliderItem>
@@ -332,7 +339,7 @@
         }
     }
 
-    private async Task StartMouseDrag(MouseEventArgs e, int index, float _Min, float _displayMax)
+    private async Task StartMouseDrag(MouseEventArgs e, int index, double _Min, double _displayMax)
     {
         var slider = Sliders[index];
         await JS.InvokeVoidAsync("startVerticalSliderDrag", new{
@@ -345,7 +352,7 @@
         });
     }
 
-    private async Task StartTouchDrag(TouchEventArgs e, int index, float _Min, float _displayMax)
+    private async Task StartTouchDrag(TouchEventArgs e, int index, double _Min, double _displayMax)
     {
         var slider = Sliders[index];
         await JS.InvokeVoidAsync("startVerticalSliderDrag", new{
@@ -403,7 +410,7 @@
         StateHasChanged();
     }
 
-    private(float min, float max) GetDisplaySliderRange(string label)
+    private(double min, double max) GetDisplaySliderRange(string label)
     {
         return label switch
         {
@@ -485,11 +492,118 @@
         AlertMessage_parent = null;
     }
 
+    private async Task<Dictionary<string, byte[]>> nowUIData_transformTo_apiWriteData(List<double> sliderValues)
+    {
+        Dictionary<string, byte[]> packedByteData = new ();
+        byte[] CURVE_CC = new byte[2];
+        byte[] CURVE_TC = new byte[2];
+        byte[] CURVE_CV = new byte[2];
+        byte[] CURVE_FV = new byte[2];
+        byte[] CURVE_CONFIG = new byte[2];
+        //CURVE_CONFIG bit description
+        //bit 6: curve stage
+        //bit 8: CC timeout enable
+        //bit 9: CV timeout enable
+        //bit 10: FV timeout enable
+        byte[] CURVE_CC_TIMEOUT = new byte[2];
+        byte[] CURVE_CV_TIMEOUT = new byte[2];
+        byte[] CURVE_FV_TIMEOUT = new byte[2];
+
+        //CURVE_CONFIG (STGS)
+        switch(selectedStage)
+        {
+            case true:
+                CURVE_CONFIG[0] = (byte)(CURVE_CONFIG[0] & (byte)(0b_1011_1111));
+                CURVE_CONFIG[0] = (byte)(CURVE_CONFIG[0] | (byte)(0b_0100_0000));
+                break;
+            case false:
+                CURVE_CONFIG[0] = (byte)(CURVE_CONFIG[0] & (byte)(0b_1011_1111));
+                break;
+            default:
+                CURVE_CONFIG[0] = (byte)(CURVE_CONFIG[0] & (byte)(0b_1011_1111));
+                break;
+        }
+
+        //CURVE_CONFIG (CCTOE);
+        switch(CCT_Enable)
+        {
+            case true:
+                CURVE_CONFIG[1] = (byte)(CURVE_CONFIG[1] & (byte)(0b_1111_1110));
+                CURVE_CONFIG[1] = (byte)(CURVE_CONFIG[1] | (byte)(0b_0000_0001));
+                break;
+            case false:
+                CURVE_CONFIG[1] = (byte)(CURVE_CONFIG[1] & (byte)(0b_1111_1110));
+                break;
+            default:
+                CURVE_CONFIG[1] = (byte)(CURVE_CONFIG[1] & (byte)(0b_1111_1110));
+                break;
+        }
+
+        //CURVE_CONFIG (CVTOE);
+        switch(CVT_Enable)
+        {
+            case true:
+                CURVE_CONFIG[1] = (byte)(CURVE_CONFIG[1] & (byte)(0b_1111_1101));
+                CURVE_CONFIG[1] = (byte)(CURVE_CONFIG[1] | (byte)(0b_0000_0010));
+                break;
+            case false:
+                CURVE_CONFIG[1] = (byte)(CURVE_CONFIG[1] & (byte)(0b_1111_1101));
+                break;
+            default:
+                CURVE_CONFIG[1] = (byte)(CURVE_CONFIG[1] & (byte)(0b_1111_1101));
+                break;
+        }
+
+        //CURVE_CONFIG (FVTOE);
+        switch(FVT_Enable)
+        {
+            case true:
+                CURVE_CONFIG[1] = (byte)(CURVE_CONFIG[1] & (byte)(0b_1111_1011));
+                CURVE_CONFIG[1] = (byte)(CURVE_CONFIG[1] | (byte)(0b_0000_0100));
+                break;
+            case false:
+                CURVE_CONFIG[1] = (byte)(CURVE_CONFIG[1] & (byte)(0b_1111_1011));
+                break;
+            default:
+                CURVE_CONFIG[1] = (byte)(CURVE_CONFIG[1] & (byte)(0b_1111_1011));
+                break;
+        }
+
+        CURVE_CC = await writeProcess.UIvalueTransformToWriteFormat(sliderValues[0], "CURVE_CC");
+        CURVE_TC = await writeProcess.UIvalueTransformToWriteFormat(sliderValues[1], "CURVE_TC");
+        CURVE_CV = await writeProcess.UIvalueTransformToWriteFormat(sliderValues[2], "CURVE_CV");
+        CURVE_FV = await writeProcess.UIvalueTransformToWriteFormat(sliderValues[3], "CURVE_FV");
+        
+        CURVE_CC_TIMEOUT = await writeProcess.UIvalueTransformToWriteFormat(CC_Timeout_value, "CURVE_CC_TIMEOUT");
+        CURVE_CV_TIMEOUT = await writeProcess.UIvalueTransformToWriteFormat(CV_Timeout_value, "CURVE_CV_TIMEOUT");
+        CURVE_FV_TIMEOUT = await writeProcess.UIvalueTransformToWriteFormat(FV_Timeout_value, "CURVE_FV_TIMEOUT");
+
+        AppLogger.Log_To_File_log(_category, $"[Battery_setting][nowUIData_transformTo_apiWriteData] CURVE_CC          = {CURVE_CC[1]:X2} {CURVE_CC[0]:X2}",      AppLogLevel.Trace);
+        AppLogger.Log_To_File_log(_category, $"[Battery_setting][nowUIData_transformTo_apiWriteData] CURVE_TC          = {CURVE_TC[1]:X2} {CURVE_TC[0]:X2}",      AppLogLevel.Trace);
+        AppLogger.Log_To_File_log(_category, $"[Battery_setting][nowUIData_transformTo_apiWriteData] CURVE_CV          = {CURVE_CV[1]:X2} {CURVE_CV[0]:X2}",      AppLogLevel.Trace);
+        AppLogger.Log_To_File_log(_category, $"[Battery_setting][nowUIData_transformTo_apiWriteData] CURVE_FV          = {CURVE_FV[1]:X2} {CURVE_FV[0]:X2}",      AppLogLevel.Trace);
+        AppLogger.Log_To_File_log(_category, $"[Battery_setting][nowUIData_transformTo_apiWriteData] CURVE_CC_TIMEOUT  = {CURVE_CC_TIMEOUT[1]:X2} {CURVE_CC_TIMEOUT[0]:X2}",      AppLogLevel.Trace);
+        AppLogger.Log_To_File_log(_category, $"[Battery_setting][nowUIData_transformTo_apiWriteData] CURVE_CV_TIMEOUT  = {CURVE_CV_TIMEOUT[1]:X2} {CURVE_CV_TIMEOUT[0]:X2}",      AppLogLevel.Trace);
+        AppLogger.Log_To_File_log(_category, $"[Battery_setting][nowUIData_transformTo_apiWriteData] CURVE_FV_TIMEOUT  = {CURVE_FV_TIMEOUT[1]:X2} {CURVE_FV_TIMEOUT[0]:X2}",      AppLogLevel.Trace);
+        AppLogger.Log_To_File_log(_category, $"[Battery_setting][nowUIData_transformTo_apiWriteData] CURVE_CONFIG      = {CURVE_CONFIG[1]:X2} {CURVE_CONFIG[0]:X2}",      AppLogLevel.Trace);
+
+
+        packedByteData["CURVE_CC"]          = CURVE_CC;
+        packedByteData["CURVE_TC"]          = CURVE_TC;
+        packedByteData["CURVE_CV"]          = CURVE_CV;
+        packedByteData["CURVE_FV"]          = CURVE_FV;
+        packedByteData["CURVE_CC_TIMEOUT"]  = CURVE_CC_TIMEOUT;
+        packedByteData["CURVE_CV_TIMEOUT"]  = CURVE_CV_TIMEOUT;
+        packedByteData["CURVE_FV_TIMEOUT"]  = CURVE_FV_TIMEOUT;
+        packedByteData["CURVE_CONFIG"]      = CURVE_CONFIG;
+        return packedByteData;
+    }
+
     private async Task ConfirmSave()
     {
         //Get CC, TC, CV, FV Data
-        var sliderValues = new List<float>();
-        sliderValues = (await JS.InvokeAsync<float[]>("transferSliderValue")).ToList();
+        var sliderValues = new List<double>();
+        sliderValues = (await JS.InvokeAsync<double[]>("transferSliderValue")).ToList();
 
         //arrange data
         BatterySetting Data = new BatterySetting()
@@ -507,20 +621,51 @@
             FV_TimeOut_Display = FV_Timeout_value,
         };
 
-        //save into DataCenter (for boardcast)
-        if(DataCenter.Battery.SaveSettingData(Data))
+        //1. 轉 UI值 成 WriteAPI值
+        var _packedByteData_dict = await nowUIData_transformTo_apiWriteData(sliderValues);
+        //2. _packedByteData 傳到 WriteProcess發送
+        try
         {
+            bool isWriteSuccess = await writeProcess.Write_To_Framework(_packedByteData_dict, 0);
+            if(isWriteSuccess is false)
+            {
+                AppLogger.Log_To_File_log(_category, $"[Battery_setting][ConfirmSave] Writing To device failed", AppLogLevel.Trace);
+                return;
+            }
+
+            //成功寫值到Framework之後
+            //3. 將設定值存於記憶體，JsonFile
+            bool isSaveSettingToFile_Succ = await DataCenter.save_BATSetting(Data);
+            if(isSaveSettingToFile_Succ is false)
+            {
+                AppLogger.Log_To_File_log(_category, $"[Battery_setting][ConfirmSave] save To memory or Json failed", AppLogLevel.Trace);
+                return;
+            }
+            //4. 同步Battery setting值到其他Client端
             await DataCenter.BroadcastBatteryChangeAsync();
         }
+        finally
+        {
+            CloseAlert();
+            CloseModal();
+            Console.WriteLine("[ConfirmSave]");
+        }
+        
+        //save into DataCenter (for boardcast)
+        @* if(DataCenter.Battery.SaveSettingData(Data))
+        {
+            await DataCenter.BroadcastBatteryChangeAsync();
+        } *@
          
         //save as Json file (Or use API to call framework to save the setting)
-         @*這裡或許要改成用API去改值就好，讓框架去下命令後保存此次設定以便下次帶入*@
+        @*這裡或許要改成用API去改值就好，讓框架去下命令後保存此次設定以便下次帶入*@
         string jsonString = JsonSerializer.Serialize(Data, new JsonSerializerOptions{WriteIndented=true});
-        string targetPath = AppJsonManager.Get_Writable_DataPath("LastTime_settingData.json");
-        AppJsonManager.SavePartialJson(targetPath, "Battery_Setting", Data);
+        Console.WriteLine(jsonString);
+        @* string targetPath = AppJsonManager.Get_Writable_DataPath("LastTime_settingData.json");
+        AppJsonManager.SavePartialJson(targetPath, "Battery_Setting", Data); *@
 
-        CloseAlert();
-        CloseModal();
+        @* CloseAlert();
+        CloseModal(); *@
     }
 
     private async Task CancelSave()

@@ -2,6 +2,7 @@
     "demoVer.Components.Pages.NTN_Home"         : 2,
     "demoVer.Components.Pages.Link_status"      : 2,
     "demoVer.Components.Pages.Inverter_setting" : 0,
+    "demoVer.Components.Pages.Battery_setting"  : 0,
     "demoVer.Shared.BlankInfoCard"              : 2,
     "demoVer.Shared.EditCard"                   : 2,
     "demoVer.Shared.BlankChartCard"             : 2,

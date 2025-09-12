@@ -1,12 +1,12 @@
 {
-  "timestamp": "2025-09-09 15:02:52.124",
+  "timestamp": "2025-09-12 09:46:44.441",
   "data": [
     {
       "commandName": "CURVE_FV",
       "isPerAddr": false,
       "targetValue": [
-        0,
-        0,
+        15,
+        160,
         0,
         0
       ],
@@ -54,8 +54,8 @@
       "commandName": "CURVE_TC",
       "isPerAddr": false,
       "targetValue": [
-        0,
-        0,
+        7,
+        8,
         0,
         0
       ],
@@ -98,8 +98,8 @@
       "commandName": "CURVE_CV",
       "isPerAddr": false,
       "targetValue": [
-        0,
-        0,
+        15,
+        160,
         0,
         0
       ],
@@ -131,8 +131,8 @@
       "commandName": "BAT_ALM_VOLT",
       "isPerAddr": false,
       "targetValue": [
-        18,
-        202,
+        17,
+        78,
         0,
         0
       ],
@@ -142,7 +142,7 @@
       "commandName": "CURVE_CONFIG",
       "isPerAddr": false,
       "targetValue": [
-        0,
+        1,
         0,
         0,
         0
@@ -164,8 +164,8 @@
       "commandName": "CURVE_CC",
       "isPerAddr": false,
       "targetValue": [
-        0,
-        0,
+        12,
+        158,
         0,
         0
       ],

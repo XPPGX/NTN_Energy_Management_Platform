@@ -118,7 +118,7 @@ namespace demoVer.Services
 
             //MdlName不一樣的時候會觸發這個Event
             _globalVar.Sys_ModelName_OnChanged += DataCenter_MdlNameChange_Task;
-            _commonData.ScalingFactor_StateChanged += SettingValues;
+            // _commonData.ScalingFactor_StateChanged += SettingValues;
         }
 
         public async Task SettingValues()
@@ -156,8 +156,14 @@ namespace demoVer.Services
                 AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] read INV_Setting FAIL", AppLogLevel.Trace);
                 return false;
             }
-            //4. Read BAT setting(待辦)
-            Battery.UpdateFrom(new Battery_InitData());
+            //4. Read BAT setting
+            bool read_BAT_Setting_succ = read_OldBATSetting_FromJson();
+            if(read_BAT_Setting_succ is false)
+            {
+                AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] read BAT_Setting FAIL", AppLogLevel.Trace);
+                return false;
+            }
+            // Battery.UpdateFrom(new Battery_InitData());
 
             AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] Done...", AppLogLevel.Trace);
             return true;
@@ -230,6 +236,20 @@ namespace demoVer.Services
             return true;
         }
 
+        public bool read_OldBATSetting_FromJson()
+        {
+            string AppDataDirectory = Path.GetFullPath("App_Data");
+            string AppData_BATSetting = Path.Combine(AppDataDirectory, "BAT_Setting_LastTime.json");
+            
+            if(!File.Exists(AppData_BATSetting))
+            {
+                AppLogger.Log_To_File_log(_category, $"[DataCenter][read_OldBATSetting_FromJson] {AppData_BATSetting} 檔案不存在", AppLogLevel.Trace);
+                return false;
+            }
+
+            Battery.UpdateFrom(Battery_InitData.LoadFromJsonFile());
+            return true;
+        }
 
         public async Task DataCenter_MdlNameChange_Task()
         {
@@ -305,7 +325,7 @@ namespace demoVer.Services
         {
             if(!_DataCenter_SaveData_lock.Wait(0))
             {
-                AppLogger.Log_To_File_log(_category, $"[DataCenter][save_INVSetting] There are someone using this function, Skip", AppLogLevel.Trace);
+                AppLogger.Log_To_File_log(_category, $"[DataCenter][save_INVSetting] There is someone using writing_lock , Skip", AppLogLevel.Trace);
                 return false;
             }
 
@@ -354,6 +374,61 @@ namespace demoVer.Services
             string json = JsonSerializer.Serialize(dataToJson, options);
 
             File.WriteAllText(INV_SettingFilePath, json);   
+        }
+
+        public async Task<bool> save_BATSetting(BatterySetting Data)
+        {
+            if(!_DataCenter_SaveData_lock.Wait(0))
+            {
+                AppLogger.Log_To_File_log(_category, $"[DataCenter][save_BATSetting] There is someone using writing_lock , Skip", AppLogLevel.Trace);
+                return false;
+            }
+
+            try
+            {
+                //存到記憶體
+                AppLogger.Log_To_File_log(_category, $"[DataCenter][save_BATSetting] Saving to memory...", AppLogLevel.Trace);
+                bool memory_changed = Battery.SaveSettingData(Data);
+                AppLogger.Log_To_File_log(_category, $"[DataCenter][save_BATSetting] Saving to memory...done", AppLogLevel.Trace);
+                if(memory_changed is true)
+                {
+                    //存到JsonFile
+                    AppLogger.Log_To_File_log(_category, $"[DataCenter][save_BATSetting] Saving to Json...", AppLogLevel.Trace);
+                    save_BATSetting_To_JsonFile();
+                    AppLogger.Log_To_File_log(_category, $"[DataCenter][save_BATSetting] Saving to Json...done", AppLogLevel.Trace);
+                    return true;
+                }
+                AppLogger.Log_To_File_log(_category, $"[DataCenter][save_BATSetting] Saving Failed, memory_changed = {memory_changed}", AppLogLevel.Trace);
+                return false;
+            }
+            catch(Exception e)
+            {
+                AppLogger.Log_To_File_log(_category, $"[DataCenter][save_BATSetting] Error : {e}", AppLogLevel.Trace);
+                return false;
+            }
+            finally
+            {
+                //釋放鎖
+                _DataCenter_SaveData_lock.Release();
+            }
+        }
+
+        public void save_BATSetting_To_JsonFile()
+        {
+            string AppDataDirectory = Path.GetFullPath("App_Data");
+            string BAT_SettingFilePath = Path.Combine(AppDataDirectory, "BAT_Setting_LastTime.json");
+            
+            var dataToJson = Battery.ToBAT_InitData();
+            
+            if(!Directory.Exists(AppDataDirectory))
+            {
+                Directory.CreateDirectory(AppDataDirectory);
+            }
+
+            var options = new JsonSerializerOptions{WriteIndented = true};
+            string json = JsonSerializer.Serialize(dataToJson, options);
+
+            File.WriteAllText(BAT_SettingFilePath, json);   
         }
 
         public async Task READ_API_TEST()

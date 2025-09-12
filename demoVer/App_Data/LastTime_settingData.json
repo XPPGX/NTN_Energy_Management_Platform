@@ -1,9 +1,9 @@
 {
   "Battery_Setting": {
-    "CC_Display": 60,
+    "CC_Display": 44.3,
     "TC_Display": 6,
-    "CV_Display": 47.3,
-    "FV_Display": 47.3,
+    "CV_Display": 57.6,
+    "FV_Display": 57.6,
     "CurveStage": false,
     "CCT_Enable": false,
     "CC_TimeOut_Display": 0,

@@ -72,7 +72,7 @@ namespace demoVer.Services
                     if(selectedPort_Check.Count == 0)
                     {   
                         //拉資料到CHECK
-                        assignSettingData_From_Framework_To_SubSysCheck(subSysInfo, targetSubSystem_WriteMem);
+                        await assignSettingData_From_Framework_To_SubSysCheck(subSysInfo, targetSubSystem_WriteMem);
                     }
                     if(targetSubSystem_WriteMem.ScalingFactors.Count == 0)
                     {
@@ -186,8 +186,8 @@ namespace demoVer.Services
             uint uint_codedVal = (uint)codedVal;
             AppLogger.Log_To_File_log(_category, $"[WriteProcess][UIvalueTransformToWriteFormat] uint_codedVal = {uint_codedVal}", AppLogLevel.Trace);
 
-            string activeSubSysPort = _globalVar.getActiveSubSysPort();
-            Console.WriteLine($"[WriteProcess][UIvalueTransformToWriteFormat] activeSubSysPort = {activeSubSysPort}", AppLogLevel.Trace);
+            // string activeSubSysPort = _globalVar.getActiveSubSysPort();
+            // Console.WriteLine($"[WriteProcess][UIvalueTransformToWriteFormat] activeSubSysPort = {activeSubSysPort}", AppLogLevel.Trace);
             
             tmp_byteArray[0] = (byte)(uint_codedVal & 0x000000FF);
             tmp_byteArray[1] = (byte)((uint_codedVal >> 8) & 0x000000FF);

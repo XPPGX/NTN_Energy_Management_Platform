@@ -15,96 +15,316 @@ namespace demoVer.Models
         //CC
         private int _CC_Raw;            //原始值(會佔用記憶體)
         public int CC_Raw => _CC_Raw;   //傳輸資料用(屬性,不消耗記憶體)
-        public float CC_Display         //UI顯示與設定(屬性,不消耗記憶體)
+        public double CC_Display         //UI顯示與設定(屬性,不消耗記憶體)
         {
-            get => ScalingComputer.MultOperation((float)_CC_Raw,  _commonData.IDC_Factor);
-            set => _CC_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.IDC_Factor);
+            get
+            {
+                if(_commonData._ScalingFactors.TryGetValue("CURVE_CC", out var factor))
+                {
+                    return ScalingComputer.MultOperation_doubleVer((double)_CC_Raw, factor);
+                }
+                else
+                {
+                    Console.WriteLine("Curve CC : factor = 0");
+                    return 0;   
+                }
+            }
+
+            set
+            {
+                if(_commonData._ScalingFactors.TryGetValue("CURVE_CC", out var factor))
+                {
+                    _CC_Raw = (int)ScalingComputer.DevideOperation_doubleVer((double)value, factor);
+                }
+            }
+            // get => ScalingComputer.MultOperation((float)_CC_Raw,  _commonData.IDC_Factor);
+            // set => _CC_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.IDC_Factor);
         }
 
         private int _CC_Max_Raw;
         public int CC_Max_Raw => _CC_Max_Raw;
-        public float CC_Max_Display
+        public double CC_Max_Display
         {
-            get => ScalingComputer.MultOperation((float)_CC_Max_Raw, _commonData.IDC_Factor);
-            set => _CC_Max_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.IDC_Factor);
+            get
+            {
+                if(_commonData._ScalingFactors.TryGetValue("CURVE_CC", out var factor))
+                {
+                    return ScalingComputer.MultOperation_doubleVer((double)_CC_Max_Raw, factor);
+                }
+                else
+                {
+                    Console.WriteLine("Curve CC : factor = 0");
+                    return 0;   
+                }
+            }
+
+            set
+            {
+                if(_commonData._ScalingFactors.TryGetValue("CURVE_CC", out var factor))
+                {
+                    _CC_Max_Raw = (int)ScalingComputer.DevideOperation_doubleVer((double)value, factor);
+                }
+            }
+            // get => ScalingComputer.MultOperation((float)_CC_Max_Raw, _commonData.IDC_Factor);
+            // set => _CC_Max_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.IDC_Factor);
         }
 
         private int _CC_Min_Raw;
         public int CC_Min_Raw => _CC_Min_Raw;
-        public float CC_Min_Display
+        public double CC_Min_Display
         {
-            get => ScalingComputer.MultOperation((float)_CC_Min_Raw, _commonData.IDC_Factor);
-            set => _CC_Min_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.IDC_Factor);
+            get
+            {
+                if(_commonData._ScalingFactors.TryGetValue("CURVE_CC", out var factor))
+                {
+                    return ScalingComputer.MultOperation_doubleVer((double)_CC_Min_Raw, factor);
+                }
+                else
+                {
+                    Console.WriteLine("Curve CC : factor = 0");
+                    return 0;   
+                }
+            }
+
+            set
+            {
+                if(_commonData._ScalingFactors.TryGetValue("CURVE_CC", out var factor))
+                {
+                    _CC_Min_Raw = (int)ScalingComputer.DevideOperation_doubleVer((double)value, factor);
+                }
+            }
+            // get => ScalingComputer.MultOperation((float)_CC_Min_Raw, _commonData.IDC_Factor);
+            // set => _CC_Min_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.IDC_Factor);
         }
 
         //TC
         private int _TC_Raw;
         public int TC_Raw => _TC_Raw;
-        public float TC_Display
+        public double TC_Display
         {
-            get => ScalingComputer.MultOperation((float)_TC_Raw, _commonData.IDC_Factor);
-            set => _TC_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.IDC_Factor);
+            get
+            {
+                if(_commonData._ScalingFactors.TryGetValue("CURVE_TC", out var factor))
+                {
+                    return ScalingComputer.MultOperation_doubleVer((double)_TC_Raw, factor);
+                }
+                else
+                {
+                    Console.WriteLine("Curve TC : factor = 0");
+                    return 0;   
+                }
+            }
+
+            set
+            {
+                if(_commonData._ScalingFactors.TryGetValue("CURVE_TC", out var factor))
+                {
+                    _TC_Raw = (int)ScalingComputer.DevideOperation_doubleVer((double)value, factor);
+                }
+            }
+            // get => ScalingComputer.MultOperation((float)_TC_Raw, _commonData.IDC_Factor);
+            // set => _TC_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.IDC_Factor);
         }
 
         private int _TC_Max_Raw;
         public int TC_Max_Raw => _TC_Max_Raw;
-        public float TC_Max_Display
+        public double TC_Max_Display
         {
-            get => ScalingComputer.MultOperation((float)_TC_Max_Raw, _commonData.IDC_Factor);
-            set => _TC_Max_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.IDC_Factor);
+            get
+            {
+                if(_commonData._ScalingFactors.TryGetValue("CURVE_TC", out var factor))
+                {
+                    return ScalingComputer.MultOperation_doubleVer((double)_TC_Max_Raw, factor);
+                }
+                else
+                {
+                    Console.WriteLine("Curve TC : factor = 0");
+                    return 0;   
+                }
+            }
+
+            set
+            {
+                if(_commonData._ScalingFactors.TryGetValue("CURVE_TC", out var factor))
+                {
+                    _TC_Max_Raw = (int)ScalingComputer.DevideOperation_doubleVer((double)value, factor);
+                }
+            }
+            // get => ScalingComputer.MultOperation((float)_TC_Max_Raw, _commonData.IDC_Factor);
+            // set => _TC_Max_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.IDC_Factor);
         }
 
         private int _TC_Min_Raw;
         public int TC_Min_Raw => _TC_Min_Raw;
-        public float TC_Min_Display
+        public double TC_Min_Display
         {
-            get => ScalingComputer.MultOperation((float)_TC_Min_Raw, _commonData.IDC_Factor);
-            set => _TC_Min_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.IDC_Factor);
+            get
+            {
+                if(_commonData._ScalingFactors.TryGetValue("CURVE_TC", out var factor))
+                {
+                    return ScalingComputer.MultOperation_doubleVer((double)_TC_Min_Raw, factor);
+                }
+                else
+                {
+                    Console.WriteLine("Curve TC : factor = 0");
+                    return 0;   
+                }
+            }
+
+            set
+            {
+                if(_commonData._ScalingFactors.TryGetValue("CURVE_TC", out var factor))
+                {
+                    _TC_Min_Raw = (int)ScalingComputer.DevideOperation_doubleVer((double)value, factor);
+                }
+            }
+            // get => ScalingComputer.MultOperation((float)_TC_Min_Raw, _commonData.IDC_Factor);
+            // set => _TC_Min_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.IDC_Factor);
         }
 
         //CV
         private int _CV_Raw;
         public int CV_Raw => _CV_Raw;
-        public float CV_Display
+        public double CV_Display
         {
-            get => ScalingComputer.MultOperation((float)_CV_Raw, _commonData.VDC_Factor * 10);
-            set => _CV_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.VDC_Factor) / 10;
+            get
+            {
+                if(_commonData._ScalingFactors.TryGetValue("CURVE_CV", out var factor))
+                {
+                    return ScalingComputer.MultOperation_doubleVer((double)_CV_Raw, factor);
+                }
+                else
+                {
+                    Console.WriteLine("Curve CV : factor = 0");
+                    return 0;   
+                }
+            }
+
+            set
+            {
+                if(_commonData._ScalingFactors.TryGetValue("CURVE_CV", out var factor))
+                {
+                    _CV_Raw = (int)ScalingComputer.DevideOperation_doubleVer((double)value, factor);
+                }
+            }
+            // get => ScalingComputer.MultOperation((float)_CV_Raw, _commonData.VDC_Factor * 10);
+            // set => _CV_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.VDC_Factor) / 10;
         }
 
         private int _CV_Max_Raw;
         public int CV_Max_Raw => _CV_Max_Raw;
-        public float CV_Max_Display
+        public double CV_Max_Display
         {
-            get => ScalingComputer.MultOperation((float)_CV_Max_Raw, _commonData.VDC_Factor * 10);
-            set => _CV_Max_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.VDC_Factor);
+            get
+            {
+                if(_commonData._ScalingFactors.TryGetValue("CURVE_CV", out var factor))
+                {
+                    return ScalingComputer.MultOperation_doubleVer((double)_CV_Max_Raw, factor);
+                }
+                else
+                {
+                    Console.WriteLine("Curve CV : factor = 0");
+                    return 0;   
+                }
+            }
+
+            set
+            {
+                if(_commonData._ScalingFactors.TryGetValue("CURVE_CV", out var factor))
+                {
+                    _CV_Max_Raw = (int)ScalingComputer.DevideOperation_doubleVer((double)value, factor);
+                }
+            }
+            // get => ScalingComputer.MultOperation((float)_CV_Max_Raw, _commonData.VDC_Factor * 10);
+            // set => _CV_Max_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.VDC_Factor);
         }
 
         private int _CV_Min_Raw;
         public int CV_Min_Raw => _CV_Min_Raw;
-        public float CV_Min_Display
+        public double CV_Min_Display
         {
-            get => ScalingComputer.MultOperation((float)_CV_Min_Raw, _commonData.VDC_Factor * 10);
-            set => _CV_Min_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.VDC_Factor);
+            get
+            {
+                if(_commonData._ScalingFactors.TryGetValue("CURVE_CV", out var factor))
+                {
+                    return ScalingComputer.MultOperation_doubleVer((double)_CV_Min_Raw, factor);
+                }
+                else
+                {
+                    Console.WriteLine("Curve CV : factor = 0");
+                    return 0;   
+                }
+            }
+
+            set
+            {
+                if(_commonData._ScalingFactors.TryGetValue("CURVE_CV", out var factor))
+                {
+                    _CV_Min_Raw = (int)ScalingComputer.DevideOperation_doubleVer((double)value, factor);
+                }
+            }
+            // get => ScalingComputer.MultOperation((float)_CV_Min_Raw, _commonData.VDC_Factor * 10);
+            // set => _CV_Min_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.VDC_Factor);
         }
 
         //FV
         private int _FV_Raw;
         public int FV_Raw => _FV_Raw;
-        public float FV_Display
+        public double FV_Display
         {
-            get => ScalingComputer.MultOperation((float)_FV_Raw, _commonData.VDC_Factor * 10);
-            set => _FV_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.VDC_Factor) / 10;
+            get
+            {
+                if(_commonData._ScalingFactors.TryGetValue("CURVE_FV", out var factor))
+                {
+                    return ScalingComputer.MultOperation_doubleVer((double)_FV_Raw, factor);
+                }
+                else
+                {
+                    Console.WriteLine("Curve FV : factor = 0");
+                    return 0;   
+                }
+            }
+
+            set
+            {
+                if(_commonData._ScalingFactors.TryGetValue("CURVE_FV", out var factor))
+                {
+                    _FV_Raw = (int)ScalingComputer.DevideOperation_doubleVer((double)value, factor);
+                }
+            }
+            // get => ScalingComputer.MultOperation((float)_FV_Raw, _commonData.VDC_Factor * 10);
+            // set => _FV_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.VDC_Factor) / 10;
         }
 
         private int _FV_Min_Raw;
         public int FV_Min_Raw => _FV_Min_Raw;
-        public float FV_Min_Display
+        public double FV_Min_Display
         {
-            get => ScalingComputer.MultOperation((float)_FV_Min_Raw, _commonData.VDC_Factor * 10);
-            set => _FV_Min_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.VDC_Factor);
+            get
+            {
+                if(_commonData._ScalingFactors.TryGetValue("CURVE_FV", out var factor))
+                {
+                    return ScalingComputer.MultOperation_doubleVer((double)_FV_Min_Raw, factor);
+                }
+                else
+                {
+                    Console.WriteLine("Curve FV : factor = 0");
+                    return 0;   
+                }
+            }
+
+            set
+            {
+                if(_commonData._ScalingFactors.TryGetValue("CURVE_FV", out var factor))
+                {
+                    _FV_Min_Raw = (int)ScalingComputer.DevideOperation_doubleVer((double)value, factor);
+                }
+            }
+            // get => ScalingComputer.MultOperation((float)_FV_Min_Raw, _commonData.VDC_Factor * 10);
+            // set => _FV_Min_Raw = (int)ScalingComputer.DevideOperation(value, _commonData.VDC_Factor);
         }
 
-        public float FV_Max_Display => CV_Display;
+        public double FV_Max_Display => CV_Display;
 
         //CC_TimeOut(Minute)
         private int _CC_TimeOut_Raw;
@@ -184,6 +404,32 @@ namespace demoVer.Models
             return changed_Flag;
         }
 
+        public Battery_InitData ToBAT_InitData()
+        {
+            var Data = new Battery_InitData();
+
+            Data.CC                 = _CC_Raw;
+            Data.CC_Max             = _CC_Max_Raw;
+            Data.CC_Min             = _CC_Min_Raw;
+            Data.TC                 = _TC_Raw;
+            Data.TC_Max             = _TC_Max_Raw;
+            Data.TC_Min             = _TC_Min_Raw;
+            Data.CV                 = _CV_Raw;
+            Data.CV_Max             = _CV_Max_Raw;
+            Data.CV_Min             = _CV_Min_Raw;
+            Data.FV                 = _FV_Raw;
+            Data.FV_Min             = _FV_Min_Raw;
+            Data.CC_TimeOut_Minute  = _CC_TimeOut_Raw;
+            Data.CV_TimeOut_Minute  = _CV_TimeOut_Raw;
+            Data.FV_TimeOut_Minute  = _FV_TimeOut_Raw;
+            Data.CCT_Enable         = _CCT_Enable;
+            Data.CVT_Enable         = _CVT_Enable;
+            Data.FVT_Enable         = _FVT_Enable;
+            Data.CurveStage         = _CurveStage;
+
+            return Data;
+        }
+
         public BatterySetting_To_JS ToDto()
         {
             return new BatterySetting_To_JS
@@ -231,10 +477,10 @@ namespace demoVer.Models
 
     public class BatterySetting
     {
-        public float CC_Display {get; set;}
-        public float TC_Display {get; set;}
-        public float CV_Display {get; set;}
-        public float FV_Display {get; set;}
+        public double CC_Display {get; set;}
+        public double TC_Display {get; set;}
+        public double CV_Display {get; set;}
+        public double FV_Display {get; set;}
         public bool CurveStage {get; set;}
         public bool CCT_Enable {get; set;}
         public int CC_TimeOut_Display {get; set;}
@@ -246,10 +492,10 @@ namespace demoVer.Models
 
     public class BatterySetting_To_JS
     {
-        public float cc_Display {get; set;}
-        public float tc_Display {get; set;}
-        public float cv_Display {get; set;}
-        public float fv_Display {get; set;}
+        public double cc_Display {get; set;}
+        public double tc_Display {get; set;}
+        public double cv_Display {get; set;}
+        public double fv_Display {get; set;}
         public bool curveStage {get; set;}
         public bool cct_Enable {get; set;}
         public int cc_TimeOut_Display {get; set;}

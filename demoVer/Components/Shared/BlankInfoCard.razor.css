@@ -1,66 +1,79 @@
 /***** overview *****/
-.infoCard-container{
+.infoCard-container {
     display: flex;
-    flex-direction:column;
+    flex-direction: column;
     gap: 2px;
-    background-color: white;
-    border-radius: 8px;
+    background: #fff; /* 回到純白 */
+    border-radius: 12px;
     width: 100%;
-    /* width: 300px; */
     height: 360px;
+
+    /* 陰影與動畫 */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.infoCard-container.top{
-    height: 40px;
+.infoCard-container:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+/* 上方標題列 */
+.infoCard-container.top {
+    height: 44px;
     width: 100%;
-    display : flex;
+    padding: 0 12px;
+    display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
+
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: #333;
+
+    background: #fafafa;            /* 淺灰背景 */
+    border-bottom: 1px solid #e0e0e0; /* 分隔線 */
+    border-radius: 12px 12px 0 0;
 }
 
-.infoCard-container.bottom{
+/* 內容區塊 */
+.infoCard-container.bottom {
+    flex: 1;
     width: 100%;
+    padding: 12px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    align-items: center;
-    justify-content: top;
+    gap: 8px;
+    align-items: stretch;
+    justify-content: flex-start;
 }
 
-
-.top-right-button{
+/* 右上角按鈕 */
+.top-right-button {
     position: absolute;
-    top: 4px;
-    right: 4px;
+    top: 6px;
+    right: 6px;
     padding: 4px 8px;
-    background-color: #eee;
+    background-color: #f0f0f0;
     border: none;
     cursor: pointer;
     font-size: 16px;
-    border-radius: 4px;
-    z-index: 999;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+.top-right-button:hover {
+    background-color: #e0e0e0;
 }
 
 /********************/
-@media(max-width:1200px){
-    .infoCard-container{
-        display: flex;
-        flex-direction:column;
-        gap: 2px;
-        background-color: white;
-        border-radius: 8px;
-        width: 100%;
-        /* width: 300px; */
+@media(max-width: 1200px) {
+    .infoCard-container {
         height: 330px;
     }
-    .infoCard-container.top{
+    .infoCard-container.top {
         height: 40px;
-        width: 100%;
-        display : flex;
         flex-direction: row;
-        align-items: center;
         justify-content: center;
-        position: relative;
     }    
 }
