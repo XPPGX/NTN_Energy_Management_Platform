@@ -14,84 +14,87 @@
 <TopRow />
 
 <div class="content-container">
-    <div class="top-panel">
-        @if (isCollapsed)
+    <div class="top-panel @(isCollapsed ? "collapsed" : "expanded")" @onclick="TogglePanel" @onclick:stopPropagation="true">
+        @if(isCollapsed)
         {
-            <div class="collapsed-label-only" @onclick="ExpandPanel">
+            <div class="collapsed-label-only">
                 條件設置
             </div>
         }
         else
         {
-             <!-- Step 1 -->
-            <div class="@GetStepClass(1)" @onclick="() => GoStep(1)">
-                @if (currentStep == LogType)
-                {
-                    <label for="logType">Log Type</label>
-                    <select id="logType" @onchange="OnLogTypeChanged" @onclick:stopPropagation="true">
-                        <option value="">-- Select --</option>
-                        <option value="event">Event Log</option>
-                        <option value="data">Data Log</option>
-                    </select>
+            <div class="panel-content">
+                <!-- Step 1, Step 2, Step 3 放這 -->
+                <!-- Step 1 -->
+                <div class="@GetStepClass(1)" @onclick="() => GoStep(1)" @onclick:stopPropagation="true">
+                    @if (currentStep == LogType)
+                    {
+                        <label for="logType">Log Type</label>
+                        <select id="logType" @onchange="OnLogTypeChanged" @onclick:stopPropagation="true">
+                            <option value="">-- Select --</option>
+                            <option value="event">Event Log</option>
+                            <option value="data">Data Log</option>
+                        </select>
 
-                    <div class="multi-select">
-                        <p class="section-title">Parameters</p>
-                        <br>
-                        @foreach (var option in parameterOptions)
-                        {
-                            <label class="multi-option">
-                                <input type="checkbox" value="@option" 
-                                    checked="@selectedParameters.Contains(option)" 
-                                    @onchange="e => OnParameterChanged(option, e)" />
-                                @option
-                            </label>
-                        }
-                    </div>
-                }
-                else
-                {
-                    <div class="collapsed-label">
-                        Log Type: @(selectedLogType ?? "未選擇")
-                        <br/>
-                        Parameters: @(selectedParameters.Count > 0 ? string.Join(", ", selectedParameters) : "未選擇")
-                    </div>
-                }
-            </div>
+                        <div class="multi-select">
+                            <p class="section-title">Parameters</p>
+                            <br>
+                            @foreach (var option in parameterOptions)
+                            {
+                                <label class="multi-option">
+                                    <input type="checkbox" value="@option" 
+                                        checked="@selectedParameters.Contains(option)" 
+                                        @onchange="e => OnParameterChanged(option, e)" />
+                                    @option
+                                </label>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="collapsed-label">
+                            Log Type: @(selectedLogType ?? "未選擇")
+                            <br/>
+                            Parameters: @(selectedParameters.Count > 0 ? string.Join(", ", selectedParameters) : "未選擇")
+                        </div>
+                    }
+                </div>
 
-            <!-- Step 2 -->
-            <div class="@GetStepClass(2)" @onclick="() => GoStep(2)" @onclick:stopPropagation="true">
-                @if (currentStep == Date)
-                {
-                    <label for="startDate">Start Date</label>
-                    <input type="date" id="startDate" @bind="selectedStartDate" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
-                    <label for="endDate">End Date</label>
-                    <input type="date" id="endDate" @bind="selectedEndDate" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
-                    @* @onchange="@(e => OnDateChanged(0, e))"  *@
-                }
-                else
-                {
-                    <div class="collapsed-label">
-                        Date: @(selectedStartDate?.ToShortDateString() ?? "未選擇")
-                        ~ @(selectedEndDate?.ToShortDateString() ?? "未選擇")
-                    </div>
-                }
-            </div>
+                <!-- Step 2 -->
+                <div class="@GetStepClass(2)" @onclick="() => GoStep(2)" @onclick:stopPropagation="true">
+                    @if (currentStep == Date)
+                    {
+                        <label for="startDate">Start Date</label>
+                        <input type="date" id="startDate" @bind="selectedStartDate" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
+                        <label for="endDate">End Date</label>
+                        <input type="date" id="endDate" @bind="selectedEndDate" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
+                        @* @onchange="@(e => OnDateChanged(0, e))"  *@
+                    }
+                    else
+                    {
+                        <div class="collapsed-label">
+                            Date: @(selectedStartDate?.ToShortDateString() ?? "未選擇")
+                            ~ @(selectedEndDate?.ToShortDateString() ?? "未選擇")
+                        </div>
+                    }
+                </div>
 
-            <!-- Step 3 -->
-            <div class="@GetStepClass(3)" @onclick="() => GoStep(3)">
-                @if (currentStep == Btn)
-                {
-                    <div class="button-row">
-                        <button class="btn btn-search" @onclick="searchClick" @onclick:stopPropagation="true">查詢</button>
-                        <button class="btn btn-export" @onclick="exportClick" @onclick:stopPropagation="true">匯出</button>
-                    </div>
-                }
-                else
-                {
-                    <div class="collapsed-label">
-                        操作選項
-                    </div>
-                }
+                <!-- Step 3 -->
+                <div class="@GetStepClass(3)" @onclick="() => GoStep(3)" @onclick:stopPropagation="true">
+                    @if (currentStep == Btn)
+                    {
+                        <div class="button-row">
+                            <button class="btn btn-search" @onclick="searchClick" @onclick:stopPropagation="true">查詢</button>
+                            <button class="btn btn-export" @onclick="exportClick" @onclick:stopPropagation="true">匯出</button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="collapsed-label">
+                            操作選項
+                        </div>
+                    }
+                </div>
             </div>
         }
     </div>
@@ -148,6 +151,19 @@
         if (step < currentStep) return "step left";
         if (step > currentStep) return "step right";
         return "step";
+    }
+
+    private void TogglePanel()
+    {
+        if(IsMobileView())
+        {
+            isCollapsed = !isCollapsed;
+        }
+    }
+
+    private bool IsMobileView()
+    {
+        return true;
     }
 
     private void CollapsePanel()
