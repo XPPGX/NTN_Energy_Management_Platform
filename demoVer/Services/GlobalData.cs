@@ -486,10 +486,10 @@ namespace demoVer.Services
 
                     //取得 temp ModelName 準備與舊ModelName進行比對
                     INV_ModelName_tmp = Get_ModelName_ByAddr(firstAddr);
-
+                    // INV_ModelName_tmp = "NTN-5K-248  "; //測試時，ModelName都是[0,0,0,0,0,0]時使用
                     //Assign 當前 Active的subAppSystem (後續應可動態調整，當前先以第一個linkedAddr 所在的範圍作為 Active subAppSystem
                     ActiveSubAppSystemID = findActiveSubAppSys(firstAddr);
-
+                    
                     AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] firstAddr = {firstAddr}, INV_ModelName_tmp = {INV_ModelName_tmp}, ActiveSubAppSystemID = {ActiveSubAppSystemID}", AppLogLevel.Trace);
                 }
                 

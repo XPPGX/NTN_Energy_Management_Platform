@@ -1,1 +1,526 @@
-﻿
+﻿[2025-09-12 11:12:30.061] [DataCenter][initSys] Start...
+[2025-09-12 11:12:30.068] [DataCenter][read_OldMdlName_FromJson] oldMdlName = NTN-5K-248  
+[2025-09-12 11:12:30.071] [CommonData][UpdateScalingFactors] _ScalingFactors re-assigned
+[2025-09-12 11:12:30.081] [DataCenter][initSys] Done...
+[2025-09-12 11:12:30.784] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName == _globalVar.Sys_ModelName
+[2025-09-12 11:22:55.923] [DataCenter][initSys] Start...
+[2025-09-12 11:22:55.932] [DataCenter][read_OldMdlName_FromJson] oldMdlName = NTN-5K-248  
+[2025-09-12 11:22:55.935] [CommonData][UpdateScalingFactors] _ScalingFactors re-assigned
+[2025-09-12 11:22:55.946] [DataCenter][initSys] Done...
+[2025-09-12 11:32:18.020] [DataCenter][initSys] Start...
+[2025-09-12 11:32:18.028] [DataCenter][read_OldMdlName_FromJson] oldMdlName = NTN-5K-248  
+[2025-09-12 11:32:18.031] [CommonData][UpdateScalingFactors] _ScalingFactors re-assigned
+[2025-09-12 11:32:18.046] [DataCenter][initSys] Done...
+[2025-09-12 11:36:49.419] [DataCenter][initSys] Start...
+[2025-09-12 11:36:49.429] [DataCenter][read_OldMdlName_FromJson] oldMdlName = NTN-5K-248  
+[2025-09-12 11:36:49.434] [CommonData][UpdateScalingFactors] _ScalingFactors re-assigned
+[2025-09-12 11:36:49.448] [DataCenter][initSys] Done...
+[2025-09-12 11:38:37.691] [DataCenter][initSys] Start...
+[2025-09-12 11:38:37.699] [DataCenter][read_OldMdlName_FromJson] oldMdlName = NTN-5K-248  
+[2025-09-12 11:38:37.702] [CommonData][UpdateScalingFactors] _ScalingFactors re-assigned
+[2025-09-12 11:38:37.715] [DataCenter][initSys] Done...
+[2025-09-12 11:39:38.437] [DataCenter][initSys] Start...
+[2025-09-12 11:39:38.450] [DataCenter][read_OldMdlName_FromJson] oldMdlName = NTN-5K-248  
+[2025-09-12 11:39:38.453] [CommonData][UpdateScalingFactors] _ScalingFactors re-assigned
+[2025-09-12 11:39:38.475] [DataCenter][initSys] Done...
+[2025-09-12 11:39:39.101] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:39:40.116] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:39:41.131] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:39:42.142] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:39:43.147] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:39:44.162] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:39:45.177] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:39:46.184] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:39:47.197] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:39:48.206] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:39:49.216] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:39:50.225] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:39:51.235] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:39:52.248] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:39:53.257] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:42:39.255] [DataCenter][initSys] Start...
+[2025-09-12 11:42:39.263] [DataCenter][read_OldMdlName_FromJson] oldMdlName = NTN-5K-248  
+[2025-09-12 11:42:39.266] [CommonData][UpdateScalingFactors] _ScalingFactors re-assigned
+[2025-09-12 11:42:39.279] [DataCenter][initSys] Done...
+[2025-09-12 11:42:40.163] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:42:41.181] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:42:42.191] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:42:43.204] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:42:44.217] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:42:45.227] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:42:46.237] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:42:47.251] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:42:48.263] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:42:49.272] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:42:50.276] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:42:51.285] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:42:52.294] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:42:53.304] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:42:54.319] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:42:55.330] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:42:56.344] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:42:57.356] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:42:58.368] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:42:59.377] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:00.391] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:01.401] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:02.412] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:03.425] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:04.433] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:05.441] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:06.455] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:07.470] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:08.475] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:09.487] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:10.498] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:11.512] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:12.520] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:13.522] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:14.534] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:15.546] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:16.561] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:17.573] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:18.584] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:19.597] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:20.609] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:21.621] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:22.627] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:23.634] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:24.649] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:25.651] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:26.655] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:27.666] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:28.677] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:29.688] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:30.692] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:31.696] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:32.706] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:33.723] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:34.732] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:35.747] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:36.758] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:37.771] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:38.782] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:39.797] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:40.813] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:41.826] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:42.837] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:43.848] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:44.861] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:45.866] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:46.873] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:47.882] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:48.891] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:49.908] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:50.922] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:51.933] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:52.945] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:53.952] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:54.961] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:55.973] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:56.985] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:57.993] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:43:59.001] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:44:00.008] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:44:01.020] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:44:02.030] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:44:03.045] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:44:04.051] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:44:05.063] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:44:06.072] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:44:07.079] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:44:08.094] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:44:09.098] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:44:10.110] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:44:11.119] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:44:12.134] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:44:13.138] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:44:14.150] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:44:15.160] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:44:16.167] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:44:17.177] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:44:18.187] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:44:19.203] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:44:20.214] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:44:21.223] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:44:22.234] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:44:23.250] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 11:44:26.945] [DataCenter][initSys] Start...
+[2025-09-12 11:44:26.952] [DataCenter][read_OldMdlName_FromJson] oldMdlName = NTN-5K-248  
+[2025-09-12 11:44:26.957] [CommonData][UpdateScalingFactors] _ScalingFactors re-assigned
+[2025-09-12 11:44:26.970] [DataCenter][initSys] Done...
+[2025-09-12 11:44:28.636] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName == _globalVar.Sys_ModelName
+[2025-09-12 11:44:28.637] [Inverter_setting][Check_ScalingFactor_Status] OK = True, _isloding = False
+[2025-09-12 11:44:28.644] [Inverter_setting][Check_ScalingFactor_Status] Refreshed UI
+[2025-09-12 11:44:40.495] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = CURVE_CC, IsPerAddr = False
+[2025-09-12 11:44:40.496] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = CURVE_CV, IsPerAddr = False
+[2025-09-12 11:44:40.496] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = CURVE_FV, IsPerAddr = False
+[2025-09-12 11:44:40.497] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = CURVE_TC, IsPerAddr = False
+[2025-09-12 11:44:40.497] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = CURVE_CONFIG, IsPerAddr = False
+[2025-09-12 11:44:40.498] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = CURVE_CC_TIMEOUT, IsPerAddr = False
+[2025-09-12 11:44:40.498] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = CURVE_CV_TIMEOUT, IsPerAddr = False
+[2025-09-12 11:44:40.499] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = CURVE_FV_TIMEOUT, IsPerAddr = False
+[2025-09-12 11:44:40.499] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = BAT_ALM_VOLT, IsPerAddr = False
+[2025-09-12 11:44:40.499] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = BAT_SHDN_VOLT, IsPerAddr = False
+[2025-09-12 11:44:40.500] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = BAT_RCHG_VOLT, IsPerAddr = False
+[2025-09-12 11:44:40.500] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = BAT_OV_ALM_VOLT, IsPerAddr = False
+[2025-09-12 11:44:40.500] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = SYSTEM_CONFIG, IsPerAddr = False
+[2025-09-12 11:44:40.501] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = INV_OPERATION, IsPerAddr = True
+[2025-09-12 11:44:40.501] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = INV_CONFIG, IsPerAddr = False
+[2025-09-12 11:44:40.501] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = Output_ACV_Set, IsPerAddr = False
+[2025-09-12 11:44:40.502] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = Output_ACF_Set, IsPerAddr = False
+[2025-09-12 11:44:40.514] [WriteProcess][assignScalingFactors_To_SubSysWriteMem] firstLinkedAddr = 0
+[2025-09-12 11:44:40.515] [WriteAPI][assignScalingFactor] cmd = CURVE_FV
+[2025-09-12 11:44:40.515] [WriteProcess][assignScalingFactor] scalingfactor = 0.01
+[2025-09-12 11:44:40.515] [WriteAPI][assignScalingFactor] cmd = INV_OPERATION
+[2025-09-12 11:44:40.516] [WriteProcess][assignScalingFactor] scalingfactor = 1
+[2025-09-12 11:44:40.516] [WriteAPI][assignScalingFactor] cmd = INV_CONFIG
+[2025-09-12 11:44:40.516] [WriteProcess][assignScalingFactor] scalingfactor = 1
+[2025-09-12 11:44:40.517] [WriteAPI][assignScalingFactor] cmd = CURVE_CC_TIMEOUT
+[2025-09-12 11:44:40.517] [WriteProcess][assignScalingFactor] scalingfactor = 1
+[2025-09-12 11:44:40.517] [WriteAPI][assignScalingFactor] cmd = Output_ACV_Set
+[2025-09-12 11:44:40.518] [WriteProcess][assignScalingFactor] scalingfactor = 1
+[2025-09-12 11:44:40.518] [WriteAPI][assignScalingFactor] cmd = CURVE_TC
+[2025-09-12 11:44:40.519] [WriteProcess][assignScalingFactor] scalingfactor = 0.01
+[2025-09-12 11:44:40.519] [WriteAPI][assignScalingFactor] cmd = CURVE_CV_TIMEOUT
+[2025-09-12 11:44:40.519] [WriteProcess][assignScalingFactor] scalingfactor = 1
+[2025-09-12 11:44:40.520] [WriteAPI][assignScalingFactor] cmd = Output_ACF_Set
+[2025-09-12 11:44:40.520] [WriteProcess][assignScalingFactor] scalingfactor = 1
+[2025-09-12 11:44:40.521] [WriteAPI][assignScalingFactor] cmd = CURVE_CV
+[2025-09-12 11:44:40.522] [WriteProcess][assignScalingFactor] scalingfactor = 0.01
+[2025-09-12 11:44:40.523] [WriteAPI][assignScalingFactor] cmd = CURVE_FV_TIMEOUT
+[2025-09-12 11:44:40.523] [WriteProcess][assignScalingFactor] scalingfactor = 1
+[2025-09-12 11:44:40.524] [WriteAPI][assignScalingFactor] cmd = BAT_RCHG_VOLT
+[2025-09-12 11:44:40.524] [WriteProcess][assignScalingFactor] scalingfactor = 0.01
+[2025-09-12 11:44:40.525] [WriteAPI][assignScalingFactor] cmd = BAT_ALM_VOLT
+[2025-09-12 11:44:40.525] [WriteProcess][assignScalingFactor] scalingfactor = 0.01
+[2025-09-12 11:44:40.525] [WriteAPI][assignScalingFactor] cmd = CURVE_CONFIG
+[2025-09-12 11:44:40.525] [WriteProcess][assignScalingFactor] scalingfactor = 1
+[2025-09-12 11:44:40.526] [WriteAPI][assignScalingFactor] cmd = BAT_SHDN_VOLT
+[2025-09-12 11:44:40.526] [WriteProcess][assignScalingFactor] scalingfactor = 0.01
+[2025-09-12 11:44:40.526] [WriteAPI][assignScalingFactor] cmd = CURVE_CC
+[2025-09-12 11:44:40.527] [WriteProcess][assignScalingFactor] scalingfactor = 0.01
+[2025-09-12 11:44:40.527] [WriteAPI][assignScalingFactor] cmd = SYSTEM_CONFIG
+[2025-09-12 11:44:40.527] [WriteProcess][assignScalingFactor] scalingfactor = 1
+[2025-09-12 11:44:40.528] [WriteAPI][assignScalingFactor] cmd = BAT_OV_ALM_VOLT
+[2025-09-12 11:44:40.528] [WriteProcess][assignScalingFactor] scalingfactor = 0.01
+[2025-09-12 11:44:40.529] [WriteProcess][UIvalueTransformToWriteFormat] cmd = BAT_ALM_VOLT, codedVal = 4430
+[2025-09-12 11:44:40.529] [WriteProcess][UIvalueTransformToWriteFormat] uint_codedVal = 4430
+[2025-09-12 11:44:40.529] [WriteProcess][UIvalueTransformToWriteFormat] tmp_byteArray[1] = 11, [0] = 4E
+[2025-09-12 11:44:40.530] [WriteProcess][UIvalueTransformToWriteFormat] cmd = BAT_SHDN_VOLT, codedVal = 4100
+[2025-09-12 11:44:40.530] [WriteProcess][UIvalueTransformToWriteFormat] uint_codedVal = 4100
+[2025-09-12 11:44:40.531] [WriteProcess][UIvalueTransformToWriteFormat] tmp_byteArray[1] = 10, [0] = 04
+[2025-09-12 11:44:40.531] [WriteProcess][UIvalueTransformToWriteFormat] cmd = BAT_RCHG_VOLT, codedVal = 5520
+[2025-09-12 11:44:40.532] [WriteProcess][UIvalueTransformToWriteFormat] uint_codedVal = 5520
+[2025-09-12 11:44:40.532] [WriteProcess][UIvalueTransformToWriteFormat] tmp_byteArray[1] = 15, [0] = 90
+[2025-09-12 11:44:40.532] [WriteProcess][UIvalueTransformToWriteFormat] cmd = BAT_OV_ALM_VOLT, codedVal = 6220
+[2025-09-12 11:44:40.533] [WriteProcess][UIvalueTransformToWriteFormat] uint_codedVal = 6220
+[2025-09-12 11:44:40.533] [WriteProcess][UIvalueTransformToWriteFormat] tmp_byteArray[1] = 18, [0] = 4C
+[2025-09-12 11:44:40.534] [Inverter_setting][nowUIData_transformTo_apiWriteData] Output_ACF_Set    = 00 02
+[2025-09-12 11:44:40.534] [Inverter_setting][nowUIData_transformTo_apiWriteData] Output_ACV_Set    = 00 02
+[2025-09-12 11:44:40.534] [Inverter_setting][nowUIData_transformTo_apiWriteData] INV_CONFIG        = 00 00
+[2025-09-12 11:44:40.535] [Inverter_setting][nowUIData_transformTo_apiWriteData] BAT_ALM_VOLT      = 11 4E
+[2025-09-12 11:44:40.535] [Inverter_setting][nowUIData_transformTo_apiWriteData] BAT_SHDN_VOLT     = 10 04
+[2025-09-12 11:44:40.539] [Inverter_setting][nowUIData_transformTo_apiWriteData] BAT_RCHG_VOLT     = 15 90
+[2025-09-12 11:44:40.540] [Inverter_setting][nowUIData_transformTo_apiWriteData] BAT_OV_ALM_VOLT   = 18 4C
+[2025-09-12 11:44:40.541] [Inverter_setting][nowUIData_transformTo_apiWriteData] INV_OPERATION     = 00 04
+[2025-09-12 11:44:40.542] [WriteProcess][Write_To_Framework] step 0...Done
+[2025-09-12 11:44:40.542] [WriteProcess][Write_To_Framework] step 1...Done
+[2025-09-12 11:44:40.550] [WriteAPI_Datas][subAppSys_Clone_CheckToWrite] clone from CHECK to WRITE is done
+[2025-09-12 11:44:40.551] [WriteProcess][putPackedData_Into_SubSysWrite] cmd = Output_ACF_Set, shiftedByte[1] = 02, shiftedByte[0] = 00
+[2025-09-12 11:44:40.551] WRITE, FOUND cmd = Output_ACF_Set
+[2025-09-12 11:44:40.552] [0, 2, 0, 0]
+[2025-09-12 11:44:40.552] [WriteProcess][putPackedData_Into_SubSysWrite] cmd = Output_ACV_Set, shiftedByte[1] = 02, shiftedByte[0] = 00
+[2025-09-12 11:44:40.553] WRITE, FOUND cmd = Output_ACV_Set
+[2025-09-12 11:44:40.553] [0, 2, 0, 0]
+[2025-09-12 11:44:40.554] [WriteProcess][putPackedData_Into_SubSysWrite] cmd = INV_CONFIG, shiftedByte[1] = 00, shiftedByte[0] = 00
+[2025-09-12 11:44:40.554] WRITE, FOUND cmd = INV_CONFIG
+[2025-09-12 11:44:40.555] [0, 0, 0, 0]
+[2025-09-12 11:44:40.556] [WriteProcess][putPackedData_Into_SubSysWrite] cmd = BAT_ALM_VOLT, shiftedByte[1] = 4E, shiftedByte[0] = 11
+[2025-09-12 11:44:40.557] WRITE, FOUND cmd = BAT_ALM_VOLT
+[2025-09-12 11:44:40.557] [17, 78, 0, 0]
+[2025-09-12 11:44:40.558] [WriteProcess][putPackedData_Into_SubSysWrite] cmd = BAT_SHDN_VOLT, shiftedByte[1] = 04, shiftedByte[0] = 10
+[2025-09-12 11:44:40.558] WRITE, FOUND cmd = BAT_SHDN_VOLT
+[2025-09-12 11:44:40.558] [16, 4, 0, 0]
+[2025-09-12 11:44:40.559] [WriteProcess][putPackedData_Into_SubSysWrite] cmd = BAT_RCHG_VOLT, shiftedByte[1] = 90, shiftedByte[0] = 15
+[2025-09-12 11:44:40.559] WRITE, FOUND cmd = BAT_RCHG_VOLT
+[2025-09-12 11:44:40.560] [21, 144, 0, 0]
+[2025-09-12 11:44:40.560] [WriteProcess][putPackedData_Into_SubSysWrite] cmd = BAT_OV_ALM_VOLT, shiftedByte[1] = 4C, shiftedByte[0] = 18
+[2025-09-12 11:44:40.560] WRITE, FOUND cmd = BAT_OV_ALM_VOLT
+[2025-09-12 11:44:40.561] [24, 76, 0, 0]
+[2025-09-12 11:44:40.561] [WriteProcess][putPackedData_Into_SubSysWrite] cmd = INV_OPERATION, shiftedByte[1] = 04, shiftedByte[0] = 00
+[2025-09-12 11:44:40.562] WRITE, FOUND cmd = INV_OPERATION
+[2025-09-12 11:44:40.562] addr = 0, data = [0, 4, 0, 0]
+[2025-09-12 11:44:40.562] [WriteProcess][Write_To_Framework] step 2...Done
+[2025-09-12 11:44:40.565] [WriteProcess][Write_To_Framework] step 3...Done
+[2025-09-12 11:44:40.665] [ApiManager][apiWrite_SettingData]成功: 200
+[2025-09-12 11:44:40.772] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = CURVE_FV, IsPerAddr = False
+[2025-09-12 11:44:40.773] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = INV_OPERATION, IsPerAddr = True
+[2025-09-12 11:44:40.773] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = INV_CONFIG, IsPerAddr = False
+[2025-09-12 11:44:40.774] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = CURVE_CC_TIMEOUT, IsPerAddr = False
+[2025-09-12 11:44:40.774] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = CURVE_TC, IsPerAddr = False
+[2025-09-12 11:44:40.775] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = Output_ACV_Set, IsPerAddr = False
+[2025-09-12 11:44:40.775] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = CURVE_CV_TIMEOUT, IsPerAddr = False
+[2025-09-12 11:44:40.776] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = Output_ACF_Set, IsPerAddr = False
+[2025-09-12 11:44:40.776] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = CURVE_CV, IsPerAddr = False
+[2025-09-12 11:44:40.777] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = CURVE_FV_TIMEOUT, IsPerAddr = False
+[2025-09-12 11:44:40.777] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = BAT_RCHG_VOLT, IsPerAddr = False
+[2025-09-12 11:44:40.778] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = BAT_ALM_VOLT, IsPerAddr = False
+[2025-09-12 11:44:40.778] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = CURVE_CONFIG, IsPerAddr = False
+[2025-09-12 11:44:40.779] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = BAT_SHDN_VOLT, IsPerAddr = False
+[2025-09-12 11:44:40.779] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = CURVE_CC, IsPerAddr = False
+[2025-09-12 11:44:40.780] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = SYSTEM_CONFIG, IsPerAddr = False
+[2025-09-12 11:44:40.780] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = BAT_OV_ALM_VOLT, IsPerAddr = False
+[2025-09-12 11:44:40.786] [WriteProcess][Transfer_And_Compare] CHECK == WRITE
+[2025-09-12 11:44:40.788] [WriteProcess][Write_To_Framework] step 4...Done
+[2025-09-12 11:44:40.789] [DataCenter][save_INVSetting] Saving to memory...
+[2025-09-12 11:44:40.792] [DataCenter][save_INVSetting] Saving to memory...done
+[2025-09-12 11:44:40.793] [DataCenter][save_INVSetting] Saving to Json...
+[2025-09-12 11:44:40.795] [DataCenter][save_INVSetting] Saving to Json...done
+[2025-09-12 11:46:02.524] [WriteProcess][UIvalueTransformToWriteFormat] cmd = BAT_ALM_VOLT, codedVal = 3930
+[2025-09-12 11:46:02.525] [WriteProcess][UIvalueTransformToWriteFormat] uint_codedVal = 3930
+[2025-09-12 11:46:02.527] [WriteProcess][UIvalueTransformToWriteFormat] tmp_byteArray[1] = 0F, [0] = 5A
+[2025-09-12 11:46:02.528] [WriteProcess][UIvalueTransformToWriteFormat] cmd = BAT_SHDN_VOLT, codedVal = 3910
+[2025-09-12 11:46:02.528] [WriteProcess][UIvalueTransformToWriteFormat] uint_codedVal = 3910
+[2025-09-12 11:46:02.529] [WriteProcess][UIvalueTransformToWriteFormat] tmp_byteArray[1] = 0F, [0] = 46
+[2025-09-12 11:46:02.530] [WriteProcess][UIvalueTransformToWriteFormat] cmd = BAT_RCHG_VOLT, codedVal = 5520
+[2025-09-12 11:46:02.531] [WriteProcess][UIvalueTransformToWriteFormat] uint_codedVal = 5520
+[2025-09-12 11:46:02.531] [WriteProcess][UIvalueTransformToWriteFormat] tmp_byteArray[1] = 15, [0] = 90
+[2025-09-12 11:46:02.532] [WriteProcess][UIvalueTransformToWriteFormat] cmd = BAT_OV_ALM_VOLT, codedVal = 6220
+[2025-09-12 11:46:02.532] [WriteProcess][UIvalueTransformToWriteFormat] uint_codedVal = 6220
+[2025-09-12 11:46:02.534] [WriteProcess][UIvalueTransformToWriteFormat] tmp_byteArray[1] = 18, [0] = 4C
+[2025-09-12 11:46:02.534] [Inverter_setting][nowUIData_transformTo_apiWriteData] Output_ACF_Set    = 00 02
+[2025-09-12 11:46:02.535] [Inverter_setting][nowUIData_transformTo_apiWriteData] Output_ACV_Set    = 00 02
+[2025-09-12 11:46:02.536] [Inverter_setting][nowUIData_transformTo_apiWriteData] INV_CONFIG        = 00 00
+[2025-09-12 11:46:02.536] [Inverter_setting][nowUIData_transformTo_apiWriteData] BAT_ALM_VOLT      = 0F 5A
+[2025-09-12 11:46:02.536] [Inverter_setting][nowUIData_transformTo_apiWriteData] BAT_SHDN_VOLT     = 0F 46
+[2025-09-12 11:46:02.537] [Inverter_setting][nowUIData_transformTo_apiWriteData] BAT_RCHG_VOLT     = 15 90
+[2025-09-12 11:46:02.537] [Inverter_setting][nowUIData_transformTo_apiWriteData] BAT_OV_ALM_VOLT   = 18 4C
+[2025-09-12 11:46:02.537] [Inverter_setting][nowUIData_transformTo_apiWriteData] INV_OPERATION     = 00 04
+[2025-09-12 11:46:02.538] [WriteProcess][Write_To_Framework] step 0...Done
+[2025-09-12 11:46:02.538] [WriteProcess][Write_To_Framework] step 1...Done
+[2025-09-12 11:46:02.546] [WriteAPI_Datas][subAppSys_Clone_CheckToWrite] clone from CHECK to WRITE is done
+[2025-09-12 11:46:02.547] [WriteProcess][putPackedData_Into_SubSysWrite] cmd = Output_ACF_Set, shiftedByte[1] = 02, shiftedByte[0] = 00
+[2025-09-12 11:46:02.548] WRITE, FOUND cmd = Output_ACF_Set
+[2025-09-12 11:46:02.548] [0, 2, 0, 0]
+[2025-09-12 11:46:02.549] [WriteProcess][putPackedData_Into_SubSysWrite] cmd = Output_ACV_Set, shiftedByte[1] = 02, shiftedByte[0] = 00
+[2025-09-12 11:46:02.549] WRITE, FOUND cmd = Output_ACV_Set
+[2025-09-12 11:46:02.550] [0, 2, 0, 0]
+[2025-09-12 11:46:02.550] [WriteProcess][putPackedData_Into_SubSysWrite] cmd = INV_CONFIG, shiftedByte[1] = 00, shiftedByte[0] = 00
+[2025-09-12 11:46:02.551] WRITE, FOUND cmd = INV_CONFIG
+[2025-09-12 11:46:02.551] [0, 0, 0, 0]
+[2025-09-12 11:46:02.552] [WriteProcess][putPackedData_Into_SubSysWrite] cmd = BAT_ALM_VOLT, shiftedByte[1] = 5A, shiftedByte[0] = 0F
+[2025-09-12 11:46:02.552] WRITE, FOUND cmd = BAT_ALM_VOLT
+[2025-09-12 11:46:02.553] [15, 90, 0, 0]
+[2025-09-12 11:46:02.553] [WriteProcess][putPackedData_Into_SubSysWrite] cmd = BAT_SHDN_VOLT, shiftedByte[1] = 46, shiftedByte[0] = 0F
+[2025-09-12 11:46:02.554] WRITE, FOUND cmd = BAT_SHDN_VOLT
+[2025-09-12 11:46:02.554] [15, 70, 0, 0]
+[2025-09-12 11:46:02.555] [WriteProcess][putPackedData_Into_SubSysWrite] cmd = BAT_RCHG_VOLT, shiftedByte[1] = 90, shiftedByte[0] = 15
+[2025-09-12 11:46:02.555] WRITE, FOUND cmd = BAT_RCHG_VOLT
+[2025-09-12 11:46:02.555] [21, 144, 0, 0]
+[2025-09-12 11:46:02.556] [WriteProcess][putPackedData_Into_SubSysWrite] cmd = BAT_OV_ALM_VOLT, shiftedByte[1] = 4C, shiftedByte[0] = 18
+[2025-09-12 11:46:02.556] WRITE, FOUND cmd = BAT_OV_ALM_VOLT
+[2025-09-12 11:46:02.556] [24, 76, 0, 0]
+[2025-09-12 11:46:02.557] [WriteProcess][putPackedData_Into_SubSysWrite] cmd = INV_OPERATION, shiftedByte[1] = 04, shiftedByte[0] = 00
+[2025-09-12 11:46:02.557] WRITE, FOUND cmd = INV_OPERATION
+[2025-09-12 11:46:02.557] addr = 0, data = [0, 4, 0, 0]
+[2025-09-12 11:46:02.558] [WriteProcess][Write_To_Framework] step 2...Done
+[2025-09-12 11:46:02.559] [WriteProcess][Write_To_Framework] step 3...Done
+[2025-09-12 11:46:02.570] [ApiManager][apiWrite_SettingData]成功: 200
+[2025-09-12 11:46:02.692] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = CURVE_FV, IsPerAddr = False
+[2025-09-12 11:46:02.692] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = INV_OPERATION, IsPerAddr = True
+[2025-09-12 11:46:02.693] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = INV_CONFIG, IsPerAddr = False
+[2025-09-12 11:46:02.693] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = CURVE_CC_TIMEOUT, IsPerAddr = False
+[2025-09-12 11:46:02.694] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = CURVE_TC, IsPerAddr = False
+[2025-09-12 11:46:02.694] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = Output_ACV_Set, IsPerAddr = False
+[2025-09-12 11:46:02.695] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = CURVE_CV_TIMEOUT, IsPerAddr = False
+[2025-09-12 11:46:02.696] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = Output_ACF_Set, IsPerAddr = False
+[2025-09-12 11:46:02.696] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = CURVE_CV, IsPerAddr = False
+[2025-09-12 11:46:02.697] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = CURVE_FV_TIMEOUT, IsPerAddr = False
+[2025-09-12 11:46:02.697] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = BAT_RCHG_VOLT, IsPerAddr = False
+[2025-09-12 11:46:02.698] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = BAT_ALM_VOLT, IsPerAddr = False
+[2025-09-12 11:46:02.698] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = CURVE_CONFIG, IsPerAddr = False
+[2025-09-12 11:46:02.698] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = BAT_SHDN_VOLT, IsPerAddr = False
+[2025-09-12 11:46:02.699] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = CURVE_CC, IsPerAddr = False
+[2025-09-12 11:46:02.699] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = SYSTEM_CONFIG, IsPerAddr = False
+[2025-09-12 11:46:02.700] [WriteAPI_Datas][saveSettingData_From_Framework_To_Check] cmdName = BAT_OV_ALM_VOLT, IsPerAddr = False
+[2025-09-12 11:46:02.708] [WriteProcess][Transfer_And_Compare] CHECK == WRITE
+[2025-09-12 11:46:02.709] [WriteProcess][Write_To_Framework] step 4...Done
+[2025-09-12 11:46:02.709] [DataCenter][save_INVSetting] Saving to memory...
+[2025-09-12 11:46:02.712] [DataCenter][save_INVSetting] Saving to memory...done
+[2025-09-12 11:46:02.713] [DataCenter][save_INVSetting] Saving to Json...
+[2025-09-12 11:46:02.715] [DataCenter][save_INVSetting] Saving to Json...done
+[2025-09-12 11:48:20.041] [DataCenter][initSys] Start...
+[2025-09-12 11:48:20.052] [DataCenter][read_OldMdlName_FromJson] oldMdlName = NTN-5K-248  
+[2025-09-12 11:48:20.056] [CommonData][UpdateScalingFactors] _ScalingFactors re-assigned
+[2025-09-12 11:48:20.072] [DataCenter][initSys] Done...
+[2025-09-12 11:48:21.690] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName == _globalVar.Sys_ModelName
+[2025-09-12 11:48:21.691] [Inverter_setting][Check_ScalingFactor_Status] OK = True, _isloding = False
+[2025-09-12 11:48:21.698] [Inverter_setting][Check_ScalingFactor_Status] Refreshed UI
+[2025-09-12 14:01:08.379] [DataCenter][initSys] Start...
+[2025-09-12 14:01:08.387] [DataCenter][read_OldMdlName_FromJson] oldMdlName = NTN-5K-248  
+[2025-09-12 14:01:08.393] [CommonData][UpdateScalingFactors] _ScalingFactors re-assigned
+[2025-09-12 14:01:08.400] [DataCenter][initSys] Done...
+[2025-09-12 14:01:09.673] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName == _globalVar.Sys_ModelName
+[2025-09-12 14:02:31.355] [DataCenter][initSys] Start...
+[2025-09-12 14:02:31.358] [DataCenter][read_OldMdlName_FromJson] oldMdlName = NTN-5K-248  
+[2025-09-12 14:02:31.362] [CommonData][UpdateScalingFactors] _ScalingFactors re-assigned
+[2025-09-12 14:02:31.370] [DataCenter][initSys] Done...
+[2025-09-12 14:02:31.516] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName == _globalVar.Sys_ModelName
+[2025-09-12 14:47:55.489] [DataCenter][initSys] Start...
+[2025-09-12 14:47:55.498] [DataCenter][read_OldMdlName_FromJson] oldMdlName = NTN-5K-248  
+[2025-09-12 14:47:55.504] [CommonData][UpdateScalingFactors] _ScalingFactors re-assigned
+[2025-09-12 14:47:55.517] [DataCenter][initSys] Done...
+[2025-09-12 14:47:56.506] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName == _globalVar.Sys_ModelName
+[2025-09-12 15:02:42.206] [DataCenter][initSys] Start...
+[2025-09-12 15:02:42.216] [DataCenter][read_OldMdlName_FromJson] oldMdlName = NTN-5K-248  
+[2025-09-12 15:02:42.222] [CommonData][UpdateScalingFactors] _ScalingFactors re-assigned
+[2025-09-12 15:02:42.235] [DataCenter][initSys] Done...
+[2025-09-12 15:02:43.658] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName == _globalVar.Sys_ModelName
+[2025-09-12 15:49:35.977] [DataCenter][initSys] Start...
+[2025-09-12 15:49:35.986] [DataCenter][read_OldMdlName_FromJson] oldMdlName = NTN-5K-248  
+[2025-09-12 15:49:35.991] [CommonData][UpdateScalingFactors] _ScalingFactors re-assigned
+[2025-09-12 15:49:36.001] [DataCenter][initSys] Done...
+[2025-09-12 15:49:36.601] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName == _globalVar.Sys_ModelName
+[2025-09-12 15:55:30.841] [DataCenter][initSys] Start...
+[2025-09-12 15:55:30.851] [DataCenter][read_OldMdlName_FromJson] oldMdlName = NTN-5K-248  
+[2025-09-12 15:55:30.860] [CommonData][UpdateScalingFactors] _ScalingFactors re-assigned
+[2025-09-12 15:55:30.882] [DataCenter][initSys] Done...
+[2025-09-12 15:55:31.850] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName == _globalVar.Sys_ModelName
+[2025-09-12 16:10:56.236] [DataCenter][initSys] Start...
+[2025-09-12 16:10:56.240] [DataCenter][read_OldMdlName_FromJson] oldMdlName = NTN-5K-248  
+[2025-09-12 16:10:56.243] [CommonData][UpdateScalingFactors] _ScalingFactors re-assigned
+[2025-09-12 16:10:56.251] [DataCenter][initSys] Done...
+[2025-09-12 16:10:56.488] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName == _globalVar.Sys_ModelName
+[2025-09-12 16:23:36.992] [DataCenter][initSys] Start...
+[2025-09-12 16:23:37.004] [DataCenter][read_OldMdlName_FromJson] oldMdlName = NTN-5K-248  
+[2025-09-12 16:23:37.011] [CommonData][UpdateScalingFactors] _ScalingFactors re-assigned
+[2025-09-12 16:23:37.032] [DataCenter][initSys] Done...
+[2025-09-12 16:23:37.750] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = NTN-5K-248  , _globalVar.Sys_ModelName = 
+[2025-09-12 16:23:38.795] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName == _globalVar.Sys_ModelName
+[2025-09-12 17:25:47.389] [ApiManager][ReadSingleINV] Http_Error: System.Net.Http.HttpRequestException: 嘗試存取通訊端被拒絕，因為存取權限不足。 (127.0.0.1:5050)
+ ---> System.Net.Sockets.SocketException (10013): 嘗試存取通訊端被拒絕，因為存取權限不足。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.CreateException(SocketError error, Boolean forAsyncThrow)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ConnectAsync(Socket socket)
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at System.Net.Http.HttpConnectionPool.AddHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+   at System.Threading.ThreadPoolWorkQueue.Dispatch()
+   at System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart()
+--- End of stack trace from previous location ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.AddHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|5_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingScopeHttpMessageHandler.<SendCoreAsync>g__Core|5_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+   at System.Net.Http.Json.HttpClientJsonExtensions.<FromJsonAsyncCore>g__Core|12_0[TValue,TJsonOptions](HttpClient client, Task`1 responseTask, Boolean usingResponseHeadersRead, CancellationTokenSource linkedCTS, Func`4 deserializeMethod, TJsonOptions jsonOptions, CancellationToken cancellationToken)
+   at demoVer.Services.ApiManager.apiRead_OneDeviceData(String type, UInt32 addr) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\ApiProcessor.cs:line 25
+[2025-09-12 17:25:48.416] [ApiManager][ReadSingleINV] Http_Error: System.Net.Http.HttpRequestException: 嘗試存取通訊端被拒絕，因為存取權限不足。 (127.0.0.1:5050)
+ ---> System.Net.Sockets.SocketException (10013): 嘗試存取通訊端被拒絕，因為存取權限不足。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.CreateException(SocketError error, Boolean forAsyncThrow)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ConnectAsync(Socket socket)
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at System.Net.Http.HttpConnectionPool.AddHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+   at System.Threading.ThreadPoolWorkQueue.Dispatch()
+   at System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart()
+--- End of stack trace from previous location ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.AddHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|5_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingScopeHttpMessageHandler.<SendCoreAsync>g__Core|5_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+   at System.Net.Http.Json.HttpClientJsonExtensions.<FromJsonAsyncCore>g__Core|12_0[TValue,TJsonOptions](HttpClient client, Task`1 responseTask, Boolean usingResponseHeadersRead, CancellationTokenSource linkedCTS, Func`4 deserializeMethod, TJsonOptions jsonOptions, CancellationToken cancellationToken)
+   at demoVer.Services.ApiManager.apiRead_OneDeviceData(String type, UInt32 addr) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\ApiProcessor.cs:line 25
+[2025-09-12 18:09:12.987] [DataCenter][initSys] Start...
+[2025-09-12 18:09:12.996] [DataCenter][read_OldMdlName_FromJson] oldMdlName = NTN-5K-248  
+[2025-09-12 18:09:13.001] [CommonData][UpdateScalingFactors] _ScalingFactors re-assigned
+[2025-09-12 18:09:13.014] [DataCenter][initSys] Done...
+[2025-09-12 18:09:13.433] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName == _globalVar.Sys_ModelName
+[2025-09-12 18:11:23.720] [DataCenter][initSys] Start...
+[2025-09-12 18:11:23.722] [DataCenter][read_OldMdlName_FromJson] oldMdlName = NTN-5K-248  
+[2025-09-12 18:11:23.729] [CommonData][UpdateScalingFactors] _ScalingFactors re-assigned
+[2025-09-12 18:11:23.745] [DataCenter][initSys] Done...
+[2025-09-12 18:11:23.975] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName == _globalVar.Sys_ModelName
+[2025-09-12 18:20:25.847] [DataCenter][initSys] Start...
+[2025-09-12 18:20:25.852] [DataCenter][read_OldMdlName_FromJson] oldMdlName = NTN-5K-248  
+[2025-09-12 18:20:25.854] [CommonData][UpdateScalingFactors] _ScalingFactors re-assigned
+[2025-09-12 18:20:25.860] [DataCenter][initSys] Done...
+[2025-09-12 18:20:26.454] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName == _globalVar.Sys_ModelName
+[2025-09-12 18:39:14.257] [DataCenter][initSys] Start...
+[2025-09-12 18:39:14.261] [DataCenter][read_OldMdlName_FromJson] oldMdlName = NTN-5K-248  
+[2025-09-12 18:39:14.268] [CommonData][UpdateScalingFactors] _ScalingFactors re-assigned
+[2025-09-12 18:39:14.283] [DataCenter][initSys] Done...
+[2025-09-12 18:39:14.452] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName == _globalVar.Sys_ModelName
+[2025-09-13 09:07:29.868] [DataCenter][initSys] Start...
+[2025-09-13 09:07:29.875] [DataCenter][read_OldMdlName_FromJson] oldMdlName = NTN-5K-248  
+[2025-09-13 09:07:29.879] [CommonData][UpdateScalingFactors] _ScalingFactors re-assigned
+[2025-09-13 09:07:29.886] [DataCenter][initSys] Done...
+[2025-09-13 09:07:30.114] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName == _globalVar.Sys_ModelName
+[2025-09-13 09:08:28.077] [ApiManager][ReadSingleINV] Http_Error: System.Net.Http.HttpRequestException: 嘗試存取通訊端被拒絕，因為存取權限不足。 (127.0.0.1:5050)
+ ---> System.Net.Sockets.SocketException (10013): 嘗試存取通訊端被拒絕，因為存取權限不足。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.CreateException(SocketError error, Boolean forAsyncThrow)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ConnectAsync(Socket socket)
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+   at System.Net.Http.HttpConnectionPool.AddHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+   at System.Threading.ThreadPoolWorkQueue.Dispatch()
+   at System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart()
+--- End of stack trace from previous location ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnectionPool.ConnectToTcpHostAsync(String host, Int32 port, HttpRequestMessage initialRequest, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.ConnectAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.CreateHttp11ConnectionAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.AddHttp11ConnectionAsync(QueueItem queueItem)
+   at System.Threading.Tasks.TaskCompletionSourceWithCancellation`1.WaitWithCancellationAsync(CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.<SendCoreAsync>g__Core|5_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingScopeHttpMessageHandler.<SendCoreAsync>g__Core|5_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+   at System.Net.Http.Json.HttpClientJsonExtensions.<FromJsonAsyncCore>g__Core|12_0[TValue,TJsonOptions](HttpClient client, Task`1 responseTask, Boolean usingResponseHeadersRead, CancellationTokenSource linkedCTS, Func`4 deserializeMethod, TJsonOptions jsonOptions, CancellationToken cancellationToken)
+   at demoVer.Services.ApiManager.apiRead_OneDeviceData(String type, UInt32 addr) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\ApiProcessor.cs:line 25
+[2025-09-13 09:08:29.955] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName == _globalVar.Sys_ModelName
+[2025-09-13 09:45:55.704] [DataCenter][initSys] Start...
+[2025-09-13 09:45:55.713] [DataCenter][read_OldMdlName_FromJson] oldMdlName = NTN-5K-248  
+[2025-09-13 09:45:55.717] [CommonData][UpdateScalingFactors] _ScalingFactors re-assigned
+[2025-09-13 09:45:55.724] [DataCenter][initSys] Done...
+[2025-09-13 09:45:57.786] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName == _globalVar.Sys_ModelName
+[2025-09-13 10:35:32.774] [DataCenter][initSys] Start...
+[2025-09-13 10:35:32.779] [DataCenter][read_OldMdlName_FromJson] oldMdlName = NTN-5K-248  
+[2025-09-13 10:35:32.784] [CommonData][UpdateScalingFactors] _ScalingFactors re-assigned
+[2025-09-13 10:35:32.791] [DataCenter][initSys] Done...
+[2025-09-13 10:35:32.843] [DataCenter][DataCenter_MdlNameChange_Task] oldMdlName == _globalVar.Sys_ModelName

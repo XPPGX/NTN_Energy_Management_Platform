@@ -4,187 +4,208 @@
 @inject IJSRuntime JS
 @using demoVer.Components.Layout
 @using demoVer.Models
+@using demoVer.Utils
+@using demoVer.Services
 
 <MudPopoverProvider/>
 
 @*Web Content*@
-<PageTitle>Battery Setting</PageTitle>
+<PageTitle>Log</PageTitle>
 <TopRow />
 
 <div class="content-container">
-    <div class="card-grid">
-        <div class="w100">
-            <div class="simple-container">
-                <div class="top">
-                    <div class="single-selection">
-                        <MudSelect T="string" Label="Log Type" Value="@selectedLogType" Dense="true" Variant="Variant.Outlined" ValueChanged="OnLogTypeChanged">
-                            <MudSelectItem Value="@("EventLog")">Event Log</MudSelectItem>
-                            <MudSelectItem Value="@("DataLog")">Data Log</MudSelectItem>
-                        </MudSelect>
-                    </div>
-                    @* 這邊不用官方的雙向綁定，改用自己寫的ToggleHeader搭配HashSet *@
-                    <MudChipSet T="string" SelectionMode="SelectionMode.MultiSelection" CheckMark="true" Class="mb-2" Color="Color.Primary">
-                        
-                        @foreach(var header in (selectedLogType == "EventLog" ? EventLog_columnHeaders : DataLog_columnHeaders))
+    <div class="top-panel">
+        @if (isCollapsed)
+        {
+            <div class="collapsed-label-only" @onclick="ExpandPanel">
+                條件設置
+            </div>
+        }
+        else
+        {
+             <!-- Step 1 -->
+            <div class="@GetStepClass(1)" @onclick="() => GoStep(1)">
+                @if (currentStep == LogType)
+                {
+                    <label for="logType">Log Type</label>
+                    <select id="logType" @onchange="OnLogTypeChanged" @onclick:stopPropagation="true">
+                        <option value="">-- Select --</option>
+                        <option value="event">Event Log</option>
+                        <option value="data">Data Log</option>
+                    </select>
+
+                    <div class="multi-select">
+                        <p class="section-title">Parameters</p>
+                        <br>
+                        @foreach (var option in parameterOptions)
                         {
-                            bool isSelected = selectedHeaders.Contains(header);
-                            <MudChip @key="header" 
-                                    Value = "@header" OnClick="@(() => ToggleHeader(header))" Selected="@isSelected">@header</MudChip>
+                            <label class="multi-option">
+                                <input type="checkbox" value="@option" 
+                                    checked="@selectedParameters.Contains(option)" 
+                                    @onchange="e => OnParameterChanged(option, e)" />
+                                @option
+                            </label>
                         }
-                    </MudChipSet>
-                </div>
-
-                <div class="bottom">
-                    <div class="bottom-left">
-                        <div class="date-height-limit">
-                            <MudDateRangePicker @bind-DateRange="@_dateRange" Margin="Margin.Dense" ReadOnly="false" Clearable="true" 
-                                PlaceholderStart="Start Date" PlaceholderEnd="End Date" Label="日期選擇"/>
-                        </div>
                     </div>
-
-                    <div class="bottom-right">
-                        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.GetApp" Style="background-color: yellowgreen; color: white; width: 200px; height: 60px;">
-                            匯出資料
-                        </MudButton>
-                        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Search" 
-                                Style="background-color: #1976d2; color: white; width: 200px; height: 60px;" OnClick="SearchData">
-                            查詢
-                        </MudButton>
+                }
+                else
+                {
+                    <div class="collapsed-label">
+                        Log Type: @(selectedLogType ?? "未選擇")
+                        <br/>
+                        Parameters: @(selectedParameters.Count > 0 ? string.Join(", ", selectedParameters) : "未選擇")
                     </div>
-                </div>
+                }
             </div>
 
-        </div>
-        <div class="w100">
-            <div class="log-container">
-                <table class="custom-table">
-                    <thead>
-                        <tr>
-                            @foreach (var header in selectedHeaders)
-                            {
-                                <th>@header</th>
-                            }
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in EventLog)
-                        {
-                            <tr>
-                                @foreach (var header in selectedHeaders)
-                                {
-                                    <td>@GetValue(item, header)</td>
-                                }
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+            <!-- Step 2 -->
+            <div class="@GetStepClass(2)" @onclick="() => GoStep(2)" @onclick:stopPropagation="true">
+                @if (currentStep == Date)
+                {
+                    <label for="startDate">Start Date</label>
+                    <input type="date" id="startDate" @bind="selectedStartDate" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
+                    <label for="endDate">End Date</label>
+                    <input type="date" id="endDate" @bind="selectedEndDate" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
+                    @* @onchange="@(e => OnDateChanged(0, e))"  *@
+                }
+                else
+                {
+                    <div class="collapsed-label">
+                        Date: @(selectedStartDate?.ToShortDateString() ?? "未選擇")
+                        ~ @(selectedEndDate?.ToShortDateString() ?? "未選擇")
+                    </div>
+                }
             </div>
-            
 
-        </div>
+            <!-- Step 3 -->
+            <div class="@GetStepClass(3)" @onclick="() => GoStep(3)">
+                @if (currentStep == Btn)
+                {
+                    <div class="button-row">
+                        <button class="btn btn-search" @onclick="searchClick" @onclick:stopPropagation="true">查詢</button>
+                        <button class="btn btn-export" @onclick="exportClick" @onclick:stopPropagation="true">匯出</button>
+                    </div>
+                }
+                else
+                {
+                    <div class="collapsed-label">
+                        操作選項
+                    </div>
+                }
+            </div>
+        }
+    </div>
+    <div class="bottom-panel">
+        <h3>下方區域</h3>
+        <p>這裡放主要內容，例如表格或圖表</p>
     </div>
 </div>
 
 @code
 {
-    private string selectedLogType = "EventLog";
-    private List<string> EventLog_columnHeaders = new()
-    {
-        "No.",
-        "Device",
-        "Event",
-        "Time"
-    };
-    private List<string> DataLog_columnHeaders = new()
-    {
-        "Time",
-        "Voltage(V)",
-        "Total Current(A)",
-        "PSU 0~191",
-        "Relay 1~5",
-        "DIO Input 1~5",
-        "AIO Input 1~5",   
-    };
-    private HashSet<string> selectedHeaders = new();
-    private List<Dictionary<string, object>> EventLog = new();
-
-    private DateRange _dateRange {get; set;}
+    private string _category    = "";
     
-    private object GetValue(Dictionary<string, object> item, string key)
-        => item.TryGetValue(key, out var value) ? value : "";
+    private const int LogType   = 1;
+    private const int Date      = 2;
+    private const int Btn       = 3;
+    
+    private int currentStep     = 1;
+    private string? selectedLogType;
+    private DateTime? selectedStartDate;
+    private DateTime? selectedEndDate;
+    private List<string> parameterOptions = new() {"電壓", "電流", "狀態", "轉速"};
+    private HashSet<string> selectedParameters = new();
+    private bool isCollapsed = false;
 
-    private async void OnChipSelectionChanged(HashSet<string> values)
-    {
-        selectedHeaders.Clear();
-        foreach (var chip in values)
-        {
-            selectedHeaders.Add(chip);
-        }
-
-        Console.WriteLine("✔️ 使用者選擇的欄位:");
-        foreach (var chip in selectedHeaders)
-        {
-            Console.WriteLine($"    - {chip}");
-        }
-    }
-
-    private void ToggleHeader(string _header)
-    {  
-        if(selectedHeaders.Contains(_header))
-        {
-            selectedHeaders.Remove(_header);
-        }
-        else
-        {
-            selectedHeaders.Add(_header);
-        }
-        Console.WriteLine("✔️ 選中的欄位: " + string.Join(", ", selectedHeaders));
-    }
-
-    private async Task SearchData()
-    {
-        // 根據目前的 selectedLogType 與 selectedHeaders 模擬查詢資料
-        Console.WriteLine($"🔍 查詢 LogType = {selectedLogType}");
-        Console.WriteLine("✔️ 顯示欄位 = " + string.Join(", ", selectedHeaders));
-
-        await InvokeAsync(StateHasChanged); // 強制刷新畫面 *@
-    }
-
-    private async Task OnLogTypeChanged(string newType)
-    {
-        Console.WriteLine("[OnLogTypeChanged]");
-        selectedLogType = newType;
-
-        selectedHeaders.Clear();
-        
-        var headersToUse = (newType == "EventLog" 
-            ? EventLog_columnHeaders 
-            : DataLog_columnHeaders);
-
-        foreach(var h in headersToUse)
-        {
-            Console.WriteLine(h);
-            selectedHeaders.Add(h);
-        }
-
-        await InvokeAsync(StateHasChanged);
-    }
 
     protected override void OnInitialized()
     {
-        selectedHeaders.Clear();
-        foreach(var h in EventLog_columnHeaders)
-        {
-            selectedHeaders.Add(h);
-        }
-
-        EventLog = new()
-        {
-            new() { ["No."] = 1, ["Device"] = "Sensor A", ["Event"] = "Alarm", ["Time"] = "2025-07-01 09:00" },
-            new() { ["No."] = 2, ["Device"] = "Sensor B", ["Event"] = "Reset", ["Time"] = "2025-07-01 09:05" },
-            new() { ["No."] = 3, ["Device"] = "Sensor C", ["Event"] = "Error", ["Time"] = "2025-07-01 09:10" }
-        };
+        _category = GetType().FullName!;
     }
 
+    private void GoStep(int step)
+    {
+        currentStep = step;
+        switch(currentStep)
+        {
+            case LogType:
+                Console.WriteLine("LogType");
+                break;
+            case Date:
+                Console.WriteLine("Date");
+                break;
+            case Btn:
+                Console.WriteLine("Btn");
+                break;
+            default:
+                break;
+        }
+    }
 
+    private string GetStepClass(int step)
+    {
+        if (step == currentStep) return "step active";
+        if (step < currentStep) return "step left";
+        if (step > currentStep) return "step right";
+        return "step";
+    }
+
+    private void CollapsePanel()
+    {
+        isCollapsed = true;
+    }
+
+    private void ExpandPanel()
+    {
+        isCollapsed = false;
+    } 
+
+    private void OnLogTypeChanged(ChangeEventArgs e)
+    {
+        selectedLogType = e.Value?.ToString();
+    }
+
+    private void OnParameterChanged(string option, ChangeEventArgs e)
+    {
+        bool isChecked = e.Value?.ToString()?.ToLower() == "true";
+
+        if(isChecked)
+        {
+            selectedParameters.Add(option);
+        }
+        else
+        {
+            selectedParameters.Remove(option);
+        }
+
+        Console.WriteLine($"{option} => {(isChecked ? "勾選" : "取消")}");
+    }
+
+    private void OnDateChanged(int index, ChangeEventArgs e)
+    {
+        if (DateTime.TryParse(e.Value?.ToString(), out var dt))
+        {
+
+            if(index == 0)
+            {
+                selectedStartDate = dt;
+                Console.WriteLine("START Time Chosen");
+            }
+            else if(index == 1)
+            {
+                selectedEndDate = dt;
+                Console.WriteLine("END Time Chosen");
+            }
+        }
+    }
+    
+    private void searchClick()
+    {
+        CollapsePanel();
+    }
+
+    private void exportClick()
+    {
+        CollapsePanel();
+    }
 }
