@@ -130,16 +130,24 @@ select:focus, input:focus {
     font-weight: bold;
   }
   
-  .multi-option {
+/* 共用基礎樣式 */
+
+.multi-option {
     display: flex;
     align-items: center;
-    margin-bottom: 6px;
     cursor: pointer;
     font-size: 0.9rem;
     color: #ccc;
-  }
-  
-  .multi-option input[type="checkbox"] {
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: background 0.3s;
+}
+
+.multi-option:hover {
+    background: #2a2a2a;
+}
+
+.multi-option input[type="checkbox"] {
     appearance: none;
     width: 16px;
     height: 16px;
@@ -149,33 +157,147 @@ select:focus, input:focus {
     background: #1f1f1f;
     cursor: pointer;
     transition: all 0.3s ease;
-  }
-  
-  .multi-option input[type="checkbox"]:checked {
+}
+
+.multi-option input[type="checkbox"]:checked {
     background: #00eaff;
     border-color: #00eaff;
-  }
+}
   
-  /* .multi-option input[type="checkbox"]:checked::after {
-    content: "✔";
-    display: block;
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.btn-columns {
+    background: #1f1f1f;
+    color: #00eaff;
+    border: 1px solid #00eaff66;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+
+    min-width: 20%;              /* 預設佔 20%，但可被文字撐大 */
+}
+.btn-columns:hover {
+    background: #00eaff22;
+    box-shadow: 0 0 8px #00eaff66;
+}
+
+.column-chooser {
+    background: #1f1f1f;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* 表格樣式 */
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #1f1f1f;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+}
+.custom-table th, .custom-table td {
+    border: 1px solid #444;
+    padding: 10px;
     text-align: center;
-    color: #000;
-    font-size: 12px;
+    color: #e0e0e0;
+}
+.custom-table th {
+    background: #2a2a2a;
     font-weight: bold;
-    line-height: 16px;
-  } */
-  
+    color: #00eaff;
+}
+.custom-table tr:nth-child(even) {
+    background: #222;
+}
+
+/* 📱 手機卡片模式 */
+.card-table {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.card-row {
+    background: #1f1f1f;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+}
+.card-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid #333;
+}
+.card-item:last-child {
+    border-bottom: none;
+}
+.card-label {
+    color: #00eaff;
+    font-weight: bold;
+}
+.card-value {
+    color: #e0e0e0;
+}
+
+/* 📱 手機專用 Modal */
+.column-chooser-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+.modal-content {
+    background: #1f1f1f;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 20px;
+    width: 90%;
+    max-height: 80%;
+    overflow-y: auto;
+}
+.btn-close {
+    margin-top: 15px;
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+    min-width: 20%;
+}
+.btn-close:hover {
+    background: #ff1a1a;
+}
 
 /* 📱 手機 RWD */
 @media(max-width: 1200px) {
     .content-container {
         display: flex;
         flex-direction: column;
-        height: 100%;  /* 不要強制佔滿整頁 */
+        height: 100vh;  /* 不要強制佔滿整頁 */
         padding: 1rem;
         box-sizing: border-box;
         gap: 1rem;
+        padding-top: 70px;
         padding-top: 70px;
     }
 
@@ -194,7 +316,7 @@ select:focus, input:focus {
     }
 
     .top-panel.expanded {
-        max-height: 80%;
+        max-height: 500px;
         padding: 1rem;
         opacity: 1;
     }
@@ -215,12 +337,14 @@ select:focus, input:focus {
     }
 
     .bottom-panel {
-        flex: 0 0 20%;
+        flex: 1; /*佔滿剩餘高度*/
         background: #333;
         padding: 1rem;
         position: relative;
         align-items: center;
         overflow-x: auto; /* 📱 手機表格/圖表可橫向滑動 */
+        overflow-y: auto;
+        min-height: 0;
     }
 
     .step {
@@ -230,7 +354,6 @@ select:focus, input:focus {
         overflow: hidden;
         transition: all 0.5s ease;
         justify-content: center;
-        
     }
 
     .step.active {
@@ -272,6 +395,4 @@ select:focus, input:focus {
     .step.hidden {
         display: none; /* 尚未到的步驟直接隱藏 */
     }
-
-    
 }

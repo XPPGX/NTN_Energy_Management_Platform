@@ -34,27 +34,11 @@
                         <option value="event">Event Log</option>
                         <option value="data">Data Log</option>
                     </select>
-
-                    <div class="multi-select">
-                        <p class="section-title">Parameters</p>
-                        <br>
-                        @foreach (var option in parameterOptions)
-                        {
-                            <label class="multi-option">
-                                <input type="checkbox" value="@option" 
-                                    checked="@selectedParameters.Contains(option)" 
-                                    @onchange="e => OnParameterChanged(option, e)" />
-                                @option
-                            </label>
-                        }
-                    </div>
                 }
                 else
                 {
                     <div class="collapsed-label">
                         Log Type: @(selectedLogType ?? "未選擇")
-                        <br/>
-                        Parameters: @(selectedParameters.Count > 0 ? string.Join(", ", selectedParameters) : "未選擇")
                     </div>
                 }
             </div>
@@ -97,8 +81,98 @@
         }
     </div>
     <div class="bottom-panel">
-        <h3>下方區域</h3>
-        <p>這裡放主要內容，例如表格或圖表</p>
+        <div class="table-header">
+            <div>
+                <h3>@(tableHeader?? "Log Table")</h3>
+            </div>
+            <div>
+                <button class="btn btn-columns" @onclick="ToggleColumnChooser">⚙ 顯示欄位</button>
+            </div>
+        </div>
+
+        <!-- 📱 手機：Modal 選單 -->
+        @if (IsMobile && isColumnChooserOpen)
+        {
+            <div class="column-chooser-modal">
+                <div class="modal-content">
+                    <h4>選擇要顯示的欄位</h4>
+                    @foreach (var col in allColumns)
+                    {
+                        <label class="multi-option">
+                            <input type="checkbox"
+                                value="@col"
+                                checked="@visibleColumns.Contains(col)"
+                                @onchange="e => OnColumnToggle(col, e)" />
+                            @col
+                        </label>
+                    }
+                    <button class="btn btn-close" @onclick="ToggleColumnChooser">關閉</button>
+                </div>
+            </div>
+        }
+
+        <!-- 桌機版 Column Chooser -->
+        @if (!IsMobile && isColumnChooserOpen)
+        {
+            <div class="column-chooser">
+                @foreach (var col in allColumns)
+                {
+                    <label class="multi-option">
+                        <input type="checkbox"
+                            value="@col"
+                            checked="@visibleColumns.Contains(col)"
+                            @onchange="e => OnColumnToggle(col, e)" />
+                        @col
+                    </label>
+                }
+            </div>
+        }
+
+        <!-- 📊 桌機表格 -->
+        @if (!IsMobile)
+        {
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        @foreach (var col in visibleColumns)
+                        {
+                            <th>@col</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in tableData)
+                    {
+                        <tr>
+                            @foreach (var col in visibleColumns)
+                            {
+                                <td>@row[col]</td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+        <!-- 📱 手機卡片 -->
+        @if (IsMobile)
+        {
+            <div class="card-table">
+                @foreach (var row in tableData)
+                {
+                    <div class="card-row">
+                        @foreach (var col in visibleColumns)
+                        {
+                            <div class="card-item">
+                                <span class="card-label">@col</span>
+                                <span class="card-value">@row[col]</span>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+
     </div>
 </div>
 
@@ -114,14 +188,35 @@
     private string? selectedLogType;
     private DateTime? selectedStartDate;
     private DateTime? selectedEndDate;
-    private List<string> parameterOptions = new() {"電壓", "電流", "狀態", "轉速"};
     private HashSet<string> selectedParameters = new();
     private bool isCollapsed = false;
     private bool IsMobile = false;
+    private bool isColumnChooserOpen = false;
+    private List<string> allColumns = new() { "時間", "電壓", "電流", "狀態", "轉速" };
+    private HashSet<string> visibleColumns = new() { "時間", "電壓", "電流" };
+    private List<Dictionary<string, object>> tableData = new();
+    private string tableHeader = "Log Table";
 
     protected override void OnInitialized()
     {
         _category = GetType().FullName!;
+
+        tableData.Add(new Dictionary<string, object>
+        {
+            {"時間", DateTime.Now.ToString("HH:mm:ss")},
+            {"電壓", "220V"},
+            {"電流", "5A"},
+            {"狀態", "運行中"},
+            {"轉速", "1500rpm"}
+        });
+        tableData.Add(new Dictionary<string, object>
+        {
+            {"時間", DateTime.Now.AddMinutes(-1).ToString("HH:mm:ss")},
+            {"電壓", "218V"},
+            {"電流", "4.8A"},
+            {"狀態", "待機"},
+            {"轉速", "0rpm"}
+        });
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -227,10 +322,34 @@
             }
         }
     }
-    
+
+
+    private void ToggleColumnChooser()
+    {
+        isColumnChooserOpen = !isColumnChooserOpen;
+    }
+
+    private void OnColumnToggle(string col, ChangeEventArgs e)
+    {
+        bool isChecked = e.Value?.ToString()?.ToLower() == "true";
+
+        if (isChecked)
+            visibleColumns.Add(col);
+        else
+            visibleColumns.Remove(col);
+    }
+
     private void searchClick()
     {
         CollapsePanel();
+        if(string.Equals(selectedLogType, "event", StringComparison.OrdinalIgnoreCase))
+        {
+            tableHeader = "Event Log";
+        }
+        else if(string.Equals(selectedLogType, "data", StringComparison.OrdinalIgnoreCase))
+        {
+            tableHeader = "Data Log";
+        }
     }
 
     private void exportClick()
