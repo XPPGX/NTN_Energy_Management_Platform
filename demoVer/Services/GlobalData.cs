@@ -169,14 +169,14 @@ namespace demoVer.Services
             SubSystems.Add(new SubAppSystem{subSystemID=0, port="CAN1", protocolFileName="NTN-5K_CAN.json", startAddr=0, length=1});
             Device_WriteData.SubAppSystem_WriteMemorys.Add(new SubAppSystem_WriteMemory(0));
             
-            // SubSystems.Add(new SubAppSystem{subSystemID=1, port="CAN2", protocolFileName="NTN-5K_CAN.json", startAddr=0, length=64});
-            // Device_WriteData.SubAppSystem_WriteMemory.Add(new SubAppSystem(1));
+            SubSystems.Add(new SubAppSystem{subSystemID=1, port="CAN2", protocolFileName="NTN-5K_CAN.json", startAddr=0, length=1});
+            Device_WriteData.SubAppSystem_WriteMemorys.Add(new SubAppSystem_WriteMemory(1));
             
-            // SubSystems.Add(new SubAppSystem{subSystemID=2, port="MOD1", protocolFileName="NTN-5K_MOD.json", startAddr=0, length=64});
-            // Device_WriteData.SubAppSystem_WriteMemory.Add(new SubAppSystem(2));
+            SubSystems.Add(new SubAppSystem{subSystemID=2, port="MOD1", protocolFileName="NTN-5K_MOD.json", startAddr=0, length=1});
+            Device_WriteData.SubAppSystem_WriteMemorys.Add(new SubAppSystem_WriteMemory(2));
             
-            // SubSystems.Add(new SubAppSystem{subSystemID=3, port="MOD2", protocolFileName="NTN-5K_MOD.json", startAddr=0, length=64});
-            // Device_WriteData.SubAppSystem_WriteMemory.Add(new SubAppSystem(3));
+            SubSystems.Add(new SubAppSystem{subSystemID=3, port="MOD2", protocolFileName="NTN-5K_MOD.json", startAddr=0, length=1});
+            Device_WriteData.SubAppSystem_WriteMemorys.Add(new SubAppSystem_WriteMemory(3));
         }
 
         public string getActiveSubSysPort()
@@ -286,7 +286,7 @@ namespace demoVer.Services
                 if(groups_copy == null) return null;
                 
                 
-                object tmp_modelName = _decoder.Decode(groups_copy, "MFR_MODEL");
+                object tmp_modelName = _decoder.Decode(groups_copy, "MFR_MODEL", addr);
                 if(tmp_modelName == null) return null;
                 
                 AppLogger.Log_To_File_log(_category, $"[GlobalData][Get_ModelName_ByAddr] tmp_modelName : {(string)tmp_modelName}", AppLogLevel.Trace);
@@ -356,7 +356,7 @@ namespace demoVer.Services
             var targetGroups = Device_ReadData.GetCommandGroups(addr, cmd);
             if(targetGroups is null) return null;
 
-            var decoded = _decoder.Decode(targetGroups, cmd);
+            var decoded = _decoder.Decode(targetGroups, cmd, addr);
             AppLogger.Log_To_File_log(_category, $"[GlobalData][Get_INV_Fault] decoded = {(string)decoded}", AppLogLevel.Trace);
             
             if(string.IsNullOrEmpty((string)decoded)) return null;
@@ -660,7 +660,7 @@ namespace demoVer.Services
                     return;
                 }
 
-                string? tmp = (string?)_decoder.Decode(targetGroups, fault_cmd);
+                string? tmp = (string?)_decoder.Decode(targetGroups, fault_cmd, addr);
                 fault = tmp;
             }
             catch(Exception e)
@@ -797,7 +797,7 @@ namespace demoVer.Services
                 //解碼
                 var targetGroups = Device_ReadData.GetCommandGroups(addr, Cmd);
                 if(targetGroups == null) return;
-                var value = _decoder.Decode(targetGroups, Cmd);
+                var value = _decoder.Decode(targetGroups, Cmd, addr);
                 
                 
                 //取出addr對應的phase
@@ -843,7 +843,7 @@ namespace demoVer.Services
                 //解碼
                 var targetGroups = Device_ReadData.GetCommandGroups(addr, Cmd);
                 if(targetGroups == null) return;
-                var value = _decoder.Decode(targetGroups, Cmd);
+                var value = _decoder.Decode(targetGroups, Cmd, addr);
                 
                 
                 //取出addr對應的phase
@@ -1045,6 +1045,8 @@ namespace demoVer.Services
             }
             return Phase_temp;
         }
+
+        
 
         // private double Compute_INV_IP_V(uint phase)
         // {

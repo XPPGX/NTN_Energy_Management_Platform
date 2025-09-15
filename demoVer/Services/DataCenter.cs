@@ -549,7 +549,7 @@ namespace demoVer.Services
                     var groups = _globalVar.Device_ReadData.GetCommandGroups(line.addr, line.Cmd);
                     if (groups != null)
                     {
-                        var decoded = _decoder.Decode(groups, line.Cmd);
+                        var decoded = _decoder.Decode(groups, line.Cmd, line.addr);
                         if (decoded != null && double.TryParse(decoded.ToString(), out var value))
                         {
                             // 把最新值 append 進 Data

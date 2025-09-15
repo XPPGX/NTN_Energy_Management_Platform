@@ -13,10 +13,12 @@ namespace demoVer.Services
             _category = GetType().FullName!;
         }
 
-        public object? Decode(Group_CommandRawData groupData, string cmdName = "")
+        public object? Decode(Group_CommandRawData groupData, string cmdName, uint addr)
         {
             try
             {
+                string port = Custom.getPortByAddr(addr);
+
                 if (groupData.Groups.TryGetValue(0, out var cmdRawData))
                 {
                     AppLogger.Log_To_File_log(_category, $"[Decode][cmd : {cmdName}][Get group (0)] exist", AppLogLevel.Trace);
@@ -25,7 +27,7 @@ namespace demoVer.Services
                     if (cmdRawData.BitFields != null && cmdRawData.BitFields.Any())
                     {
                         AppLogger.Log_To_File_log(_category, $"[Decode : BitFields] processing...", AppLogLevel.Trace);
-                        int rawValue = BytesToInt(cmdRawData.Data, cmdRawData.Signed.GetValueOrDefault());
+                        int rawValue = BytesToInt(cmdRawData.Data, cmdRawData.Signed.GetValueOrDefault(), port);
                         // AppLogger.Log_To_File_log($"rawValue = {rawValue}");
                         var activeFields = new List<string>();
                         foreach (var bf in cmdRawData.BitFields)
@@ -78,7 +80,7 @@ namespace demoVer.Services
                                 continue;
                             }
                             
-                            var decoded = ApplyFormat(slice, cmdRawData);
+                            var decoded = ApplyFormat(slice, cmdRawData, port);
         
                             //For Cmd : Revision
                             
@@ -132,7 +134,7 @@ namespace demoVer.Services
                         
                         AppLogger.Log_To_File_log(_category, $"group_List = {string.Join(", ", tmpConcatByteData_List)}", AppLogLevel.Trace);
 
-                        var formatAppliedData = ApplyFormat(tmpConcatByteData_List, cmdRawData);
+                        var formatAppliedData = ApplyFormat(tmpConcatByteData_List, cmdRawData, port);
                         AppLogger.Log_To_File_log(_category, $"return_val = {formatAppliedData}", AppLogLevel.Trace);
                         AppLogger.Log_To_File_log(_category, $"[Decode : group] done...", AppLogLevel.Trace);
                         return formatAppliedData; // return string for ASCII, double for numeric
@@ -140,7 +142,7 @@ namespace demoVer.Services
 
                     // 5. 處理基本 ASCII / Numeric
                     AppLogger.Log_To_File_log(_category, $"[Decode : Format] processing...", AppLogLevel.Trace);
-                    var temp_return_val = ApplyFormat(cmdRawData.Data, cmdRawData);
+                    var temp_return_val = ApplyFormat(cmdRawData.Data, cmdRawData, port);
                     AppLogger.Log_To_File_log(_category, $"temp_return_val = {temp_return_val}", AppLogLevel.Trace);
                     AppLogger.Log_To_File_log(_category, $"[Decode : Format] done...", AppLogLevel.Trace);
                     return temp_return_val;
@@ -161,7 +163,7 @@ namespace demoVer.Services
             }
         }
 
-        private object ApplyFormat(List<byte> data, CommandRawData cmdRawData)
+        private object ApplyFormat(List<byte> data, CommandRawData cmdRawData, string port)
         {
             // Case : ASCII
             if (string.Equals(cmdRawData.DataFormat, "ASCII", StringComparison.OrdinalIgnoreCase))
@@ -172,7 +174,7 @@ namespace demoVer.Services
             // Case : Numeric
             else
             {
-                int tmp_val = BytesToInt(data, cmdRawData.Signed.GetValueOrDefault());
+                int tmp_val = BytesToInt(data, cmdRawData.Signed.GetValueOrDefault(), port);
                 double result = ScalingComputer.MultOperation_doubleVer(tmp_val, cmdRawData.Scaling);
 
                 // return result.ToString("G"); // 可能有精度問題
@@ -180,8 +182,9 @@ namespace demoVer.Services
             }
         }
 
-        private int BytesToInt(List<byte> data, bool signed, int shiftBytes = 0)
+        private int BytesToInt(List<byte> data, bool signed, string port)
         {
+            int shiftBytes = 0;
             if (data.Count > 4)
             {
                 throw new NotSupportedException($"BytesToInt 不支援超過 4 bytes (len={data.Count})");
@@ -190,14 +193,20 @@ namespace demoVer.Services
             var effectiveData = (shiftBytes > 0 && shiftBytes < data.Count) ? data.Skip(shiftBytes).ToList() : data;
 
             int value = 0;
-            // for (int i = 0; i < effectiveData.Count && i < 4; i++)
-            // {
-            //     value |= effectiveData[i] << (8 * (effectiveData.Count - 1 - i));
-            // }
-            //這邊可能要考慮 CAN、MOD的byte位移問題
-            for(int i = effectiveData.Count - 1 ; i >= 0 && i < 4 ; i --)
+            if(port.StartsWith("MOD"))
             {
-                value |= effectiveData[i] << (8 * i);
+                for (int i = 0; i < effectiveData.Count && i < 4; i++)
+                {
+                    value |= effectiveData[i] << (8 * (effectiveData.Count - 1 - i));
+                }    
+            }
+            else
+            {
+                //這邊可能要考慮 CAN、MOD的byte位移問題
+                for(int i = effectiveData.Count - 1 ; i >= 0 && i < 4 ; i --)
+                {
+                    value |= effectiveData[i] << (8 * i);
+                }
             }
 
             if (signed == true)

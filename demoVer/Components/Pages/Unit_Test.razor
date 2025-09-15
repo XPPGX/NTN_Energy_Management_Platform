@@ -12,169 +12,40 @@
 @inject IGroupsDataDecoder Decoder
 @using demoVer.Utils
 @inject WriteProcess writeProcess
-<p>Addr : <span id="Address"> N/A </span></p>
-<p>ModelName : <span id="modelname-display">N/A</span></p>
-<button @onclick="getWriteMemory">Call R_WriteMemory</button>
-<button @onclick="postWriteMemory">Call W_WriteMemmory</button>
+
+<button @onclick="testFunc">READ_LINK_STATUS</button>
+
 @code{
-    private bool _signalRStarted = false;
-    private uint addr = 0;
-    string type = "CAN1";
-    string protocolFileName = "NTN-5K_CAN.json";
+    private LinkStatus_JsonFormat rcv_LinkStatus = new();    
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && !_signalRStarted)
+        if (firstRender)
         {
-            // _signalRStarted = true;
 
-
-            // await JS.InvokeVoidAsync("DataSocket");
-
-            
-            // string[] SubscribeCommands = new[]
-            // {
-            //     //Table Info
-            //     "MFR_MODEL",
-            //     "INV_STATUS",
-            //     "INV_FAULT",
-            //     "MFR_REVISION_B0B5",
-            //     //Modal Info
-            //     "READ_FAN_SPEED_1",
-            //     "READ_FAN_SPEED_2",
-            //     "READ_AC_VOUT",
-            //     "READ_OP_VA",
-            //     "READ_CHG_CURR",
-            //     "READ_VBAT",
-            //     "READ_TEMPERATURE_1",
-            // };
-
-            // await JS.InvokeVoidAsync("subscribe_fixedCommands_dynamicAddr", SubscribeCommands, 0);
-            
-            
-            // var result = await apiManager.apiRead_OneDeviceData("CAN1", 0);
-            // string parsedJson = JsonSerializer.Serialize(result, new JsonSerializerOptions {WriteIndented = true});
-            // allDevice_Data tmp_allDeviceData = new allDevice_Data();
-            // globalVar.Device_ReadData.Read_oneDevice_Data(0, result);
-
-            // await JS.InvokeAsync<object>("subscribeGroup", 0, "CURVE_CV");
-            // await JS.InvokeAsync<object>("subscribeGroup", 0, "MFR_MODEL");
-
-            
-            // tmp_allDeviceData.Read_oneDevice_Data(1, result);
-            // tmp_allDeviceData.Read_oneDevice_Data(2, result); *@
-            // globalVar.Device_ReadData.debug_PrintAllDeviceData();
-
-            
-
-            //  //Test Decoder : BitFields
-            // string cmdName = "INV_STATUS";
-            // var cmd_groups = tmp_allDeviceData.GetCommandGroups(0, cmdName);
-            // var tmpDecodedData = Decoder.Decode(cmd_groups, cmdName);
-            
-            // cmdName = "INV_FAULT";
-            // cmd_groups = tmp_allDeviceData.GetCommandGroups(0, cmdName);
-            // cmd_groups.Groups[0].Data[0] = 1;
-            // tmpDecodedData = Decoder.Decode(cmd_groups, cmdName);
-
-            // //Test Decoder : Split
-            // cmdName = "MFR_REVISION_B0B5";
-            // cmd_groups = tmp_allDeviceData.GetCommandGroups(0, cmdName);
-            // cmd_groups.Groups[0].Data[0] = 87;
-            // tmpDecodedData = Decoder.Decode(cmd_groups, cmdName);
-
-            // //Test Decoder : GroupIndex, ASCII
-            // cmdName = "MFR_MODEL";
-            // cmd_groups = tmp_allDeviceData.GetCommandGroups(0, cmdName);
-            // cmd_groups.Groups[0].Data = new List<byte> {78, 84, 78, 45, 53, 75}; //"NTN-5K"
-            // cmd_groups.Groups[1].Data = new List<byte> {45, 50, 52, 32, 32, 32}; //"-24   "
-            // tmpDecodedData = Decoder.Decode(cmd_groups, cmdName);
-
-            // //Test Decoder : GroupIndex, Numeric
-            // cmdName = "READ_OP_WATT";
-            // cmd_groups = tmp_allDeviceData.GetCommandGroups(0, cmdName);
-            // cmd_groups.Groups[0].Data[1] = 0; //High byte, low element
-            // cmd_groups.Groups[1].Data[1] = 87; //Low byte, low element
-            // tmpDecodedData = Decoder.Decode(cmd_groups, cmdName);
-
-            // //Test Decoder : Basic ASCII
-            // cmdName = "MFR_DATE_B0B5";
-            // cmd_groups = tmp_allDeviceData.GetCommandGroups(0, cmdName);
-            // cmd_groups.Groups[0].Data[1] = 78;
-            // tmpDecodedData = Decoder.Decode(cmd_groups, cmdName);
-
-            // //Test Decode : Basic Numeric
-            // cmdName = "CURVE_CV";
-            // cmd_groups = tmp_allDeviceData.GetCommandGroups(0, cmdName);
-            // cmd_groups.Groups[0].Data[1] = 167;
-            // tmpDecodedData = Decoder.Decode(cmd_groups, cmdName);
-
-            // Console.WriteLine("[Parsed Result] = " + parsedJson);
-            // oneDevice_Data tmp = new oneDevice_Data();
-            // tmp.LoadSingleDeviceData(result);
-            // tmp.debug_PrintAllCommandData();
-            // DataCenter.MOD_DATA.Read_oneDevice_ModData(0, result);
-            
-            
         }
     }
     
 
     protected override void OnInitialized()
     {
-        Heartbeat.OnTick += testFunc;
-        @* writeProcess.awake(); *@
+
     }
 
     public void Dispose()
     {
-        Heartbeat.OnTick -= testFunc;
-    }
 
+    }
+    
     public async Task testFunc()
     {
-        var ModelName_List = globalVar.Get_addr_and_ModelNames_List();
-    }
+        rcv_LinkStatus = await apiManager.apiRead_LinkStatus();
 
-    public async Task getWriteMemory()
-    {
-        @* Console.WriteLine("CALL WriteAPI");
-        
-        var result = await apiManager.apiRead_SettingData(type, protocolFileName);
-        AppLogger.Log_To_File_Json(result);
-        string result_json = JsonSerializer.Serialize(result, new JsonSerializerOptions
-        {
+        var rawJsonData_String = JsonSerializer.Serialize(rcv_LinkStatus, new JsonSerializerOptions{
             WriteIndented = true
         });
 
-
-        globalVar.Device_WriteData.saveSettingData_ToCheck(type, result);
-        globalVar.Device_WriteData.clone_CheckToWrite(type); *@
+        Console.WriteLine(rawJsonData_String);
     }
 
-    public async Task postWriteMemory()
-    {
-        @* var cmdData = globalVar.Device_WriteData.getCmdData_Ref(type, "CURVE_CC");
-        string json_str = JsonSerializer.Serialize(cmdData, new JsonSerializerOptions{WriteIndented = true});
-        Console.WriteLine(json_str);
-        cmdData.TargetValue = new List<byte> {0, 0, 0, 0};
-        var WriteBody = globalVar.Device_WriteData.Generate_WriteFormat(type);
-        Console.WriteLine(WriteBody);
-        bool success = await apiManager.apiWrite_SettingData(type, protocolFileName, WriteBody); *@
-    }
-
-    public long MeasureMs(Action action, int warmup = 3, int rounds = 10)
-    {
-        //預熱
-        for(int i = 0 ; i < warmup ; i ++) action();
-
-        var sw = new Stopwatch();
-        
-        sw.Start();
-        for(int i = 0 ; i < rounds ; i ++) action();
-        sw.Stop();
-
-        return sw.ElapsedMilliseconds;
-        
-    }
 }

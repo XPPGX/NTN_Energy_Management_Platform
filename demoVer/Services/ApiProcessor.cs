@@ -15,6 +15,31 @@ namespace demoVer.Services
             _category = GetType().FullName!;
         }
 
+        //READ_API : 讀當前連線狀態
+        public async Task<LinkStatus_JsonFormat?> apiRead_LinkStatus()
+        {
+            try
+            {
+                string url = $"api/memory/link-status";
+                var result = await _http.GetFromJsonAsync<LinkStatus_JsonFormat>(url);
+                
+                if(result == null)
+                {
+                    throw new Exception($"[apiRead_LinkStatus] Read_API_JSON == null");
+                }
+                return result;
+            }
+            catch(HttpRequestException ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[ApiManager][apiRead_LinkStatus] Http_Error: {ex}", AppLogLevel.Debug);
+                return null;
+            }
+            catch(Exception ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[ApiManager][apiRead_LinkStatus] Error: {ex}", AppLogLevel.Debug);
+                return null;
+            }
+        }
 
         //READ_API : 讀 單個 device 的 資料
         public async Task<List<SingleRawCommand_JsonFormat?>> apiRead_OneDeviceData(string type, uint addr)

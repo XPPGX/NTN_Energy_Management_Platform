@@ -162,7 +162,29 @@ namespace demoVer.Utils
         }
     }
 
-    
+    public static class Custom
+    {
+        public static string getPortByAddr(uint addr)
+        {
+            if(addr >= 192)
+            {
+                return "MOD2";
+            }
+            if(addr >= 128)
+            {
+                return "MOD1";
+            }
+            if(addr >= 64)
+            {
+                return "CAN2";
+            }
+            if(addr >= 0)
+            {
+                return "CAN1";
+            }
+            return "MOD2";
+        }
+    }    
 
     public static class ScalingComputer
     {

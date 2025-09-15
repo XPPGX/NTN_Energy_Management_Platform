@@ -107,7 +107,7 @@ namespace demoVer.Services
             try
             {
                 // 1) decode 一次，兩邊共用
-                var decoded = _decoder.Decode(groups, cmdName);
+                var decoded = _decoder.Decode(groups, cmdName, addr);
 
                 var bytes = new List<byte>();
                 foreach (var raw in groups.Groups.Values)

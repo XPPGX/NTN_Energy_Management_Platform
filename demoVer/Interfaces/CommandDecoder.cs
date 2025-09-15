@@ -4,6 +4,6 @@ namespace demoVer.Interfaces
 {
     public interface IGroupsDataDecoder
     {
-        object? Decode(Group_CommandRawData groups, string cmdName = "");
+        object? Decode(Group_CommandRawData groups, string cmdName, uint addr);
     }
 }

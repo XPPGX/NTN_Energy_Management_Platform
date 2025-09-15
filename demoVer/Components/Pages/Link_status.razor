@@ -258,12 +258,13 @@
         //traverse MOD_DATA，取出各Addr對應的當前modelName跟Status
         
         Elements = new List<Element>();
+        
         foreach(var addr in addrs)
         {
             //string modelName = decode_ModelName(addr);
             //string runningStatus = decode_INV_Status(addr);
             Group_CommandRawData tmp_Group = globalVar.Device_ReadData.GetCommandGroups(addr, "MFR_MODEL"); 
-            var modelName = Decoder.Decode(tmp_Group, "MFR_MODEL")?.ToString() ?? "N/A";
+            var modelName = Decoder.Decode(tmp_Group, "MFR_MODEL", addr)?.ToString() ?? "N/A";
             string runningStatus = decode_INV_Status(addr);
 
             AppLogger.Log_To_File_log(_category, $"[Link_status][getINVsLink] : Addr = {addr}, ModelName = {modelName}, LinkStatus = Linked, runningStatus = {runningStatus}", AppLogLevel.Trace);
@@ -272,9 +273,13 @@
             {
                 runningStatus = "Error";
             }
-
-           
             
+            //如果modelName收到空值，直接忽略這個連線
+            if(string.IsNullOrEmpty(modelName.ToString()))
+            {
+                continue;
+            }
+
             Elements.Add(new Element
             {
                 Address = addr,
@@ -590,4 +595,6 @@
             group_err.Items = temp_TimelineItem_list_error;
         }
     }
+
+    
 }

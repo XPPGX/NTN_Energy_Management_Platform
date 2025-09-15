@@ -4,12 +4,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using demoVer.Interfaces;
 
+//1. 在開始polling前先取得link-status，
+//2. 每次polling單台時比對是否有在link-status，有才發送api
+//2. 等polling完port.length，就再取一次link-status看是否有新的
+
 namespace demoVer.Services
 {   
     public class PollingOptions
     {
-        public int PerRequestDelayMs {get; set;} = 1000;
-        public int RequestTimeoutMs {get; set;} = 2000;
+        public int PerRequestDelayMs {get; set;} = 300;
+        public int RequestTimeoutMs {get; set;} = 1000;
     }
 
     public class PollingWave
@@ -58,7 +62,8 @@ namespace demoVer.Services
         // CAN2         |64~127          |0~63
         // MOD1         |128~191         |0~63
         // MOD2         |191~255         |0~63
-
+        private LinkStatus_JsonFormat rcv_linkStatus = new();
+        
 
         public PollingRead( GlobalVar globalVar,
                             ApiManager apiManager)
@@ -72,7 +77,7 @@ namespace demoVer.Services
             initPollingWave();
             
         }
-
+        
         public Task EnableAsync()
         {
             _enabled = true;
@@ -100,7 +105,7 @@ namespace demoVer.Services
 
                     while(_enabled && !ct.IsCancellationRequested)
                     {
-                       await PollOneStepAsync(ct);
+                        await PollOneStepAsync(ct);
                     }
                     
                 }
@@ -132,7 +137,7 @@ namespace demoVer.Services
                 // nowPollingAddr  = (uint)(_globalVar.getPortStartAddr(nowPollingPort) + _pollingWave[waveIndex].startAddr + nowPollingCount);
                 nowPollingAddr = (uint)(_pollingWave[waveIndex].startAddr + nowPollingCount);
                 nowStoringAddr = (uint)waveIndex * portMaxDeviceNum + nowPollingAddr;
-                
+
                 // AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] nowPollingPort = {nowPollingPort}, nowPollingAddr = {nowPollingAddr}", AppLogLevel.Trace);
 
                 //用READ_API取得 單台INV的資料 （建議 ApiManager 方法支援 CancellationToken）
