@@ -1190,6 +1190,10 @@ edit-container是用來綁以下javascript事件的 id :
 
     private void Add_INFO_DataItem()
     {
+        if(edit_INFO_DataItems.Count >= 4)
+        {
+            return;
+        }
         edit_INFO_DataItems.Add(new INFO_DataItem());
     }
 

@@ -1,71 +1,5 @@
 [
   {
-    "ID": "0ae85b65c98a450b9629fecc7b3a4f75",
-    "card_Type": 1,
-    "widthClass": "w25",
-    "showSequence": 1,
-    "cardName": "NTN CAN1 addr0",
-    "Info_DataItems": [
-      {
-        "iconPath": "images/user_selections/fridge.png",
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "[0] : NTN-5K-248  ",
-            "Addr": 0,
-            "UserSettingName": "Factory",
-            "Cmd": "READ_FAN_SPEED_1",
-            "ValueName": "FAN1",
-            "Unit": "RPM"
-          }
-        ]
-      },
-      {
-        "iconPath": "images/user_selections/transmission-tower.png",
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "[0] : NTN-5K-248  ",
-            "Addr": 0,
-            "UserSettingName": "Factory",
-            "Cmd": "READ_VIN",
-            "ValueName": "VIN",
-            "Unit": "V"
-          }
-        ]
-      }
-    ],
-    "Link_STATUS_Pairs": null,
-    "Chart_Setting": null
-  },
-  {
-    "ID": "0939ff5ddceb4bf1826f1aac8a583844",
-    "card_Type": 3,
-    "widthClass": "w50",
-    "showSequence": 2,
-    "cardName": "RunningDiagram",
-    "Info_DataItems": null,
-    "Link_STATUS_Pairs": [
-      {
-        "iconPath": "images/user_selections/transmission-tower.png",
-        "Label": "AC"
-      },
-      {
-        "iconPath": "images/user_selections/fridge.png",
-        "Label": "NTN-5K-248"
-      },
-      {
-        "iconPath": "images/user_selections/plug.png",
-        "Label": "LOAD"
-      },
-      {
-        "iconPath": "images/user_selections/car-battery.png",
-        "Label": "BATTERY"
-      }
-    ],
-    "Chart_Setting": null
-  },
-  {
     "ID": "17a125ec92474921927fc6fc5e2fcfe8",
     "card_Type": 1,
     "widthClass": "w25",
@@ -130,6 +64,72 @@
       }
     ],
     "Link_STATUS_Pairs": null,
+    "Chart_Setting": null
+  },
+  {
+    "ID": "0ae85b65c98a450b9629fecc7b3a4f75",
+    "card_Type": 1,
+    "widthClass": "w25",
+    "showSequence": 1,
+    "cardName": "NTN CAN1 addr0",
+    "Info_DataItems": [
+      {
+        "iconPath": "images/user_selections/fridge.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[0] : NTN-5K-248  ",
+            "Addr": 0,
+            "UserSettingName": "Factory",
+            "Cmd": "READ_FAN_SPEED_1",
+            "ValueName": "FAN1",
+            "Unit": "RPM"
+          }
+        ]
+      },
+      {
+        "iconPath": "images/user_selections/transmission-tower.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[0] : NTN-5K-248  ",
+            "Addr": 0,
+            "UserSettingName": "Factory",
+            "Cmd": "READ_VIN",
+            "ValueName": "VIN",
+            "Unit": "V"
+          }
+        ]
+      }
+    ],
+    "Link_STATUS_Pairs": null,
+    "Chart_Setting": null
+  },
+  {
+    "ID": "0939ff5ddceb4bf1826f1aac8a583844",
+    "card_Type": 3,
+    "widthClass": "w50",
+    "showSequence": 2,
+    "cardName": "RunningDiagram",
+    "Info_DataItems": null,
+    "Link_STATUS_Pairs": [
+      {
+        "iconPath": "images/user_selections/transmission-tower.png",
+        "Label": "AC"
+      },
+      {
+        "iconPath": "images/user_selections/fridge.png",
+        "Label": "NTN-5K-248"
+      },
+      {
+        "iconPath": "images/user_selections/plug.png",
+        "Label": "LOAD"
+      },
+      {
+        "iconPath": "images/user_selections/car-battery.png",
+        "Label": "BATTERY"
+      }
+    ],
     "Chart_Setting": null
   },
   {
