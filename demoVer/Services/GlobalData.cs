@@ -166,16 +166,16 @@ namespace demoVer.Services
 
         public void initSubAppSystem()
         {
-            SubSystems.Add(new SubAppSystem{subSystemID=0, port="CAN1", protocolFileName="NTN-5K_CAN.json", startAddr=0, length=1});
+            SubSystems.Add(new SubAppSystem{subSystemID=0, port="CAN1", protocolFileName="NTN-5K_CAN.json", startAddr=0, length=64});
             Device_WriteData.SubAppSystem_WriteMemorys.Add(new SubAppSystem_WriteMemory(0));
             
-            SubSystems.Add(new SubAppSystem{subSystemID=1, port="CAN2", protocolFileName="NTN-5K_CAN.json", startAddr=0, length=1});
+            SubSystems.Add(new SubAppSystem{subSystemID=1, port="CAN2", protocolFileName="NTN-5K_CAN.json", startAddr=0, length=64});
             Device_WriteData.SubAppSystem_WriteMemorys.Add(new SubAppSystem_WriteMemory(1));
             
-            SubSystems.Add(new SubAppSystem{subSystemID=2, port="MOD1", protocolFileName="NTN-5K_MOD.json", startAddr=0, length=1});
+            SubSystems.Add(new SubAppSystem{subSystemID=2, port="MOD1", protocolFileName="NTN-5K_MOD.json", startAddr=0, length=64});
             Device_WriteData.SubAppSystem_WriteMemorys.Add(new SubAppSystem_WriteMemory(2));
             
-            SubSystems.Add(new SubAppSystem{subSystemID=3, port="MOD2", protocolFileName="NTN-5K_MOD.json", startAddr=0, length=1});
+            SubSystems.Add(new SubAppSystem{subSystemID=3, port="MOD2", protocolFileName="NTN-5K_MOD.json", startAddr=0, length=64});
             Device_WriteData.SubAppSystem_WriteMemorys.Add(new SubAppSystem_WriteMemory(3));
         }
 
@@ -488,18 +488,18 @@ namespace demoVer.Services
                     uint addr = linkedAddr_array[index];
                     
                     //process ModelError
-                    if(Sys_modelError is false)
-                    {
-                        string? Iter_ModelName = Get_ModelName_ByAddr(addr);
-                        if(!string.IsNullOrEmpty(Iter_ModelName))
-                        {
-                            if(!string.Equals(Iter_ModelName, INV_ModelName_tmp, StringComparison.Ordinal))
-                            {
-                                INV_ModelName_tmp = "Model_ERROR";
-                                Sys_modelError = true;
-                            }
-                        }
-                    }
+                    // if(Sys_modelError is false)
+                    // {
+                    //     string? Iter_ModelName = Get_ModelName_ByAddr(addr);
+                    //     if(!string.IsNullOrEmpty(Iter_ModelName))
+                    //     {
+                    //         if(!string.Equals(Iter_ModelName, INV_ModelName_tmp, StringComparison.Ordinal))
+                    //         {
+                    //             INV_ModelName_tmp = "Model_ERROR";
+                    //             Sys_modelError = true;
+                    //         }
+                    //     }
+                    // }
                     
                     //Process INV_FAULT
                     Parse_INV_FAULT(addr, out fault_str);

@@ -16,12 +16,15 @@ USE_RANDOM_DATA = True
 with open("INV_DATA.json", "r", encoding="utf-8") as f:
     _base_data = json.load(f)
 
+with open("link_status.json", "r", encoding="utf-8") as f:
+    _link_status = json.load(f)
+
 _TEMPLATES = [{k: v for k, v in item.items() if k != "data"} for item in _base_data]
 _LENGTHS   = [len(item["data"]) for item in _base_data]
 
 # 固定字串（先算好 ASCII），避免每次重複計算
 _MFR_MODEL_G0_Y = [ord(c) for c in "NTN-5K"]   # groupIndex = 0
-_MFR_MODEL_G1_Y = [ord(c) for c in "-248  "]   # groupIndex = 1（注意兩個空白）
+_MFR_MODEL_G1_Y = [ord(c) for c in "-124  "]   # groupIndex = 1（注意兩個空白）
 _MFR_MODEL_G0 = [ord(c) for c in "\x00\x00\x00\x00\x00\x00"]   # groupIndex = 0
 _MFR_MODEL_G1 = [ord(c) for c in "\x00\x00\x00\x00\x00\x00"]   # groupIndex = 1（注意兩個空白）
 
@@ -61,6 +64,10 @@ def write_memory_init(filename: str):
         print(f"  {k} => {v}")
 
 
+@app.route("/api/memory/link-status", methods=["GET"])
+def get_link_status():
+    return jsonify(_link_status), 200
+
 @app.route("/api/memory/read-memory", methods=["GET"])
 def read_memory():
     port = request.args.get("type", "Unknown")
@@ -78,7 +85,7 @@ def read_memory():
             data = [0] * dlen
         # 特例：MFR_MODEL
         if cmd == "MFR_MODEL":
-            if port == "MOD1" and addr == "0":
+            if port == "MOD1" and (addr == "0" or addr == "1" or addr == "2" or addr == "3" or addr == "4"):
                 if gix == 0:
                     data = _MFR_MODEL_G0_Y[:dlen] + [32] * max(0, dlen - len(_MFR_MODEL_G0_Y))  # 不足補空白
                 elif gix == 1:

@@ -13,7 +13,7 @@
     "demoVer.Services.DataChangeEventManager"   : 2,
     "demoVer.Services.ApiManager"               : 2,
     "demoVer.Services.GroupsDataDecoder"        : 2,
-    "demoVer.Services.PollingRead"              : 2,
+    "demoVer.Services.PollingRead"              : 0,
     "demoVer.Services.WriteProcess"             : 2,
     "demoVer.Services.HeartbeatService"         : 2,
     "demoVer.Services.GlobalVar"                : 2,
