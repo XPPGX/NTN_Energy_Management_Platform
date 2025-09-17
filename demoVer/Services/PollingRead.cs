@@ -155,11 +155,7 @@ namespace demoVer.Services
                 else
                 {
                     //檢查MFR_MODEL是否為空，是的話就放棄這筆資料。
-                    Console.WriteLine("Check");
                     var mfrModels = res.Where(c => c.commandName == "MFR_MODEL").ToList();
-                    
-                    Console.WriteLine($"Check, num = {mfrModels.Count}");
-
                     bool allZero = true;
                     foreach(var cmdRawData in mfrModels)
                     {

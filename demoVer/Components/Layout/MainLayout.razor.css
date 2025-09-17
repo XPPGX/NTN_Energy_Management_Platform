@@ -6,7 +6,7 @@ html, body{
     position: relative;
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
     padding: 0;
 }
@@ -55,6 +55,8 @@ main {
     margin: 0;
     padding: 0;
     position: relative;
+    height: 100%;
+    width: 100%;
     /* top: 0; */
 }
 /* .top-bar {
