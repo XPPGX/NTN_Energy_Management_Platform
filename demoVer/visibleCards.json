@@ -3,7 +3,7 @@
     "ID": "0ae85b65c98a450b9629fecc7b3a4f75",
     "card_Type": 1,
     "widthClass": "w25",
-    "showSequence": 0,
+    "showSequence": 1,
     "cardName": "NTN CAN1 addr0",
     "Info_DataItems": [
       {
@@ -42,7 +42,7 @@
     "ID": "0939ff5ddceb4bf1826f1aac8a583844",
     "card_Type": 3,
     "widthClass": "w50",
-    "showSequence": 1,
+    "showSequence": 2,
     "cardName": "RunningDiagram",
     "Info_DataItems": null,
     "Link_STATUS_Pairs": [
@@ -69,9 +69,66 @@
     "ID": "17a125ec92474921927fc6fc5e2fcfe8",
     "card_Type": 1,
     "widthClass": "w25",
-    "showSequence": 2,
+    "showSequence": 0,
     "cardName": "NTN CAN1 addr63",
-    "Info_DataItems": [],
+    "Info_DataItems": [
+      {
+        "iconPath": "images/user_selections/charge.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[0] :             ",
+            "Addr": 0,
+            "UserSettingName": "CAN1",
+            "Cmd": "MFR_MODEL",
+            "ValueName": "mdl",
+            "Unit": null
+          }
+        ]
+      },
+      {
+        "iconPath": null,
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[64] :             ",
+            "Addr": 64,
+            "UserSettingName": "CAN2",
+            "Cmd": "MFR_MODEL",
+            "ValueName": "mdl",
+            "Unit": null
+          }
+        ]
+      },
+      {
+        "iconPath": null,
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[128] :             ",
+            "Addr": 128,
+            "UserSettingName": "MOD1",
+            "Cmd": "MFR_MODEL",
+            "ValueName": "mdl",
+            "Unit": null
+          }
+        ]
+      },
+      {
+        "iconPath": null,
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[192] :             ",
+            "Addr": 192,
+            "UserSettingName": "MOD2",
+            "Cmd": "MFR_MODEL",
+            "ValueName": "mdl",
+            "Unit": null
+          }
+        ]
+      }
+    ],
     "Link_STATUS_Pairs": null,
     "Chart_Setting": null
   },

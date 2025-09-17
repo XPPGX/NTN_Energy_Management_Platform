@@ -208,22 +208,6 @@ namespace demoVer.Services
                 default:
                     break;
             }
-
-            // if(InitSysOK is true)
-            // {
-                
-            // }
-            // else
-            // {//從Read API讀 Sys Init資訊
-            //     //1. SysInfo
-            //     //2. INV Setting
-            //     //3. BAT Setting
-            //     // InitSysOK = true;
-            // }
-            // await Sys_INV_Mode_OnChanged()?.Invoke();
-            // AppLogger.Log_To_File_log(_category, $"[GlobalData][Sys_INV_Mode_Assign]", AppLogLevel.Trace);
-            // await Sys_ModelName_OnChanged()?.Invoke();
-            // AppLogger.Log_To_File_log(_category, $"[GlobalData][Sys_ModelName_Assign]", AppLogLevel.Trace);
         }
 
         

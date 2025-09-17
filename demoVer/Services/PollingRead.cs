@@ -12,7 +12,7 @@ namespace demoVer.Services
 {   
     public class PollingOptions
     {
-        public int PerRequestDelayMs {get; set;} = 300;
+        public int PerRequestDelayMs {get; set;} = 500;
         public int RequestTimeoutMs {get; set;} = 1000;
     }
 
@@ -141,12 +141,57 @@ namespace demoVer.Services
                 // AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] nowPollingPort = {nowPollingPort}, nowPollingAddr = {nowPollingAddr}", AppLogLevel.Trace);
 
                 //用READ_API取得 單台INV的資料 （建議 ApiManager 方法支援 CancellationToken）
-                AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] nowPollingPort = {nowPollingPort}, nowPollingAddr = {nowPollingAddr} begin...", AppLogLevel.Trace);
+                AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] nowPollingPort = {nowPollingPort}, nowPollingAddr = {nowPollingAddr} begin...", AppLogLevel.Trace);
                 var res = await _apiManager.apiRead_OneDeviceData(nowPollingPort, nowPollingAddr);
-                AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] nowPollingPort = {nowPollingPort}, nowPollingAddr = {nowPollingAddr} done...", AppLogLevel.Trace);
+                bool res_is_valid = false;
+                AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] nowPollingPort = {nowPollingPort}, nowPollingAddr = {nowPollingAddr} done...", AppLogLevel.Trace);
+                //檢查 ReadAPI資料有效性
                 if(res == null)
                 {
-                    AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : {nowPollingPort}@{nowPollingAddr} removing begin...", AppLogLevel.Trace);
+                    //資料為空
+                    res_is_valid = false;
+                    AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] response is NULL", AppLogLevel.Trace);
+                }
+                else
+                {
+                    //檢查MFR_MODEL是否為空，是的話就放棄這筆資料。
+                    Console.WriteLine("Check");
+                    var mfrModels = res.Where(c => c.commandName == "MFR_MODEL").ToList();
+                    
+                    Console.WriteLine($"Check, num = {mfrModels.Count}");
+
+                    bool allZero = true;
+                    foreach(var cmdRawData in mfrModels)
+                    {
+                        var data = cmdRawData.data;
+                        for(int i = 0 ; i < data.Count ; i ++)
+                        {
+                            AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] data[{i}] = {data[i]}", AppLogLevel.Trace);
+                            if(data[i] != 0)
+                            {
+                                
+                                allZero = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if(allZero is true)
+                    {
+                        res_is_valid = false;
+                    }
+                    else
+                    {
+                        res_is_valid = true;
+                    }
+                    
+                    AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] response is {res_is_valid}", AppLogLevel.Trace);
+                }
+                
+                if(res_is_valid is false)
+                {
+                    
+                    AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] : response is {res_is_valid}, {nowPollingPort}@{nowPollingAddr} removing begin...", AppLogLevel.Trace);
                 
                     //移除 link
                     _globalVar.LinkedDevices.Unlink(nowStoringAddr);
@@ -156,21 +201,20 @@ namespace demoVer.Services
                     //刪除Device_ReadData裡面，nowStoringAddr的資料
                     _globalVar.Device_ReadData.Remove_oneDevice_Data(nowStoringAddr);
 
-                    AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : {nowPollingPort}@{nowPollingAddr} removing done...", AppLogLevel.Trace);
+                    AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] : {nowPollingPort}@{nowPollingAddr} removing done...", AppLogLevel.Trace);
                 }
                 else
                 {
                     //儲存 單台INV的資料到記憶體中 
-                    
                     if(waveIndex >= 0)
                     {   
-                        AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : {nowPollingPort}@{nowPollingAddr} saving start...", AppLogLevel.Trace);
+                        AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] : response is {res_is_valid}, {nowPollingPort}@{nowPollingAddr} saving start...", AppLogLevel.Trace);
 
                         _globalVar.LinkedDevices.Link(nowStoringAddr);
 
                         _globalVar.Device_ReadData.Read_oneDevice_Data(nowStoringAddr, res);
 
-                        AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : {nowPollingPort}@{nowPollingAddr} saving done...", AppLogLevel.Trace);
+                        AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] : {nowPollingPort}@{nowPollingAddr} saving done...", AppLogLevel.Trace);
                     }
                 }
             }

@@ -103,7 +103,7 @@
 
     private async Task UpdateData_OnChart()
     {
-        Console.WriteLine("[UpdateData_OnChart]");
+        @* Console.WriteLine("[UpdateData_OnChart]"); *@
         @* DataCenter.ApplySimulatedDataToChart(currentCard.Chart_Setting); *@
         DataCenter.ApplyRealDataToChart(currentCard.Chart_Setting, isMobile);
         await JS.InvokeVoidAsync("drawChart_Func", currentCard.Chart_Setting);

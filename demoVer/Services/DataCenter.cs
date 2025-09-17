@@ -9,6 +9,7 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Text.Json;
 using demoVer.Interfaces;
+using System.Runtime.InteropServices;
 
 namespace demoVer.Services
 {
@@ -47,6 +48,7 @@ namespace demoVer.Services
         // public bool ApiSendFlag = false;
         
         
+        private string basePath = "";
         private readonly SemaphoreSlim _DataCenter_SaveData_lock = new(1, 1);
         public string oldMdlName = "";
 
@@ -78,7 +80,6 @@ namespace demoVer.Services
             bool ApiReadFlag = false;
             uint counter = 0;
             bool counterEnable = true;
-
 
             bool initSysFromJson = initSys();
             if(initSysFromJson is true)
@@ -133,6 +134,10 @@ namespace demoVer.Services
         public bool initSys()
         {
             AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] Start...", AppLogLevel.Trace);
+
+            //0. Read base path
+            read_basePath();
+            
             //1. Read ModelName
             bool read_mdlName_succ = read_OldMdlName_FromJson();
             if(read_mdlName_succ is false)
@@ -169,11 +174,36 @@ namespace demoVer.Services
             return true;
         }
 
-        public bool read_OldMdlName_FromJson()
-        {            
-            string AppDataDirectory = Path.GetFullPath("App_Data");
-            string AppData_SysInfo = Path.Combine(AppDataDirectory, "LastTime_SysInfo.json");
+        public void read_basePath()
+        {
+            //1. 確認當前OS類別，賦值給basePath
+            if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                basePath = "";
+            }
+            else if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                basePath = "/userdata/CMU3/UserSetting/5040";
+                Directory.CreateDirectory(basePath);
+            }
+            else
+            {
+                basePath = "";
+            }
 
+            
+        }
+
+
+        public bool read_OldMdlName_FromJson()
+        {   
+            string AppDataDirectory = Path.Combine(basePath, "App_Data");
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][read_OldMdlName_FromJson] After Combine : AppDataDirectory = {AppDataDirectory}", AppLogLevel.Trace);
+            AppDataDirectory = Path.GetFullPath(AppDataDirectory);
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][read_OldMdlName_FromJson] After GetFullPath : AppDataDirectory = {AppDataDirectory}", AppLogLevel.Trace);
+            string AppData_SysInfo = Path.Combine(AppDataDirectory, "LastTime_SysInfo.json");
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][read_OldMdlName_FromJson] After GetFullPath : AppData_SysInfo = {AppData_SysInfo}", AppLogLevel.Trace);
+            
             if(!File.Exists(AppData_SysInfo))
             {
                 AppLogger.Log_To_File_log(_category, $"[DataCenter][read_OldMdlName_FromJson]{AppData_SysInfo} 檔案不存在", AppLogLevel.Trace);
@@ -528,7 +558,7 @@ namespace demoVer.Services
         {
             try
             {
-                Console.WriteLine($"[DataCenter][ApplyRealDataToChart] isMobile = {isMobile}, hash = {this.GetHashCode}");
+                // Console.WriteLine($"[DataCenter][ApplyRealDataToChart] isMobile = {isMobile}, hash = {this.GetHashCode}");
                 int chartMaxDataCount = (isMobile == true) ? 10 : 30;
                 // 確保有線條
                 if (chartSetting.chart_single_data_lines == null || chartSetting.chart_single_data_lines.Count == 0)
@@ -537,7 +567,7 @@ namespace demoVer.Services
                 //同步兩條線資料長度
                 int nowDataLength = 0;
                 nowDataLength = chartSetting.chart_single_data_lines[0].Data?.Length ?? 0;
-                Console.WriteLine($"[DataCenter][ApplyRealDataToChart] nowDataLength = {nowDataLength}");
+                // Console.WriteLine($"[DataCenter][ApplyRealDataToChart] nowDataLength = {nowDataLength}");
                 
 
                 //更新每條線的資料

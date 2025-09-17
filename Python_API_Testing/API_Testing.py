@@ -20,9 +20,10 @@ _TEMPLATES = [{k: v for k, v in item.items() if k != "data"} for item in _base_d
 _LENGTHS   = [len(item["data"]) for item in _base_data]
 
 # 固定字串（先算好 ASCII），避免每次重複計算
-_MFR_MODEL_G0 = [ord(c) for c in "NTN-5K"]   # groupIndex = 0
-_MFR_MODEL_G1 = [ord(c) for c in "-248  "]   # groupIndex = 1（注意兩個空白）
-
+_MFR_MODEL_G0_Y = [ord(c) for c in "NTN-5K"]   # groupIndex = 0
+_MFR_MODEL_G1_Y = [ord(c) for c in "-248  "]   # groupIndex = 1（注意兩個空白）
+_MFR_MODEL_G0 = [ord(c) for c in "\x00\x00\x00\x00\x00\x00"]   # groupIndex = 0
+_MFR_MODEL_G1 = [ord(c) for c in "\x00\x00\x00\x00\x00\x00"]   # groupIndex = 1（注意兩個空白）
 
 _COMMAND_STORE = {}
 
@@ -77,10 +78,21 @@ def read_memory():
             data = [0] * dlen
         # 特例：MFR_MODEL
         if cmd == "MFR_MODEL":
-            if gix == 0:
-                data = _MFR_MODEL_G0[:dlen] + [32] * max(0, dlen - len(_MFR_MODEL_G0))  # 不足補空白
-            elif gix == 1:
-                data = _MFR_MODEL_G1[:dlen] + [32] * max(0, dlen - len(_MFR_MODEL_G1))
+            if port == "MOD1" and addr == "0":
+                if gix == 0:
+                    data = _MFR_MODEL_G0_Y[:dlen] + [32] * max(0, dlen - len(_MFR_MODEL_G0_Y))  # 不足補空白
+                elif gix == 1:
+                    data = _MFR_MODEL_G1_Y[:dlen] + [32] * max(0, dlen - len(_MFR_MODEL_G1_Y))
+                # if gix == 0:
+                #     data = _MFR_MODEL_G0[:dlen] + [32] * max(0, dlen - len(_MFR_MODEL_G0))  # 不足補空白
+                # elif gix == 1:
+                #     data = _MFR_MODEL_G1[:dlen] + [32] * max(0, dlen - len(_MFR_MODEL_G1))
+            else:
+                if gix == 0:
+                    data = _MFR_MODEL_G0[:dlen] + [32] * max(0, dlen - len(_MFR_MODEL_G0))  # 不足補空白
+                elif gix == 1:
+                    data = _MFR_MODEL_G1[:dlen] + [32] * max(0, dlen - len(_MFR_MODEL_G1))
+            
 
         # 特例：INV_FAULT 固定回 [0, 0]
         if cmd == "INV_FAULT":
