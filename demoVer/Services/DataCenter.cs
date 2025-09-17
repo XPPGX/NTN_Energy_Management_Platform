@@ -73,9 +73,8 @@ namespace demoVer.Services
             // Device_ReadData = new allDevice_Data();
             
             Battery     = new Battery_DataSetting_Module(_commonData);
-            // Battery.UpdateFrom(new Battery_InitData()); //接收初始值
             INV         = new INV_DataSetting_Module(_commonData);
-            // INV.UpdateFrom(INV_InitData.LoadFromJsonFile()); //接收初始值
+
             uint pollingCounter = 0;
             bool ApiReadFlag = false;
             uint counter = 0;
@@ -119,16 +118,6 @@ namespace demoVer.Services
 
             //MdlName不一樣的時候會觸發這個Event
             _globalVar.Sys_ModelName_OnChanged += DataCenter_MdlNameChange_Task;
-            // _commonData.ScalingFactor_StateChanged += SettingValues;
-        }
-
-        public async Task SettingValues()
-        {
-            
-            Battery.UpdateFrom(new Battery_InitData()); //接收初始值
-
-            //INV設定值 初始化流程
-            INV.UpdateFrom(INV_InitData.LoadFromJsonFile()); //接收初始值
         }
 
         public bool initSys()
@@ -190,8 +179,6 @@ namespace demoVer.Services
             {
                 basePath = "";
             }
-
-            
         }
 
 
@@ -199,8 +186,10 @@ namespace demoVer.Services
         {   
             string AppDataDirectory = Path.Combine(basePath, "App_Data");
             AppLogger.Log_To_File_log(_category, $"[DataCenter][read_OldMdlName_FromJson] After Combine : AppDataDirectory = {AppDataDirectory}", AppLogLevel.Trace);
+
             AppDataDirectory = Path.GetFullPath(AppDataDirectory);
             AppLogger.Log_To_File_log(_category, $"[DataCenter][read_OldMdlName_FromJson] After GetFullPath : AppDataDirectory = {AppDataDirectory}", AppLogLevel.Trace);
+
             string AppData_SysInfo = Path.Combine(AppDataDirectory, "LastTime_SysInfo.json");
             AppLogger.Log_To_File_log(_category, $"[DataCenter][read_OldMdlName_FromJson] After GetFullPath : AppData_SysInfo = {AppData_SysInfo}", AppLogLevel.Trace);
             
@@ -227,9 +216,15 @@ namespace demoVer.Services
 
         public bool read_OldScaling_FromJson()
         {
-            string AppDataDirectory = Path.GetFullPath("App_Data");
-            string AppData_Scaling = Path.Combine(AppDataDirectory, "LastTime_ScalingFactors.json");
+            string AppDataDirectory = Path.Combine(basePath, "App_Data");
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][read_OldScaling_FromJson] After Combine : AppDataDirectory = {AppDataDirectory}", AppLogLevel.Trace);
 
+            AppDataDirectory = Path.GetFullPath(AppDataDirectory);
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][read_OldScaling_FromJson] After GetFullPath : AppDataDirectory = {AppDataDirectory}", AppLogLevel.Trace);
+            
+            string AppData_Scaling = Path.Combine(AppDataDirectory, "LastTime_ScalingFactors.json");
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][read_OldScaling_FromJson] After GetFullPath : AppData_Scaling = {AppData_Scaling}", AppLogLevel.Trace);
+            
             if(!File.Exists(AppData_Scaling))
             {
                 AppLogger.Log_To_File_log(_category, $"[DataCenter][read_OldScaling_FromJson] {AppData_Scaling} 檔案不存在", AppLogLevel.Trace);
@@ -253,8 +248,14 @@ namespace demoVer.Services
 
         public bool read_OldINVSetting_FromJson()
         {
-            string AppDataDirectory = Path.GetFullPath("App_Data");
+            string AppDataDirectory = Path.Combine(basePath, "App_Data");
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][read_OldINVSetting_FromJson] After Combine : AppDataDirectory = {AppDataDirectory}", AppLogLevel.Trace);
+
+            AppDataDirectory = Path.GetFullPath(AppDataDirectory);
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][read_OldINVSetting_FromJson] After GetFullPath : AppDataDirectory = {AppDataDirectory}", AppLogLevel.Trace);
+
             string AppData_INVSetting = Path.Combine(AppDataDirectory, "INV_Setting_LastTime.json");
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][read_OldINVSetting_FromJson] After GetFullPath : AppData_INVSetting = {AppData_INVSetting}", AppLogLevel.Trace);
 
             if(!File.Exists(AppData_INVSetting))
             {
@@ -262,22 +263,28 @@ namespace demoVer.Services
                 return false;
             }
 
-            INV.UpdateFrom(INV_InitData.LoadFromJsonFile());
+            INV.UpdateFrom(INV_InitData.LoadFromJsonFile(AppData_INVSetting));
             return true;
         }
 
         public bool read_OldBATSetting_FromJson()
         {
-            string AppDataDirectory = Path.GetFullPath("App_Data");
+            string AppDataDirectory = Path.Combine(basePath, "App_Data");
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][read_OldBATSetting_FromJson] After Combine : AppDataDirectory = {AppDataDirectory}", AppLogLevel.Trace);
+
+            AppDataDirectory = Path.GetFullPath(AppDataDirectory);
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][read_OldBATSetting_FromJson] After GetFullPath : AppDataDirectory = {AppDataDirectory}", AppLogLevel.Trace);
+
             string AppData_BATSetting = Path.Combine(AppDataDirectory, "BAT_Setting_LastTime.json");
-            
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][read_OldINVSetting_FromJson] After GetFullPath : AppData_BATSetting = {AppData_BATSetting}", AppLogLevel.Trace);
+
             if(!File.Exists(AppData_BATSetting))
             {
                 AppLogger.Log_To_File_log(_category, $"[DataCenter][read_OldBATSetting_FromJson] {AppData_BATSetting} 檔案不存在", AppLogLevel.Trace);
                 return false;
             }
 
-            Battery.UpdateFrom(Battery_InitData.LoadFromJsonFile());
+            Battery.UpdateFrom(Battery_InitData.LoadFromJsonFile(AppData_BATSetting));
             return true;
         }
 
@@ -311,8 +318,14 @@ namespace demoVer.Services
 
         public void saveSysInfo_To_JsonFile()
         {
-            string AppDataDirectory = Path.GetFullPath("App_Data");
+            string AppDataDirectory = Path.Combine(basePath, "App_Data");
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][saveSysInfo_To_JsonFile] After Combine : AppDataDirectory = {AppDataDirectory}", AppLogLevel.Trace);
+            
+            AppDataDirectory = Path.GetFullPath(AppDataDirectory);
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][saveSysInfo_To_JsonFile] After GetFullPath : AppDataDirectory = {AppDataDirectory}", AppLogLevel.Trace);
+
             string sysInfo_FilePath = Path.Combine(AppDataDirectory, "LastTime_SysInfo.json");
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][saveSysInfo_To_JsonFile] After GetFullPath : sysInfo_FilePath = {sysInfo_FilePath}", AppLogLevel.Trace);
 
             oldMdlName = _globalVar.Sys_ModelName;
 
@@ -333,9 +346,15 @@ namespace demoVer.Services
 
         public void saveScaling_To_JsonFile()
         {
-            string AppDataDirectory = Path.GetFullPath("App_Data");
-            string scaling_FilePath = Path.Combine(AppDataDirectory, "LastTime_ScalingFactors.json");
+            string AppDataDirectory = Path.Combine(basePath, "App_Data");
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][saveScaling_To_JsonFile] After Combine : AppDataDirectory = {AppDataDirectory}", AppLogLevel.Trace);
             
+            AppDataDirectory = Path.GetFullPath(AppDataDirectory);
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][saveScaling_To_JsonFile] After GetFullPath : AppDataDirectory = {AppDataDirectory}", AppLogLevel.Trace);
+
+            string scaling_FilePath = Path.Combine(AppDataDirectory, "LastTime_ScalingFactors.json");
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][saveScaling_To_JsonFile] After GetFullPath : scaling_FilePath = {scaling_FilePath}", AppLogLevel.Trace);
+
             var scaling_factors = _commonData._ScalingFactors;
             
             if(!Directory.Exists(AppDataDirectory))
@@ -390,9 +409,15 @@ namespace demoVer.Services
 
         public void save_INVSetting_To_JsonFile()
         {
-            string AppDataDirectory = Path.GetFullPath("App_Data");
-            string INV_SettingFilePath = Path.Combine(AppDataDirectory, "INV_Setting_LastTime.json");
+            string AppDataDirectory = Path.Combine(basePath, "App_Data");
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][save_INVSetting_To_JsonFile] After Combine : AppDataDirectory = {AppDataDirectory}", AppLogLevel.Trace);
             
+            AppDataDirectory = Path.GetFullPath(AppDataDirectory);
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][save_INVSetting_To_JsonFile] After GetFullPath : AppDataDirectory = {AppDataDirectory}", AppLogLevel.Trace);
+
+            string INV_SettingFilePath = Path.Combine(AppDataDirectory, "INV_Setting_LastTime.json");
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][save_INVSetting_To_JsonFile] After GetFullPath : INV_SettingFilePath = {INV_SettingFilePath}", AppLogLevel.Trace);
+
             var dataToJson = INV.ToINV_InitData();
             
             if(!Directory.Exists(AppDataDirectory))
@@ -445,9 +470,15 @@ namespace demoVer.Services
 
         public void save_BATSetting_To_JsonFile()
         {
-            string AppDataDirectory = Path.GetFullPath("App_Data");
-            string BAT_SettingFilePath = Path.Combine(AppDataDirectory, "BAT_Setting_LastTime.json");
+            string AppDataDirectory = Path.Combine(basePath, "App_Data");
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][save_BATSetting_To_JsonFile] After Combine : AppDataDirectory = {AppDataDirectory}", AppLogLevel.Trace);
             
+            AppDataDirectory = Path.GetFullPath(AppDataDirectory);
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][save_BATSetting_To_JsonFile] After GetFullPath : AppDataDirectory = {AppDataDirectory}", AppLogLevel.Trace);
+
+            string BAT_SettingFilePath = Path.Combine(AppDataDirectory, "BAT_Setting_LastTime.json");
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][save_BATSetting_To_JsonFile] After GetFullPath : BAT_SettingFilePath = {BAT_SettingFilePath}", AppLogLevel.Trace);
+
             var dataToJson = Battery.ToBAT_InitData();
             
             if(!Directory.Exists(AppDataDirectory))

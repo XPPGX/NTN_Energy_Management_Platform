@@ -54,11 +54,10 @@ namespace demoVer.Models
         [JsonPropertyName("curve_stage")]
         public bool CurveStage {get; set;} = false;
     
-        public static Battery_InitData LoadFromJsonFile()
+        public static Battery_InitData LoadFromJsonFile(string filePath)
         {
-            string AppDataDirectory = Path.GetFullPath("App_Data");
-            string BAT_SettingFilePath = Path.Combine(AppDataDirectory, "BAT_Setting_LastTime.json");
-
+            string BAT_SettingFilePath = filePath;
+            
             if(!File.Exists(BAT_SettingFilePath))
             {
                 Console.WriteLine($"{BAT_SettingFilePath} 檔案不存在");

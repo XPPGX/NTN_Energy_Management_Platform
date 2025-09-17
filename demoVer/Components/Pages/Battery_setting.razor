@@ -661,11 +661,6 @@
         @*這裡或許要改成用API去改值就好，讓框架去下命令後保存此次設定以便下次帶入*@
         string jsonString = JsonSerializer.Serialize(Data, new JsonSerializerOptions{WriteIndented=true});
         Console.WriteLine(jsonString);
-        @* string targetPath = AppJsonManager.Get_Writable_DataPath("LastTime_settingData.json");
-        AppJsonManager.SavePartialJson(targetPath, "Battery_Setting", Data); *@
-
-        @* CloseAlert();
-        CloseModal(); *@
     }
 
     private async Task CancelSave()

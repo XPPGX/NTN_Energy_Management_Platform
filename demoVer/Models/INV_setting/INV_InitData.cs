@@ -66,10 +66,9 @@ namespace demoVer.Models
         [JsonPropertyName("bat_capacity_val")]
         public uint BAT_Capacity_Value  {get; set;} = 0;
         
-        public static INV_InitData LoadFromJsonFile()
+        public static INV_InitData LoadFromJsonFile(string filePath)
         {
-            string AppDataDirectory = Path.GetFullPath("App_Data");
-            string INV_SettingFilePath = Path.Combine(AppDataDirectory, "INV_Setting_LastTime.json");
+            string INV_SettingFilePath = filePath;
 
             if(!File.Exists(INV_SettingFilePath))
             {
