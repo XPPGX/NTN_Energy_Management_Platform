@@ -925,7 +925,7 @@ edit-container是用來綁以下javascript事件的 id :
         try
         {
             //清空 cmd_uint_Dict 的內容
-            
+            Console.WriteLine($"currentSelected_Addr = {currentSelected_Addr}");
             if(currentSelected_Addr == 256) // Selecting "Summary"
             {
                 show_cmd_unit_Dict_ref = Summary_cmd_unit_Dict;
@@ -934,7 +934,10 @@ edit-container是用來綁以下javascript事件的 id :
             }
             else if(currentSelected_Addr < 256) //Selecting normal machine addr 0 ~ 255
             {
-                oneDevice_cmd_unit_Dict.Clear();
+                if(oneDevice_cmd_unit_Dict != null)
+                {
+                    oneDevice_cmd_unit_Dict.Clear();
+                }
                 oneDevice_cmd_unit_Dict = globalVar.Get_oneDevice_Cmd_unit_Dict(currentSelected_Addr);
 
                 show_cmd_unit_Dict_ref = oneDevice_cmd_unit_Dict;
