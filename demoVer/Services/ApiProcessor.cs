@@ -27,6 +27,8 @@ namespace demoVer.Services
                 {
                     throw new Exception($"[apiRead_LinkStatus] Read_API_JSON == null");
                 }
+
+                Console.WriteLine($"result = {result.Products["INV"].CAN1_LINK}");
                 return result;
             }
             catch(HttpRequestException ex)

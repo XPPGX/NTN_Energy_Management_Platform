@@ -14,7 +14,7 @@ namespace demoVer.Services
 {   
     public class PollingOptions
     {
-        public int PerRequestDelayMs {get; set;} = 300;
+        public int PerRequestDelayMs {get; set;} = 500;
         public int RequestTimeoutMs {get; set;} = 1000;
     }
 
@@ -110,7 +110,7 @@ namespace demoVer.Services
                     {
                         await PollOneStepAsync(ct);
                         counter ++;
-                        if(counter == 50)
+                        if(counter == 10)
                         {
                             await PollNowLinkAddr(ct);
                             counter = 0;
@@ -148,7 +148,8 @@ namespace demoVer.Services
                 nowStoringAddr = (uint)waveIndex * portMaxDeviceNum + nowPollingAddr;
 
                 //判斷當前連線中是否有 nowPollingAddr
-                if(!linkingAddr.Contains(nowStoringAddr))
+                var tmp_linkingAddr = new HashSet<uint>(linkingAddr);
+                if(!tmp_linkingAddr.Contains(nowStoringAddr))
                 {
                     AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] polling {nowStoringAddr} is not linked, pass it.", AppLogLevel.Trace);
 
@@ -301,11 +302,6 @@ namespace demoVer.Services
                 }
 
                 var INV_products = rcv_linkStatus.Products["INV"];
-                
-                Console.WriteLine($"CAN1 : {INV_products.CAN1_LINK}");
-                Console.WriteLine($"CAN2 : {INV_products.CAN2_LINK}");
-                Console.WriteLine($"MOD1 : {INV_products.MOD1_LINK}");
-                Console.WriteLine($"MOD2 : {INV_products.MOD2_LINK}");
 
                 for(uint i = 0 ; i < 64 ; i ++)
                 {
@@ -318,24 +314,29 @@ namespace demoVer.Services
                     
                     if(CAN1_index == 1)
                     {
+                        Console.WriteLine($"CAN1 : i = {i} ADD");
                         linkingAddr.Add(i);
                     }
                     else
                     {
+                        Console.WriteLine($"CAN1 : i = {i} REMOVE");
                         linkingAddr.Remove(i);
                     }
 
                     if(CAN2_index == 1)
                     {
+                        Console.WriteLine($"CAN2 : i = {i}");
                         linkingAddr.Add(i + 64);
                     }
                     else
                     {
-                        linkingAddr.Remove(i);
+                        Console.WriteLine($"CAN2 : i = {i} REMOVE");
+                        linkingAddr.Remove(i + 64);
                     }
 
                     if(MOD1_index == 1)
                     {
+                        Console.WriteLine($"MOD1 : i = {i}");
                         linkingAddr.Add(i + 128);
                     }
                     else
@@ -345,6 +346,7 @@ namespace demoVer.Services
 
                     if(MOD2_index == 1)
                     {
+                        Console.WriteLine($"MOD2 : i = {i}");
                         linkingAddr.Add(i + 196);
                     }
                     else
@@ -352,7 +354,7 @@ namespace demoVer.Services
                         linkingAddr.Remove(i + 196);
                     }
                 }
-                
+                Console.WriteLine(string.Join(", ", linkingAddr));
             }
             catch(Exception e)
             {

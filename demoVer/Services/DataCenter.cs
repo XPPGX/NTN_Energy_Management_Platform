@@ -120,6 +120,12 @@ namespace demoVer.Services
             _globalVar.Sys_ModelName_OnChanged += DataCenter_MdlNameChange_Task;
         }
 
+        public void wake()
+        {
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][wake]", AppLogLevel.Trace);
+            return;
+        }
+
         public bool initSys()
         {
             AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] Start...", AppLogLevel.Trace);
@@ -179,6 +185,8 @@ namespace demoVer.Services
             {
                 basePath = "";
             }
+
+            
         }
 
 

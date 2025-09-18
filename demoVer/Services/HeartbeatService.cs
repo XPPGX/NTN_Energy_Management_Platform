@@ -16,7 +16,7 @@ namespace demoVer.Services
 		public event Func<Task>? OnTick;
 
 		public HeartbeatService(ILogger<HeartbeatService> logger)
-		{
+		{			
 			_category = GetType().FullName!;
 		}
 
