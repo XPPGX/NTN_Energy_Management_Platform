@@ -20,7 +20,7 @@ namespace demoVer.Services
         protected void NotifyChanged() => OnUpdated?.Invoke();
     }
 
-    public class DataCenter
+    public class DataCenter 
     {
         //For log
         private string _category = "";
@@ -75,9 +75,6 @@ namespace demoVer.Services
             Battery     = new Battery_DataSetting_Module(_commonData);
             INV         = new INV_DataSetting_Module(_commonData);
 
-            uint pollingCounter = 0;
-            bool ApiReadFlag = false;
-            uint counter = 0;
             bool counterEnable = true;
 
             bool initSysFromJson = initSys();
@@ -89,42 +86,17 @@ namespace demoVer.Services
             {
                 _globalVar.nowInitStage = InitStage.FromDevice;
             }
-            // _globalVar.InitSysOK = initSys();
 
             _heartbeat.OnTick += async () => 
             {
-                // AddSimulatedData();
                 NotifyChartSubscribers();
-
-                if(ApiReadFlag == false)
-                {
-                    // var result = await _apiManager.ReadSingleINV("CAN1", 0);
-                    // string parsedJson = JsonSerializer.Serialize(result, new JsonSerializerOptions {WriteIndented = true});
-                    // Console.WriteLine("[Parsed Result] = " + parsedJson);
-
-                    // READ_API_TEST();
-                    ApiReadFlag = true;
-                }
-
-                if(counter == 3)
-                {
-                    counter = 0;
-                    // LocalDataChange_Test();
-                }
-                counter ++;
-
                 await RefreshAllAsync();
             };
 
             //MdlName不一樣的時候會觸發這個Event
             _globalVar.Sys_ModelName_OnChanged += DataCenter_MdlNameChange_Task;
         }
-
-        public void wake()
-        {
-            AppLogger.Log_To_File_log(_category, $"[DataCenter][wake]", AppLogLevel.Trace);
-            return;
-        }
+        
 
         public bool initSys()
         {
@@ -660,6 +632,7 @@ namespace demoVer.Services
         // ✅ 通知 UI 重新繪製（例如透過 CardUpdateNotifier）
         private void NotifyChartSubscribers()
         {
+            Console.WriteLine("[DataCenter][NotifyChartSubscribers]");
             OnChartDataUpdated?.Invoke();
         }
         // ✅ 其他元件可以註冊來聽模擬資料更新

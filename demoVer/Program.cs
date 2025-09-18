@@ -6,6 +6,7 @@ using demoVer.Services;
 using demoVer.Models;
 using demoVer.Broadcast;
 using demoVer.Interfaces;
+using System.Runtime.InteropServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,16 +46,26 @@ builder.Services.AddHostedService(sp => sp.GetRequiredService<PollingRead>());
 builder.Services.AddSingleton<CircuitsWatcher>();
 builder.Services.AddSingleton<CircuitHandler>(sp => sp.GetRequiredService<CircuitsWatcher>());
 
-//[Migrate] IP : localhost
+//根據作業系統自動切換 IP
 builder.Services.AddHttpClient("ApiClient", client =>
 {
-    // client.BaseAddress = new Uri("http://127.0.0.1:5039/"); //Release
-    client.BaseAddress = new Uri("http://192.168.102.210:5039"); 
-    // client.BaseAddress = new Uri("http://192.168.31.184:5039/"); //CMU3 test
-    // client.BaseAddress = new Uri("http://127.0.0.1:5050/"); //local debug with python
-    // client.BaseAddress = new Uri("http://192.168.102.201:5039/"); //windows debug with remote linux
-    // client.BaseAddress = new Uri("http://192.168.102.204:5039/"); //windows debug with remote linux
-    // client.BaseAddress = new Uri("http://192.168.31.90:5039/"); //windows debug with remote linux
+    if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+    {
+        client.BaseAddress = new Uri("http://127.0.0.1:5050/"); //local debug with python
+        // client.BaseAddress = new Uri("http://192.168.102.210:5039"); 
+        // client.BaseAddress = new Uri("http://192.168.31.184:5039/"); //CMU3 test
+        // client.BaseAddress = new Uri("http://192.168.102.201:5039/"); //windows debug with remote linux
+        // client.BaseAddress = new Uri("http://192.168.102.204:5039/"); //windows debug with remote linux
+        // client.BaseAddress = new Uri("http://192.168.31.90:5039/"); //windows debug with remote linux
+    }
+    else if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+    {
+        client.BaseAddress = new Uri("http://127.0.0.1:5039/"); //Release
+    }
+    else
+    {
+        client.BaseAddress = new Uri("http://127.0.0.1:5050/"); //local debug with python
+    }
 });
 builder.Services.AddSingleton<ApiManager>();
 builder.Services.AddSingleton<WriteProcess>();
