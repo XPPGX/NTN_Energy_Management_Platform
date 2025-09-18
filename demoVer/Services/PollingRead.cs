@@ -314,29 +314,24 @@ namespace demoVer.Services
                     
                     if(CAN1_index == 1)
                     {
-                        Console.WriteLine($"CAN1 : i = {i} ADD");
                         linkingAddr.Add(i);
                     }
                     else
                     {
-                        Console.WriteLine($"CAN1 : i = {i} REMOVE");
                         linkingAddr.Remove(i);
                     }
 
                     if(CAN2_index == 1)
                     {
-                        Console.WriteLine($"CAN2 : i = {i}");
                         linkingAddr.Add(i + 64);
                     }
                     else
                     {
-                        Console.WriteLine($"CAN2 : i = {i} REMOVE");
                         linkingAddr.Remove(i + 64);
                     }
 
                     if(MOD1_index == 1)
                     {
-                        Console.WriteLine($"MOD1 : i = {i}");
                         linkingAddr.Add(i + 128);
                     }
                     else
@@ -346,7 +341,6 @@ namespace demoVer.Services
 
                     if(MOD2_index == 1)
                     {
-                        Console.WriteLine($"MOD2 : i = {i}");
                         linkingAddr.Add(i + 196);
                     }
                     else
@@ -354,7 +348,7 @@ namespace demoVer.Services
                         linkingAddr.Remove(i + 196);
                     }
                 }
-                Console.WriteLine(string.Join(", ", linkingAddr));
+                AppLogger.Log_To_File_log(_category, $"[PollingRead][PollNowLinkAddr] {string.Join(", ", linkingAddr)}", AppLogLevel.Trace);
             }
             catch(Exception e)
             {

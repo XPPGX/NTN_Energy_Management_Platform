@@ -19,7 +19,7 @@ namespace demoVer.Models
         public ConcurrentDictionary<string, settingCommandRawData> Setting_Write {get; set;}
 
         //The Scaling Factors got from globalVar.Device_ReadData
-        public ConcurrentDictionary<string, double> ScalingFactors;
+        public ConcurrentDictionary<string, double> ScalingFactors; //新版WriteAPI會給這些值，而不是從ReadAPI那邊拉過來
 
         public SubAppSystem_WriteMemory(int subSysID)
         {   

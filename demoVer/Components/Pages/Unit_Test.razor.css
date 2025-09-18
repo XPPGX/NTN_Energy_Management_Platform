@@ -1,0 +1,79 @@
+/* Grid 容器 */
+.btn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    padding: 40px;
+    justify-items: center;
+    align-items: center;
+    min-height: 100vh; /* 置中用 */
+    box-sizing: border-box;
+}
+
+/* 漂亮按鈕 */
+.glow-btn {
+    --btn-h: 56px;
+    --btn-radius: 14px;
+    --btn-bg: linear-gradient(135deg, #4e7cff, #2bd2c8);
+    --btn-bg-hover: linear-gradient(135deg, #6a93ff, #4ff5e9);
+    --btn-text: #fff;
+
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    height: var(--btn-h);
+    padding: 0 28px;
+    border: 0;
+    border-radius: var(--btn-radius);
+    background: var(--btn-bg);
+    color: var(--btn-text);
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform .12s ease, filter .15s ease, box-shadow .15s ease;
+    box-shadow: 0 6px 18px rgba(88, 140, 255, .28),
+                0 2px 8px rgba(0, 0, 0, .18);
+}
+
+.glow-btn .btn-inner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transform: translateY(0);
+    transition: transform .12s ease;
+}
+
+.glow-btn .btn-glow {
+    position: absolute;
+    inset: -2px;
+    border-radius: calc(var(--btn-radius) + 2px);
+    background: radial-gradient(120% 160% at 50% 0%,
+        rgba(78, 124, 255, .5),
+        transparent 60%),
+        radial-gradient(120% 160% at 50% 100%,
+        rgba(43, 210, 200, .5),
+        transparent 60%);
+    filter: blur(10px);
+    opacity: .6;
+    z-index: -1;
+    transition: opacity .2s ease, filter .2s ease;
+}
+
+/* 狀態互動 */
+.glow-btn:hover {
+    background: var(--btn-bg-hover);
+    transform: translateY(-1px);
+}
+.glow-btn:hover .btn-inner {
+    transform: translateY(-1px);
+}
+.glow-btn:active {
+    transform: translateY(0);
+    filter: brightness(.95);
+}
+.glow-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(78, 124, 255, .35),
+                0 0 0 6px rgba(78, 124, 255, .2),
+                0 6px 18px rgba(88, 140, 255, .28);
+}

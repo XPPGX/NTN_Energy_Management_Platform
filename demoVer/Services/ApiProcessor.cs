@@ -27,8 +27,6 @@ namespace demoVer.Services
                 {
                     throw new Exception($"[apiRead_LinkStatus] Read_API_JSON == null");
                 }
-
-                Console.WriteLine($"result = {result.Products["INV"].CAN1_LINK}");
                 return result;
             }
             catch(HttpRequestException ex)
@@ -124,17 +122,6 @@ namespace demoVer.Services
             }
         }
 
-        // public List<string> GetProtocolFilesForPort(string port)
-        // {
-        //     try
-        //     {
-        //         return null;
-        //     }
-        //     catch(Exception e)
-        //     {
-        //         return null;
-        //     }
-        // }
 
         //讀回settingData的格式、當前數值
         public async Task<List<SingleRawSettingCommand_JsonFormat>?> apiRead_SettingData(string type, string protocolFileName)
@@ -193,6 +180,33 @@ namespace demoVer.Services
             {
                 Console.WriteLine($"[WriteAPI] Unexpected Error: {ex.Message}");
                 return false;
+            }
+        }
+
+        //READ_API_V1.1 : 讀 單個device的資料
+        public async Task<Real_SingleDeviceData_JsonFormat> apiReadReal_OneDeviceData(string type, uint addr)
+        {
+            try
+            {
+                string url = $"api/memory/read-real?type={type}&addr={addr}";
+                var result = await _http.GetFromJsonAsync<Real_SingleDeviceData_JsonFormat>(url);
+                
+                if(result == null)
+                {
+                     throw new Exception($"[apiRead_OneDeviceData] ReadReal_API_Json == null");
+                }
+                return result;
+
+            }
+            catch (HttpRequestException ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[ApiManager][apiReadReal_OneDeviceData] Http_Error: {ex}", AppLogLevel.Debug);
+                return null;
+            }
+            catch(Exception ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[ApiManager][apiReadReal_OneDeviceData] Error : {ex.Message}", AppLogLevel.Error);
+                return null;
             }
         }
     }

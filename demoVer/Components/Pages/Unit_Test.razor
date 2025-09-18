@@ -13,7 +13,21 @@
 @using demoVer.Utils
 @inject WriteProcess writeProcess
 
-<button @onclick="testFunc">READ_LINK_STATUS</button>
+<div class="btn-grid">
+    <button class="glow-btn" @onclick="testFunc">
+        <span class="btn-inner">
+            🚀 READ_LINK_STATUS
+        </span>
+        <span class="btn-glow" aria-hidden="true"></span>
+    </button>
+
+    <button class="glow-btn" @onclick="TEST_readReal_DeviceData">
+        <span class="btn-inner">
+            🚀 apiReadReal_DeviceData
+        </span>
+        <span class="btn-glow" aria-hidden="true"></span>
+    </button>
+</div>
 
 @code{
     private LinkStatus_JsonFormat rcv_LinkStatus = new();    
@@ -48,4 +62,14 @@
         Console.WriteLine(rawJsonData_String);
     }
 
+    public async Task TEST_readReal_DeviceData()
+    {
+        var result = await apiManager.apiReadReal_OneDeviceData("MOD1", 0);
+
+        var rawJsonData_String = JsonSerializer.Serialize(result, new JsonSerializerOptions{
+            WriteIndented = true
+        });
+
+        Console.WriteLine(rawJsonData_String);
+    }
 }

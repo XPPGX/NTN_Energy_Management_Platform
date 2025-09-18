@@ -472,53 +472,6 @@ namespace demoVer.Services
             File.WriteAllText(BAT_SettingFilePath, json);   
         }
 
-        public async Task READ_API_TEST()
-        {
-            // var result = await _apiManager.apiRead_OneDeviceData("CAN1", 0);
-            // string parsedJson = JsonSerializer.Serialize(result, new JsonSerializerOptions {WriteIndented = true});
-            // _globalVar.Device_ReadData.Read_oneDevice_Data(0, result);
-
-            // var result = await _apiManager.apiRead_SettingData("CAN1", "NTN-5K_CAN.json");
-            // string parsedJson = JsonSerializer.Serialize(result, new JsonSerializerOptions {WriteIndented = true});
-            
-        }
-        public async Task LocalDataChange_Test()
-        {
-            //CURVE_CV
-            var tmp_groups = _globalVar.Device_ReadData.GetCommandGroups(0, "CURVE_CV");
-            
-            var rnd = new Random();
-            var randomBytes = new List<byte>();
-
-            for (int i = 0 ; i < 2 ; i ++)randomBytes.Add((byte)rnd.Next(0, 256));
-            tmp_groups.Groups[0].Data = randomBytes;
-
-            //MFR_MODEL
-            tmp_groups = _globalVar.Device_ReadData.GetCommandGroups(0, "MFR_MODEL");
-            randomBytes = new List<byte>();
-            for(int i = 0 ; i < 6 ; i ++)randomBytes.Add((byte)rnd.Next(65, 90));
-            tmp_groups.Groups[0].Data = randomBytes;
-            randomBytes = new List<byte>();
-            for(int i = 0 ; i < 6 ; i ++)randomBytes.Add((byte)rnd.Next(65, 90));
-            tmp_groups.Groups[1].Data = randomBytes;
-
-            //READ_AC_VOUT
-            tmp_groups = _globalVar.Device_ReadData.GetCommandGroups(0, "READ_AC_VOUT");
-            randomBytes = new List<byte>();
-            for(int i = 0 ; i < 2 ; i ++)randomBytes.Add((byte)rnd.Next(1, 10));
-            tmp_groups.Groups[0].Data = randomBytes;
-            
-            //READ_OP_VA
-            tmp_groups = _globalVar.Device_ReadData.GetCommandGroups(0, "READ_OP_VA");
-            randomBytes = new List<byte>();
-            for(int i = 0 ; i < 2 ; i ++)randomBytes.Add((byte)rnd.Next(1, 10));
-            tmp_groups.Groups[0].Data = randomBytes; 
-            randomBytes = new List<byte>();
-            for(int i = 0 ; i < 2 ; i ++)randomBytes.Add((byte)rnd.Next(1, 10));
-            tmp_groups.Groups[1].Data = randomBytes;           
-        }
-
-
         public async Task BroadcastBatteryChangeAsync()
         {
             var dto = Battery.ToDto();
@@ -538,33 +491,7 @@ namespace demoVer.Services
             await Task.CompletedTask;
         }
 
-        #region SimulationDataTransfer_And_DrawChart
-        private void AddSimulatedData()
-        {
-            if (_labels.Count >= 10)
-            {
-                _labels.RemoveAt(0);
-                _values.RemoveAt(0);
-                _values2.RemoveAt(0);
-            }
-
-            _labels.Add(DateTime.Now.ToString("HH:mm:ss"));
-            _values.Add(new Random().NextDouble() * 100);
-            _values2.Add(new Random().NextDouble() * 100);
-        }
-        // public void ApplySimulatedDataToChart(CHART_SETTING chartSetting)
-        // {
-        //     chartSetting.Labels = _labels.ToArray();
-        //     if (chartSetting.chart_single_data_lines.Count == 1)
-        //     {
-        //         chartSetting.chart_single_data_lines[0].Data = _values.ToArray();
-        //     }
-        //     else if(chartSetting.chart_single_data_lines.Count == 2)
-        //     {
-        //         chartSetting.chart_single_data_lines[0].Data = _values.ToArray();
-        //         chartSetting.chart_single_data_lines[1].Data = _values2.ToArray();
-        //     }
-        // }
+        #region DrawChartFunctions
         public void ApplyRealDataToChart(CHART_SETTING chartSetting, bool isMobile)
         {
             try
@@ -632,7 +559,6 @@ namespace demoVer.Services
         // ✅ 通知 UI 重新繪製（例如透過 CardUpdateNotifier）
         private void NotifyChartSubscribers()
         {
-            Console.WriteLine("[DataCenter][NotifyChartSubscribers]");
             OnChartDataUpdated?.Invoke();
         }
         // ✅ 其他元件可以註冊來聽模擬資料更新
@@ -645,62 +571,6 @@ namespace demoVer.Services
         {
             OnChartDataUpdated -= callback;
         }
-        #endregion
-
-        #region API_Simulate
-        public async Task <List<ModSingleRawCommandFormat>> LoadMockJsonAsync(string filePath)
-        {
-            try
-            {
-                string json = File.ReadAllText(filePath);
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                };
-
-                List<ModSingleRawCommandFormat> rawJsonData = new List<ModSingleRawCommandFormat>();
-
-                rawJsonData = JsonSerializer.Deserialize<List<ModSingleRawCommandFormat>>(json, options) ?? new();
-                
-                var rawJsonData_String = JsonSerializer.Serialize(rawJsonData, new JsonSerializerOptions{
-                    WriteIndented = true
-                });
-                // Console.WriteLine(rawJsonData_String);
-                return rawJsonData;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"JSON read fail: {ex.Message}");
-                return new List<ModSingleRawCommandFormat>();
-            }
-        }
-
-        private void Update_Read_Data()
-        {
-            try
-            {
-                const uint targetAddr = 4;
-                List<string> cmds = new List<string>();
-                cmds.Add("READ_TEMPERATURE_1");
-                cmds.Add("READ_VIN");
-                cmds.Add("READ_IIN");
-                cmds.Add("READ_FREQ");
-                // cmds.Add("READ_IIN");
-                
-                foreach(var cmd_str in cmds)
-                {
-                    var oneDevice_groups = _globalVar.Device_ReadData.GetCommandGroups(targetAddr, cmd_str);
-                    byte val1 = (byte)(new Random().Next() * 10);
-                    byte val2 = (byte)(new Random().Next() * 10);
-                    oneDevice_groups.Groups[0].Data = new List<byte> {val1, val2};
-                }
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine($"[DataCenter][Update_Read_Data] Error : {e}");
-            }
-            
-        }
-        #endregion API_Simulate
+        #endregion //DrawChartFunctions
     }
 }

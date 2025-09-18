@@ -121,53 +121,6 @@ namespace demoVer.Models
         //存每個groupIndex對應的資料
         //如果沒有groupIndex則視為groupIndex = 0        
         public Dictionary<uint, CommandRawData> Groups {get; set;} = new();
-        
-        
-        // public readonly Dictionary<uint, Action> _handlers = new();
-        // //Group層級事件
-        // public event Action<uint>? OnChildChanged;
-        // //把RawData放入Group，順便掛上OnChange的handler
-        // public void AddOrUpdateGroup(uint index, CommandRawData Raw)
-        // {
-        //     if(_handlers.TryGetValue(index, out var oldHandler))
-        //     {
-        //         if(Groups.TryGetValue(index, out var oldRaw))
-        //         {
-        //             oldRaw.OnChanged -= oldHandler;
-        //         }
-                
-        //         _handlers.Remove(index);
-        //     }
-
-        //     Action handler = () => ChildDataChanged();
-
-        //     //掛handler
-        //     Raw.OnChanged += handler;
-            
-        //     //存group的handler，解除handler時會用到(防止memory leak)
-        //     _handlers[index] = handler;
-
-        //     //把RawData放入Groups中
-        //     Groups[index] = Raw;
-        // }
-
-        // //解掛Groups內的每一個Group的Handler
-        // public void ClearAllHandlers()
-        // {
-        //     foreach (var pair in _handlers)
-        //     {
-        //         if(Groups.TryGetValue(pair.Key, out var Raw))
-        //         {
-        //             Raw.OnChanged -= pair.Value;
-        //         }
-        //     }
-        //     _handlers.Clear();
-        // }
-
-        // private void ChildDataChanged()
-        // {
-        //     OnChildChanged?.Invoke();
-        // }
 
         public IEnumerable<CommandRawData> GetOrderedGroups()
         {
