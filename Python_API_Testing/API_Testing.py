@@ -261,7 +261,7 @@ def R_real_write_memory():
         return jsonify({"error": f"File {fileName} not found"}), 404
 
     print(f'[R]/api/memory/write-api : {port}, {fileName}')
-    return jsonify(store[fileName]), 200
+    return jsonify(store), 200
 
 
 #未完成，正常應該不是這樣存值的

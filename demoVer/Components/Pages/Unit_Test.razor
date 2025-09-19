@@ -21,9 +21,23 @@
         <span class="btn-glow" aria-hidden="true"></span>
     </button>
 
-    <button class="glow-btn" @onclick="TEST_readReal_DeviceData">
+    <button class="glow-btn" @onclick="TEST_readReal_ReadMemory">
         <span class="btn-inner">
             🚀 apiReadReal_DeviceData
+        </span>
+        <span class="btn-glow" aria-hidden="true"></span>
+    </button>
+
+    <button class="glow-btn" @onclick="TEST_readReal_WriteMemory">
+        <span class="btn-inner">
+            🚀 apiReadReal_SettingData
+        </span>
+        <span class="btn-glow" aria-hidden="true"></span>
+    </button>
+
+    <button class="glow-btn" @onclick="TEST_writeReal_WriteMemory">
+        <span class="btn-inner">
+            🚀 apiWriteReal_SettingData
         </span>
         <span class="btn-glow" aria-hidden="true"></span>
     </button>
@@ -62,14 +76,41 @@
         Console.WriteLine(rawJsonData_String);
     }
 
-    public async Task TEST_readReal_DeviceData()
+    public async Task TEST_readReal_ReadMemory()
     {
-        var result = await apiManager.apiReadReal_OneDeviceData("MOD1", 0);
+        var result = await apiManager.apiReadReal_OneDeviceData("CAN1", 0);
 
         var rawJsonData_String = JsonSerializer.Serialize(result, new JsonSerializerOptions{
             WriteIndented = true
         });
 
         Console.WriteLine(rawJsonData_String);
+    }
+
+    public async Task TEST_readReal_WriteMemory()
+    {
+        var result = await apiManager.apiReadReal_SettingData("CAN1", "NTN-5K_CAN.json");
+        var rawJsonData_String = JsonSerializer.Serialize(result, new JsonSerializerOptions{
+            WriteIndented = true
+        });
+
+        Console.WriteLine(rawJsonData_String);
+    }
+
+    public async Task TEST_writeReal_WriteMemory()
+    {
+        WrtieVal writeVal = new();
+        writeVal.Number = 100;
+        writeVal.Text   = null;
+        writeVal.Bits   = null;
+        
+        Post_RealSingleRawSettingCMD_JsonFormat body = new();
+        body.Type           = "CAN1";
+        body.Protocol       = "NTN-5K_CAN.json";
+        body.CommandName    = "CURVE_CC";
+        body.Target         = writeVal;
+
+        var IsSendSucc = await apiManager.apiWrite_SetSingleCMD(body);
+        Console.WriteLine($"[TEST_Write] IsSendSucc = {IsSendSucc}");
     }
 }

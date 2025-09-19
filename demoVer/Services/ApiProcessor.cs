@@ -183,7 +183,7 @@ namespace demoVer.Services
             }
         }
 
-        //READ_API_V1.1 : 讀 單個device的資料
+        //GET API READ_Memory_V1.1 : 讀 單個device的資料
         public async Task<Real_SingleDeviceData_JsonFormat> apiReadReal_OneDeviceData(string type, uint addr)
         {
             try
@@ -207,6 +207,108 @@ namespace demoVer.Services
             {
                 AppLogger.Log_To_File_log(_category, $"[ApiManager][apiReadReal_OneDeviceData] Error : {ex.Message}", AppLogLevel.Error);
                 return null;
+            }
+        }
+
+        //GET API WRITE_Memory_V1.1 : 讀某個(port)的所有協定的所有命令格式、值
+        public async Task<Dictionary<string, List<GET_RealSingleRawSettingCMD_JsonFormat>>> apiReadReal_SettingData_AllProtocol_Within_OnePort(string type)
+        {
+            try
+            {
+                if(string.IsNullOrEmpty(type))
+                {
+                    AppLogger.Log_To_File_log(_category, $"[ApiManager][apiReadReal_SettingData_AllProtocol_Within_OnePort] type is invalid", AppLogLevel.Trace);
+                    return null;
+                }
+                
+                string url = $"api/memory/write-api?type={type}";
+                var result = await _http.GetFromJsonAsync<Dictionary<string, List<GET_RealSingleRawSettingCMD_JsonFormat>>>(url);
+                
+                if(result == null)
+                {
+                     throw new Exception($"[ApiManager][apiReadReal_SettingData_AllProtocol_Within_OnePort] ReadReal_SettingData is null");
+                }
+                return result;
+            }
+            catch (HttpRequestException ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[ApiManager][apiReadReal_SettingData_AllProtocol_Within_OnePort] Http_Error: {ex}", AppLogLevel.Debug);
+                return null;
+            }
+            catch(Exception ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[ApiManager][apiReadReal_SettingData_AllProtocol_Within_OnePort] Error : {ex.Message}", AppLogLevel.Error);
+                return null;
+            }
+        }
+
+        //GET API WRITE_Memory_V1.1 : 讀某個(Port, protocolFileName)所有命令格式、值
+        public async Task<Dictionary<string, List<GET_RealSingleRawSettingCMD_JsonFormat>>> apiReadReal_SettingData(string type, string protocolFileName)
+        {
+            try
+            {
+                if(string.IsNullOrEmpty(type))
+                {
+                    AppLogger.Log_To_File_log(_category, $"[ApiManager][apiReadReal_SettingData] type is invalid", AppLogLevel.Trace);
+                    return null;
+                }
+                if(string.IsNullOrEmpty(protocolFileName))
+                {
+                    AppLogger.Log_To_File_log(_category, $"[ApiManager][apiReadReal_SettingData] protocol is invalid", AppLogLevel.Trace);
+                    return null;
+                }
+                
+                
+                string url = $"api/memory/write-api?type={type}&protocol={protocolFileName}";
+                var result = await _http.GetFromJsonAsync<Dictionary<string, List<GET_RealSingleRawSettingCMD_JsonFormat>>>(url);
+                
+                if(result == null)
+                {
+                     throw new Exception($"[ApiManager][apiReadReal_SettingData] ReadReal_SettingData is null");
+                }
+                return result;
+            }
+            catch (HttpRequestException ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[ApiManager][apiReadReal_SettingData] Http_Error: {ex}", AppLogLevel.Debug);
+                return null;
+            }
+            catch(Exception ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[ApiManager][apiReadReal_SettingData] Error : {ex.Message}", AppLogLevel.Error);
+                return null;
+            }
+        }
+
+        //POST API WRITE_Memory_V1.1 : 寫某個(port, protocolFileName)的某個(cmd)的值
+        public async Task<bool> apiWrite_SetSingleCMD(Post_RealSingleRawSettingCMD_JsonFormat api_body, CancellationToken ct = default)
+        {
+            try
+            {
+                string url = $"api/memory/write-api";
+                using var response = await _http.PostAsJsonAsync(url, api_body, ct);
+                
+                if(response.IsSuccessStatusCode)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[ApiManager][apiWrite_SetSingleCMD]成功: {(int)response.StatusCode}", AppLogLevel.Trace);
+                    return true;
+                }
+                else
+                {
+                    var text = await response.Content.ReadAsStringAsync(ct);
+                    AppLogger.Log_To_File_log(_category, $"[ApiManager][apiWrite_SetSingleCMD]失敗: {(int)response.StatusCode}, Failed Message : {text}", AppLogLevel.Trace);
+                    return false;
+                }
+            }
+            catch(HttpRequestException ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[ApiManager][apiWrite_SetSingleCMD] Http_Error: {ex}", AppLogLevel.Debug);
+                return false;
+            }
+            catch(Exception ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[ApiManager][apiWrite_SetSingleCMD] Error : {ex.Message}", AppLogLevel.Error);
+                return false;
             }
         }
     }

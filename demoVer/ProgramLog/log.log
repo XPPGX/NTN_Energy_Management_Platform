@@ -1,10 +1,1 @@
-﻿[2025-09-18 16:42:47.643] [PollingRead][PollNowLinkAddr] rcv_linkStatus is Null
-[2025-09-18 16:42:49.692] [PollingRead][PollNowLinkAddr] rcv_linkStatus is Null
-[2025-09-18 16:42:51.729] [PollingRead][PollNowLinkAddr] rcv_linkStatus is Null
-[2025-09-18 16:42:53.775] [PollingRead][PollNowLinkAddr] rcv_linkStatus is Null
-[2025-09-18 16:55:36.339] [CommonData][modelNameChange_Task] Error : System.NullReferenceException: Object reference not set to an instance of an object.
-   at demoVer.Services.CommonData.modelNameChange_Task() in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\CommonData.cs:line 94
-[2025-09-19 08:39:47.861] [CommonData][modelNameChange_Task] Error : System.NullReferenceException: Object reference not set to an instance of an object.
-   at demoVer.Services.CommonData.modelNameChange_Task() in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\CommonData.cs:line 94
-[2025-09-19 09:53:19.057] [CommonData][modelNameChange_Task] Error : System.NullReferenceException: Object reference not set to an instance of an object.
-   at demoVer.Services.CommonData.modelNameChange_Task() in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\CommonData.cs:line 94
+﻿

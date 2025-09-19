@@ -270,6 +270,12 @@ namespace demoVer.Services
 
         public async Task DataCenter_MdlNameChange_Task()
         {
+            if(string.IsNullOrEmpty(_globalVar.Sys_ModelName))
+            {
+                AppLogger.Log_To_File_log(_category, $"[DataCenter][DataCenter_MdlNameChange_Task] _globalVar.Sys_ModelName is Null or Empty", AppLogLevel.Trace);
+                return;
+            }
+
             if(string.Equals(oldMdlName, _globalVar.Sys_ModelName, StringComparison.OrdinalIgnoreCase))
             {
                 AppLogger.Log_To_File_log(_category, $"[DataCenter][DataCenter_MdlNameChange_Task] oldMdlName == _globalVar.Sys_ModelName", AppLogLevel.Trace);
@@ -278,11 +284,11 @@ namespace demoVer.Services
                 
                 return;
             }
-            AppLogger.Log_To_File_log(_category, $"[DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = {oldMdlName}, _globalVar.Sys_ModelName = {_globalVar.Sys_ModelName}", AppLogLevel.Trace);
-            
-            //重新 Loading
-            if(!string.IsNullOrEmpty(_globalVar.Sys_ModelName))
+            else
             {
+                AppLogger.Log_To_File_log(_category, $"[DataCenter][DataCenter_MdlNameChange_Task] oldMdlName = {oldMdlName}, _globalVar.Sys_ModelName = {_globalVar.Sys_ModelName}", AppLogLevel.Trace);
+                
+                //重新 Loading
                 //1. SysInfo
                 saveSysInfo_To_JsonFile();
                 //2. ScalingFactor
@@ -293,7 +299,6 @@ namespace demoVer.Services
                 //4. BAT setting
                 //待辦(等上下限API開通)
             }
-            
         }
 
         public void saveSysInfo_To_JsonFile()
