@@ -1,0 +1,218 @@
+{
+    "port": "CAN1",
+    "addr": 0,
+    "protocolName": "NTN-5K_CAN.json",
+    "timestamp": "2025-09-19T00:43:56.1503075+00:00",
+    "values": {
+        "READ_AC_FOUT": {
+            "type": "Numeric",
+            "value": 286.95,
+            "unit": "Hz"
+        },
+        "READ_AC_VOUT": {
+            "type": "Numeric",
+            "value": 4148,
+            "unit": "V"
+        },
+        "READ_OP_LD_PCNT": {
+            "type": "Numeric",
+            "value": 0,
+            "unit": ""
+        },
+        "READ_OP_WATT": {
+            "type": "Numeric",
+            "value": 0,
+            "unit": "W"
+        },
+        "READ_OP_VA": {
+            "type": "Numeric",
+            "value": 6144,
+            "unit": "VA"
+        },
+        "READ_CHG_CURR": {
+            "type": "Numeric",
+            "value": 552.94,
+            "unit": "A"
+        },
+        "INV_FAULT": {
+            "type": "BitField",
+            "value": "",
+            "unit": ""
+        },
+        "READ_BP_WATT": {
+            "type": "Numeric",
+            "value": 0,
+            "unit": "W"
+        },
+        "READ_BP_VA": {
+            "type": "Numeric",
+            "value": 4608.5,
+            "unit": "VA"
+        },
+        "READ_AC_IOUT": {
+            "type": "Numeric",
+            "value": 51.2,
+            "unit": "A"
+        },
+        "READ_TEMPERATURE_1": {
+            "type": "Numeric",
+            "value": 1382.5,
+            "unit": "℃"
+        },
+        "READ_FAN_SPEED_1": {
+            "type": "Numeric",
+            "value": 31245,
+            "unit": "RPM"
+        },
+        "READ_FAN_SPEED_2": {
+            "type": "Numeric",
+            "value": 38925,
+            "unit": "RPM"
+        },
+        "READ_VIN": {
+            "type": "Numeric",
+            "value": 4352.8,
+            "unit": "V"
+        },
+        "READ_IIN": {
+            "type": "Numeric",
+            "value": 281.6,
+            "unit": "A"
+        },
+        "READ_FREQ": {
+            "type": "Numeric",
+            "value": 284.39,
+            "unit": "Hz"
+        },
+        "CURVE_CC": {
+            "type": "Numeric",
+            "value": 358.5,
+            "unit": "A"
+        },
+        "CURVE_CV": {
+            "type": "Numeric",
+            "value": 82,
+            "unit": "V"
+        },
+        "CURVE_FV": {
+            "type": "Numeric",
+            "value": 532.55,
+            "unit": "V"
+        },
+        "CURVE_TC": {
+            "type": "Numeric",
+            "value": 35.85,
+            "unit": "A"
+        },
+        "CURVE_CONFIG": {
+            "type": "Numeric",
+            "value": 0,
+            "unit": ""
+        },
+        "CURVE_CC_TIMEOUT": {
+            "type": "Numeric",
+            "value": 22530,
+            "unit": "Sec"
+        },
+        "CURVE_CV_TIMEOUT": {
+            "type": "Numeric",
+            "value": 22530,
+            "unit": "Sec"
+        },
+        "CURVE_FV_TIMEOUT": {
+            "type": "Numeric",
+            "value": 22530,
+            "unit": "Sec"
+        },
+        "CHG_STATUS": {
+            "type": "BitField",
+            "value": "",
+            "unit": ""
+        },
+        "BAT_ALM_VOLT": {
+            "type": "Numeric",
+            "value": 532.55,
+            "unit": "V"
+        },
+        "BAT_SHDN_VOLT": {
+            "type": "Numeric",
+            "value": 276.55,
+            "unit": "V"
+        },
+        "BAT_RCHG_VOLT": {
+            "type": "Numeric",
+            "value": 122.95,
+            "unit": "V"
+        },
+        "SYSTEM_CONFIG": {
+            "type": "Numeric",
+            "value": 0,
+            "unit": ""
+        },
+        "INV_OPERATION": {
+            "type": "Numeric",
+            "value": 256,
+            "unit": ""
+        },
+        "INV_CONFIG": {
+            "type": "Numeric",
+            "value": 0,
+            "unit": ""
+        },
+        "Output_ACV_Set": {
+            "type": "Numeric",
+            "value": 256,
+            "unit": ""
+        },
+        "Output_ACF_Set": {
+            "type": "Numeric",
+            "value": 256,
+            "unit": ""
+        },
+        "READ_VBAT": {
+            "type": "Numeric",
+            "value": 312.40000000000003,
+            "unit": "V"
+        },
+        "INV_STATUS": {
+            "type": "BitField",
+            "value": "Phase 120°",
+            "unit": ""
+        },
+        "SCALING_FACTOR": {
+            "type": "Numeric",
+            "value": 93967280899328,
+            "unit": ""
+        },
+        "MFR_ID": {
+            "type": "ASCII",
+            "value": "MEANWELL    ",
+            "unit": ""
+        },
+        "MFR_MODEL": {
+            "type": "ASCII",
+            "value": "NTN-5K-224  ",
+            "unit": ""
+        },
+        "MFR_REVISION_B0B5": {
+            "type": "ASCII",
+            "value": "2,2,2,25.5,25.5,25.5",
+            "unit": ""
+        },
+        "MFR_LOCATION_B0B2": {
+            "type": "ASCII",
+            "value": "TWN",
+            "unit": ""
+        },
+        "MFR_DATE_B0B5": {
+            "type": "ASCII",
+            "value": "250213",
+            "unit": ""
+        },
+        "MFR_SERIAL": {
+            "type": "ASCII",
+            "value": "250213000038",
+            "unit": ""
+        }
+    }
+}

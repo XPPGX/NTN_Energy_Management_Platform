@@ -51,8 +51,8 @@ builder.Services.AddHttpClient("ApiClient", client =>
 {
     if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
     {
-        // client.BaseAddress = new Uri("http://127.0.0.1:5050/"); //local debug with python
-        client.BaseAddress = new Uri("http://192.168.102.210:5039"); 
+        client.BaseAddress = new Uri("http://127.0.0.1:5050/"); //local debug with python
+        // client.BaseAddress = new Uri("http://192.168.102.210:5039"); 
         // client.BaseAddress = new Uri("http://192.168.31.184:5039/"); //CMU3 test
         // client.BaseAddress = new Uri("http://192.168.102.201:5039/"); //windows debug with remote linux
         // client.BaseAddress = new Uri("http://192.168.102.204:5039/"); //windows debug with remote linux

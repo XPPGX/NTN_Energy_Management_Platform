@@ -3,9 +3,10 @@ from flask import Flask, jsonify, request
 import json, random
 import sys
 import time
+from datetime import datetime, timezone, timedelta
 
 
-
+TZ_TAIPEI = timezone(timedelta(hours=8))
 
 app = Flask(__name__)
 app.config["JSONIFY_PRETTYPRINT_REGULAR"] = False  # 少一點格式化開銷
@@ -19,6 +20,10 @@ with open("INV_DATA.json", "r", encoding="utf-8") as f:
 with open("link_status.json", "r", encoding="utf-8") as f:
     _link_status = json.load(f)
 
+with open("REAL_ReadMemory_JsonFormat.json", "r", encoding="utf-8") as f:
+    REAL_INV_TEMPLATE = json.load(f)
+
+
 _TEMPLATES = [{k: v for k, v in item.items() if k != "data"} for item in _base_data]
 _LENGTHS   = [len(item["data"]) for item in _base_data]
 
@@ -29,8 +34,9 @@ _MFR_MODEL_G0 = [ord(c) for c in "\x00\x00\x00\x00\x00\x00"]   # groupIndex = 0
 _MFR_MODEL_G1 = [ord(c) for c in "\x00\x00\x00\x00\x00\x00"]   # groupIndex = 1（注意兩個空白）
 
 _COMMAND_STORE = {}
+_REAL_WRITE_STORE = {}
 
-def write_memory_init(filename: str):
+def memory_init(filename: str):
     global _COMMAND_STORE
     
     with open(filename, "r", encoding="utf-8") as f:
@@ -63,6 +69,48 @@ def write_memory_init(filename: str):
     for k,v in _COMMAND_STORE.items():
         print(f"  {k} => {v}")
 
+def real_write_memory_init(filename: str):
+    """初始化 REAL_WRITE_STORE (用 REAL_WriteMemory_JsonFormat.json)"""
+    global _REAL_WRITE_STORE
+    with open(filename, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    # data 格式是 { "NTN-5K_CAN.json": [ {...}, {...} ] }
+    _REAL_WRITE_STORE = data
+    print(f"Init finished. REAL_WRITE_STORE loaded: {list(_REAL_WRITE_STORE.keys())}")
+
+def get_real_write_store():
+    return _REAL_WRITE_STORE
+
+@app.route("/api/memory/read-real", methods=["GET"])
+def read_real():
+    port = request.args.get("type", "Unknown")
+    addr = int(request.args.get("addr", "0"))
+
+    # 複製一份 template，避免修改到原始資料
+    resp = json.loads(json.dumps(REAL_INV_TEMPLATE))
+
+    # 更新固定欄位
+    resp["port"] = port
+    resp["addr"] = addr
+    resp["timestamp"] = datetime.now(TZ_TAIPEI).isoformat()
+
+    # 處理 values
+    for key, item in resp["values"].items():
+        vtype = item.get("type")
+
+        if vtype == "Numeric":
+            # 給一個隨機 double (範圍 0~1000，可自行調整)
+            item["value"] = round(random.uniform(0, 1000), 2)
+
+        elif vtype == "BitField":
+            item["value"] = ""
+
+        elif vtype == "ASCII":
+            # 保留 JSON 裡原本寫的字串，不動
+            pass
+
+    return jsonify(resp), 200
 
 @app.route("/api/memory/link-status", methods=["GET"])
 def get_link_status():
@@ -199,15 +247,48 @@ def W_write_memory():
 
     return jsonify({"status" : "ok",
                     "updated" : payload}), 200
-                    
+
+@app.route("/api/memory/write-api", methods=["GET"])
+def R_real_write_memory():
+    port = request.args.get("type", None)
+    fileName = request.args.get("protocolFileName", "NTN-5K_CAN.json")
+
+    store = get_real_write_store()
+    if not store:
+        return jsonify({"error": "REAL_WRITE_STORE not initialized"}), 500
+
+    if fileName not in store:
+        return jsonify({"error": f"File {fileName} not found"}), 404
+
+    print(f'[R]/api/memory/write-api : {port}, {fileName}')
+    return jsonify(store[fileName]), 200
+
+
+#未完成，正常應該不是這樣存值的
+@app.route("/api/memory/write-api", methods=["POST"])
+def W_real_write_memory():
+    port = request.args.get("type", None)
+    fileName = request.args.get("protocolFileName", "NTN-5K_CAN.json")
+
+    global _REAL_WRITE_STORE
+    payload = request.get_json(force=True)
+
+    if fileName not in _REAL_WRITE_STORE:
+        return jsonify({"error": f"File {fileName} not found"}), 404
+
+    if not isinstance(payload, list):
+        return jsonify({"error": "Body must be a JSON array"}), 400
+
+    # 覆蓋更新
+    _REAL_WRITE_STORE[fileName] = payload
+
+    print(f'[W]/api/memory/write-api : {port}, {fileName} updated')
+    return jsonify({"status": "ok", "updated": payload}), 200
+
 if __name__ == "__main__":
     # 測速/實際部署建議關掉 debug reloader
     print(sys.executable)
-    
-    # print("delay...")
-    # for countdown in range(10, 0, -1):
-    #     time.sleep(1)
-    #     print("countdown = {}".format(countdown))
 
-    write_memory_init("WriteMemory_JsonFormat.json")
+    memory_init("WriteMemory_JsonFormat.json")
+    real_write_memory_init("REAL_WriteMemory_JsonFormat.json")  # ⭐ 新增
     app.run(host="0.0.0.0", port=5050, debug=False)
