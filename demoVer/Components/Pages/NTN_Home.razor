@@ -14,6 +14,7 @@
 @inject CardUpdateNotifier Notifier
 @inject IDialogService DialogService
 @inject ApiManager apiManager
+@inject HeartbeatService heartbeat
 <PageTitle>NTN module</PageTitle>
 
 <TopRow OnSendToParent="ReceiveFrom_TopRow"
@@ -269,6 +270,7 @@
         if (firstRender)
         {   
             AppLogger.Log_To_File_log(_category, "[NTN_Home][OnAfterRenderAsync] First Rendered", AppLogLevel.Trace);
+            heartbeat.OnTick += TickTask;
             try{
                 //[Debug] try drag function
                 // var dotNetRef = DotNetObjectReference.Create(this);
@@ -317,9 +319,14 @@
         globalVar.Sys_ModelName_OnChanged += hookTask;
         await hookTask();
         await Read_CardInfos_FromJsonFile();
+        
     }
     #endregion //Render_Flow_Control
 
+    private async Task TickTask()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
 
     private async Task hookTask()
     {
