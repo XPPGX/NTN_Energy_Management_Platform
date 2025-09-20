@@ -54,7 +54,7 @@ builder.Services.AddHttpClient("ApiClient", client =>
     // client.BaseAddress = new Uri("http://127.0.0.1:5050/"); //local debug with python
     // client.BaseAddress = new Uri("http://192.168.102.201:5039/"); //windows debug with remote linux
     // client.BaseAddress = new Uri("http://192.168.102.204:5039/"); //windows debug with remote linux
-    // client.BaseAddress = new Uri("http://192.168.31.33:5039/"); //windows debug with remote linux
+    // client.BaseAddress = new Uri("http://192.168.31.67:5039/"); //windows debug with remote linux
 });
 builder.Services.AddSingleton<ApiManager>();
 builder.Services.AddSingleton<WriteProcess>();

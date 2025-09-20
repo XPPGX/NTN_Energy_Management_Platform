@@ -14,7 +14,7 @@ namespace demoVer.Services
 {   
     public class PollingOptions
     {
-        public int PerRequestDelayMs {get; set;} = 300;
+        public int PerRequestDelayMs {get; set;} = 200;
         public int RequestTimeoutMs {get; set;} = 1000;
     }
 
@@ -110,7 +110,7 @@ namespace demoVer.Services
                     {
                         await PollOneStepAsync(ct);
                         counter ++;
-                        if(counter == 10)
+                        if(counter == 50)
                         {
                             await PollNowLinkAddr(ct);
                             counter = 0;
@@ -347,11 +347,11 @@ namespace demoVer.Services
                     if(MOD2_index == 1)
                     {
                         Console.WriteLine($"MOD2 : i = {i}");
-                        linkingAddr.Add(i + 196);
+                        linkingAddr.Add(i + 192);
                     }
                     else
                     {
-                        linkingAddr.Remove(i + 196);
+                        linkingAddr.Remove(i + 192);
                     }
                 }
                 Console.WriteLine(string.Join(", ", linkingAddr));
