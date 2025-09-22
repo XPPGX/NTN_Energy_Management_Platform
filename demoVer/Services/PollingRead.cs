@@ -341,7 +341,6 @@ namespace demoVer.Services
 
                     if(MOD2_index == 1)
                     {
-                        Console.WriteLine($"MOD2 : i = {i}");
                         linkingAddr.Add(i + 192);
                     }
                     else

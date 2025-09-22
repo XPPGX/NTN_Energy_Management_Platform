@@ -19,5 +19,6 @@
     "demoVer.Services.GlobalVar"                : 2,
     "demoVer.Services.ArrowAnimationService"    : 2,
     "demoVer.Services.CommonData"               : 2,
-    "demoVer.Services.DataCenter"               : 2
+    "demoVer.Services.DataCenter"               : 2,
+    "demoVer.Services.SqlProcessor"             : 0
 }

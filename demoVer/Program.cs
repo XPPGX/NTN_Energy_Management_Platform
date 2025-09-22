@@ -32,7 +32,7 @@ builder.Services.AddSingleton<GlobalVar>();
 builder.Services.AddSingleton<DataChangeEventManager>();
 builder.Services.AddSingleton<IGroupsDataDecoder, GroupsDataDecoder>();
 builder.Services.AddSingleton<CircuitsWatcher>();
-
+builder.Services.AddSingleton<SqlProcessor>();
 
 builder.Services.AddServerSideBlazor().AddCircuitOptions(o =>
 {

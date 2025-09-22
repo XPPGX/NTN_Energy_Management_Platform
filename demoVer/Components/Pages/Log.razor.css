@@ -2,8 +2,8 @@
     display: grid;
     grid-template-rows: 30% 70%; /* 桌機預設比例 */
     height: 100vh; /* 滿版高度 */
-    background: #1a1a1a;
-    color: #e0e0e0;
+    background: #0f0f0f; /* 更深的底色，對比更高 */
+    color: #f5f5f5;     /* 提升文字亮度 */
     position: relative;
 }
 
@@ -13,11 +13,11 @@
     justify-content: center;
     align-items: center;
     gap: 10px;
-    background: #2a2a2a;
+    background: #1c1c1c;
     padding: 1rem;
 }
 .bottom-panel {
-    background: #333;
+    background: #222;
     padding: 1rem;
     position: relative;
     align-items: center;
@@ -30,13 +30,14 @@
     background: #2a2a2a;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.8);
     transition: all 0.5s ease;
     text-align: center;
     overflow: hidden;
     cursor: pointer;
 }
 .step.active {
+    background: #333;
     flex: 0 0 50%;
     opacity: 1;
     z-index: 2;
@@ -45,25 +46,25 @@
 /* 左邊 */
 .step.left {
     flex: 0 0 20%;
-    opacity: 0.4;
+    opacity: 0.6;
     transform: translateX(-10%);
     z-index: 1;
 }
 /* 右邊 */
 .step.right {
     flex: 0 0 20%;
-    opacity: 0.4;
+    opacity: 0.6;
     transform: translateX(10%);
     z-index: 1;
 }
 
 label {
     font-size: 0.9rem;
-    color: #bbb;
+    color: #ddd;
     display: block;
     margin-bottom: 8px;
 }
-select, input {
+select{
     width: 100%;
     padding: 10px;
     border-radius: 6px;
@@ -72,11 +73,44 @@ select, input {
     color: #f0f0f0;
     transition: border 0.3s, box-shadow 0.3s;
 }
-select:focus, input:focus {
-    border: 1px solid #00eaff;
-    box-shadow: 0 0 8px #00eaff66;
+
+select:focus {
+    border: 1px solid #33cfff;
+    box-shadow: 0 0 10px #33cfff99;
+    background: #262626;
     outline: none;
 }
+
+/* 針對 input 分離出的樣式 - 毛玻璃 */
+input {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 8px;
+
+    background-color: rgba(255, 255, 255, 0.08); /* 半透明白，背景會透出 */
+    border: 1px solid rgba(255, 255, 255, 0.25); /* 半透明白邊框 */
+    color: #ffffff; /* 白色字 */
+    font-size: 14px;
+
+    backdrop-filter: blur(6px); /* 毛玻璃效果 */
+    -webkit-backdrop-filter: blur(6px); /* Safari 需要加這個 */
+
+    transition: border-color 0.25s, box-shadow 0.25s, background-color 0.25s;
+}
+
+/* placeholder 樣式 */
+input::placeholder {
+    color: rgba(255, 255, 255, 0.5); /* 半透明白，提示文字不搶眼 */
+}
+
+/* focus 狀態 */
+input:focus {
+    outline: none;
+    border-color: rgba(107, 176, 255, 0.7); /* 帶藍光的邊框 */
+    box-shadow: 0 0 12px rgba(107, 176, 255, 0.6); /* 藍色光暈 */
+    background-color: rgba(255, 255, 255, 0.12); /* 稍微加深，凸顯焦點 */
+}
+
 
 .button-row {
     display: flex;
@@ -95,20 +129,55 @@ select:focus, input:focus {
 .btn-search {
     background: #1f1f1f;
     color: #00eaff;
-    border: 1px solid #00eaff66;
+    border: 1px solid #00eaff;
 }
 .btn-search:hover {
-    background: #00eaff22;
-    box-shadow: 0 0 8px #00eaff66;
+    background: #00eaff33;
+    box-shadow: 0 0 10px #00eaffaa;
 }
 .btn-export {
-    background: #1f1f1f;
+    background: #121212;
     color: #ff4d4d;
-    border: 1px solid #ff4d4d66;
+    border: 1px solid #ff4d4d;
 }
 .btn-export:hover {
-    background: #ff4d4d22;
-    box-shadow: 0 0 8px #ff4d4d66;
+    background: #ff4d4d33;
+    box-shadow: 0 0 8px #ff4d4daa;
+}
+
+.dateCol {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 20px; /* row 與 row 間距 */
+}
+
+.dateRow {
+    display: flex;
+    flex-direction: row; /* 預設桌面版：左右排列 */
+    width: 100%;
+    align-items: stretch;
+}
+
+.dateRow label {
+    flex: 0 0 120px;        /* 固定 label 寬度 (可調整) */
+    display: flex;
+    align-items: center;    /* 垂直置中 */
+    font-weight: bold;
+    white-space: nowrap;    /* 避免換行 */
+}
+
+.dateInputs {
+    display: flex;
+    flex-direction: column; /* date/time 垂直排列 */
+    flex: 1;
+    gap: 5px;
+}
+
+.dateInputs input {
+    flex: 1;              /* date/time 各佔 50% */
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .multi-select {
@@ -137,7 +206,7 @@ select:focus, input:focus {
     align-items: center;
     cursor: pointer;
     font-size: 0.9rem;
-    color: #ccc;
+    color: #eee;
     padding: 6px 10px;
     border-radius: 6px;
     transition: background 0.3s;
@@ -151,10 +220,10 @@ select:focus, input:focus {
     appearance: none;
     width: 16px;
     height: 16px;
-    border: 1px solid #666;
+    border: 1px solid #777;
     border-radius: 4px;
     margin-right: 8px;
-    background: #1f1f1f;
+    background: #111;
     cursor: pointer;
     transition: all 0.3s ease;
 }
@@ -202,10 +271,10 @@ select:focus, input:focus {
 .custom-table {
     width: 100%;
     border-collapse: collapse;
-    background: #1f1f1f;
+    background: #121212;
     border-radius: 6px;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.8);
 }
 .custom-table th, .custom-table td {
     border: 1px solid #444;
@@ -214,12 +283,15 @@ select:focus, input:focus {
     color: #e0e0e0;
 }
 .custom-table th {
-    background: #2a2a2a;
+    background: #1c1c1c;
     font-weight: bold;
     color: #00eaff;
 }
+.custom-table td {
+    color: #f5f5f5;
+}
 .custom-table tr:nth-child(even) {
-    background: #222;
+    background: #181818;
 }
 
 /* 📱 手機卡片模式 */
@@ -229,11 +301,11 @@ select:focus, input:focus {
     gap: 10px;
 }
 .card-row {
-    background: #1f1f1f;
+    background: #121212;
     border: 1px solid #444;
     border-radius: 6px;
     padding: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.8);
 }
 .card-item {
     display: flex;
@@ -249,7 +321,7 @@ select:focus, input:focus {
     font-weight: bold;
 }
 .card-value {
-    color: #e0e0e0;
+    color: #fafafa;
 }
 
 /* 📱 手機專用 Modal */
@@ -266,8 +338,8 @@ select:focus, input:focus {
     z-index: 100;
 }
 .modal-content {
-    background: #1f1f1f;
-    border: 1px solid #444;
+    background: #121212;
+    border: 1px solid #555;
     border-radius: 8px;
     padding: 20px;
     width: 90%;
@@ -276,7 +348,7 @@ select:focus, input:focus {
 }
 .btn-close {
     margin-top: 15px;
-    background: #ff4d4d;
+    background: #ff3333;
     color: white;
     border: none;
     border-radius: 6px;
@@ -287,6 +359,14 @@ select:focus, input:focus {
 .btn-close:hover {
     background: #ff1a1a;
 }
+
+.step-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+  
 
 /* 📱 手機 RWD */
 @media(max-width: 1200px) {
@@ -348,15 +428,18 @@ select:focus, input:focus {
     }
 
     .step {
+        flex: none;
         width: 100%;
         opacity: 0.4;
         max-height: 0;
         overflow: hidden;
-        transition: all 0.5s ease;
+        transition: max-height 0.5s ease, opacity 0.5s ease;
         justify-content: center;
+        padding: 0;
     }
 
     .step.active {
+        flex:auto;
         opacity: 1;
         transform: scaleY(1);
         max-height: 1000px;
@@ -371,6 +454,7 @@ select:focus, input:focus {
         max-height: 80px;
         transform: none !important;
         z-index: 1;
+        align-items: center;
     }
 
     .step.collapsed {
@@ -394,5 +478,14 @@ select:focus, input:focus {
 
     .step.hidden {
         display: none; /* 尚未到的步驟直接隱藏 */
+    }
+    .dateRow {
+        flex-direction: column; /* 改為上下排列 */
+    }
+
+    .dateRow label {
+        flex: unset;
+        width: 100%;
+        margin-bottom: 5px; /* label 與 inputs 留間距 */
     }
 }

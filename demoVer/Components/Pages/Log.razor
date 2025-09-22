@@ -37,8 +37,10 @@
                 }
                 else
                 {
-                    <div class="collapsed-label">
-                        Log Type: @(selectedLogType ?? "未選擇")
+                    <div class="step-inner">
+                        <div class="collapsed-label">
+                            Log Type: @(selectedLogType ?? "未選擇")
+                        </div>
                     </div>
                 }
             </div>
@@ -47,17 +49,32 @@
             <div class="@GetStepClass(2)" @onclick="() => GoStep(2)" @onclick:stopPropagation="true">
                 @if (currentStep == Date)
                 {
-                    <label for="startDate">Start Date</label>
-                    <input type="date" id="startDate" @bind="selectedStartDate" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
-                    <label for="endDate">End Date</label>
-                    <input type="date" id="endDate" @bind="selectedEndDate" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
-                    @* @onchange="@(e => OnDateChanged(0, e))"  *@
+                    <div class="dateCol">
+                        
+                        <div class="dateRow">
+                            <label for="startDate">Start Date</label>
+                            <div class="dateInputs">
+                                <input type="date" id="startDate" @bind="selectedStartDate" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
+                                <input type="time" id="startTime"/>
+                            </div>
+                        </div>
+                        
+                        <div class="dateRow">
+                            <label for="endDate">End Date</label>
+                            <div class="dateInputs">
+                                <input type="date" id="endDate" @bind="selectedEndDate" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
+                                <input type="time" id="endTime"/>
+                            </div>
+                        </div>
+                    </div>
                 }
                 else
                 {
-                    <div class="collapsed-label">
-                        Date: @(selectedStartDate?.ToShortDateString() ?? "未選擇")
-                        ~ @(selectedEndDate?.ToShortDateString() ?? "未選擇")
+                    <div class="step-inner">
+                        <div class="collapsed-label">                            
+                            Date: @(selectedStartDate?.ToShortDateString() ?? "未選擇")
+                            ~ @(selectedEndDate?.ToShortDateString() ?? "未選擇")
+                        </div>
                     </div>
                 }
             </div>
@@ -73,8 +90,10 @@
                 }
                 else
                 {
-                    <div class="collapsed-label">
-                        操作選項
+                    <div class="step-inner">
+                        <div class="collapsed-label">
+                            操作選項
+                        </div>
                     </div>
                 }
             </div>
@@ -186,8 +205,6 @@
     
     private int currentStep     = 1;
     private string? selectedLogType;
-    private DateTime? selectedStartDate;
-    private DateTime? selectedEndDate;
     private HashSet<string> selectedParameters = new();
     private bool isCollapsed = false;
     private bool IsMobile = false;
@@ -196,6 +213,13 @@
     private HashSet<string> visibleColumns = new() { "時間", "電壓", "電流" };
     private List<Dictionary<string, object>> tableData = new();
     private string tableHeader = "Log Table";
+
+    private DateTime? selectedStartDate;
+    private DateTime? selectedEndDate;
+    private string? displayRange;
+    private ElementReference dateRangeContainer;
+    private ElementReference dateRangeRef;
+
 
     protected override void OnInitialized()
     {
@@ -226,9 +250,13 @@
             IsMobile = await JS.InvokeAsync<bool>("checkIsMobile");
             await InvokeAsync(StateHasChanged);
         }
+        if(currentStep == Date && dateRangeRef.Context != null)
+        {
+            await JS.InvokeVoidAsync("initFlatpickr", "dateRange", DotNetObjectReference.Create(this));
+        }
     }
 
-    private void GoStep(int step)
+    private async Task GoStep(int step)
     {
         currentStep = step;
         switch(currentStep)
@@ -303,6 +331,19 @@
         }
 
         Console.WriteLine($"{option} => {(isChecked ? "勾選" : "取消")}");
+    }
+
+    private async Task OpenDatePicker()
+    {
+        await JS.InvokeVoidAsync("initFlatpickr", "dateRange", DotNetObjectReference.Create(this));
+    }
+
+    [JSInvokable]
+    public void SetDateRangeFromJs(string dateStr)
+    {
+        Console.WriteLine($"收到範圍：{dateStr}");
+        //displayRange = rangeStr;
+        //StateHasChanged();
     }
 
     private void OnDateChanged(int index, ChangeEventArgs e)

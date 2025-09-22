@@ -12,7 +12,7 @@
 @inject IGroupsDataDecoder Decoder
 @using demoVer.Utils
 @inject WriteProcess writeProcess
-
+@inject SqlProcessor sqlProcessor
 <div class="btn-grid">
     <button class="glow-btn" @onclick="testFunc">
         <span class="btn-inner">
@@ -38,6 +38,13 @@
     <button class="glow-btn" @onclick="TEST_writeReal_WriteMemory">
         <span class="btn-inner">
             🚀 apiWriteReal_SettingData
+        </span>
+        <span class="btn-glow" aria-hidden="true"></span>
+    </button>
+
+    <button class="glow-btn" @onclick="TEST_SQL_ReadEventLog">
+        <span class="btn-inner">
+            🚀 sql_ReadEventLog
         </span>
         <span class="btn-glow" aria-hidden="true"></span>
     </button>
@@ -112,5 +119,15 @@
 
         var IsSendSucc = await apiManager.apiWrite_SetSingleCMD(body);
         Console.WriteLine($"[TEST_Write] IsSendSucc = {IsSendSucc}");
+    }
+    
+    public async Task TEST_SQL_ReadEventLog()
+    {
+        var eventLogs = await sqlProcessor.GetEventLog(0, 3);
+        var Json_Str = JsonSerializer.Serialize(eventLogs, new JsonSerializerOptions{
+            WriteIndented = true
+        });
+
+        Console.WriteLine(Json_Str);
     }
 }

@@ -7,7 +7,7 @@ VERSION="1.0.0"
 ##################################################################
 APP_NAME="NTN_module-aarch64.AppImage"
 APP_DIR="/userdata/CMU3/Application"
-SRC_DIR=~/cmu3_page/repo_page/NTN_Energy_Management_Platform/demoVer
+SRC_DIR=~/cmu3_page/NTN_Energy_Management_Platform/demoVer
 ##################################################################
 PUBLISH_DIR="$SRC_DIR/publish"
 TEMP_NAME="NEW_$APP_NAME"
