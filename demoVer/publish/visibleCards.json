@@ -1,0 +1,270 @@
+[
+  {
+    "ID": "0ae85b65c98a450b9629fecc7b3a4f75",
+    "card_Type": 1,
+    "widthClass": "w25",
+    "showSequence": 0,
+    "cardName": "NTN MOD1 addr0",
+    "Info_DataItems": [
+      {
+        "iconPath": "images/user_selections/fridge.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[128] : ",
+            "Addr": 128,
+            "UserSettingName": "device1",
+            "Cmd": "MFR_MODEL",
+            "ValueName": "mdlName",
+            "Unit": ""
+          }
+        ]
+      },
+      {
+        "iconPath": "images/user_selections/lighting.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[128] : ",
+            "Addr": 128,
+            "UserSettingName": "device",
+            "Cmd": "READ_VIN",
+            "ValueName": "VIN",
+            "Unit": "V"
+          }
+        ]
+      },
+      {
+        "iconPath": "images/user_selections/plug.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[128] : ",
+            "Addr": 128,
+            "UserSettingName": "device1",
+            "Cmd": "READ_FAN_SPEED_1",
+            "ValueName": "FAN",
+            "Unit": "RPM"
+          }
+        ]
+      },
+      {
+        "iconPath": "images/user_selections/lighting.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[128] : ",
+            "Addr": 128,
+            "UserSettingName": "device",
+            "Cmd": "READ_AC_VOUT",
+            "ValueName": "VOUT",
+            "Unit": "V"
+          }
+        ]
+      }
+    ],
+    "Link_STATUS_Pairs": null,
+    "Chart_Setting": null
+  },
+  {
+    "ID": "17a125ec92474921927fc6fc5e2fcfe8",
+    "card_Type": 1,
+    "widthClass": "w25",
+    "showSequence": 3,
+    "cardName": "NTN CAN2 addr0",
+    "Info_DataItems": [
+      {
+        "iconPath": "images/user_selections/car-battery.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[64] : ",
+            "Addr": 64,
+            "UserSettingName": "DEV1",
+            "Cmd": "MFR_MODEL",
+            "ValueName": "mdlName",
+            "Unit": ""
+          }
+        ]
+      },
+      {
+        "iconPath": "images/user_selections/plug.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[64] : ",
+            "Addr": 64,
+            "UserSettingName": "DEV1",
+            "Cmd": "READ_VIN",
+            "ValueName": "VIN",
+            "Unit": "V"
+          }
+        ]
+      },
+      {
+        "iconPath": "images/user_selections/car-battery.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[64] : ",
+            "Addr": 64,
+            "UserSettingName": "DEV1",
+            "Cmd": "READ_AC_VOUT",
+            "ValueName": "VOUT",
+            "Unit": "V"
+          }
+        ]
+      },
+      {
+        "iconPath": "images/user_selections/transmission-tower.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[64] : ",
+            "Addr": 64,
+            "UserSettingName": "DEV1",
+            "Cmd": "READ_FAN_SPEED_1",
+            "ValueName": "FAN1",
+            "Unit": "RPM"
+          }
+        ]
+      }
+    ],
+    "Link_STATUS_Pairs": null,
+    "Chart_Setting": null
+  },
+  {
+    "ID": "816067f99d5e4dbeb67aa5362ca729ea",
+    "card_Type": 1,
+    "widthClass": "w25",
+    "showSequence": 2,
+    "cardName": "NTN CAN1 addr0",
+    "Info_DataItems": [
+      {
+        "iconPath": "images/user_selections/fridge.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[0] : ",
+            "Addr": 0,
+            "UserSettingName": "DEV1",
+            "Cmd": "MFR_MODEL",
+            "ValueName": "mdlName",
+            "Unit": ""
+          }
+        ]
+      },
+      {
+        "iconPath": "images/user_selections/charge.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[0] : ",
+            "Addr": 0,
+            "UserSettingName": "DEV1",
+            "Cmd": "READ_VIN",
+            "ValueName": "VIN",
+            "Unit": "V"
+          }
+        ]
+      },
+      {
+        "iconPath": "images/user_selections/fridge.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[0] : ",
+            "Addr": 0,
+            "UserSettingName": "DEV1",
+            "Cmd": "READ_AC_VOUT",
+            "ValueName": "VOUT",
+            "Unit": "V"
+          }
+        ]
+      },
+      {
+        "iconPath": "images/user_selections/lighting.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[0] : ",
+            "Addr": 0,
+            "UserSettingName": "DEV1",
+            "Cmd": "READ_FAN_SPEED_1",
+            "ValueName": "FAN1",
+            "Unit": "RPM"
+          }
+        ]
+      }
+    ],
+    "Link_STATUS_Pairs": null,
+    "Chart_Setting": null
+  },
+  {
+    "ID": "85b9981a166a4f8ab59c9740159f50c4",
+    "card_Type": 1,
+    "widthClass": "w25",
+    "showSequence": 1,
+    "cardName": "NTN MOD2 addr0",
+    "Info_DataItems": [
+      {
+        "iconPath": "images/user_selections/fridge.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[192] : ",
+            "Addr": 192,
+            "UserSettingName": "DEV1",
+            "Cmd": "MFR_MODEL",
+            "ValueName": "MODEL",
+            "Unit": ""
+          }
+        ]
+      },
+      {
+        "iconPath": "images/user_selections/transmission-tower.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[192] : ",
+            "Addr": 192,
+            "UserSettingName": "DEV1",
+            "Cmd": "READ_VIN",
+            "ValueName": "VIN1",
+            "Unit": "V"
+          }
+        ]
+      },
+      {
+        "iconPath": "images/user_selections/plug.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[192] : ",
+            "Addr": 192,
+            "UserSettingName": "DEV1",
+            "Cmd": "READ_AC_VOUT",
+            "ValueName": "VOUT",
+            "Unit": "V"
+          }
+        ]
+      },
+      {
+        "iconPath": "images/user_selections/transmission-tower.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[192] : ",
+            "Addr": 192,
+            "UserSettingName": "DEV1",
+            "Cmd": "READ_FAN_SPEED_1",
+            "ValueName": "FAN1",
+            "Unit": "RPM"
+          }
+        ]
+      }
+    ],
+    "Link_STATUS_Pairs": null,
+    "Chart_Setting": null
+  }
+]

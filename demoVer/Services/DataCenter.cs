@@ -48,7 +48,7 @@ namespace demoVer.Services
         // public bool ApiSendFlag = false;
         
         
-        private string basePath = "";
+        protected string basePath = "";
         private readonly SemaphoreSlim _DataCenter_SaveData_lock = new(1, 1);
         public string oldMdlName = "";
 
@@ -100,12 +100,14 @@ namespace demoVer.Services
 
         public bool initSys()
         {
-            AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] Start...", AppLogLevel.Trace);
-
             //0. Read base path
             read_basePath();
-            
-            //1. Read ModelName
+            //1. Init AppLogger file paths
+            AppLogger.Init_AppLogger(basePath);
+
+            AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] Start...", AppLogLevel.Trace);
+
+            //2. Read ModelName
             bool read_mdlName_succ = read_OldMdlName_FromJson();
             if(read_mdlName_succ is false)
             {
@@ -113,7 +115,7 @@ namespace demoVer.Services
                 return false;
             }
 
-            //2. Read Scaling Factor 
+            //3. Read Scaling Factor 
             bool read_Scaling_succ = read_OldScaling_FromJson();
             if(read_Scaling_succ is false)
             {
@@ -121,21 +123,20 @@ namespace demoVer.Services
                 return false;
             }
             
-            //3. Read INV setting
+            //4. Read INV setting
             bool read_INV_Setting_succ = read_OldINVSetting_FromJson();
             if(read_INV_Setting_succ is false)
             {
                 AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] read INV_Setting FAIL", AppLogLevel.Trace);
                 return false;
             }
-            //4. Read BAT setting
+            //5. Read BAT setting
             bool read_BAT_Setting_succ = read_OldBATSetting_FromJson();
             if(read_BAT_Setting_succ is false)
             {
                 AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] read BAT_Setting FAIL", AppLogLevel.Trace);
                 return false;
             }
-            // Battery.UpdateFrom(new Battery_InitData());
 
             AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] Done...", AppLogLevel.Trace);
             return true;
@@ -158,7 +159,7 @@ namespace demoVer.Services
                 basePath = "";
             }
 
-            
+            Console.WriteLine($"Application Path : ${basePath}");
         }
 
 

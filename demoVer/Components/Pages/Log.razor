@@ -6,6 +6,8 @@
 @using demoVer.Models
 @using demoVer.Utils
 @using demoVer.Services
+@inject SqlProcessor _sqlProcessor
+@using System.Text.Json
 
 <MudPopoverProvider/>
 
@@ -13,7 +15,7 @@
 <PageTitle>Log</PageTitle>
 <TopRow />
 
-<div class="content-container">
+<div id="whole-container" class="content-container">
     <div class="top-panel @(isCollapsed ? "collapsed" : "expanded")" @onclick="TogglePanel" @onclick:stopPropagation="true">
         @if(isCollapsed)
         {
@@ -54,16 +56,16 @@
                         <div class="dateRow">
                             <label for="startDate">Start Date</label>
                             <div class="dateInputs">
-                                <input type="date" id="startDate" @bind="selectedStartDate" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
-                                <input type="time" id="startTime"/>
+                                <input type="date" id="startDate" @bind="selectedStartDate" placeholder="點擊選擇日期" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
+                                <input type="time" id="startTime" @bind="selectedStartTime" placeholder="點擊選擇時間" @onclick:stopPropagation="true" @onchange:stopPropagation="true"/>
                             </div>
                         </div>
                         
                         <div class="dateRow">
                             <label for="endDate">End Date</label>
                             <div class="dateInputs">
-                                <input type="date" id="endDate" @bind="selectedEndDate" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
-                                <input type="time" id="endTime"/>
+                                <input type="date" id="endDate" @bind="selectedEndDate" placeholder="點擊選擇日期" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
+                                <input type="time" id="endTime" @bind="selectedEndTime" placeholder="點擊選擇時間" @onclick:stopPropagation="true" @onchange:stopPropagation="true"/>
                             </div>
                         </div>
                     </div>
@@ -99,10 +101,11 @@
             </div>
         }
     </div>
-    <div class="bottom-panel">
+    <div id="log-table-container" class="bottom-panel">
         <div class="table-header">
             <div>
                 <h3>@(tableHeader?? "Log Table")</h3>
+                <span>@($"總頁數: {TCB.nowTotalPages}")</span>
             </div>
             <div>
                 <button class="btn btn-columns" @onclick="ToggleColumnChooser">⚙ 顯示欄位</button>
@@ -153,7 +156,7 @@
             <table class="custom-table">
                 <thead>
                     <tr>
-                        @foreach (var col in visibleColumns)
+                        @foreach (var col in allColumns.Where(c => visibleColumns.Contains(c)))
                         {
                             <th>@col</th>
                         }
@@ -163,7 +166,7 @@
                     @foreach (var row in tableData)
                     {
                         <tr>
-                            @foreach (var col in visibleColumns)
+                            @foreach (var col in allColumns.Where(c => visibleColumns.Contains(c)))
                             {
                                 <td>@row[col]</td>
                             }
@@ -171,6 +174,13 @@
                     }
                 </tbody>
             </table>
+            <!-- 📑 翻頁控制區 -->
+            <div class="pagination-container">
+                <button class="btn-page" @onclick="turnToPreviousPage">⟨ 上一頁</button>
+                <span class="page-info">第 <input type="number" min="1" class="page-input" @bind="UI_PageNum"
+                    @onkeyup="OnKeyUp" @onfocus="() => PageInputFocus()" @onblur="() => PageInputBlur()"/> 頁</span>
+                <button class="btn-page" @onclick="turnToNextPage">下一頁 ⟩</button>
+            </div>
         }
 
         <!-- 📱 手機卡片 -->
@@ -180,7 +190,7 @@
                 @foreach (var row in tableData)
                 {
                     <div class="card-row">
-                        @foreach (var col in visibleColumns)
+                        @foreach (var col in allColumns.Where(c => visibleColumns.Contains(c)))
                         {
                             <div class="card-item">
                                 <span class="card-label">@col</span>
@@ -189,6 +199,13 @@
                         }
                     </div>
                 }
+            </div>
+            <!-- 📑 翻頁控制區  -->
+            <div class="pagination-container">
+                <button class="btn-page" @onclick="turnToPreviousPage">⟨</button>
+                <span class="page-info">第 <input type="number" min="1" class="page-input" @bind="UI_PageNum" 
+                    @onkeyup="OnKeyUp" @onfocus="() => PageInputFocus()" @onblur="() => PageInputBlur()"/> 頁</span>
+                <button class="btn-page" @onclick="turnToNextPage">⟩</button>
             </div>
         }
 
@@ -205,42 +222,40 @@
     
     private int currentStep     = 1;
     private string? selectedLogType;
-    private HashSet<string> selectedParameters = new();
     private bool isCollapsed = false;
     private bool IsMobile = false;
-    private bool isColumnChooserOpen = false;
-    private List<string> allColumns = new() { "時間", "電壓", "電流", "狀態", "轉速" };
-    private HashSet<string> visibleColumns = new() { "時間", "電壓", "電流" };
+
+    private bool isColumnChooserOpen            = false;
+    private List<string> allColumns             = new();
+    private HashSet<string> visibleColumns      = new();
+    private List<string> eventLog_allColumns    = new();
+    private List<string> dataLog_allColumns     = new();
     private List<Dictionary<string, object>> tableData = new();
-    private string tableHeader = "Log Table";
+    private string tableHeader = "Table";
+    private TableControlBlock TCB = new();
+    private int UI_PageNum = 1;
+    private string? CurrentFocus {get; set;}
+
+    Dictionary<string, Func<EventLog_Item, object>> eventColumnMap = new Dictionary<string, Func<EventLog_Item, object>>
+    {
+        {"id",              r => r.Id},
+        {"time",            r => r.Time},
+        {"port",            r => r.Port},
+        {"addr",            r => r.Addr},
+        {"serial_number",   r => r.SerialNumber ?? string.Empty},
+        {"command_name",    r => r.CommandName},
+        {"event",           r => r.Event ?? string.Empty},
+        {"trigger_state",   r => r.TriggerState}
+    };
 
     private DateTime? selectedStartDate;
+    private TimeOnly? selectedStartTime;
     private DateTime? selectedEndDate;
-    private string? displayRange;
-    private ElementReference dateRangeContainer;
-    private ElementReference dateRangeRef;
-
+    private TimeOnly? selectedEndTime;
 
     protected override void OnInitialized()
     {
         _category = GetType().FullName!;
-
-        tableData.Add(new Dictionary<string, object>
-        {
-            {"時間", DateTime.Now.ToString("HH:mm:ss")},
-            {"電壓", "220V"},
-            {"電流", "5A"},
-            {"狀態", "運行中"},
-            {"轉速", "1500rpm"}
-        });
-        tableData.Add(new Dictionary<string, object>
-        {
-            {"時間", DateTime.Now.AddMinutes(-1).ToString("HH:mm:ss")},
-            {"電壓", "218V"},
-            {"電流", "4.8A"},
-            {"狀態", "待機"},
-            {"轉速", "0rpm"}
-        });
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -249,13 +264,12 @@
         {
             IsMobile = await JS.InvokeAsync<bool>("checkIsMobile");
             await InvokeAsync(StateHasChanged);
-        }
-        if(currentStep == Date && dateRangeRef.Context != null)
-        {
-            await JS.InvokeVoidAsync("initFlatpickr", "dateRange", DotNetObjectReference.Create(this));
+            
+            await InitColumn();
         }
     }
-
+    
+    #region Appearance_Control
     private async Task GoStep(int step)
     {
         currentStep = step;
@@ -317,35 +331,6 @@
         selectedLogType = e.Value?.ToString();
     }
 
-    private void OnParameterChanged(string option, ChangeEventArgs e)
-    {
-        bool isChecked = e.Value?.ToString()?.ToLower() == "true";
-
-        if(isChecked)
-        {
-            selectedParameters.Add(option);
-        }
-        else
-        {
-            selectedParameters.Remove(option);
-        }
-
-        Console.WriteLine($"{option} => {(isChecked ? "勾選" : "取消")}");
-    }
-
-    private async Task OpenDatePicker()
-    {
-        await JS.InvokeVoidAsync("initFlatpickr", "dateRange", DotNetObjectReference.Create(this));
-    }
-
-    [JSInvokable]
-    public void SetDateRangeFromJs(string dateStr)
-    {
-        Console.WriteLine($"收到範圍：{dateStr}");
-        //displayRange = rangeStr;
-        //StateHasChanged();
-    }
-
     private void OnDateChanged(int index, ChangeEventArgs e)
     {
         if (DateTime.TryParse(e.Value?.ToString(), out var dt))
@@ -364,7 +349,6 @@
         }
     }
 
-
     private void ToggleColumnChooser()
     {
         isColumnChooserOpen = !isColumnChooserOpen;
@@ -380,21 +364,387 @@
             visibleColumns.Remove(col);
     }
 
-    private void searchClick()
+    private async Task searchClick()
     {
         CollapsePanel();
         if(string.Equals(selectedLogType, "event", StringComparison.OrdinalIgnoreCase))
         {
+            //1. 更換表格名稱
             tableHeader = "Event Log";
+            //2. 更換Column選擇
+            allColumns = eventLog_allColumns;
+            //3. 讓Visible顯示前5個col
+            visibleColumns.Clear();
+            for(int i = 0 ; i < 5 ; i ++)
+            {
+                visibleColumns.Add(allColumns[i]);
+            }
         }
         else if(string.Equals(selectedLogType, "data", StringComparison.OrdinalIgnoreCase))
         {
+            //1. 更換表格名稱
             tableHeader = "Data Log";
+            //2. 更換Column選擇
+            allColumns = dataLog_allColumns;
         }
+
+        //撈資料，顯示在Table上
+        await QueryFromDB_InitTCB();
+        await JS.InvokeVoidAsync("scrollToElement", "log-table-container"); //這還要再調整，捲到的位置有點怪
     }
 
-    private void exportClick()
+    private async Task exportClick()
     {
         CollapsePanel();
     }
+
+    private void PageInputFocus()
+    {
+        CurrentFocus = "PageInput";
+    }
+
+    private void PageInputBlur()
+    {
+        CurrentFocus = null;
+    }
+
+    private void OnKeyUp(KeyboardEventArgs e)
+    {
+        if(e.Key == "Enter" && string.Equals(CurrentFocus, "PageInput", StringComparison.OrdinalIgnoreCase))
+        {
+            turnToCertainPage();
+        }
+    }
+    #endregion //Appearance_Control
+
+    #region Logic_Control
+    private async Task InitColumn()
+    {
+        //1. 清空當前 所有Column選擇
+        allColumns.Clear();
+        visibleColumns.Clear();
+        eventLog_allColumns.Clear();
+        dataLog_allColumns.Clear();
+
+        //2. 載入當前資料表 所有Column
+        eventLog_allColumns = await _sqlProcessor.GetTableColumn("event");
+        dataLog_allColumns  = await _sqlProcessor.GetTableColumn("data");
+
+        var Json_Str = JsonSerializer.Serialize(eventLog_allColumns, new JsonSerializerOptions{
+            WriteIndented = true
+        });
+        Console.WriteLine(Json_Str);
+
+        Json_Str = JsonSerializer.Serialize(dataLog_allColumns, new JsonSerializerOptions{
+            WriteIndented = true
+        });
+        Console.WriteLine(Json_Str);
+    }
+    
+    private DateTime? dateTime_Transform(DateTime? date, TimeOnly? time)
+    {
+        try
+        {
+            if(date is null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[Log][dateTime_Transform] 日期不可為 null", AppLogLevel.Trace);
+                return null;
+            }
+            if(time is null)
+            {
+                AppLogger.Log_To_File_log(_category, $"時間不可為 null", AppLogLevel.Trace);
+                return null;
+            }
+            
+            var time_AfterSpaned =  time.Value.ToTimeSpan();
+
+            if(date == DateTime.MinValue)
+            {
+                AppLogger.Log_To_File_log(_category, $"日期參數無效", AppLogLevel.Trace);
+                return null;
+            }
+            if(time_AfterSpaned < TimeSpan.Zero || time_AfterSpaned >= TimeSpan.FromDays(1))
+            {
+                AppLogger.Log_To_File_log(_category, $"時間必須在 00:00:00 ~ 23:59:59 之間", AppLogLevel.Trace);
+                return null;
+            }
+
+            var combined = date.Value.Date + time_AfterSpaned;
+            return DateTime.SpecifyKind(combined, DateTimeKind.Utc);
+        }
+        catch(Exception e)
+        {
+            AppLogger.Log_To_File_log(_category, $"[Log][dateTime_Transform] : Error, {e}", AppLogLevel.Trace);
+            return null;
+        }
+    }
+
+    private async Task QueryFromDB_InitTCB()
+    {   
+        try
+        {
+            //1. 驗證並取得時間
+            var startTime_Formatted = dateTime_Transform(selectedStartDate, selectedStartTime);
+            var endTime_Formatted   = dateTime_Transform(selectedEndDate, selectedEndTime);
+            Console.WriteLine($"[Log][QueryFromDB_InitTCB] startTime_Formatted = {startTime_Formatted}");
+            Console.WriteLine($"[Log][QueryFromDB_InitTCB] endTime_Formatted = {endTime_Formatted}");
+            if(endTime_Formatted < startTime_Formatted)
+            {
+                AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] : endTime < startTime", AppLogLevel.Trace);
+                return;
+            }
+            TCB.startTime   = startTime_Formatted; //本次查詢的時間範圍起始點，存進TCB
+            TCB.endTime     = endTime_Formatted; //本次查詢的時間範圍結束點，存進TCB
+            AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step1 : startTime_Formatted = {startTime_Formatted}, endTime_Formatted = {endTime_Formatted}", AppLogLevel.Trace);
+
+            //2. 根據時間 查資料總共筆數
+            var rangeInfo = await _sqlProcessor.GetTable_Range_AfterWHERE("event_log", startTime_Formatted, endTime_Formatted);
+            if(rangeInfo is not null)
+            {
+                TCB.nowQueryRecordsNum  = rangeInfo.Count;
+                TCB.startId             = rangeInfo.FirstId;
+                TCB.endId               = rangeInfo.LastId;
+            }
+            else
+            {
+                TCB.nowQueryRecordsNum = 0;
+                TCB.startId = null;
+                TCB.endId = null;
+                
+                AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] rangeInfo is null", AppLogLevel.Trace);
+                return;
+            }
+
+            TCB.nowTotalPages = (TCB.nowQueryRecordsNum / 10) + 1;
+            AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step2 : nowQueryRecordsNum = {TCB.nowQueryRecordsNum}, nowTotalPages = {TCB.nowTotalPages}", AppLogLevel.Trace);
+            AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step2 : startId = {TCB.startId}, endId = {TCB.endId}", AppLogLevel.Trace);
+            
+            //3. 根據LogType查詢(現在只有EventLog)
+            bool IsSucc = await eventLog_Query(startTime_Formatted, endTime_Formatted);
+            if(!IsSucc)
+            {
+                //可以顯示一個 懸浮的FAIL訊息
+                return;
+            }
+            AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step3 : Query Done...", AppLogLevel.Trace);
+
+            //4. reset 當前page
+            TCB.nowTablePage = 1; 
+            AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step4 : nowTablePage = {TCB.nowTablePage}", AppLogLevel.Trace);
+            //[DEBUG]印出結果
+            // var Json_Str = JsonSerializer.Serialize(eventLog_records, new JsonSerializerOptions{
+            //     WriteIndented = true
+            // });
+            // Console.WriteLine(Json_Str);
+        }
+        catch(Exception e)
+        {
+            AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] Error : {e}", AppLogLevel.Trace);
+            return;
+        }
+    }
+
+    private async Task<bool> eventLog_Query(DateTime? startTime_Formatted, DateTime? endTime_Formatted)
+    {
+        try
+        {
+            //1. 根據時間Query 前10筆 eventLog Table 內的資料
+            var eventLog_records = await _sqlProcessor.GetEventLog_WHERE_Time(startTime_Formatted, endTime_Formatted, 10);
+            if(eventLog_records is null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[Log][eventLog_Query] : eventLog_records is null", AppLogLevel.Trace);
+                return false;
+            }
+            AppLogger.Log_To_File_log(_category, $"[Log][eventLog_Query] step1 : GetEventLog_WHERE_Time success", AppLogLevel.Trace);
+
+            //2. 塞進tableData
+            tableData.Clear();
+            foreach(var record in eventLog_records)
+            {
+                var row = new Dictionary<string, object>();
+                
+                foreach(var col in eventLog_allColumns)
+                {
+                    if(eventColumnMap.TryGetValue(col.ToLower(), out var getter))
+                    {
+                        row[col] = getter(record);
+                    }
+                    else
+                    {
+                        row[col] = string.Empty;
+                    }
+                }
+
+                tableData.Add(row);
+            }
+            AppLogger.Log_To_File_log(_category, $"[Log][eventLog_Query] step2: GetEventLog_WHERE_Time success", AppLogLevel.Trace);
+            
+            //3. 在TCB中紀錄 現在10筆資料 的 最早時間 與 最晚時間，用於翻頁時查詢資料庫的WHERE語法
+            var firstRow    = tableData.FirstOrDefault();
+            var lastRow     = tableData.LastOrDefault();
+            if(firstRow != null && firstRow.ContainsKey("time") && firstRow["time"] is DateTime lastedTime) TCB.lastedTime_InTable      = lastedTime; 
+            if(lastRow != null && firstRow.ContainsKey("time") && lastRow["time"] is DateTime earliestTime) TCB.earliestTime_InTable    = earliestTime;
+            if(firstRow != null && firstRow.ContainsKey("id") && firstRow["id"] is int lastedId)            TCB.lastedId_InTable        = lastedId;
+            if(lastRow != null && firstRow.ContainsKey("id") && lastRow["id"] is int earliestId)            TCB.earliestId_InTable      = earliestId;
+
+            AppLogger.Log_To_File_log(_category, $"[Log][eventLog_Query] step3: earliestTime_InTable = {TCB.earliestTime_InTable}, lastedTime_InTable = {TCB.lastedTime_InTable}", AppLogLevel.Trace);
+            AppLogger.Log_To_File_log(_category, $"[Log][eventLog_Query] step3: earliestId_InTable = {TCB.earliestId_InTable}, lastedId_InTable = {TCB.lastedId_InTable}", AppLogLevel.Trace);
+
+            return true;
+        }
+        catch(Exception e)
+        {
+            AppLogger.Log_To_File_log(_category, $"[Log][eventLog_Query] Error : {e}", AppLogLevel.Trace);
+            return false;
+        }
+    }
+    
+    private async Task<bool> eventLog_TurnPage(string direction, int? startId, int? endId)
+    {
+        try
+        {
+            //1. 根據ID, 方向 去 Query 前10筆 eventLog Table 內的資料
+            var eventLog_records = await _sqlProcessor.GetEvetLog_WHERE_Id(direction, startId, endId, 10);
+            if(eventLog_records is null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[Log][eventLog_TurnPage] : eventLog_records is null", AppLogLevel.Trace);
+                return false;
+            }
+
+            //2. 塞進tableData
+            tableData.Clear();
+            foreach(var record in eventLog_records)
+            {
+                var row = new Dictionary<string, object>();
+                
+                foreach(var col in eventLog_allColumns)
+                {
+                    if(eventColumnMap.TryGetValue(col.ToLower(), out var getter))
+                    {
+                        row[col] = getter(record);
+                    }
+                    else
+                    {
+                        row[col] = string.Empty;
+                    }
+                }
+
+                tableData.Add(row);
+            }
+            AppLogger.Log_To_File_log(_category, $"[Log][eventLog_TurnPage] step2: GetEventLog_WHERE_Id success", AppLogLevel.Trace);
+
+            //3. 在TCB中紀錄 現在10筆資料 的 表內 最小ID 與 最大ID，用於翻頁時查詢資料庫的WHERE語法
+            var firstRow    = tableData.FirstOrDefault();
+            var lastRow     = tableData.LastOrDefault();
+            if(firstRow != null && firstRow.ContainsKey("id") && firstRow["id"] is int lastedId)    TCB.lastedId_InTable    = lastedId;
+            if(lastRow != null && firstRow.ContainsKey("id") && lastRow["id"] is int earliestId)    TCB.earliestId_InTable  = earliestId;
+            
+            return true;
+        }
+        catch(Exception e)
+        {
+            AppLogger.Log_To_File_log(_category, $"[Log][eventLog_TurnPage] Error : {e}", AppLogLevel.Trace);
+            return false;
+        }
+    }
+
+    private async Task turnToNextPage() //往右
+    {
+        //檢查頁數是否超出範圍
+        if(TCB.nowTablePage >= TCB.nowTotalPages)
+        {
+            TCB.nowTablePage = TCB.nowTotalPages;
+            UI_PageNum = TCB.nowTablePage;
+            AppLogger.Log_To_File_log(_category, $"[Log][turnToNextPage] 已翻到最後一頁", AppLogLevel.Trace);
+            return;
+        }
+        
+        //查詢資料，放入TABLE
+        bool IsSucc = await eventLog_TurnPage("right", TCB.earliestId_InTable, TCB.startId);
+        if(!IsSucc)
+        {
+            //可以顯示一個 懸浮的FAIL訊息
+            AppLogger.Log_To_File_log(_category, $"[Log][turnToNextPage] Fail : eventlog_TurnPage", AppLogLevel.Trace);
+            return;
+        }
+
+        //頁數 + 1
+        TCB.nowTablePage ++;
+        UI_PageNum = TCB.nowTablePage;
+        AppLogger.Log_To_File_log(_category, $"[Log][turnToNextPage] 查詢成功，nowTablePage = {TCB.nowTablePage}", AppLogLevel.Trace);
+
+        //捲軸捲至最上方
+        await JS.InvokeVoidAsync("scrollToTop", "log-table-container");
+    }
+    
+    private async Task turnToPreviousPage()
+    {
+        //檢查頁數是否超出範圍
+        if(TCB.nowTablePage <= 1)
+        {
+            TCB.nowTablePage = 1;
+            UI_PageNum = TCB.nowTablePage;
+            AppLogger.Log_To_File_log(_category, $"[Log][turnToPreviousPage] 已翻置第一頁", AppLogLevel.Trace);
+            return;
+        }
+
+        //查詢資料，放入TABLE
+        bool IsSucc = await eventLog_TurnPage("left", TCB.lastedId_InTable, TCB.endId);
+        if(!IsSucc)
+        {
+            //可以顯示一個 懸浮的FAIL訊息
+            AppLogger.Log_To_File_log(_category, $"[Log][turnToPreviousPage] Fail : eventLog_TurnPage", AppLogLevel.Trace);
+            return;
+        }
+
+        //頁數 - 1
+        TCB.nowTablePage --;
+        UI_PageNum = TCB.nowTablePage;
+        AppLogger.Log_To_File_log(_category, $"[Log][turnToPreviousPage] 查詢成功，nowTablePage = {TCB.nowTablePage}", AppLogLevel.Trace);
+
+        //捲軸捲至最上方
+        await JS.InvokeVoidAsync("scrollToTop", "log-table-container");
+    }
+
+    private async Task turnToCertainPage()
+    {
+        Console.WriteLine("TurnToCertainPage");
+        
+        //檢查頁數是否超出範圍
+        if(UI_PageNum < 1 || UI_PageNum > TCB.nowTotalPages)
+        {
+            UI_PageNum = TCB.nowTablePage;
+            AppLogger.Log_To_File_log(_category, $"[Log][turnToCertainPage] 目標page超出範圍", AppLogLevel.Trace);
+            return;
+        }
+        if(TCB.endId is null)
+        {
+            AppLogger.Log_To_File_log(_category, $"[Log][turnToCertainPage] TCB.endId is null", AppLogLevel.Trace);
+            return;
+        }
+
+        //由 目標頁數，算 新的 lastedId_InTable，準備當作參數丟到 Function
+        int tmp_lastedId_InTable = (TCB.endId ?? 0) - (10 * (UI_PageNum - 1)) + 1;
+        AppLogger.Log_To_File_log(_category, $"[Log][turnToCertainPage] tmp_lastedId_InTable = {tmp_lastedId_InTable}", AppLogLevel.Trace);
+        
+        //查詢資料，放入TABLE
+        bool IsSucc = await eventLog_TurnPage("right", tmp_lastedId_InTable, TCB.startId);
+        if(!IsSucc)
+        {
+            //可以顯示一個 懸浮的FAIL訊息
+            AppLogger.Log_To_File_log(_category, $"[Log][turnToCertainPage] Fail : eventLog_TurnPage", AppLogLevel.Trace);
+            return;
+        }
+
+        //頁數到指定的頁數
+        TCB.nowTablePage = UI_PageNum;
+        AppLogger.Log_To_File_log(_category, $"[Log][turnToCertainPage] 查詢成功，nowTablePage = {TCB.nowTablePage}", AppLogLevel.Trace);
+
+        //UI重繪
+        await InvokeAsync(StateHasChanged);
+
+        //捲軸捲至最上方
+        await JS.InvokeVoidAsync("scrollToTop", "log-table-container");
+    }
+    #endregion //Logic
 }

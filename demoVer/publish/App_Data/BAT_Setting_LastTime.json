@@ -1,0 +1,20 @@
+{
+  "cc": 12000,
+  "cc_max": 12000,
+  "cc_min": 2400,
+  "tc": 1200,
+  "tc_max": 3600,
+  "tc_min": 240,
+  "cv": 2880,
+  "cv_max": 3000,
+  "cv_min": 2000,
+  "fv": 2760,
+  "fv_min": 2000,
+  "cc_timeout_minute": 0,
+  "cv_timeout_minute": 0,
+  "fv_timeout_minute": 0,
+  "cct_enable": true,
+  "cvt_enable": false,
+  "fvt_enable": false,
+  "curve_stage": false
+}

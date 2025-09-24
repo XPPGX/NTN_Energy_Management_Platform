@@ -66,6 +66,7 @@ builder.Services.AddHttpClient("ApiClient", client =>
     {
         client.BaseAddress = new Uri("http://127.0.0.1:5050/"); //local debug with python
     }
+    Console.WriteLine($"API Server : {client.BaseAddress}");
 });
 builder.Services.AddSingleton<ApiManager>();
 builder.Services.AddSingleton<WriteProcess>();

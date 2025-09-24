@@ -123,7 +123,7 @@
     
     public async Task TEST_SQL_ReadEventLog()
     {
-        var eventLogs = await sqlProcessor.GetEventLog(0, 3);
+        var eventLogs = await sqlProcessor.GetEventLog_OFFSET(0, 3);
         var Json_Str = JsonSerializer.Serialize(eventLogs, new JsonSerializerOptions{
             WriteIndented = true
         });

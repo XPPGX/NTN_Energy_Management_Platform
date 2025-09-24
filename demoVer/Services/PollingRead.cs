@@ -297,7 +297,9 @@ namespace demoVer.Services
                 if(rcv_linkStatus is null)
                 {
                     linkingAddr.Clear();
-                    AppLogger.Log_To_File_log(_category, $"[PollingRead][PollNowLinkAddr] rcv_linkStatus is Null", AppLogLevel.Error);
+                    AppLogger.Log_To_File_log(_category, $"[PollingRead][PollNowLinkAddr] rcv_linkStatus is Null", AppLogLevel.Trace);
+
+                    await Task.Delay(5000, ct); //如果linkStatus收到NULL，等待五秒
                     return;
                 }
 
@@ -353,8 +355,9 @@ namespace demoVer.Services
             catch(Exception e)
             {
                 AppLogger.Log_To_File_log(_category, $"[PollingRead][PollNowLinkAddr] Error : {e}", AppLogLevel.Error);
+                return;
             }
-
+            
             if(_opt.PerRequestDelayMs > 0)
             {
                 await Task.Delay(_opt.PerRequestDelayMs, ct);

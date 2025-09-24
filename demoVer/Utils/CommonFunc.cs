@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Concurrent;
 using demoVer.Models;
 
-
 namespace demoVer.Utils
 {
     public static class AppLogger
@@ -23,10 +22,22 @@ namespace demoVer.Utils
         private static readonly string LogLevel_FilePath = Path.Combine(LogLevelSetting_Directory, "logLevels.json");
         public static bool DEBUG_MODE = true;
         
-        private static readonly string LogDirectory = Path.GetFullPath("ProgramLog");
-        private static readonly string LogFilePath = Path.Combine(LogDirectory, "log.json");
-        private static readonly string LogFilePath_log = Path.Combine(LogDirectory, "log.log");
+        private static string LogDirectory = Path.GetFullPath("ProgramLog");
+        private static string LogFilePath = Path.Combine(LogDirectory, "log.json");
+        private static string LogFilePath_log = Path.Combine(LogDirectory, "log.log");
         
+        public static void Init_AppLogger(string basePath)
+        {
+            LogDirectory    = Path.Combine(basePath, "ProgramLog");
+            LogDirectory    = Path.GetFullPath(LogDirectory);
+            LogFilePath     = Path.Combine(LogDirectory, "log.json");
+            LogFilePath_log = Path.Combine(LogDirectory, "log.log");
+
+            Console.WriteLine($"[Init_AppLogger] LogDirectory       = {LogDirectory}");
+            Console.WriteLine($"[Init_AppLogger] LogFilePath        = {LogFilePath}");
+            Console.WriteLine($"[Init_AppLogger] LogFilePath_log    = {LogFilePath_log}");
+        }
+
         public static void readLogLevelSettings()
         {
             try
@@ -119,7 +130,6 @@ namespace demoVer.Utils
                 string logEntry = $"[{timestamp}] {message}{Environment.NewLine}";
 
                 // 跨行程命名 Mutex，序列化所有寫入
-                // 建議名字帶上產品名稱，避免跟別的程式衝突
                 using var mutex = new System.Threading.Mutex(false, @"Global\NTN_Energy_Management_LogMutex");
 
                 // 最長等 200ms，避免卡死；你可依需求調整
