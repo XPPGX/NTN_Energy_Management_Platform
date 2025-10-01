@@ -25,17 +25,31 @@
         }
         else
         {
-            <!-- Step 1, Step 2, Step 3 放這 -->
             <!-- Step 1 -->
             <div class="@GetStepClass(1)" @onclick="() => GoStep(1)" @onclick:stopPropagation="true">
                 @if (currentStep == LogType)
                 {
                     <label for="logType">Log Type</label>
-                    <select id="logType" @onchange="OnLogTypeChanged" @onclick:stopPropagation="true">
+                    <select id="logType" @onchange="OnLogTypeChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
                         <option value="">-- Select --</option>
                         <option value="event">Event Log</option>
                         <option value="data">Data Log</option>
                     </select>
+
+                    if(string.Equals(selectedLogType, "data", StringComparison.OrdinalIgnoreCase))
+                    {
+                        <div class="radio-group" @onchange:stopPropagation="true" @onclick:stopPropagation="true">
+                            <label class="radio-option">
+                                <input type="radio" name="DataType" value="CAN" @onchange="DataTypeChanged"/>
+                                <span class="radio-label">CAN Data</span>
+                            </label>
+                            
+                            <label class="radio-option">
+                                <input type="radio" name="DataType" value="MOD" @onchange="DataTypeChanged"/>
+                                <span class="radio-label">MOD Data</span>
+                            </label>
+                        </div>
+                    }
                 }
                 else
                 {
@@ -221,7 +235,9 @@
     private const int Btn       = 3;
     
     private int currentStep     = 1;
-    private string? selectedLogType;
+    private string? selectedLogType = string.Empty;
+    private string? selectedDataType = string.Empty;
+    private string? TableName = string.Empty;
     private bool isCollapsed = false;
     private bool IsMobile = false;
 
@@ -236,17 +252,28 @@
     private int UI_PageNum = 1;
     private string? CurrentFocus {get; set;}
 
-    Dictionary<string, Func<EventLog_Item, object>> eventColumnMap = new Dictionary<string, Func<EventLog_Item, object>>
-    {
-        {"id",              r => r.Id},
-        {"time",            r => r.Time},
-        {"port",            r => r.Port},
-        {"addr",            r => r.Addr},
-        {"serial_number",   r => r.SerialNumber ?? string.Empty},
-        {"command_name",    r => r.CommandName},
-        {"event",           r => r.Event ?? string.Empty},
-        {"trigger_state",   r => r.TriggerState}
-    };
+    //自動抓 Models 內的 EventLog_Item 格式
+    Dictionary<string, Func<EventLog_Item, object>> eventColumnMap = typeof(EventLog_Item).GetProperties().ToDictionary(
+        prop => prop.Name.ToLower(),
+        prop => (Func<EventLog_Item, object>)(r => prop.GetValue(r) ?? string.Empty)
+    );
+    //自動抓 Models 內的 DataLog_Item 格式
+    Dictionary<string, Func<DataLog_Item, object>> dataColumnMap = typeof(DataLog_Item).GetProperties().ToDictionary(
+        prop => prop.Name.ToLower(),
+        prop => (Func<DataLog_Item, object>)(r => prop.GetValue(r) ?? string.Empty)
+    );
+
+    // Dictionary<string, Func<EventLog_Item, object>> eventColumnMap = new Dictionary<string, Func<EventLog_Item, object>>
+    // {
+    //     {"id",              r => r.Id},
+    //     {"time",            r => r.Time},
+    //     {"port",            r => r.Port},
+    //     {"addr",            r => r.Addr},
+    //     {"serial_number",   r => r.SerialNumber ?? string.Empty},
+    //     {"command_name",    r => r.CommandName},
+    //     {"event",           r => r.Event ?? string.Empty},
+    //     {"trigger_state",   r => r.TriggerState}
+    // };
 
     private DateTime? selectedStartDate;
     private TimeOnly? selectedStartTime;
@@ -276,6 +303,7 @@
         switch(currentStep)
         {
             case LogType:
+                selectedLogType = string.Empty;
                 Console.WriteLine("LogType");
                 break;
             case Date:
@@ -367,6 +395,11 @@
     private async Task searchClick()
     {
         CollapsePanel();
+
+        //清空 表格 、 Column
+        tableData.Clear();
+        visibleColumns.Clear();
+
         if(string.Equals(selectedLogType, "event", StringComparison.OrdinalIgnoreCase))
         {
             //1. 更換表格名稱
@@ -386,10 +419,17 @@
             tableHeader = "Data Log";
             //2. 更換Column選擇
             allColumns = dataLog_allColumns;
+            //3. 讓visible顯示前5個col
+            visibleColumns.Clear();
+            for(int i = 0 ; i < 5 ; i ++)
+            {
+                visibleColumns.Add(allColumns[i]);
+            }
         }
 
         //撈資料，顯示在Table上
         await QueryFromDB_InitTCB();
+        UI_PageNum = 1;
         await JS.InvokeVoidAsync("scrollToElement", "log-table-container"); //這還要再調整，捲到的位置有點怪
     }
 
@@ -415,6 +455,13 @@
             turnToCertainPage();
         }
     }
+
+    private void DataTypeChanged(ChangeEventArgs e)
+    {
+        selectedDataType = e.Value?.ToString();
+        Console.WriteLine($"selectedDataType = {selectedDataType}");
+    }
+
     #endregion //Appearance_Control
 
     #region Logic_Control
@@ -497,35 +544,58 @@
             TCB.endTime     = endTime_Formatted; //本次查詢的時間範圍結束點，存進TCB
             AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step1 : startTime_Formatted = {startTime_Formatted}, endTime_Formatted = {endTime_Formatted}", AppLogLevel.Trace);
 
-            //2. 根據時間 查資料總共筆數
-            var rangeInfo = await _sqlProcessor.GetTable_Range_AfterWHERE("event_log", startTime_Formatted, endTime_Formatted);
-            if(rangeInfo is not null)
+            //2. 根據選項 logType, dataType 決定資料表
+            TableName = string.Empty;
+            if(string.Equals(selectedLogType, "event", StringComparison.OrdinalIgnoreCase))
             {
-                TCB.nowQueryRecordsNum  = rangeInfo.Count;
-                TCB.startId             = rangeInfo.FirstId;
-                TCB.endId               = rangeInfo.LastId;
+                TableName = "event_log";
+            }
+            else if(string.Equals(selectedLogType, "data", StringComparison.OrdinalIgnoreCase))
+            {
+                switch(selectedDataType)
+                {
+                    case "CAN": TableName = "datalog_NTN-5K_CAN"; break;
+                    case "MOD": TableName = "datalog_NTN-5K_MOD"; break;
+                    default: 
+                        AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step2: Error, LogType = data, selectedDataType = None", AppLogLevel.Trace);
+                        return;
+                }
             }
             else
             {
-                TCB.nowQueryRecordsNum = 0;
-                TCB.startId = null;
-                TCB.endId = null;
-                
-                AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] rangeInfo is null", AppLogLevel.Trace);
+                AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step2: Error, LogType = {selectedLogType}, DataType = {selectedDataType}", AppLogLevel.Trace);
                 return;
             }
+            AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step2 : TableName = {TableName}", AppLogLevel.Trace);
 
-            TCB.nowTotalPages = (TCB.nowQueryRecordsNum / 10) + 1;
-            AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step2 : nowQueryRecordsNum = {TCB.nowQueryRecordsNum}, nowTotalPages = {TCB.nowTotalPages}", AppLogLevel.Trace);
-            AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step2 : startId = {TCB.startId}, endId = {TCB.endId}", AppLogLevel.Trace);
+            //3. 根據時間 查資料總共筆數
+            var rangeInfo = await _sqlProcessor.GetTable_Range_AfterWHERE(TableName, startTime_Formatted, endTime_Formatted);
+            getRangeInfo(rangeInfo);
+
+            AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step3 : nowQueryRecordsNum = {TCB.nowQueryRecordsNum}, nowTotalPages = {TCB.nowTotalPages}", AppLogLevel.Trace);
+            AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step3 : startId = {TCB.startId}, endId = {TCB.endId}", AppLogLevel.Trace);
             
             //3. 根據LogType查詢(現在只有EventLog)
-            bool IsSucc = await eventLog_Query(startTime_Formatted, endTime_Formatted);
-            if(!IsSucc)
+            if(string.Equals(TableName, "event_log", StringComparison.OrdinalIgnoreCase))
             {
-                //可以顯示一個 懸浮的FAIL訊息
-                return;
+                bool IsSucc = await eventLog_Query(startTime_Formatted, endTime_Formatted);
+                if(!IsSucc)
+                {
+                    //可以顯示一個 懸浮的FAIL訊息
+                    return;
+                }
             }
+            else
+            {
+                bool IsSucc = await dataLog_Query(TableName, startTime_Formatted, endTime_Formatted);
+                if(!IsSucc)
+                {
+                    //可以顯示一個 懸浮的FAIL訊息
+                    return;
+                }
+            }
+            
+        
             AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step3 : Query Done...", AppLogLevel.Trace);
 
             //4. reset 當前page
@@ -540,6 +610,26 @@
         catch(Exception e)
         {
             AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] Error : {e}", AppLogLevel.Trace);
+            return;
+        }
+    }
+
+    private void getRangeInfo(TableRangeResult rangeInfo)
+    {
+        if(rangeInfo is not null)
+        {
+            TCB.nowQueryRecordsNum  = rangeInfo.Count;
+            TCB.startId             = rangeInfo.FirstId;
+            TCB.endId               = rangeInfo.LastId;
+            TCB.nowTotalPages       = (TCB.nowQueryRecordsNum / 10) + 1;
+        }
+        else
+        {
+            TCB.nowQueryRecordsNum  = 0;
+            TCB.startId             = null;
+            TCB.endId               = null;
+            TCB.nowTotalPages       = (TCB.nowQueryRecordsNum / 10) + 1;
+            AppLogger.Log_To_File_log(_category, $"[Log][getRangeInfo] rangeInfo is null", AppLogLevel.Trace);
             return;
         }
     }
@@ -577,7 +667,7 @@
 
                 tableData.Add(row);
             }
-            AppLogger.Log_To_File_log(_category, $"[Log][eventLog_Query] step2: GetEventLog_WHERE_Time success", AppLogLevel.Trace);
+            AppLogger.Log_To_File_log(_category, $"[Log][eventLog_Query] step2: Put event records into table, success", AppLogLevel.Trace);
             
             //3. 在TCB中紀錄 現在10筆資料 的 最早時間 與 最晚時間，用於翻頁時查詢資料庫的WHERE語法
             var firstRow    = tableData.FirstOrDefault();
@@ -599,7 +689,60 @@
         }
     }
     
-    private async Task<bool> eventLog_TurnPage(string direction, int? startId, int? endId)
+    private async Task<bool> dataLog_Query(string targetTable, DateTime? startTime_Formatted, DateTime? endTime_Formatted)
+    {
+        try
+        {
+            //1. 根據時間 Query 前10筆 DataLog Table內的資料
+            var dataLog_records = await _sqlProcessor.GetDataLog_WHERE_Time(targetTable, startTime_Formatted, endTime_Formatted, 10);
+            if(dataLog_records is null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[Log][dataLog_Query] dataLog_records is null", AppLogLevel.Trace);
+                return false;
+            }
+            AppLogger.Log_To_File_log(_category, $"[Log][dataLog_Query] step1: GetDataLog_WHERE_Time success", AppLogLevel.Trace);
+
+            //2.塞進tableData
+            tableData.Clear();
+            foreach(var record in dataLog_records)
+            {
+                var row = new Dictionary<string, object>();
+                foreach(var col in dataLog_allColumns)
+                {
+                    if(dataColumnMap.TryGetValue(col.ToLower(), out var getter))
+                    {
+                        row[col] = getter(record);
+                    }
+                    else
+                    {
+                        row[col] = string.Empty;
+                    }
+                }
+                tableData.Add(row);
+            }
+            AppLogger.Log_To_File_log(_category, $"[Log][dataLog_Query] step2: Put data records into table, success", AppLogLevel.Trace);
+
+            //3. 在TCB中紀錄 現在10筆資料 的 最早時間 與 最晚時間，用於翻頁時查詢資料庫的WHERE語法
+            var firstRow    = tableData.FirstOrDefault();
+            var lastRow     = tableData.LastOrDefault();
+            if(firstRow != null && firstRow.ContainsKey("timestamp") && firstRow["timestamp"] is DateTime lastedTime)   TCB.lastedTime_InTable      = lastedTime;
+            if(lastRow != null && firstRow.ContainsKey("timestamp") && lastRow["timestamp"] is DateTime earliestTime)   TCB.earliestTime_InTable    = earliestTime;
+            if(firstRow != null && firstRow.ContainsKey("id") && firstRow["id"] is long lastedId)                       TCB.lastedId_InTable        = lastedId;
+            if(lastRow != null && lastRow.ContainsKey("id") && lastRow["id"] is long earliestId)                        TCB.earliestId_InTable      = earliestId;
+
+            AppLogger.Log_To_File_log(_category, $"[Log][dataLog_Query] step3: earliestTime_InTable = {TCB.earliestTime_InTable}, lastedTime_InTable = {TCB.lastedTime_InTable}", AppLogLevel.Trace);
+            AppLogger.Log_To_File_log(_category, $"[Log][dataLog_Query] step3: earliestId_InTable = {TCB.earliestId_InTable}, lastedId_InTable = {TCB.lastedId_InTable}", AppLogLevel.Trace);
+
+            return true;
+        }
+        catch(Exception e)
+        {
+            AppLogger.Log_To_File_log(_category, $"[Log][dataLog_Query] Error : {e}", AppLogLevel.Trace);
+            return false;
+        }
+    }
+
+    private async Task<bool> eventLog_TurnPage(string direction, long? startId, long? endId)
     {
         try
         {
@@ -607,7 +750,7 @@
             var eventLog_records = await _sqlProcessor.GetEvetLog_WHERE_Id(direction, startId, endId, 10);
             if(eventLog_records is null)
             {
-                AppLogger.Log_To_File_log(_category, $"[Log][eventLog_TurnPage] : eventLog_records is null", AppLogLevel.Trace);
+                AppLogger.Log_To_File_log(_category, $"[Log][eventLog_TurnPage] step1: eventLog_records is null", AppLogLevel.Trace);
                 return false;
             }
 
@@ -636,14 +779,64 @@
             //3. 在TCB中紀錄 現在10筆資料 的 表內 最小ID 與 最大ID，用於翻頁時查詢資料庫的WHERE語法
             var firstRow    = tableData.FirstOrDefault();
             var lastRow     = tableData.LastOrDefault();
+            //Note : event_log 的 id 欄位 是 普通的 int
             if(firstRow != null && firstRow.ContainsKey("id") && firstRow["id"] is int lastedId)    TCB.lastedId_InTable    = lastedId;
-            if(lastRow != null && firstRow.ContainsKey("id") && lastRow["id"] is int earliestId)    TCB.earliestId_InTable  = earliestId;
-            
+            if(lastRow != null && lastRow.ContainsKey("id") && lastRow["id"] is int earliestId)     TCB.earliestId_InTable  = earliestId;
+            AppLogger.Log_To_File_log(_category, $"[Log][eventLog_TurnPage] lastedId_InTable = {TCB.lastedId_InTable}, earliestId_InTable = {TCB.earliestId_InTable}", AppLogLevel.Trace);
             return true;
         }
         catch(Exception e)
         {
             AppLogger.Log_To_File_log(_category, $"[Log][eventLog_TurnPage] Error : {e}", AppLogLevel.Trace);
+            return false;
+        }
+    }
+
+    private async Task<bool> dataLog_TurnPage(string tableName, string direction, long? startId, long? endId)
+    {
+        try
+        {
+            //1. 根據tableName, Id, 方向 去Query 前10筆 DataLog Table 內的資料
+            var dataLog_records = await _sqlProcessor.GetDataLog_WHERE_Id(tableName, direction, startId, endId, 10);
+            if(dataLog_records is null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[Log][dataLog_TurnPage] step1 : dataLog_records is null", AppLogLevel.Trace);
+                return false;
+            }
+
+            //2. 塞進 tableData
+            tableData.Clear();
+            foreach(var record in dataLog_records)
+            {
+                var row = new Dictionary<string, object>();
+
+                foreach(var col in dataLog_allColumns)
+                {
+                    if(dataColumnMap.TryGetValue(col.ToLower(), out var getter))
+                    {
+                        row[col] = getter(record);
+                    }
+                    else
+                    {
+                        row[col] = string.Empty;
+                    }
+                }
+
+                tableData.Add(row);
+            }
+            AppLogger.Log_To_File_log(_category, $"[Log][dataLog_TurnPage] step2: GetEventLog_WHERE_Id success", AppLogLevel.Trace);
+
+            //3. 在TCB中紀錄 現在10筆資料 的 表內 最小ID 與 最大ID，用於翻頁時查詢資料庫的WHERE語法
+            var firstRow    = tableData.FirstOrDefault();
+            var lastRow     = tableData.LastOrDefault();
+            if(firstRow != null && firstRow.ContainsKey("id") && firstRow["id"] is long lastedId)    TCB.lastedId_InTable    = lastedId;
+            if(lastRow != null && lastRow.ContainsKey("id") && lastRow["id"] is long earliestId)     TCB.earliestId_InTable  = earliestId;
+            AppLogger.Log_To_File_log(_category, $"[Log][eventLog_TurnPage] lastedId_InTable = {TCB.lastedId_InTable}, earliestId_InTable = {TCB.earliestId_InTable}", AppLogLevel.Trace);
+            return true;
+        }
+        catch(Exception e)
+        {
+            AppLogger.Log_To_File_log(_category, $"[Log][dataLog_TurnPage] Error : {e}", AppLogLevel.Trace);
             return false;
         }
     }
@@ -660,11 +853,21 @@
         }
         
         //查詢資料，放入TABLE
-        bool IsSucc = await eventLog_TurnPage("right", TCB.earliestId_InTable, TCB.startId);
+        bool IsSucc = false;
+        if(string.Equals(TableName, "event_log", StringComparison.OrdinalIgnoreCase))
+        {//Event 翻頁
+            IsSucc = await eventLog_TurnPage("right", TCB.earliestId_InTable, TCB.startId);
+            AppLogger.Log_To_File_log(_category, $"[Log][turnToNextPage] EventLog", AppLogLevel.Trace);
+        }
+        else 
+        {//Data 翻頁
+            IsSucc = await dataLog_TurnPage(TableName, "right", TCB.earliestId_InTable, TCB.startId);
+            AppLogger.Log_To_File_log(_category, $"[Log][turnToNextPage] DataLog", AppLogLevel.Trace);
+        }
         if(!IsSucc)
         {
             //可以顯示一個 懸浮的FAIL訊息
-            AppLogger.Log_To_File_log(_category, $"[Log][turnToNextPage] Fail : eventlog_TurnPage", AppLogLevel.Trace);
+            AppLogger.Log_To_File_log(_category, $"[Log][turnToNextPage] Fail", AppLogLevel.Trace);
             return;
         }
 
@@ -689,11 +892,21 @@
         }
 
         //查詢資料，放入TABLE
-        bool IsSucc = await eventLog_TurnPage("left", TCB.lastedId_InTable, TCB.endId);
+        bool IsSucc = false;
+        if(string.Equals(TableName, "event_log", StringComparison.OrdinalIgnoreCase))
+        {//Event 翻頁
+            AppLogger.Log_To_File_log(_category, $"[Log][turnToNextPage] EventLog", AppLogLevel.Trace);
+            IsSucc = await eventLog_TurnPage("left", TCB.lastedId_InTable, TCB.endId);
+        }
+        else 
+        {//Data 翻頁
+            AppLogger.Log_To_File_log(_category, $"[Log][turnToNextPage] DataLog", AppLogLevel.Trace);
+            IsSucc = await dataLog_TurnPage(TableName, "left", TCB.lastedId_InTable, TCB.endId);
+        }
         if(!IsSucc)
         {
             //可以顯示一個 懸浮的FAIL訊息
-            AppLogger.Log_To_File_log(_category, $"[Log][turnToPreviousPage] Fail : eventLog_TurnPage", AppLogLevel.Trace);
+            AppLogger.Log_To_File_log(_category, $"[Log][turnToNextPage] Fail", AppLogLevel.Trace);
             return;
         }
 
@@ -724,17 +937,33 @@
         }
 
         //由 目標頁數，算 新的 lastedId_InTable，準備當作參數丟到 Function
-        int tmp_lastedId_InTable = (TCB.endId ?? 0) - (10 * (UI_PageNum - 1)) + 1;
+        long tmp_lastedId_InTable = (TCB.endId ?? 0) - (10 * (UI_PageNum - 1)) + 1;
         AppLogger.Log_To_File_log(_category, $"[Log][turnToCertainPage] tmp_lastedId_InTable = {tmp_lastedId_InTable}", AppLogLevel.Trace);
         
         //查詢資料，放入TABLE
-        bool IsSucc = await eventLog_TurnPage("right", tmp_lastedId_InTable, TCB.startId);
+        bool IsSucc = false;
+        if(string.Equals(TableName, "event_log", StringComparison.OrdinalIgnoreCase))
+        {
+            AppLogger.Log_To_File_log(_category, $"[Log][turnToCertainPage] EventLog", AppLogLevel.Trace);
+            IsSucc = await eventLog_TurnPage("right", tmp_lastedId_InTable, TCB.startId);
+        }
+        else
+        {
+            AppLogger.Log_To_File_log(_category, $"[Log][turnToCertainPage] DataLog", AppLogLevel.Trace);
+            IsSucc = await dataLog_TurnPage(TableName, "right", tmp_lastedId_InTable, TCB.startId);
+        }
         if(!IsSucc)
         {
-            //可以顯示一個 懸浮的FAIL訊息
             AppLogger.Log_To_File_log(_category, $"[Log][turnToCertainPage] Fail : eventLog_TurnPage", AppLogLevel.Trace);
             return;
         }
+        // bool IsSucc = await eventLog_TurnPage("right", tmp_lastedId_InTable, TCB.startId);
+        // if(!IsSucc)
+        // {
+        //     //可以顯示一個 懸浮的FAIL訊息
+        //     AppLogger.Log_To_File_log(_category, $"[Log][turnToCertainPage] Fail : eventLog_TurnPage", AppLogLevel.Trace);
+        //     return;
+        // }
 
         //頁數到指定的頁數
         TCB.nowTablePage = UI_PageNum;

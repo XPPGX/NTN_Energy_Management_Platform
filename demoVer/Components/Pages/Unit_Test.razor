@@ -42,7 +42,7 @@
         <span class="btn-glow" aria-hidden="true"></span>
     </button>
 
-    <button class="glow-btn" @onclick="TEST_SQL_ReadEventLog">
+    <button class="glow-btn" @onclick="TEST_SQL_ReadDataLog">
         <span class="btn-inner">
             🚀 sql_ReadEventLog
         </span>
@@ -121,13 +121,8 @@
         Console.WriteLine($"[TEST_Write] IsSendSucc = {IsSendSucc}");
     }
     
-    public async Task TEST_SQL_ReadEventLog()
+    public async Task TEST_SQL_ReadDataLog()
     {
-        var eventLogs = await sqlProcessor.GetEventLog_OFFSET(0, 3);
-        var Json_Str = JsonSerializer.Serialize(eventLogs, new JsonSerializerOptions{
-            WriteIndented = true
-        });
-
-        Console.WriteLine(Json_Str);
+        
     }
 }

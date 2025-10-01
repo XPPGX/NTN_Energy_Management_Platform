@@ -1660,6 +1660,52 @@ input:focus[b-edekmb0cds] {
     background: #121212;
     color: #fff;
 }
+.radio-group[b-edekmb0cds] {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+.radio-option[b-edekmb0cds] {
+    display: inline-flex;       /* ✅ 保持水平排列 */
+    align-items: center;        /* ✅ 垂直置中 */
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #eee;
+    padding: 4px 8px;
+    border-radius: 6px;
+    white-space: nowrap;        /* ✅ 文字不允許換行 */
+    gap: 6px;                   /* ✅ 控制圓圈與文字的距離 */
+    transition: background 0.3s;
+}
+
+.radio-option:hover[b-edekmb0cds] {
+    border-color: #00eaff;
+    box-shadow: 0 0 8px #00eaff55, 0 0 4px #00eaff inset;
+}
+
+.radio-option input[type="radio"][b-edekmb0cds] {
+    flex-shrink: 0;             /* ✅ 防止圓圈被壓縮變形 */
+    width: 14px;                /* ✅ 比 16px 小一點，更接近預設 */
+    height: 14px;
+    border: 2px solid #555;
+    border-radius: 50%;
+    background: #111;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: inset 0 0 3px rgba(0,0,0,0.6);
+    vertical-align: middle;
+}
+
+.radio-option input[type="radio"]:checked[b-edekmb0cds] {
+    border-color: #00eaff;
+    background: radial-gradient(circle at center, #00eaff 60%, #111 62%);
+    box-shadow: 0 0 6px #00eaff88;
+}
+
+.radio-label[b-edekmb0cds] {
+    color: #ddd;
+    white-space: nowrap;        /* ✅ 文字不換行 */
+}
 
 /* 📱 手機 RWD */
 @media(max-width: 768px) {
@@ -1780,6 +1826,10 @@ input:focus[b-edekmb0cds] {
         flex: unset;
         width: 100%;
         margin-bottom: 5px; /* label 與 inputs 留間距 */
+    }
+    .radio-group[b-edekmb0cds] {
+        flex-direction: column;
+        gap: 8px;
     }
 }
 /* _content/demoVer/Components/Pages/NTN_Home.razor.rz.scp.css */
