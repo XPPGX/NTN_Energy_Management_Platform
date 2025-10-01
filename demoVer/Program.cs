@@ -70,6 +70,8 @@ builder.Services.AddHttpClient("ApiClient", client =>
 });
 builder.Services.AddSingleton<ApiManager>();
 builder.Services.AddSingleton<WriteProcess>();
+builder.Services.AddControllers();
+
 
 var app = builder.Build();
 
@@ -89,6 +91,7 @@ app.UseAntiforgery();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
+app.MapControllers();
 app.MapHub<DataHub>("/datahub"); //Sync data for all web that connected with the server
 
 //Server前啟動DataCenter

@@ -2,6 +2,9 @@ using Npgsql;
 using demoVer.Models;
 using demoVer.Services;
 using demoVer.Utils;
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace demoVer.Services
 {
@@ -16,17 +19,30 @@ namespace demoVer.Services
         private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(5);
         //等待取鎖時間，最多3秒
         private const int maxWaitLock_Time = 3000;
+        
+        //匯出的檔案位置
+        private string exportDirectory {get; set;} = string.Empty;
 
         public SqlProcessor()
         {
             _category = GetType().FullName!;
         }
 
-        //取得Table的Column header
-        public async Task<List<string>?> GetTableColumn(string logType, string dataType = "", CancellationToken ct = default)
+        public void Init(string basePath)
         {
-            string targetTable = string.Empty;
-            
+            exportDirectory = Path.Combine(basePath, "exports") ;
+            exportDirectory = Path.GetFullPath(exportDirectory);
+        }
+
+        //取得Table的Column header
+        public async Task<List<string>?> GetTableColumn(string targetTable, CancellationToken ct = default)
+        {   
+            if(string.IsNullOrEmpty(targetTable))
+            {
+                AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetTableColumn] targetTable is null", AppLogLevel.Trace);
+                return null;
+            }
+
             //嘗試取lock
             if(!await _semaphore.WaitAsync(maxWaitLock_Time, ct))
             {
@@ -39,32 +55,32 @@ namespace demoVer.Services
                 List<string> colsName = new();
 
                 //參數檢查
-                if(string.IsNullOrEmpty(logType))
-                {
-                    AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetTableColumn] logType is Empty", AppLogLevel.Trace);
-                    return null;
-                }
-                //參數檢查，指定targetTable
-                if(string.Equals(logType, "event", StringComparison.OrdinalIgnoreCase))
-                {
-                    targetTable = "event_log";
-                }
-                else if(string.Equals(logType, "data", StringComparison.OrdinalIgnoreCase))
-                {
-                    if(string.Equals(dataType, "CAN", StringComparison.OrdinalIgnoreCase))
-                    {
-                        targetTable = "datalog_NTN-5K_CAN";
-                    }
-                    else if(string.Equals(dataType, "MOD", StringComparison.OrdinalIgnoreCase))
-                    {
-                        targetTable = "datalog_NTN-5K_MOD";
-                    }
-                }
-                else
-                {
-                    AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetTableColumn] logType is invalid", AppLogLevel.Trace);
-                    return null;                    
-                }
+                // if(string.IsNullOrEmpty(logType))
+                // {
+                //     AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetTableColumn] logType is Empty", AppLogLevel.Trace);
+                //     return null;
+                // }
+                // //參數檢查，指定targetTable
+                // if(string.Equals(logType, "event", StringComparison.OrdinalIgnoreCase))
+                // {
+                //     targetTable = "event_log";
+                // }
+                // else if(string.Equals(logType, "data", StringComparison.OrdinalIgnoreCase))
+                // {
+                //     if(string.Equals(dataType, "CAN", StringComparison.OrdinalIgnoreCase))
+                //     {
+                //         targetTable = "datalog_NTN-5K_CAN";
+                //     }
+                //     else if(string.Equals(dataType, "MOD", StringComparison.OrdinalIgnoreCase))
+                //     {
+                //         targetTable = "datalog_NTN-5K_MOD";
+                //     }
+                // }
+                // else
+                // {
+                //     AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetTableColumn] logType is invalid", AppLogLevel.Trace);
+                //     return null;                    
+                // }
 
                 //1. SQL 連線
                 await using var conn = new NpgsqlConnection(_connectionString);
@@ -494,19 +510,6 @@ namespace demoVer.Services
                 AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetDataLog_WHERE_Time] SQL Query success", AppLogLevel.Trace);
 
                 //4. 組合資料
-                // while (await reader.ReadAsync(ct))
-                // {
-                //     for (int i = 0; i < reader.FieldCount; i++)
-                //     {
-                //         string colName  = reader.GetName(i);           // 欄位名稱
-                //         Type   colType  = reader.GetFieldType(i);      // C# 對應型別
-                //         object colValue = reader.IsDBNull(i) ? "NULL" : reader.GetValue(i);
-
-                //         Console.WriteLine($"[{i}] {colName} ({colType.Name}) = {colValue}");
-                //     }
-
-                //     Console.WriteLine("──────────────────────");
-                // }
                 while(await reader.ReadAsync(ct))
                 {
                     var row = new Dictionary<string, object>();
@@ -637,6 +640,175 @@ namespace demoVer.Services
             finally
             {
                 _semaphore.Release();
+            }
+        }
+        
+        public async IAsyncEnumerable<(int percent, string? filePath)> ExportBigDataAsync(string targetTable, DateTime? startTime, DateTime? endTime, [EnumeratorCancellation] CancellationToken ct = default)
+        {
+            if (string.IsNullOrEmpty(targetTable))
+            {
+                AppLogger.Log_To_File_log(_category, $"[SqlProcessor][ExportBigDataAsync] targetTable is null", AppLogLevel.Trace);
+                yield break;
+            }
+            if (startTime == DateTime.MinValue || endTime == DateTime.MinValue)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SqlProcessor][ExportBigDataAsync] 時間參數無效", AppLogLevel.Trace);
+                yield break;
+            }
+
+            await _semaphore.WaitAsync(ct);
+
+            string? exportFilePath = null;
+            List<(int percent, string? filePath)> results = new(); // 暫存結果
+            bool hasError = false;
+
+            try
+            {
+                int totalRows = await GetRowCount(targetTable, startTime, endTime, ct);
+                if (totalRows == 0)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SqlProcessor][ExportBigDataAsync] 查無資料", AppLogLevel.Trace);
+                    yield break;
+                }
+
+                int batchSize = 10000;
+                int processed = 0;
+
+                string todayDir = Path.Combine(exportDirectory, DateTime.UtcNow.ToString("yyyyMMdd"));
+                Directory.CreateDirectory(todayDir);
+                string fileName = $"{targetTable}_{Guid.NewGuid()}.csv";
+                exportFilePath = Path.Combine(todayDir, fileName);
+
+                //URL
+                var downloadUrl = $"/api/FileDownload/{DateTime.UtcNow:yyyyMMdd}/{fileName}";
+
+                await using var fs = new FileStream(exportFilePath, FileMode.Create, FileAccess.Write, FileShare.None);
+                await using var writer = new StreamWriter(fs, Encoding.UTF8);
+
+                var columns = await GetTableColumn(targetTable, ct);
+                if (columns == null || columns.Count == 0)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SqlProcessor][ExportBigDataAsync] 無法取得欄位名稱", AppLogLevel.Trace);
+                    yield break;
+                }
+                await writer.WriteLineAsync(string.Join(",", columns));
+
+                await using var conn = new NpgsqlConnection(_connectionString);
+                await conn.OpenAsync(ct);
+
+                string timeColumn = targetTable == "event_log" ? "time" : "timestamp";
+
+                string sql = $@"SELECT * FROM ""{targetTable}"" 
+                                WHERE ""{timeColumn}"" BETWEEN @startTime AND @endTime
+                                ORDER BY id ASC
+                                LIMIT @limit OFFSET @offset";
+
+                while (processed < totalRows)
+                {
+                    ct.ThrowIfCancellationRequested();
+
+                    await using var cmd = new NpgsqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("startTime", DateTime.SpecifyKind(startTime ?? DateTime.MinValue, DateTimeKind.Utc));
+                    cmd.Parameters.AddWithValue("endTime", DateTime.SpecifyKind(endTime ?? DateTime.MaxValue, DateTimeKind.Utc));
+                    cmd.Parameters.AddWithValue("limit", batchSize);
+                    cmd.Parameters.AddWithValue("offset", processed);
+
+                    await using var reader = await cmd.ExecuteReaderAsync(ct);
+
+                    while (await reader.ReadAsync(ct))
+                    {
+                        var values = new List<string>();
+                        for (int i = 0; i < reader.FieldCount; i++)
+                        {
+                            if (reader.IsDBNull(i))
+                                values.Add("");
+                            else
+                            {
+                                var val = reader.GetValue(i)?.ToString() ?? "";
+                                if (val.Contains(",") || val.Contains("\""))
+                                    val = $"\"{val.Replace("\"", "\"\"")}\"";
+                                values.Add(val);
+                            }
+                        }
+                        await writer.WriteLineAsync(string.Join(",", values));
+                    }
+
+                    processed += batchSize;
+                    int percent = Math.Min(100, (processed * 100) / totalRows);
+                    results.Add((percent, null)); // ✅ 不直接 yield
+                }
+
+                await writer.FlushAsync();
+                results.Add((100, downloadUrl)); // ✅ 回傳相對 URL
+
+                AppLogger.Log_To_File_log(_category, $"[SqlProcessor][ExportBigDataAsync] 匯出完成，檔案位置: {exportFilePath}", AppLogLevel.Trace);
+                AppLogger.Log_To_File_log(_category, $"[SqlProcessor][ExportBigDataAsync] URL : {downloadUrl}", AppLogLevel.Trace);
+            }
+            catch (OperationCanceledException)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SqlProcessor][ExportBigDataAsync] 匯出被取消", AppLogLevel.Trace);
+                if (exportFilePath != null && File.Exists(exportFilePath))
+                    File.Delete(exportFilePath);
+                hasError = true;
+            }
+            catch (Exception e)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SqlProcessor][ExportBigDataAsync] Error: {e}", AppLogLevel.Trace);
+                if (exportFilePath != null && File.Exists(exportFilePath))
+                    File.Delete(exportFilePath);
+                hasError = true;
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
+
+            if (!hasError)
+            {
+                foreach (var item in results) // ✅ 統一在這裡 yield
+                    yield return item;
+            }
+        }
+
+
+        private async Task<int> GetRowCount(string targetTable, DateTime? startTime, DateTime? endTime, CancellationToken ct)
+        {
+            if (string.IsNullOrEmpty(targetTable))
+            {
+                AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetRowCount] targetTable is null", AppLogLevel.Trace);
+                return 0;
+            }
+            if (startTime == DateTime.MinValue || endTime == DateTime.MinValue)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetRowCount] 時間參數無效", AppLogLevel.Trace);
+                return 0;
+            }
+
+            string timeColumn = targetTable == "event_log" ? "time" : "timestamp";
+
+            try
+            {
+                await using var conn = new NpgsqlConnection(_connectionString);
+                await conn.OpenAsync(ct);
+
+                string sql = $@"SELECT COUNT(*) 
+                                FROM ""{targetTable}"" 
+                                WHERE ""{timeColumn}"" BETWEEN @startTime AND @endTime";
+
+                await using var cmd = new NpgsqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("startTime", DateTime.SpecifyKind(startTime ?? DateTime.MinValue, DateTimeKind.Utc));
+                cmd.Parameters.AddWithValue("endTime", DateTime.SpecifyKind(endTime ?? DateTime.MaxValue, DateTimeKind.Utc));
+
+                var result = await cmd.ExecuteScalarAsync(ct);
+                int total = Convert.ToInt32(result);
+
+                AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetRowCount] {targetTable} 總筆數 = {total}", AppLogLevel.Trace);
+                return total;
+            }
+            catch (Exception e)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetRowCount] Error : {e}", AppLogLevel.Trace);
+                return 0;
             }
         }
     }

@@ -33,6 +33,7 @@ namespace demoVer.Services
         private readonly ApiManager _apiManager;
         private readonly GlobalVar _globalVar;
         private readonly IGroupsDataDecoder _decoder;
+        private readonly SqlProcessor _sqlProcessor;
         //[Declare] variables shared in whole process
         public Battery_DataSetting_Module Battery {get; set;}
         public INV_DataSetting_Module INV{get; set;}
@@ -58,18 +59,19 @@ namespace demoVer.Services
                             DataChangeEventManager eventManager,
                             ApiManager apiManager,
                             GlobalVar globalVar,
-                            IGroupsDataDecoder decoder)
+                            IGroupsDataDecoder decoder,
+                            SqlProcessor sqlProcessor)
         {
             _category = GetType().FullName!;
 
-            _heartbeat  = heartbeat;
-            _hubContext = hubContext;
-            _commonData = commonData;
-            _eventManager = eventManager;
-            _apiManager = apiManager;
-            _globalVar = globalVar;
-            _decoder = decoder;
-
+            _heartbeat      = heartbeat;
+            _hubContext     = hubContext;
+            _commonData     = commonData;
+            _eventManager   = eventManager;
+            _apiManager     = apiManager;
+            _globalVar      = globalVar;
+            _decoder        = decoder;
+            _sqlProcessor   = sqlProcessor;
             // Device_ReadData = new allDevice_Data();
             
             Battery     = new Battery_DataSetting_Module(_commonData);
@@ -102,8 +104,13 @@ namespace demoVer.Services
         {
             //0. Read base path
             read_basePath();
-            //1. Init AppLogger file paths
+            //1. Init file paths
             AppLogger.Init_AppLogger(basePath);
+            Console.WriteLine("[DataCenter] Init : AppLogger done");
+            
+            _sqlProcessor.Init(basePath);
+            Console.WriteLine("[DataCenter] Init : SqlProcessor done");
+
 
             AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] Start...", AppLogLevel.Trace);
 

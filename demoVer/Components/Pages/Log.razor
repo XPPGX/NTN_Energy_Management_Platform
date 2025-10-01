@@ -15,6 +15,18 @@
 <PageTitle>Log</PageTitle>
 <TopRow />
 
+@if(showExportDialog)
+{
+    <div class="export-overlay">
+        <div class="export-dialog">
+            <h3>匯出中...</h3>
+            <progress value="@exportProgress" max="100"></progress>
+            <div>@exportProgress %</div>
+            <button class="btn btn-cancel" @onclick="CancelExport">取消</button>
+        </div>
+    </div>
+}
+
 <div id="whole-container" class="content-container">
     <div class="top-panel @(isCollapsed ? "collapsed" : "expanded")" @onclick="TogglePanel" @onclick:stopPropagation="true">
         @if(isCollapsed)
@@ -256,6 +268,10 @@
     private DateTime? selectedEndDate;
     private TimeOnly? selectedEndTime;
 
+    private bool showExportDialog = false;
+    private int exportProgress = 0;
+    private CancellationTokenSource? exportCts;
+
     protected override void OnInitialized()
     {
         _category = GetType().FullName!;
@@ -412,6 +428,7 @@
     private async Task exportClick()
     {
         CollapsePanel();
+        exportTask();
     }
 
     private void PageInputFocus()
@@ -450,8 +467,8 @@
         dataLog_allColumns.Clear();
 
         //2. 載入當前資料表 所有Column
-        eventLog_allColumns = await _sqlProcessor.GetTableColumn("event");
-        dataLog_allColumns  = await _sqlProcessor.GetTableColumn("data", "CAN");
+        eventLog_allColumns = await _sqlProcessor.GetTableColumn("event_log");
+        dataLog_allColumns  = await _sqlProcessor.GetTableColumn("datalog_NTN-5K_CAN");
 
         var Json_Str = JsonSerializer.Serialize(eventLog_allColumns, new JsonSerializerOptions{
             WriteIndented = true
@@ -500,6 +517,83 @@
             AppLogger.Log_To_File_log(_category, $"[Log][dateTime_Transform] : Error, {e}", AppLogLevel.Trace);
             return null;
         }
+    }
+
+    private async Task exportTask()
+    {
+        TCB.TableName = string.Empty;
+        //參數檢查
+        if(string.Equals(selectedLogType, "event", StringComparison.OrdinalIgnoreCase))
+        {
+            TCB.TableName = "event_log";
+        }
+        else if(string.Equals(selectedLogType, "data", StringComparison.OrdinalIgnoreCase))
+        {
+            switch(selectedDataType)
+            {
+                case "CAN": TCB.TableName = "datalog_NTN-5K_CAN"; break;
+                case "MOD": TCB.TableName = "datalog_NTN-5K_MOD"; break;
+                default: 
+                    AppLogger.Log_To_File_log(_category, $"[Log][exportTask] Error, LogType = data, selectedDataType = None", AppLogLevel.Trace);
+                    return;
+            }
+        }
+        else
+        {
+            AppLogger.Log_To_File_log(_category, $"[Log][exportTask] Error, LogType = {selectedLogType}, DataType = {selectedDataType}", AppLogLevel.Trace);
+            return;
+        }
+        
+
+        showExportDialog = true;
+        exportProgress = 0;
+        exportCts = new CancellationTokenSource();
+        
+        try
+        {
+            //1. 驗證並取得時間
+            var startTime_Formatted = dateTime_Transform(selectedStartDate, selectedStartTime);
+            var endTime_Formatted   = dateTime_Transform(selectedEndDate, selectedEndTime);
+            Console.WriteLine($"[Log][exportTask] startTime_Formatted = {startTime_Formatted}");
+            Console.WriteLine($"[Log][exportTask] endTime_Formatted = {endTime_Formatted}");
+            if(endTime_Formatted < startTime_Formatted)
+            {
+                AppLogger.Log_To_File_log(_category, $"[Log][exportTask] : endTime < startTime", AppLogLevel.Trace);
+                return;
+            }
+
+            // 2. 開始Export動作(查詢、寫檔、更新進度)
+            await foreach (var (percent, fileUrl) in 
+                _sqlProcessor.ExportBigDataAsync(TCB.TableName, startTime_Formatted, endTime_Formatted, exportCts.Token))
+            {
+                exportProgress = percent;
+                await InvokeAsync(StateHasChanged);
+
+                if (fileUrl != null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[Log][exportTask] Export 完成", AppLogLevel.Trace);
+
+                    await JS.InvokeVoidAsync("startDownload", fileUrl);
+                    
+                    AppLogger.Log_To_File_log(_category, $"[Log][exportTask] Download 完成: {fileUrl}", AppLogLevel.Trace);
+                }
+            }
+        }
+        catch(OperationCanceledException)
+        {
+            AppLogger.Log_To_File_log(_category, "[Log][exportTask] 匯出已取消", AppLogLevel.Trace);
+            return;
+        }
+        finally
+        {
+            showExportDialog = false;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void CancelExport()
+    {
+        exportCts?.Cancel();
     }
 
     private async Task QueryFromDB_InitTCB()
@@ -796,14 +890,6 @@
                     {
                         row[col] = string.Empty;
                     }
-                    // if(dataColumnMap.TryGetValue(col, out var getter))
-                    // {
-                    //     row[col] = getter(record);
-                    // }
-                    // else
-                    // {
-                    //     row[col] = string.Empty;
-                    // }
                 }
 
                 tableData.Add(row);
@@ -938,16 +1024,10 @@
         }
         if(!IsSucc)
         {
+            //可以顯示一個 懸浮的FAIL訊息
             AppLogger.Log_To_File_log(_category, $"[Log][turnToCertainPage] Fail : eventLog_TurnPage", AppLogLevel.Trace);
             return;
         }
-        // bool IsSucc = await eventLog_TurnPage("right", tmp_lastedId_InTable, TCB.startId);
-        // if(!IsSucc)
-        // {
-        //     //可以顯示一個 懸浮的FAIL訊息
-        //     AppLogger.Log_To_File_log(_category, $"[Log][turnToCertainPage] Fail : eventLog_TurnPage", AppLogLevel.Trace);
-        //     return;
-        // }
 
         //頁數到指定的頁數
         TCB.nowTablePage = UI_PageNum;
