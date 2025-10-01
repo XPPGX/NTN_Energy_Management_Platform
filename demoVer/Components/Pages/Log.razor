@@ -237,7 +237,6 @@
     private int currentStep     = 1;
     private string? selectedLogType = string.Empty;
     private string? selectedDataType = string.Empty;
-    private string? TableName = string.Empty;
     private bool isCollapsed = false;
     private bool IsMobile = false;
 
@@ -251,29 +250,6 @@
     private TableControlBlock TCB = new();
     private int UI_PageNum = 1;
     private string? CurrentFocus {get; set;}
-
-    //自動抓 Models 內的 EventLog_Item 格式
-    Dictionary<string, Func<EventLog_Item, object>> eventColumnMap = typeof(EventLog_Item).GetProperties().ToDictionary(
-        prop => prop.Name.ToLower(),
-        prop => (Func<EventLog_Item, object>)(r => prop.GetValue(r) ?? string.Empty)
-    );
-    //自動抓 Models 內的 DataLog_Item 格式
-    Dictionary<string, Func<DataLog_Item, object>> dataColumnMap = typeof(DataLog_Item).GetProperties().ToDictionary(
-        prop => prop.Name.ToLower(),
-        prop => (Func<DataLog_Item, object>)(r => prop.GetValue(r) ?? string.Empty)
-    );
-
-    // Dictionary<string, Func<EventLog_Item, object>> eventColumnMap = new Dictionary<string, Func<EventLog_Item, object>>
-    // {
-    //     {"id",              r => r.Id},
-    //     {"time",            r => r.Time},
-    //     {"port",            r => r.Port},
-    //     {"addr",            r => r.Addr},
-    //     {"serial_number",   r => r.SerialNumber ?? string.Empty},
-    //     {"command_name",    r => r.CommandName},
-    //     {"event",           r => r.Event ?? string.Empty},
-    //     {"trigger_state",   r => r.TriggerState}
-    // };
 
     private DateTime? selectedStartDate;
     private TimeOnly? selectedStartTime;
@@ -466,7 +442,7 @@
 
     #region Logic_Control
     private async Task InitColumn()
-    {
+    {//可動態接收資料庫欄位變動
         //1. 清空當前 所有Column選擇
         allColumns.Clear();
         visibleColumns.Clear();
@@ -475,7 +451,7 @@
 
         //2. 載入當前資料表 所有Column
         eventLog_allColumns = await _sqlProcessor.GetTableColumn("event");
-        dataLog_allColumns  = await _sqlProcessor.GetTableColumn("data");
+        dataLog_allColumns  = await _sqlProcessor.GetTableColumn("data", "CAN");
 
         var Json_Str = JsonSerializer.Serialize(eventLog_allColumns, new JsonSerializerOptions{
             WriteIndented = true
@@ -545,17 +521,17 @@
             AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step1 : startTime_Formatted = {startTime_Formatted}, endTime_Formatted = {endTime_Formatted}", AppLogLevel.Trace);
 
             //2. 根據選項 logType, dataType 決定資料表
-            TableName = string.Empty;
+            TCB.TableName = string.Empty;
             if(string.Equals(selectedLogType, "event", StringComparison.OrdinalIgnoreCase))
             {
-                TableName = "event_log";
+                TCB.TableName = "event_log";
             }
             else if(string.Equals(selectedLogType, "data", StringComparison.OrdinalIgnoreCase))
             {
                 switch(selectedDataType)
                 {
-                    case "CAN": TableName = "datalog_NTN-5K_CAN"; break;
-                    case "MOD": TableName = "datalog_NTN-5K_MOD"; break;
+                    case "CAN": TCB.TableName = "datalog_NTN-5K_CAN"; break;
+                    case "MOD": TCB.TableName = "datalog_NTN-5K_MOD"; break;
                     default: 
                         AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step2: Error, LogType = data, selectedDataType = None", AppLogLevel.Trace);
                         return;
@@ -566,17 +542,17 @@
                 AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step2: Error, LogType = {selectedLogType}, DataType = {selectedDataType}", AppLogLevel.Trace);
                 return;
             }
-            AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step2 : TableName = {TableName}", AppLogLevel.Trace);
+            AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step2 : TCB.TableName = {TCB.TableName}", AppLogLevel.Trace);
 
             //3. 根據時間 查資料總共筆數
-            var rangeInfo = await _sqlProcessor.GetTable_Range_AfterWHERE(TableName, startTime_Formatted, endTime_Formatted);
+            var rangeInfo = await _sqlProcessor.GetTable_Range_AfterWHERE(TCB.TableName, startTime_Formatted, endTime_Formatted);
             getRangeInfo(rangeInfo);
 
             AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step3 : nowQueryRecordsNum = {TCB.nowQueryRecordsNum}, nowTotalPages = {TCB.nowTotalPages}", AppLogLevel.Trace);
             AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step3 : startId = {TCB.startId}, endId = {TCB.endId}", AppLogLevel.Trace);
             
-            //3. 根據LogType查詢(現在只有EventLog)
-            if(string.Equals(TableName, "event_log", StringComparison.OrdinalIgnoreCase))
+            //4. 根據LogType查詢(現在只有EventLog)
+            if(string.Equals(TCB.TableName, "event_log", StringComparison.OrdinalIgnoreCase))
             {
                 bool IsSucc = await eventLog_Query(startTime_Formatted, endTime_Formatted);
                 if(!IsSucc)
@@ -587,7 +563,7 @@
             }
             else
             {
-                bool IsSucc = await dataLog_Query(TableName, startTime_Formatted, endTime_Formatted);
+                bool IsSucc = await dataLog_Query(TCB.TableName, startTime_Formatted, endTime_Formatted);
                 if(!IsSucc)
                 {
                     //可以顯示一個 懸浮的FAIL訊息
@@ -598,7 +574,7 @@
         
             AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step3 : Query Done...", AppLogLevel.Trace);
 
-            //4. reset 當前page
+            //5. 設當前page為1
             TCB.nowTablePage = 1; 
             AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step4 : nowTablePage = {TCB.nowTablePage}", AppLogLevel.Trace);
             //[DEBUG]印出結果
@@ -655,9 +631,9 @@
                 
                 foreach(var col in eventLog_allColumns)
                 {
-                    if(eventColumnMap.TryGetValue(col.ToLower(), out var getter))
+                    if(record.TryGetValue(col, out var val))
                     {
-                        row[col] = getter(record);
+                        row[col] = val ?? string.Empty;
                     }
                     else
                     {
@@ -709,9 +685,9 @@
                 var row = new Dictionary<string, object>();
                 foreach(var col in dataLog_allColumns)
                 {
-                    if(dataColumnMap.TryGetValue(col.ToLower(), out var getter))
+                    if(record.TryGetValue(col, out var val))
                     {
-                        row[col] = getter(record);
+                        row[col] = val ?? string.Empty;
                     }
                     else
                     {
@@ -762,9 +738,9 @@
                 
                 foreach(var col in eventLog_allColumns)
                 {
-                    if(eventColumnMap.TryGetValue(col.ToLower(), out var getter))
+                    if(record.TryGetValue(col, out var val))
                     {
-                        row[col] = getter(record);
+                        row[col] = val ?? string.Empty;
                     }
                     else
                     {
@@ -812,14 +788,22 @@
 
                 foreach(var col in dataLog_allColumns)
                 {
-                    if(dataColumnMap.TryGetValue(col.ToLower(), out var getter))
+                    if(record.TryGetValue(col, out var val))
                     {
-                        row[col] = getter(record);
+                        row[col] = val ?? string.Empty;
                     }
                     else
                     {
                         row[col] = string.Empty;
                     }
+                    // if(dataColumnMap.TryGetValue(col, out var getter))
+                    // {
+                    //     row[col] = getter(record);
+                    // }
+                    // else
+                    // {
+                    //     row[col] = string.Empty;
+                    // }
                 }
 
                 tableData.Add(row);
@@ -854,14 +838,14 @@
         
         //查詢資料，放入TABLE
         bool IsSucc = false;
-        if(string.Equals(TableName, "event_log", StringComparison.OrdinalIgnoreCase))
+        if(string.Equals(TCB.TableName, "event_log", StringComparison.OrdinalIgnoreCase))
         {//Event 翻頁
             IsSucc = await eventLog_TurnPage("right", TCB.earliestId_InTable, TCB.startId);
             AppLogger.Log_To_File_log(_category, $"[Log][turnToNextPage] EventLog", AppLogLevel.Trace);
         }
         else 
         {//Data 翻頁
-            IsSucc = await dataLog_TurnPage(TableName, "right", TCB.earliestId_InTable, TCB.startId);
+            IsSucc = await dataLog_TurnPage(TCB.TableName, "right", TCB.earliestId_InTable, TCB.startId);
             AppLogger.Log_To_File_log(_category, $"[Log][turnToNextPage] DataLog", AppLogLevel.Trace);
         }
         if(!IsSucc)
@@ -893,7 +877,7 @@
 
         //查詢資料，放入TABLE
         bool IsSucc = false;
-        if(string.Equals(TableName, "event_log", StringComparison.OrdinalIgnoreCase))
+        if(string.Equals(TCB.TableName, "event_log", StringComparison.OrdinalIgnoreCase))
         {//Event 翻頁
             AppLogger.Log_To_File_log(_category, $"[Log][turnToNextPage] EventLog", AppLogLevel.Trace);
             IsSucc = await eventLog_TurnPage("left", TCB.lastedId_InTable, TCB.endId);
@@ -901,7 +885,7 @@
         else 
         {//Data 翻頁
             AppLogger.Log_To_File_log(_category, $"[Log][turnToNextPage] DataLog", AppLogLevel.Trace);
-            IsSucc = await dataLog_TurnPage(TableName, "left", TCB.lastedId_InTable, TCB.endId);
+            IsSucc = await dataLog_TurnPage(TCB.TableName, "left", TCB.lastedId_InTable, TCB.endId);
         }
         if(!IsSucc)
         {
@@ -942,7 +926,7 @@
         
         //查詢資料，放入TABLE
         bool IsSucc = false;
-        if(string.Equals(TableName, "event_log", StringComparison.OrdinalIgnoreCase))
+        if(string.Equals(TCB.TableName, "event_log", StringComparison.OrdinalIgnoreCase))
         {
             AppLogger.Log_To_File_log(_category, $"[Log][turnToCertainPage] EventLog", AppLogLevel.Trace);
             IsSucc = await eventLog_TurnPage("right", tmp_lastedId_InTable, TCB.startId);
@@ -950,7 +934,7 @@
         else
         {
             AppLogger.Log_To_File_log(_category, $"[Log][turnToCertainPage] DataLog", AppLogLevel.Trace);
-            IsSucc = await dataLog_TurnPage(TableName, "right", tmp_lastedId_InTable, TCB.startId);
+            IsSucc = await dataLog_TurnPage(TCB.TableName, "right", tmp_lastedId_InTable, TCB.startId);
         }
         if(!IsSucc)
         {

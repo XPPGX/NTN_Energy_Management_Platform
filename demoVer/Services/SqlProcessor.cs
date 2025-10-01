@@ -23,7 +23,7 @@ namespace demoVer.Services
         }
 
         //取得Table的Column header
-        public async Task<List<string>?> GetTableColumn(string logType, CancellationToken ct = default)
+        public async Task<List<string>?> GetTableColumn(string logType, string dataType = "", CancellationToken ct = default)
         {
             string targetTable = string.Empty;
             
@@ -51,7 +51,14 @@ namespace demoVer.Services
                 }
                 else if(string.Equals(logType, "data", StringComparison.OrdinalIgnoreCase))
                 {
-                    targetTable = "datalog_NTN-5K_CAN"; //"datalog_NTN-5K_MOD" 與 "datalog_NTN-5K_CAN" 的欄位是一樣的
+                    if(string.Equals(dataType, "CAN", StringComparison.OrdinalIgnoreCase))
+                    {
+                        targetTable = "datalog_NTN-5K_CAN";
+                    }
+                    else if(string.Equals(dataType, "MOD", StringComparison.OrdinalIgnoreCase))
+                    {
+                        targetTable = "datalog_NTN-5K_MOD";
+                    }
                 }
                 else
                 {
@@ -203,7 +210,7 @@ namespace demoVer.Services
         }
 
         //EventLog照篩選過的 時間 降序排列
-        public async Task<List<EventLog_Item>?> GetEventLog_WHERE_Time(DateTime? startTime, DateTime? endTime, int recordNum, CancellationToken ct = default)
+        public async Task<List<Dictionary<string, object>>?> GetEventLog_WHERE_Time(DateTime? startTime, DateTime? endTime, int recordNum, CancellationToken ct = default)
         {
             //輸入參數檢查
             if(startTime == DateTime.MinValue)
@@ -236,7 +243,7 @@ namespace demoVer.Services
             //嘗試撈資料
             try
             {
-                var list = new List<EventLog_Item>();
+                var list = new List<Dictionary<string, object>>();
                 
 
                 //1. SQL 連線
@@ -282,17 +289,15 @@ namespace demoVer.Services
                 //4. 組合資料
                 while(await reader.ReadAsync(ct))
                 {
-                    list.Add(new EventLog_Item
+                    var row = new Dictionary<string, object>();
+
+                    for(int i = 0 ; i < reader.FieldCount ; i ++)
                     {
-                        Id              = reader.GetInt32(0),
-                        Time            = reader.GetDateTime(1),
-                        Port            = reader.GetString(2),
-                        Addr            = reader.GetInt32(3),
-                        SerialNumber    = reader.IsDBNull(4) ? null : reader.GetString(4),
-                        CommandName     = reader.GetString(5),
-                        Event           = reader.IsDBNull(6) ? null : reader.GetString(6),
-                        TriggerState    = reader.GetString(7)
-                    });
+                        string colName = reader.GetName(i);
+                        object colValue = reader.IsDBNull(i) ? null : reader.GetValue(i);
+                        row[colName] = colValue;
+                    }
+                    list.Add(row);
                 }
                 AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetEventLog_WHERE_Time] SQL Data Composition success", AppLogLevel.Trace);
                 
@@ -310,7 +315,7 @@ namespace demoVer.Services
         }
 
         //EventLog照篩選過的 Id 降序排列 (翻頁使用)
-        public async Task<List<EventLog_Item>?> GetEvetLog_WHERE_Id(string direction, long? startId, long? endId, int recordNum, CancellationToken ct = default)
+        public async Task<List<Dictionary<string, object>>?> GetEvetLog_WHERE_Id(string direction, long? startId, long? endId, int recordNum, CancellationToken ct = default)
         {
             //輸入參數檢查
             if(string.IsNullOrEmpty(direction))
@@ -350,7 +355,7 @@ namespace demoVer.Services
             //嘗試撈資料
             try
             {
-                var list = new List<EventLog_Item>();
+                var list = new List<Dictionary<string, object>>();
                 
 
                 //1. SQL 連線
@@ -384,17 +389,15 @@ namespace demoVer.Services
                 //4. 組合資料
                 while(await reader.ReadAsync(ct))
                 {
-                    list.Add(new EventLog_Item
+                    var row = new Dictionary<string, object>();
+
+                    for(int i = 0 ; i < reader.FieldCount ; i ++)
                     {
-                        Id              = reader.GetInt32(0),
-                        Time            = reader.GetDateTime(1),
-                        Port            = reader.GetString(2),
-                        Addr            = reader.GetInt32(3),
-                        SerialNumber    = reader.IsDBNull(4) ? null : reader.GetString(4),
-                        CommandName     = reader.GetString(5),
-                        Event           = reader.IsDBNull(6) ? null : reader.GetString(6),
-                        TriggerState    = reader.GetString(7)
-                    });
+                        string colName = reader.GetName(i);
+                        object colValue = reader.IsDBNull(i) ? null : reader.GetValue(i);
+                        row[colName] = colValue;
+                    }
+                    list.Add(row);
                 }
                 AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetEvetLog_WHERE_Id] SQL Data Composition success", AppLogLevel.Trace);
                 
@@ -413,7 +416,7 @@ namespace demoVer.Services
         }
 
         //DataLog照篩選過的 時間 降序排列
-        public async Task<List<DataLog_Item>?> GetDataLog_WHERE_Time(string targetTable, DateTime? startTime, DateTime? endTime, int recordNum, CancellationToken ct = default)
+        public async Task<List<Dictionary<string, object>>?> GetDataLog_WHERE_Time(string targetTable, DateTime? startTime, DateTime? endTime, int recordNum, CancellationToken ct = default)
         {
             //輸入參數檢查
             if(startTime == DateTime.MinValue)
@@ -447,7 +450,7 @@ namespace demoVer.Services
 
             try
             {
-                var list = new List<DataLog_Item>();
+                var list = new List<Dictionary<string, object>>();
 
                  //1. SQL 連線
                 await using var conn = new NpgsqlConnection(_connectionString);
@@ -506,27 +509,15 @@ namespace demoVer.Services
                 // }
                 while(await reader.ReadAsync(ct))
                 {
-                    list.Add(new DataLog_Item
+                    var row = new Dictionary<string, object>();
+
+                    for(int i = 0 ; i < reader.FieldCount ; i ++)
                     {
-                        Id                  = reader.GetInt64(reader.GetOrdinal("id")),             // long
-                        Timestamp           = reader.IsDBNull(reader.GetOrdinal("timestamp")) ? (DateTime?)null : reader.GetDateTime(reader.GetOrdinal("timestamp")),          // DateTime
-                        Port                = reader.IsDBNull(reader.GetOrdinal("port")) ? (string?)null : reader.GetString(reader.GetOrdinal("port")),            // string
-                        device_addr         = reader.IsDBNull(reader.GetOrdinal("device_addr")) ? null : reader.GetInt32(reader.GetOrdinal("device_addr")),             // int
-                        READ_VIN            = reader.IsDBNull(reader.GetOrdinal("READ_VIN")) ? (decimal?)null : reader.GetDecimal(reader.GetOrdinal("READ_VIN")),           // decimal
-                        READ_IIN            = reader.IsDBNull(reader.GetOrdinal("READ_IIN")) ? (decimal?)null : reader.GetDecimal(reader.GetOrdinal("READ_IIN")),
-                        READ_TEMPERATURE_1  = reader.IsDBNull(reader.GetOrdinal("READ_TEMPERATURE_1")) ? (decimal?)null : reader.GetDecimal(reader.GetOrdinal("READ_TEMPERATURE_1")),
-                        READ_FAN_SPEED_1    = reader.IsDBNull(reader.GetOrdinal("READ_FAN_SPEED_1")) ? (decimal?)null : reader.GetDecimal(reader.GetOrdinal("READ_FAN_SPEED_1")),
-                        READ_FAN_SPEED_2    = reader.IsDBNull(reader.GetOrdinal("READ_FAN_SPEED_2")) ? (decimal?)null : reader.GetDecimal(reader.GetOrdinal("READ_FAN_SPEED_2")),
-                        READ_AC_VOUT        = reader.IsDBNull(reader.GetOrdinal("READ_AC_VOUT")) ? (decimal?)null : reader.GetDecimal(reader.GetOrdinal("READ_AC_VOUT")),
-                        READ_OP_WATT        = reader.IsDBNull(reader.GetOrdinal("READ_OP_WATT")) ? null : reader.GetDecimal(reader.GetOrdinal("READ_OP_WATT")),
-                        READ_VBAT           = reader.IsDBNull(reader.GetOrdinal("READ_VBAT")) ? null : reader.GetDecimal(reader.GetOrdinal("READ_VBAT")),
-                        READ_CHG_CURR       = reader.IsDBNull(reader.GetOrdinal("READ_CHG_CURR")) ? (decimal?)null : reader.GetDecimal(reader.GetOrdinal("READ_CHG_CURR")),
-                        READ_AC_IOUT        = reader.IsDBNull(reader.GetOrdinal("READ_AC_IOUT")) ? (decimal?)null : reader.GetDecimal(reader.GetOrdinal("READ_AC_IOUT")),
-                        MFR_MODEL           = reader.IsDBNull(reader.GetOrdinal("MFR_MODEL")) ? (string?)null : reader.GetString(reader.GetOrdinal("MFR_MODEL")),           // string
-                        MFR_SERIAL          = reader.IsDBNull(reader.GetOrdinal("MFR_SERIAL")) ? (string?)null : reader.GetString(reader.GetOrdinal("MFR_SERIAL")),
-                        INV_STATUS          = reader.IsDBNull(reader.GetOrdinal("INV_STATUS")) ? (string?)null : reader.GetString(reader.GetOrdinal("INV_STATUS")),
-                        INV_FAULT           = reader.IsDBNull(reader.GetOrdinal("INV_FAULT")) ? (string?)null : reader.GetString(reader.GetOrdinal("INV_FAULT"))
-                    });
+                        string colName = reader.GetName(i);
+                        object colValue = reader.IsDBNull(i) ? null : reader.GetValue(i);
+                        row[colName] = colValue;
+                    }
+                    list.Add(row);
                 }
                 AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetDataLog_WHERE_Time] SQL Data Composition success", AppLogLevel.Trace);
 
@@ -543,7 +534,7 @@ namespace demoVer.Services
             }   
         }
         
-        public async Task<List<DataLog_Item>?> GetDataLog_WHERE_Id(string targetTable, string direction, long? startId, long? endId, int recordNum, CancellationToken ct = default)
+        public async Task<List<Dictionary<string, object>>?> GetDataLog_WHERE_Id(string targetTable, string direction, long? startId, long? endId, int recordNum, CancellationToken ct = default)
         {
             //輸入參數檢查
             if(string.IsNullOrEmpty(direction))
@@ -588,7 +579,7 @@ namespace demoVer.Services
             //嘗試撈資料
             try
             {
-                var list = new List<DataLog_Item>();
+                var list = new List<Dictionary<string, object>>();
                 
 
                 //1. SQL 連線
@@ -624,27 +615,15 @@ namespace demoVer.Services
                 //4. 組合資料
                 while(await reader.ReadAsync(ct))
                 {
-                    list.Add(new DataLog_Item
+                    var row = new Dictionary<string, object>();
+
+                    for(int i = 0 ; i < reader.FieldCount ; i ++)
                     {
-                        Id                  = reader.GetInt64(reader.GetOrdinal("id")),             // long
-                        Timestamp           = reader.IsDBNull(reader.GetOrdinal("timestamp")) ? (DateTime?)null : reader.GetDateTime(reader.GetOrdinal("timestamp")),          // DateTime
-                        Port                = reader.IsDBNull(reader.GetOrdinal("port")) ? (string?)null : reader.GetString(reader.GetOrdinal("port")),            // string
-                        device_addr         = reader.IsDBNull(reader.GetOrdinal("device_addr")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("device_addr")),             // int
-                        READ_VIN            = reader.IsDBNull(reader.GetOrdinal("READ_VIN")) ? (decimal?)null : reader.GetDecimal(reader.GetOrdinal("READ_VIN")),           // decimal
-                        READ_IIN            = reader.IsDBNull(reader.GetOrdinal("READ_IIN")) ? (decimal?)null : reader.GetDecimal(reader.GetOrdinal("READ_IIN")),
-                        READ_TEMPERATURE_1  = reader.IsDBNull(reader.GetOrdinal("READ_TEMPERATURE_1")) ? (decimal?)null : reader.GetDecimal(reader.GetOrdinal("READ_TEMPERATURE_1")),
-                        READ_FAN_SPEED_1    = reader.IsDBNull(reader.GetOrdinal("READ_FAN_SPEED_1")) ? (decimal?)null : reader.GetDecimal(reader.GetOrdinal("READ_FAN_SPEED_1")),
-                        READ_FAN_SPEED_2    = reader.IsDBNull(reader.GetOrdinal("READ_FAN_SPEED_2")) ? (decimal?)null : reader.GetDecimal(reader.GetOrdinal("READ_FAN_SPEED_2")),
-                        READ_AC_VOUT        = reader.IsDBNull(reader.GetOrdinal("READ_AC_VOUT")) ? (decimal?)null : reader.GetDecimal(reader.GetOrdinal("READ_AC_VOUT")),
-                        READ_OP_WATT        = reader.IsDBNull(reader.GetOrdinal("READ_OP_WATT")) ? (decimal?)null : reader.GetDecimal(reader.GetOrdinal("READ_OP_WATT")),
-                        READ_VBAT           = reader.IsDBNull(reader.GetOrdinal("READ_VBAT")) ? (decimal?)null : reader.GetDecimal(reader.GetOrdinal("READ_VBAT")),
-                        READ_CHG_CURR       = reader.IsDBNull(reader.GetOrdinal("READ_CHG_CURR")) ? (decimal?)null : reader.GetDecimal(reader.GetOrdinal("READ_CHG_CURR")),
-                        READ_AC_IOUT        = reader.IsDBNull(reader.GetOrdinal("READ_AC_IOUT")) ? (decimal?)null : reader.GetDecimal(reader.GetOrdinal("READ_AC_IOUT")),
-                        MFR_MODEL           = reader.IsDBNull(reader.GetOrdinal("MFR_MODEL")) ? (string?)null : reader.GetString(reader.GetOrdinal("MFR_MODEL")),           // string
-                        MFR_SERIAL          = reader.IsDBNull(reader.GetOrdinal("MFR_SERIAL")) ? (string?)null : reader.GetString(reader.GetOrdinal("MFR_SERIAL")),
-                        INV_STATUS          = reader.IsDBNull(reader.GetOrdinal("INV_STATUS")) ? (string?)null : reader.GetString(reader.GetOrdinal("INV_STATUS")),
-                        INV_FAULT           = reader.IsDBNull(reader.GetOrdinal("INV_FAULT")) ? (string?)null : reader.GetString(reader.GetOrdinal("INV_FAULT"))
-                    });
+                        string colName = reader.GetName(i);
+                        object colValue = reader.IsDBNull(i) ? null : reader.GetValue(i);
+                        row[colName] = colValue;
+                    }
+                    list.Add(row);
                 }
                 AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetDataLog_WHERE_Id] SQL Data Composition success", AppLogLevel.Trace);
                 

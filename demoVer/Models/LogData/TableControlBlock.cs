@@ -2,6 +2,7 @@ namespace demoVer.Models
 {
     public class TableControlBlock
     {
+        public string? TableName {get; set;} = string.Empty;
         public int nowTablePage {get; set;} = 1;
         public int nowQueryRecordsNum {get; set;} = 0;
         public int nowTotalPages {get; set;} = 0;
