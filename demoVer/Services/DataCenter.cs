@@ -169,6 +169,10 @@ namespace demoVer.Services
             Console.WriteLine($"Application Path : ${basePath}");
         }
 
+        public string get_basePath()
+        {
+            return basePath;
+        }
 
         public bool read_OldMdlName_FromJson()
         {   
