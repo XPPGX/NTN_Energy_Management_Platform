@@ -22,7 +22,7 @@
             <h3>匯出中...</h3>
             <progress value="@exportProgress" max="100"></progress>
             <div>@exportProgress %</div>
-            <button class="btn btn-cancel" @onclick="CancelExport">取消</button>
+            <button class="btn" @onclick="CancelExport">取消</button>
         </div>
     </div>
 }
@@ -112,8 +112,8 @@
                 @if (currentStep == Btn)
                 {
                     <div class="button-row">
-                        <button class="btn btn-search" @onclick="searchClick" @onclick:stopPropagation="true">查詢</button>
-                        <button class="btn btn-export" @onclick="exportClick" @onclick:stopPropagation="true">匯出</button>
+                        <button class="btn btn-blue" @onclick="searchClick" @onclick:stopPropagation="true">查詢</button>
+                        <button class="btn btn-red" @onclick="exportClick" @onclick:stopPropagation="true">匯出</button>
                     </div>
                 }
                 else
@@ -134,7 +134,7 @@
                 <span>@($"總頁數: {TCB.nowTotalPages}")</span>
             </div>
             <div>
-                <button class="btn btn-columns" @onclick="ToggleColumnChooser">⚙ 顯示欄位</button>
+                <button class="btn btn-blue" @onclick="ToggleColumnChooser">⚙ 顯示欄位</button>
             </div>
         </div>
 
@@ -154,7 +154,7 @@
                             @col
                         </label>
                     }
-                    <button class="btn btn-close" @onclick="ToggleColumnChooser">關閉</button>
+                    <button class="btn btn-bubble-red" @onclick="ToggleColumnChooser">關閉</button>
                 </div>
             </div>
         }
@@ -165,13 +165,13 @@
             <div class="column-chooser">
                 @foreach (var col in allColumns)
                 {
-                    <label class="multi-option">
+                    <div class="multi-option">
                         <input type="checkbox"
                             value="@col"
                             checked="@visibleColumns.Contains(col)"
                             @onchange="e => OnColumnToggle(col, e)" />
-                        @col
-                    </label>
+                        <div>@col</div>
+                    </div>
                 }
             </div>
         }
@@ -202,10 +202,10 @@
             </table>
             <!-- 📑 翻頁控制區 -->
             <div class="pagination-container">
-                <button class="btn-page" @onclick="turnToPreviousPage">⟨ 上一頁</button>
+                <button class="btn btn-blue no-flex" @onclick="turnToPreviousPage">⟨ 上一頁</button>
                 <span class="page-info">第 <input type="number" min="1" class="page-input" @bind="UI_PageNum"
                     @onkeyup="OnKeyUp" @onfocus="() => PageInputFocus()" @onblur="() => PageInputBlur()"/> 頁</span>
-                <button class="btn-page" @onclick="turnToNextPage">下一頁 ⟩</button>
+                <button class="btn btn-blue no-flex" @onclick="turnToNextPage">下一頁 ⟩</button>
             </div>
         }
 
@@ -228,10 +228,10 @@
             </div>
             <!-- 📑 翻頁控制區  -->
             <div class="pagination-container">
-                <button class="btn-page" @onclick="turnToPreviousPage">⟨</button>
+                <button class="btn btn-blue no-flex" @onclick="turnToPreviousPage">⟨</button>
                 <span class="page-info">第 <input type="number" min="1" class="page-input" @bind="UI_PageNum" 
                     @onkeyup="OnKeyUp" @onfocus="() => PageInputFocus()" @onblur="() => PageInputBlur()"/> 頁</span>
-                <button class="btn-page" @onclick="turnToNextPage">⟩</button>
+                <button class="btn btn-blue no-flex" @onclick="turnToNextPage">⟩</button>
             </div>
         }
 

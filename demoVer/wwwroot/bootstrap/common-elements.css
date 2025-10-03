@@ -1,0 +1,221 @@
+/********** stretch **********/
+.no-flex
+{
+    flex:0 0 auto !important;
+    display: inline-flex !important;
+}
+
+/********** Button **********/
+/*
+[Usage]
+
+<button class="btn btn-blue">@Var1_Text</button>
+
+<button class="btn btn-blue no-flex">@Var1_Text</button>
+*/
+.btn
+{
+    flex: 1;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+    border: none;
+}
+.btn-blue
+{
+    background: #1f1f1f;
+    color: #00eeff;
+    border: 1px solid #00eaff;
+}
+.btn-blue:hover
+{
+    background: #00eaff33;
+    box-shadow: 0 0 10px #00eaffaa;
+}
+
+.btn-red
+{
+    background: #121212;
+    color: #ff4d4d;
+    border: 1px solid #ff4d4d;
+}
+.btn-red:hover
+{
+    background: #ff4d4d33;
+    box-shadow: 0 0 8px #ff4d4daa;
+}
+
+.btn-bubble-red
+{
+    background: #ff3333;
+    color: white;
+}
+.btn-bubble-red:hover
+{
+    background: #ff1a1a;
+}
+
+/********** multi-option **********/
+/*
+[Usage]
+
+<div class="column-chooser">
+    @foreach (var Var1_Text in SelectionSet)
+    {
+        <div class="multi-option">
+            <input type="checkbox"
+                value="@Var1_Text"
+                checked="@Var2_Bool"
+                @onchange="e => OnToggle(Var1_Text, e)" />
+            <div>@Var1_Text</div>
+        </div>
+    }
+</div>
+*/
+.column-chooser {
+    background: #1f1f1f;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.multi-option {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #eee;
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: background 0.3s;
+}
+
+.multi-option:hover {
+    background: #2a2a2a;
+}
+
+.multi-option input[type="checkbox"] {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 1px solid #777;
+    border-radius: 4px;
+    margin-right: 8px;
+    background: #111;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.multi-option input[type="checkbox"]:checked {
+    background: #00eaff;
+    border-color: #00eaff;
+}
+
+/********** table (on computer) **********/
+/*
+[Usage]
+
+<table class="custom-table">
+    <thead>
+        <tr>
+            @foreach (var col in Columns)
+            {
+                <th>@col</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var row in records)
+        {
+            <tr>
+                @foreach (var col in columns)
+                {
+                    <td>@row[col]</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+*/
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #121212;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.8);
+}
+.custom-table th, .custom-table td {
+    border: 1px solid #444;
+    padding: 10px;
+    text-align: center;
+    color: #e0e0e0;
+}
+.custom-table th {
+    background: #1c1c1c;
+    font-weight: bold;
+    color: #00eaff;
+}
+.custom-table td {
+    color: #f5f5f5;
+}
+.custom-table tr:nth-child(even) {
+    background: #181818;
+}
+
+/********** table (Mobile) **********/
+/*
+[Usage] 
+
+<div class="card-table">
+    @foreach (var row in Records)
+    {
+        <div class="card-row">
+            @foreach (var col in Columns)
+            {
+                <div class="card-item">
+                    <span class="card-label">@col</span>
+                    <span class="card-value">@row[col]</span>
+                </div>
+            }
+        </div>
+    }
+</div>
+*/
+.card-table {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.card-row {
+    background: #121212;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 10px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.8);
+}
+.card-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid #333;
+}
+.card-item:last-child {
+    border-bottom: none;
+}
+.card-label {
+    color: #00eaff;
+    font-weight: bold;
+}
+.card-value {
+    color: #fafafa;
+}
+

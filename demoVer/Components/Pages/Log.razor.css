@@ -117,7 +117,7 @@ input:focus {
     gap: 10px;
     margin-top: 10px;
 }
-.btn {
+/* .btn {
     flex: 1;
     padding: 12px;
     border-radius: 6px;
@@ -125,8 +125,8 @@ input:focus {
     cursor: pointer;
     transition: 0.3s;
     border: none;
-}
-.btn-search {
+} */
+/* .btn-search {
     background: #1f1f1f;
     color: #00eaff;
     border: 1px solid #00eaff;
@@ -143,7 +143,7 @@ input:focus {
 .btn-export:hover {
     background: #ff4d4d33;
     box-shadow: 0 0 8px #ff4d4daa;
-}
+} */
 
 .dateCol {
     display: flex;
@@ -201,7 +201,7 @@ input:focus {
   
 /* 共用基礎樣式 */
 
-.multi-option {
+/* .multi-option {
     display: flex;
     align-items: center;
     cursor: pointer;
@@ -231,7 +231,7 @@ input:focus {
 .multi-option input[type="checkbox"]:checked {
     background: #00eaff;
     border-color: #00eaff;
-}
+} */
   
 .table-header {
     display: flex;
@@ -240,7 +240,7 @@ input:focus {
     margin-bottom: 10px;
 }
 
-.btn-columns {
+/* .btn-columns {
     background: #1f1f1f;
     color: #00eaff;
     border: 1px solid #00eaff66;
@@ -249,14 +249,15 @@ input:focus {
     cursor: pointer;
     transition: 0.3s;
 
-    min-width: 20%;              /* 預設佔 20%，但可被文字撐大 */
+    min-width: 20%;              
 }
 .btn-columns:hover {
     background: #00eaff22;
     box-shadow: 0 0 8px #00eaff66;
 }
+*/
 
-.column-chooser {
+/* .column-chooser {
     background: #1f1f1f;
     border: 1px solid #444;
     border-radius: 6px;
@@ -265,10 +266,10 @@ input:focus {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-}
+} */
 
 /* 表格樣式 */
-.custom-table {
+/* .custom-table {
     width: 100%;
     border-collapse: collapse;
     background: #121212;
@@ -292,10 +293,10 @@ input:focus {
 }
 .custom-table tr:nth-child(even) {
     background: #181818;
-}
+} */
 
 /* 📱 手機卡片模式 */
-.card-table {
+/* .card-table {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -322,7 +323,7 @@ input:focus {
 }
 .card-value {
     color: #fafafa;
-}
+} */
 
 /* 📱 手機專用 Modal */
 .column-chooser-modal {
@@ -346,7 +347,7 @@ input:focus {
     max-height: 80%;
     overflow-y: auto;
 }
-.btn-close {
+/* .btn-close {
     margin-top: 15px;
     background: #ff3333;
     color: white;
@@ -358,7 +359,7 @@ input:focus {
 }
 .btn-close:hover {
     background: #ff1a1a;
-}
+} */
 
 .step-inner {
     display: flex;
@@ -381,7 +382,7 @@ input:focus {
     z-index: 50;        /* 確保不被其他東西壓住 */
 }
 
-.btn-page {
+/* .btn-page {
     background: #1f1f1f;
     color: #00eaff;
     border: 1px solid #00eaff66;
@@ -393,7 +394,7 @@ input:focus {
 .btn-page:hover {
     background: #00eaff22;
     box-shadow: 0 0 6px #00eaff66;
-}
+} */
 
 .page-info {
     color: #eee;
