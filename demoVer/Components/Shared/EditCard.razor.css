@@ -72,6 +72,10 @@ table.table th {
     text-align: center;
 }
 
+.custom-table td {
+    height: 36px;
+}
+
 table.table input {
     width: 100%;   /* 讓 input 自動填滿欄位但不超出 */
     box-sizing: border-box; /* 內距也計算在 width 裡 */
@@ -200,6 +204,14 @@ table.table input {
     justify-content: center;
     align-items: center;
     gap: 20px;
+}
+
+.long-press-row {
+    user-select: none;         /* 禁止選取文字 */
+    -webkit-user-select: none; /* Safari / iOS */
+    -moz-user-select: none;    /* Firefox */
+    -ms-user-select: none;     /* 舊版 Edge */
+    touch-action: manipulation; /* 禁止預設手勢行為（如雙擊縮放） */
 }
 
 @keyframes ripple {

@@ -292,19 +292,16 @@ edit-container是用來綁以下javascript事件的 id :
                     </table>
                 </div>
                 <div class="confirm-cancel-container">
-                    <MudButton OnClick="AddRow_ValueAndCmd"
-                            Variant="Variant.Filled"
-                            Color="Color.Primary"
-                            StartIcon="@Icons.Material.Filled.Add"
-                            Style="width: 120px;">
+                    <button class="btn btn-green no-flex" style="width: 120px;"
+                            type="button"
+                            @onclick="AddRow_ValueAndCmd">
                         新增
-                    </MudButton>
-                    <MudButton OnClick="confirm_INFO_DataFormats_Setting"
-                                Variant="Variant.Filled"
-                                Color="Color.Success"
-                                Style="width: 120px;">
+                    </button>
+                    <button class="btn btn-primary no-flex" style="width: 120px;"
+                            type="button"
+                            @onclick="confirm_INFO_DataFormats_Setting">
                         確認
-                    </MudButton>
+                    </button>
                 </div>
                 break;
             default:
@@ -339,90 +336,10 @@ edit-container是用來綁以下javascript事件的 id :
         }
         switch(CHART_setting_stage)
         {
-            @* case CHART_SETTING_STAGE.OVERVIEW:
-                <MudPaper Class="pa-4">
-                    <MudText Typo="Typo.h6">曲線清單</MudText>
-
-                    <MudTable Items="_curves" Hover="true" Bordered="true" Dense="true" Breakpoint="Breakpoint.None">
-                        <HeaderContent>
-                            <MudTh>設備 Address</MudTh>
-                            <MudTh>命令 CMD</MudTh>
-                            <MudTh>曲線標題</MudTh>
-                            <MudTh>位置</MudTh>
-                            <MudTh>顏色</MudTh>
-                            <MudTh>操作</MudTh>
-                        </HeaderContent>
-                        <RowTemplate>
-                            <MudTd DataLabel="Address">@context.Address</MudTd>
-                            <MudTd DataLabel="CMD">@context.Cmd</MudTd>
-                            <MudTd DataLabel="Title">@context.Title</MudTd>
-                            <MudTd DataLabel="Axis">@(context.Axis == "Left" ? "左軸" : "右軸")</MudTd>
-                            <MudTd DataLabel="Color">
-                                <MudAvatar Size="Size.Small" Style="@($"background-color:{context.Color}; border:1px solid #ccc;")" />
-                            </MudTd>
-                            <MudTd>
-                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" OnClick="() => EditCurve(context)" />
-                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="() => DeleteCurve(context)" />
-                            </MudTd>
-                        </RowTemplate>
-                    </MudTable>
-
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Class="mt-2">
-                        新增曲線
-                    </MudButton>
-                </MudPaper>
-                break; *@
             case CHART_SETTING_STAGE.SELECT_MACHINE_CMD:
                 <div class="chart-machine-cmd-setting">
                     <h3>選擇設備與命令</h3>
                     <div class="chartForm">
-                        @* 原本的 MudStepper 寫法，暫時保留方便回溯 *@
-                        @*
-                        <MudPaper Class="responsive-paper">
-                            <MudStepper Vertical ShowResetButton="false" OnPreviewInteraction="OnPreviewInteraction" NonLinear="false"
-                                OnFinished="GoToDisplaySetting">
-                                <ChildContent>  
-                                    <MudStep Title="Select Machine" HasError="@(blank_singleDataLine.addr == 9999)">
-                                        <div class="custom-select-wrapper">
-                                            <label for="machineSelect">Machine</label>
-                                            <select id="machineSelect" class="custom-select" @onchange="@(e => MachineChanged(e))">
-                                                <option value="9999">請選擇一個機器</option>
-                                                @foreach (var (addr, mdlName) in deviceAddr_List)
-                                                {
-                                                    <option value="@addr">[@addr]: @mdlName</option>
-                                                }
-                                            </select>
-                                        </div>
-                                    </MudStep>
-                                    <MudStep Title="Select Cmd" HasError="@(string.IsNullOrEmpty(blank_singleDataLine.Cmd))">                    
-                                        @if(blank_singleDataLine.addr < 256 && show_cmd_unit_Dict_ref?.Any() == true)
-                                        {
-                                            <div class="custom-select-wrapper">
-                                                <label for="cmdSelect">CMD</label>
-                                                <select id="cmdSelect" class="custom-select" @onchange="@(e => ChartCmdChanged(e))">
-                                                    <option value="">請選擇一個命令</option>
-                                                    @foreach(var (cmd, unit) in show_cmd_unit_Dict_ref)
-                                                    {
-                                                        <option value="@cmd">@cmd</option>
-                                                    }
-                                                </select>
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <MudText Typo="Typo.body2" Color="Color.Secondary">
-                                                請先選擇機器
-                                            </MudText>
-                                        }
-                                    </MudStep>
-                                </ChildContent>
-                                <CompletedContent>
-                                    Machine and CMD selection is done.
-                                </CompletedContent>
-                            </MudStepper>
-                        </MudPaper>
-                        *@
-
                         <div class="chart-selector-panel">
                             <div class="chart-selector-grid">
                                 <div class="custom-select-wrapper">
@@ -1146,7 +1063,7 @@ edit-container是用來綁以下javascript事件的 id :
 
     private void AddRow_ValueAndCmd()
     {
-        if(currentEdit_INFO_DataItem_ref.INFO_DataFormats.Count >= 2)
+        if(currentEdit_INFO_DataItem_ref.INFO_DataFormats.Count >= 1)
         {
             return;
         }

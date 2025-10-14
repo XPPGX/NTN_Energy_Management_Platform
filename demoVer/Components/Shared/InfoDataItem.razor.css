@@ -1,27 +1,119 @@
-.overview-inner-card{
+.overview-inner-card {
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: center;
     width: 100%;
-    height: 60px;
-    gap: 4rem;
-    background-color: #E6F2FF ;
-    border-radius: 8px;
+    min-height: 72px;
+    padding: 5px 10px;
+    gap: clamp(0.75rem, 1.75vw, 1.35rem);
+    border-radius: 10px;
+    background: linear-gradient(135deg, #1d1f24 0%, #111217 100%);
+    border: 1px solid #3c4452;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    color: #d8dde7;
+    font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+    box-sizing: border-box;
+    overflow: hidden;
 }
-.smallIcon{
-    display: flex;
-    align-items: center; /* ✅ 垂直置中 */
-    justify-content: center; /* 可選：水平置中圖片內容 */
+.smallIcon {
+    flex: 0 0 clamp(36px, 5vw, 48px);
     height: 100%;
-    padding-left: 10px;
+    min-height: clamp(36px, 5vw, 48px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 8px;
+    background: radial-gradient(circle at 30% 30%, rgba(120, 135, 150, 0.35), rgba(25, 28, 33, 0.6));
+    border: 1px solid rgba(122, 133, 150, 0.4);
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.08);
+}
+
+.smallIcon img {
+    width: clamp(26px, 3.5vw, 32px);
+    height: clamp(26px, 3.5vw, 32px);
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45));
 }
 .overview-inner-card.rightPart{
     display: flex;
-    flex-direction: column;
+    flex-direction: column;     
     gap: 2px;
+    padding: 0px;
+    flex: 0 1 auto;        /* ✅ 不主動撐開父容器 */
+    min-width: 0;          /* ✅ 允許在 flex 中縮小 */
+    max-width: 100%;       /* ✅ 不超過父容器 */
+    overflow: hidden;      /* ✅ 若內部太多內容就截斷 */
 }
-.overview-inner-card.valueBlock{
+.overview-inner-card.valueBlock {
     display: flex;
-    flex-direction: row;
-    gap: 2px;
+    flex-direction: column;
+    gap: clamp(6px, 1.2vw, 10px);
+    padding: clamp(8px, 1.6vw, 12px);
+    border-radius: 6px;
+    background: linear-gradient(90deg, rgba(48, 54, 63, 0.55) 0%, rgba(37, 41, 48, 0.6) 100%);
+    border: 1px solid rgba(92, 102, 118, 0.4);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    width: 100%;
+    box-sizing: border-box;
+    
+    flex: 0 1 auto;        /* ✅ 不會自動放大父容器 */
+    min-width: 0;          /* ✅ 允許縮小 */
+    max-width: 100%;       /* ✅ 不超出父層寬度 */
+    overflow: hidden;      /* ✅ 隱藏溢出內容 */
+}
+
+.valueBlock-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: clamp(6px, 1vw, 12px);
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+.value-name {
+    font-weight: 600;
+    color: #f0f3f9;
+    text-shadow: 0 0 6px rgba(96, 182, 255, 0.25);
+    flex: 1 1 auto;
+    min-width: 120px;
+}
+
+.value-label {
+    color: #9fb4c8;
+    font-size: clamp(0.8rem, 1.1vw, 0.9rem);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    margin-left: auto;
+
+    flex-shrink: 1;           /* ✅ 允許縮小 */
+    min-width: 0;             /* ✅ 關鍵：允許收縮到比內容小 */
+    overflow: hidden;         /* 可選：避免爆版 */
+    text-overflow: ellipsis;  /* 可選：顯示 ... */
+    white-space: nowrap;
+}
+
+.valueBlock-body {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    width: 100%;
+    gap: clamp(8px, 1.5vw, 14px);
+}
+
+.value-value {
+    font-weight: 700;
+    font-size: clamp(0.8rem, 1.4vw, 1rem);
+    color: #f7f9fc;
+    min-width: 60px;
+}
+
+.value-unit {
+    color: #8aa7c0;
+    font-size: clamp(1rem, 1.2vw, 1rem);
+    letter-spacing: 0.05em;
+    white-space: nowrap;
 }

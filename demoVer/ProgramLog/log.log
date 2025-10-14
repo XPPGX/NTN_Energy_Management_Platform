@@ -175,3 +175,7 @@
    at demoVer.Shared.EditCard.getCMDs()
 [2025-10-14 14:26:29.165] [EditCard][getCMDs] Error : System.NullReferenceException: Object reference not set to an instance of an object.
    at demoVer.Shared.EditCard.getCMDs() in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Components\Shared\EditCard.razor:line 861
+[2025-10-14 14:40:49.781] [EditCard][getCMDs] Error : System.NullReferenceException: Object reference not set to an instance of an object.
+   at demoVer.Shared.EditCard.getCMDs() in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Components\Shared\EditCard.razor:line 861
+[2025-10-14 16:43:22.530] [EditCard][getCMDs] Error : System.NullReferenceException: Object reference not set to an instance of an object.
+   at demoVer.Shared.EditCard.getCMDs() in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Components\Shared\EditCard.razor:line 778

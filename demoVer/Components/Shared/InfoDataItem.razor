@@ -2,18 +2,21 @@
 @inherits LayoutComponentBase
 <div class="overview-inner-card">
     <div class="smallIcon">
-        <img src="@IconPath" style="width:48px; height:48px" />
+        <img src="@IconPath"/>
     </div>
     <div class="overview-inner-card rightPart">
         @foreach(var cell in Cells)
         {
             @* var ADDR = cell.addr?.ToString() ?? ""; *@
-            <div class="overview-inner-card valueBlock">
-                <div>@cell.UserSettingName</div>
-                <div>@cell.Label</div>
-                <div>:</div>
-                <div>@(cell.Value ?? "--")</div> 
-                <div>@cell.Unit</div>
+             <div class="overview-inner-card valueBlock">
+                <div class="valueBlock-header">
+                    <span class="value-name">@cell.UserSettingName</span>
+                    <span class="value-label">@cell.Label</span>
+                </div>
+                <div class="valueBlock-body">
+                    <span class="value-value">@(cell.Value ?? "--")</span>
+                    <span class="value-unit">@cell.Unit</span>
+                </div>
             </div>
         }
     </div>

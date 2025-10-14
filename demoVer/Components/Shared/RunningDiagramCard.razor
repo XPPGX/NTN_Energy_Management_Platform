@@ -7,21 +7,19 @@
 <div class="running-diagram-container @CssClass" @attributes="AdditionalAttributes">
     <div class="running-diagram-container top">
         <div class="leftPart">
-            
-        </div>
-        <div class="rightPart">
             運行模式：
             <div id="running_mode">@local_INV_MODE_str</div>
         </div>
+        <div class="rightPart">
+            
+        </div>
         @if(showEditButton)
         {
-            <MudButton Variant="Variant.Text"
-                    Style="position: absolute; top: 4px; right: 4px; padding: 4px 8px; font-size: 16px; z-index: 999;"
-                    OnClick="openEditMenu"
-                    Class="custom-top-right-button"
-                    Color="Color.Default">
+            <button type="button"
+                    class="top-right-button"
+                    @onclick="openEditMenu">
                 <MudIcon Icon="@Icons.Material.Filled.MoreHoriz" />
-            </MudButton>
+            </button>
         }
     </div>
     <div class="running-diagram-container bottom">
@@ -214,12 +212,12 @@
     private async Task Sys_INV_Mode_Change_Task()
     {
         local_INV_MODE_str = globalVar.INV_Status_translator();
-        InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
 
     private void OnArrowTick()
     {
-        InvokeAsync(StateHasChanged);
+        _ = InvokeAsync(StateHasChanged);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -263,7 +261,7 @@
 
     protected System.Threading.Timer? timer;
 
-    [Inject] protected IJSRuntime JS {get; set; } = default;
+    [Inject] protected IJSRuntime JS {get; set; } = default!;
 
     // DomRect 物件用來接 JS 回傳的資料
     protected class DomRect
