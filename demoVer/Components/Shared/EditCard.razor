@@ -68,7 +68,7 @@ edit-container是用來綁以下javascript事件的 id :
                 </div>
                 <br>
                 @* <div class="underline"></div> *@
-                <table class="table no-text-select" id="table-settingInfoDataItem">
+                <table class="custom-table" id="table-settingInfoDataItem">
                     <thead>
                         <tr>
                             <th>圖示</th>
@@ -87,7 +87,7 @@ edit-container是用來綁以下javascript事件的 id :
                                         <img src=@iconPath alt="waitImg"/>
                                     </button>
                                 </td>
-                                <td class="basic-td long-press-row" data-table="table-settingInfoDataItem" data-index="@i">
+                                <td class="long-press-row" data-table="table-settingInfoDataItem" data-index="@i">
                                 @* <td class="clickable-td" @onclick="() => AdjustValueCmdRow(temp)"> *@
                                     @{
                                         string hint = "";
@@ -149,32 +149,32 @@ edit-container是用來綁以下javascript事件的 id :
                 <div class="edit-info-top">
                     <h3>數值與命令設定</h3>
                 </div>
-                <table class="table">
+                <table class="custom-table">
                     <tbody>
                         @if(currentEdit_INFO_DataFormat_ref != null)
                         {
                             <tr>
                                 <th>設備選擇</th>
-                                <td class="clickable-td" @onclick="() => selectMachine()">
+                                <td style="cursor:pointer;" @onclick="() => selectMachine()">
                                     @(string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.MachineName) ? "設定" : currentEdit_INFO_DataFormat_ref.MachineName)
                                 </td>
                             </tr>
                             <tr>
                                 <th>設備名稱</th>
                                 <td>
-                                    <input @bind="currentEdit_INFO_DataFormat_ref.UserSettingName" class="td-input"  style="text-align: center;"/>
+                                    <input @bind="currentEdit_INFO_DataFormat_ref.UserSettingName" style="text-align: center;"/>
                                 </td>
                             </tr>
                             <tr>
                                 <th>命令選擇</th>
-                                <td class="clickable-td" @onclick="() => selectCMD()">
+                                <td style="cursor:pointer;" @onclick="() => selectCMD()">
                                     @(string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Cmd) ? "設定" : currentEdit_INFO_DataFormat_ref.Cmd)
                                 </td>
                             </tr>
                             <tr>
                                 <th>數值名稱</th>
                                 <td>
-                                    <input @bind="currentEdit_INFO_DataFormat_ref.ValueName" class="td-input"  style="text-align: center;"/>
+                                    <input @bind="currentEdit_INFO_DataFormat_ref.ValueName" style="text-align: center;"/>
                                 </td>
                             </tr>
                             <tr>
@@ -235,7 +235,7 @@ edit-container是用來綁以下javascript事件的 id :
             case INFO_SETTING_STAGE.CMD_SELECTION_STAGE:
                 <MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 300px; max-height: 240px; overflow-y: auto;">
                     <MudList T="string" Dense="true" Hover="true">
-                        @foreach (var (cmd, unit) in show_cmd_unit_Dict_ref)
+                        @foreach (var (cmd, unit) in show_cmd_unit_Dict_ref ?? Enumerable.Empty<KeyValuePair<string, string>>())
                         {
                             <MudListItem T="string"
                                         @onclick="() => clickCmd(cmd, unit)"
@@ -270,7 +270,7 @@ edit-container是用來綁以下javascript事件的 id :
             case INFO_SETTING_STAGE.ADD_VALUE_AND_CMD_ROW_STAGE:
                 <div style="max-height: 300px; overflow-y: auto;">
                     <h4>@(isMobile? "長按編輯" : "右鍵編輯")</h4>
-                    <table class="table no-text-select" id="table-settingInfoDataFormat">
+                    <table class="custom-table no-text-select" id="table-settingInfoDataFormat">
                         <thead>
                             <th>數值名稱</th>
                             <th>單位</th>
@@ -280,7 +280,7 @@ edit-container是用來綁以下javascript事件的 id :
                             {
                                 var tempDataFormat = currentEdit_INFO_DataItem_ref.INFO_DataFormats[i];
                                 <tr class="long-press-row" data-table="table-settingInfoDataFormat" data-index="@i">
-                                    <td class="basic-td">
+                                    <td>
                                         @(string.IsNullOrEmpty(tempDataFormat.ValueName) ? "" : tempDataFormat.ValueName)
                                     </td>
                                     <td>
@@ -376,6 +376,8 @@ edit-container是用來綁以下javascript事件的 id :
                 <div class="chart-machine-cmd-setting">
                     <h3>選擇設備與命令</h3>
                     <div class="chartForm">
+                        @* 原本的 MudStepper 寫法，暫時保留方便回溯 *@
+                        @*
                         <MudPaper Class="responsive-paper">
                             <MudStepper Vertical ShowResetButton="false" OnPreviewInteraction="OnPreviewInteraction" NonLinear="false"
                                 OnFinished="GoToDisplaySetting">
@@ -395,18 +397,15 @@ edit-container是用來綁以下javascript事件的 id :
                                     <MudStep Title="Select Cmd" HasError="@(string.IsNullOrEmpty(blank_singleDataLine.Cmd))">                    
                                         @if(blank_singleDataLine.addr < 256 && show_cmd_unit_Dict_ref?.Any() == true)
                                         {
-                                            
                                             <div class="custom-select-wrapper">
                                                 <label for="cmdSelect">CMD</label>
                                                 <select id="cmdSelect" class="custom-select" @onchange="@(e => ChartCmdChanged(e))">
                                                     <option value="">請選擇一個命令</option>
-                                
                                                     @foreach(var (cmd, unit) in show_cmd_unit_Dict_ref)
                                                     {
                                                         <option value="@cmd">@cmd</option>
                                                     }
                                                 </select>
-                                                
                                             </div>
                                         }
                                         else
@@ -422,216 +421,135 @@ edit-container是用來綁以下javascript事件的 id :
                                 </CompletedContent>
                             </MudStepper>
                         </MudPaper>
+                        *@
+
+                        <div class="chart-selector-panel">
+                            <div class="chart-selector-grid">
+                                <div class="custom-select-wrapper">
+                                    <label for="chartMachineSelect" style="color: #ffffff;">Machine</label>
+                                    <select id="chartMachineSelect"
+                                            class="custom-select"
+                                            style="color: #2a2a2a;"
+                                            value="@blank_singleDataLine.addr"
+                                            @onchange="MachineChanged">
+                                        <option value="9999">請選擇一個機器</option>
+                                        @foreach (var (addr, mdlName) in deviceAddr_List)
+                                        {
+                                            <option value="@addr">[@addr]: @mdlName</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="custom-select-wrapper">
+                                    <label for="chartCmdSelect" style="color: #ffffff;">CMD</label>
+                                    <select id="chartCmdSelect"
+                                            class="custom-select"
+                                            style="color: #2a2a2a;"
+                                            value="@blank_singleDataLine.Cmd"
+                                            @onchange="ChartCmdChanged"
+                                            disabled="@(show_cmd_unit_Dict_ref?.Any() != true)">
+                                        <option value="">請選擇一個命令</option>
+                                        @foreach (var (cmd, unit) in show_cmd_unit_Dict_ref ?? Enumerable.Empty<KeyValuePair<string, string>>())
+                                        {
+                                            <option value="@cmd">@cmd</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(chartMachineCmdError))
+                            {
+                                <div class="chart-step-error">@chartMachineCmdError</div>
+                            }
+
+                            <div class="chart-stepper-actions">
+                                <button class="btn btn-primary no-flex"
+                                        type="button"
+                                        @onclick="ProceedToDisplaySetting">
+                                    下一步
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    
                 </div>
                 
                 break;
 
             case CHART_SETTING_STAGE.OVERVIEW:
                 <h5>編輯 : 圖表</h5>
-                <MudTextField T="string" @bind-Value="temp_chartTitle" Label="Y-Title" Required="true" Variant="Variant.Outlined" />
+                <div class="input-container">
+                    <label for="tempChartTitle" class="input-label">圖表標題</label>
+                    <input id="tempChartTitle" type="text" class="input" @bind="temp_chartTitle" required placeholder="輸入圖表標題" />
+                </div>
 
                 @for (int i = 0; i < edit_ChartSetting_Clone.chart_single_data_lines.Count; i++)
                 {   
                     var index = i;
                     var temp = edit_ChartSetting_Clone.chart_single_data_lines[i];
 
-                    <MudPaper Class="pa-3 mb-2" Elevation="1" Style="border-left: 4px solid #1976d2; cursor: pointer"
-                        @onclick="() => OnLineClick(index, temp)">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <MudText Typo="Typo.subtitle2">Line @(index+1)</MudText>
-                            <MudIconButton Icon="@Icons.Material.Filled.Delete" 
-                                Color="Color.Error"
-                                Size="Size.Small"
-                                @onclick="() => DeleteCurve(temp)"/> 
+                    var addr_mdlName_str = $"[{temp.addr}]{temp.mdlName}";
+                    var hint_cmd = temp.status switch
+                    {
+                        SettingStatus.YET => isMobile ? "長按此處編輯" : "右鍵編輯",
+                        SettingStatus.PROGRESS => isMobile ? "未完成:長按此處編輯" : "未完成:右鍵編輯",
+                        SettingStatus.DONE => $"{temp.Cmd}({temp.Unit})",
+                        _ => string.Empty
+                    };
+                    var hint = temp.Y_axis_selection == true
+                        ? $"{edit_ChartSetting_Clone.Y_left_Title}"
+                        : $"{edit_ChartSetting_Clone.Y_right_Title}";
+                    var hint_axis = temp.Y_axis_selection == true ? "左" : "右";
+                    var hint_color = string.IsNullOrEmpty(temp.color) ? "#000000" : temp.color;
+                    <div class="detail-card" @onclick="() => OnLineClick(index, temp)">
+                        <div class="detail-card-header">
+                            <span class="detail-card-title">Line @(index + 1)</span>
+                            <button type="button"
+                                    class="detail-card-action"
+                                    @onclick="() => DeleteCurve(temp)"
+                                    @onclick:stopPropagation="true">
+                                刪除
+                            </button>
                         </div>
-                        
-
-
-                        <MudText Typo="Typo.body2">
-                            @{
-                                
-                                string addr_mdlName_str = "";
-                                addr_mdlName_str = $"[{temp.addr}]{temp.mdlName}";
-                            }
-                            <b>設備 :</b> @(string.IsNullOrEmpty(addr_mdlName_str) ? "未設定" : addr_mdlName_str)
-                        </MudText>
-
-                        <MudText Typo="Typo.body2">
-                            <b>命令 :</b>
-                            @{
-                                string hint_cmd = "";
-                                switch (temp.status)
-                                {
-                                    case SettingStatus.YET:
-                                        hint_cmd = isMobile ? "長按此處編輯" : "右鍵編輯";
-                                        break;
-                                    case SettingStatus.PROGRESS:
-                                        hint_cmd = isMobile ? "未完成:長按此處編輯" : "未完成:右鍵編輯";
-                                        break;
-                                    case SettingStatus.DONE:
-                                        hint_cmd = temp.Cmd + $"({temp.Unit})";
-                                        break;
-                                }
-                            }
-                            @hint_cmd
-                        </MudText>
-
-                        <MudText Typo="Typo.body2">
-                            <b>Y軸標題:</b> 
-                            @{
-                                string hint = "";
-                                if(temp.Y_axis_selection == true){hint = $"{edit_ChartSetting_Clone.Y_left_Title}";}
-                                else if(temp.Y_axis_selection == false){hint = $"{edit_ChartSetting_Clone.Y_right_Title}";}
-                                @* string hint_color = "#000000";
-                                switch (temp.status)
-                                {
-                                    case SettingStatus.YET:
-                                        hint = isMobile ? "長按此處編輯" : "右鍵編輯";
-                                        break;
-                                    case SettingStatus.PROGRESS:
-                                        hint = isMobile ? "未完成:長按此處編輯" : "未完成:右鍵編輯";
-                                        break;
-                                    case SettingStatus.DONE:
-                                        if (temp.Y_axis_selection == true) { hint = $"{edit_ChartSetting_Clone.Y_left_Title}-左"; }
-                                        else if (temp.Y_axis_selection == false) { hint = $"{edit_ChartSetting_Clone.Y_right_Title}-右"; }
-                                        hint_color = temp.color;
-                                        break;
-                                } *@
-                            }
-                            @hint
-                        </MudText>
-                        
-                        <MudText Typo="Typo.body2">
-                            <b>參照軸:</b>
-                            @{
-                                string hint_axis = "";
-                                if(temp.Y_axis_selection == true){hint_axis = "左";}
-                                else if(temp.Y_axis_selection == false){hint_axis = "右";}
-                            }
-                            @hint_axis
-                        </MudText>
-
-                        <MudText Typo="Typo.body2">
-                            <b>顏色:</b>
-                            @{
-                                string hint_color = "#000000";
-                                hint_color = temp.color;
-                            }
-                            <span style="display:inline-block;width:16px;height:16px;margin-left:8px;
-                                        border-radius:4px;background-color:@hint_color;border:1px solid #ccc;">
-                            </span>
-                        </MudText>
-                    </MudPaper>
+                        <div class="detail-card-body">
+                            <div class="detail-card-row">
+                                <span class="detail-card-label">設備 :</span>
+                                <span class="detail-card-value">@(string.IsNullOrEmpty(addr_mdlName_str) ? "未設定" : addr_mdlName_str)</span>
+                            </div>
+                            <div class="detail-card-row">
+                                <span class="detail-card-label">命令 :</span>
+                                <span class="detail-card-value">@hint_cmd</span>
+                            </div>
+                            <div class="detail-card-row">
+                                <span class="detail-card-label">Y軸標題:</span>
+                                <span class="detail-card-value">@hint</span>
+                            </div>
+                            <div class="detail-card-row">
+                                <span class="detail-card-label">參照軸:</span>
+                                <span class="detail-card-value">@hint_axis</span>
+                            </div>
+                            <div class="detail-card-row detail-card-row-color">
+                                <span class="detail-card-label">顏色:</span>
+                                <span class="detail-card-value">
+                                    <span class="detail-card-color" style="background-color:@hint_color;"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 }
 
                 <div class="confirm-cancel-container">
-                    <MudButton Class="no-transform"
-                            OnClick="Add_Curve"
-                            Variant="Variant.Filled"
-                            Color="Color.Primary"
-                            StartIcon="@Icons.Material.Filled.Add"
-                            Style="width: 120px;">
+                    <button class="btn btn-green no-flex" style="width: 120px;"
+                            type="button"
+                            @onclick="Add_Curve">
                         新增
-                    </MudButton>
-                    <MudButton Class="no-transform" 
-                            OnClick="Confirm_CurveSetting"
-                            Variant="Variant.Filled"
-                            Color="Color.Success"
-                            Style="width: 120px;">
+                    </button>
+                    <button class="btn btn-primary no-flex" style="width: 120px;"
+                            type="button"
+                            @onclick="Confirm_CurveSetting">
                         確定
-                    </MudButton>
+                    </button>
                 </div>
 
-                @* <h5>編輯 : 圖表</h5>
-                <MudTextField T="string" @bind-Value="temp_chartTitle" Label="Y-Title" Required="true" Variant="Variant.Outlined"/>
-                <table class="table no-text-select" id="table-ChartSetting">
-                    <thead>
-                        <tr>
-                            <th>命令</th>
-                            <th>Y軸標題-左/右-顏色</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for(int i = 0 ; i < edit_ChartSetting_Clone.chart_single_data_lines.Count ; i ++)
-                        {
-                            var temp = edit_ChartSetting_Clone.chart_single_data_lines[i];
-                            <tr>
-                                <td class="basic-td long-press-row" data-table="table-ChartSetting" data-index="@i">
-                                    @{
-                                        string hint_cmd = "";
-                                        switch(temp.status)
-                                        {
-                                            case SettingStatus.YET:
-                                                if(isMobile){hint_cmd = "長按此處編輯";}
-                                                else{hint_cmd = "右鍵編輯";}
-                                                break;
-                                            case SettingStatus.PROGRESS:
-                                                if(isMobile){hint_cmd = "未完成:長按此處編輯";}
-                                                else{hint_cmd = "未完成:右鍵編輯";}
-                                                break;
-                                            case SettingStatus.DONE:
-                                                hint_cmd = temp.Cmd + $"({temp.Unit})";
-                                                break;
-                                            default:
-                                                hint_cmd = "";
-                                                break;
-                                        }
-                                    }
-                                    @hint_cmd
-                                </td>
-                                <td class="basic-td long-press-row" data-table="table-ChartSetting" data-index="@i">
-                                    @{
-                                        string hint = "";
-                                        string hint_color = "#000000";
-                                        switch(temp.status)
-                                        {
-                                            case SettingStatus.YET:
-                                                if(isMobile){hint = "長按此處編輯";}
-                                                else{hint = "右鍵編輯";}
-                                                break;
-                                            case SettingStatus.PROGRESS:
-                                                if(isMobile){hint = "未完成:長按此處編輯";}
-                                                else{hint = "未完成:右鍵編輯";}
-                                                break;
-                                            case SettingStatus.DONE:
-                                                if(temp.Y_axis_selection == true){hint = $"{edit_ChartSetting_Clone.Y_left_Title}-左";}
-                                                else if(temp.Y_axis_selection == false){hint = $"{edit_ChartSetting_Clone.Y_right_Title}-右";}
-                                                hint_color = temp.color;
-                                                break;
-                                            default:
-                                                hint = "";
-                                                break;
-                                        }
-                                    }
-                                    
-                                    <div class="display-show-setting">
-                                        <span>@hint</span>
-                                        <div style="width: 16px; height: 16px; border-radius: 4px; background-color: @hint_color; border: 1px solid #ccc;"></div>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-                <div class="confirm-cancel-container">
-                    <MudButton Class="no-transform"
-                            OnClick="Add_Curve"
-                            Variant="Variant.Filled"
-                            Color="Color.Primary"
-                            StartIcon="@Icons.Material.Filled.Add"
-                            Style="width: 120px;">
-                        新增
-                    </MudButton>
-                    <MudButton Class="no-transform" 
-                            OnClick="Confirm_CurveSetting"
-                            Variant="Variant.Filled"
-                            Color="Color.Success"
-                            Style="width: 120px;">
-                        確定
-                    </MudButton>
-                </div> *@
                 break;
             case CHART_SETTING_STAGE.DISPLAY_SETTING:
                 <div class="chart-display-setting">
@@ -661,7 +579,7 @@ edit-container是用來綁以下javascript事件的 id :
             case CHART_SETTING_STAGE.SELECT_CMD_STAGE:
                 <MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 200px; max-height: 240px; overflow-y: auto;">
                     <MudList T="string" Dense="true" Hover="true">
-                        @foreach (var item in show_cmd_unit_Dict_ref)
+                        @foreach (var item in show_cmd_unit_Dict_ref ?? Enumerable.Empty<KeyValuePair<string, string>>())
                         {
                             <MudListItem T="string"
                                         @onclick="() => clickCmd_CHART(item.Key)"
@@ -703,7 +621,7 @@ edit-container是用來綁以下javascript事件的 id :
         switch(STATUS_setting_stage)
         {
             case STATUS_SETTING_STAGE.OVERVIEW:
-                <table class="table no-text-select" id="table-linkingStatus">
+                <table class="custom-table no-text-select" id="table-linkingStatus">
                     <colgroup>
                         <col style="width: 20%;">
                         <col style="width: 30%;">
@@ -795,7 +713,7 @@ edit-container是用來綁以下javascript事件的 id :
     private bool isMobile = false;
     private Dictionary<string, string> oneDevice_cmd_unit_Dict = new Dictionary<string, string>();
     private Dictionary<string, string> Summary_cmd_unit_Dict = new Dictionary<string, string>();
-    private Dictionary<string, string> show_cmd_unit_Dict_ref;
+    private Dictionary<string, string>? show_cmd_unit_Dict_ref;
     private JObject cmdDict;
     string Cmd_filePath = "CMD_and_Unit.json";
     private List<string> UnitLists;
@@ -934,14 +852,17 @@ edit-container是用來綁以下javascript事件的 id :
             }
             else if(currentSelected_Addr < 256) //Selecting normal machine addr 0 ~ 255
             {
+                AppLogger.Log_To_File_log(_category, $"[EditCard][getCMDs] currentSelected_Addr = {currentSelected_Addr}", AppLogLevel.Trace);
                 if(oneDevice_cmd_unit_Dict != null)
                 {
                     oneDevice_cmd_unit_Dict.Clear();
                 }
                 oneDevice_cmd_unit_Dict = globalVar.Get_oneDevice_Cmd_unit_Dict(currentSelected_Addr);
+                AppLogger.Log_To_File_log(_category, $"[EditCard][getCMDs] oneDevice_cmd_unit_Dict.Count = {oneDevice_cmd_unit_Dict.Count}", AppLogLevel.Trace);
 
                 show_cmd_unit_Dict_ref = oneDevice_cmd_unit_Dict;
-                
+                AppLogger.Log_To_File_log(_category, $"[EditCard][getCMDs] show_cmd_unit_Dict_ref.Count = {show_cmd_unit_Dict_ref.Count}", AppLogLevel.Trace);
+
                 if(currentEdit_INFO_DataFormat_ref is not null)
                 {
                     AppLogger.Log_To_File_log(_category, $"[EditCard][getCMDs] Select : addr = {currentSelected_Addr}, mdlName = {currentEdit_INFO_DataFormat_ref.MachineName}", AppLogLevel.Trace);
@@ -949,7 +870,7 @@ edit-container是用來綁以下javascript事件的 id :
                 else
                 {
                     AppLogger.Log_To_File_log(_category, $"[EditCard][getCMDs] Select : addr = {currentSelected_Addr}", AppLogLevel.Trace);
-                }
+                } 
             }
             else
             {
@@ -1121,6 +1042,7 @@ edit-container是用來綁以下javascript事件的 id :
                 {
                     case CHART_SETTING_STAGE.OVERVIEW:
                         //reset blank_singleDataLine
+
                         blank_singleDataLine.addr = 9999;
                         blank_singleDataLine.mdlName = "";
                         blank_singleDataLine.Cmd = null;
@@ -1454,6 +1376,7 @@ edit-container是用來綁以下javascript事件的 id :
     private string temp_chartTitle = null;
     private string chartForm_errorMessage = null;
     private List<CurveSetting> _curves = new List<CurveSetting>();
+    private string chartMachineCmdError = string.Empty;
 
     private void SetCMD_CHART()
     {
@@ -1466,6 +1389,40 @@ edit-container是用來綁以下javascript事件的 id :
     private void ToggleDropdown_CHART()
     {
         
+    }
+
+    private void ProceedToDisplaySetting()
+    {
+        chartMachineCmdError = string.Empty;
+
+        if (blank_singleDataLine.addr == 9999)
+        {
+            chartMachineCmdError = "請先選擇機器";
+            return;
+        }
+
+        currentSelected_Addr = blank_singleDataLine.addr;
+
+        if (show_cmd_unit_Dict_ref is null || show_cmd_unit_Dict_ref.Count == 0)
+        {
+            chartMachineCmdError = "此設備沒有可選命令";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(blank_singleDataLine.Cmd))
+        {
+            chartMachineCmdError = "請先選擇命令";
+            return;
+        }
+
+        if (!show_cmd_unit_Dict_ref.TryGetValue(blank_singleDataLine.Cmd, out var unit))
+        {
+            chartMachineCmdError = "找不到對應的命令資訊";
+            return;
+        }
+
+        blank_singleDataLine.Unit = unit;
+        CHART_setting_stage = CHART_SETTING_STAGE.DISPLAY_SETTING;
     }
 
     private void OnLineClick(int index, CHART_SINGLE_DATA_LINE temp)
@@ -1507,6 +1464,7 @@ edit-container是用來綁以下javascript事件的 id :
                 else
                 {
                     AppLogger.Log_To_File_log(_category, $"[EditCard][ControlStepCompletion] You have selected a addr = {blank_singleDataLine.addr}, mdlName = {blank_singleDataLine.mdlName}", AppLogLevel.Trace);
+                    currentSelected_Addr = blank_singleDataLine.addr;
                     if(getCMDs())
                     {
                         AppLogger.Log_To_File_log(_category, $"[EditCard][ControlStepCompletion] The CMDs are found, addr = {blank_singleDataLine.addr}, mdlName = {blank_singleDataLine.mdlName}", AppLogLevel.Trace);
@@ -1527,7 +1485,14 @@ edit-container是用來綁以下javascript事件的 id :
                 {//選擇CMD後
 
                     //Assign Unit
-                    blank_singleDataLine.Unit = show_cmd_unit_Dict_ref[blank_singleDataLine.Cmd];
+                    if (show_cmd_unit_Dict_ref is null || !show_cmd_unit_Dict_ref.TryGetValue(blank_singleDataLine.Cmd, out var selectedUnit))
+                    {
+                        AppLogger.Log_To_File_log(_category, "[EditCard][ControlStepCompletion] Unable to locate unit for selected CMD", AppLogLevel.Trace);
+                        arg.Cancel = true;
+                        break;
+                    }
+
+                    blank_singleDataLine.Unit = selectedUnit;
                     Console.WriteLine($"[EditCard][ControlStepCompletion] Selected CMD = {blank_singleDataLine.Cmd}, Unit = {blank_singleDataLine.Unit}");
                     
                     //Switch Stage
@@ -1602,29 +1567,78 @@ edit-container是用來綁以下javascript事件的 id :
 
     private void ChartCmdChanged(ChangeEventArgs e)
     {
-        if(show_cmd_unit_Dict_ref is null) return;
+        chartMachineCmdError = string.Empty;
 
-        blank_singleDataLine.Cmd = e.Value?.ToString() ?? string.Empty;        
-        if(string.IsNullOrEmpty(blank_singleDataLine.Cmd)) return;
-        
-        blank_singleDataLine.Unit = show_cmd_unit_Dict_ref[blank_singleDataLine.Cmd];
-        Console.WriteLine($"[EditCard][ChartCmdChanged] : Cmd = {blank_singleDataLine.Cmd}, Unit = {blank_singleDataLine.Unit}");
+        if (show_cmd_unit_Dict_ref is null)
+        {
+            blank_singleDataLine.Cmd = string.Empty;
+            blank_singleDataLine.Unit = string.Empty;
+            return;
+        }
+
+        var selectedCmd = e.Value?.ToString() ?? string.Empty;
+        blank_singleDataLine.Cmd = selectedCmd;
+        blank_singleDataLine.Unit = string.Empty;
+
+        if (string.IsNullOrEmpty(blank_singleDataLine.Cmd))
+        {
+            return;
+        }
+
+        if (show_cmd_unit_Dict_ref.TryGetValue(blank_singleDataLine.Cmd, out var unit))
+        {
+            blank_singleDataLine.Unit = unit;
+            Console.WriteLine($"[EditCard][ChartCmdChanged] : Cmd = {blank_singleDataLine.Cmd}, Unit = {blank_singleDataLine.Unit}");
+        }
+        else
+        {
+            chartMachineCmdError = "找不到對應的命令資訊";
+        }
     }
 
     private void MachineChanged(ChangeEventArgs e)
     {
+        chartMachineCmdError = string.Empty;
+
         if (uint.TryParse(e.Value?.ToString(), out var selected))
         {
             blank_singleDataLine.addr = selected;
-            if(blank_singleDataLine.addr >= 0 && blank_singleDataLine.addr < 256)
+        }
+        else
+        {
+            blank_singleDataLine.addr = 9999;
+        }
+
+        blank_singleDataLine.Cmd = string.Empty;
+        blank_singleDataLine.Unit = string.Empty;
+
+        show_cmd_unit_Dict_ref = null;
+
+        if (blank_singleDataLine.addr < 256)
+        {
+            var deviceInfo = deviceAddr_List.FirstOrDefault(x => x.Item1 == blank_singleDataLine.addr);
+            blank_singleDataLine.mdlName = deviceInfo.Item2 ?? string.Empty;
+            currentSelected_Addr = blank_singleDataLine.addr;
+
+            if (!getCMDs())
             {
-                blank_singleDataLine.mdlName = deviceAddr_List.FirstOrDefault(x => x.Item1 == blank_singleDataLine.addr).Item2;
+                chartMachineCmdError = "此設備沒有可用命令";
+            }
+        }
+        else if (blank_singleDataLine.addr == 256)
+        {
+            currentSelected_Addr = blank_singleDataLine.addr;
+            if (!getCMDs())
+            {
+                chartMachineCmdError = "此設備沒有可用命令";
             }
         }
         else
         {
-            blank_singleDataLine.addr = 9999; // 沒選時保持錯誤狀態
+            blank_singleDataLine.mdlName = string.Empty;
         }
+
+        AppLogger.Log_To_File_log(_category, $"[EditCard][MachineChanged] blank_singleDataLine.addr = {blank_singleDataLine.addr}, blank_singleDataLine.mdlName = {blank_singleDataLine.mdlName}", AppLogLevel.Trace);
     }
 
     private void clickUnit_CHART(string _selected_Unit)
@@ -1708,6 +1722,7 @@ edit-container是用來綁以下javascript事件的 id :
         Console.WriteLine("表單驗證成功");
         
         target_DataLine.addr = blank_singleDataLine.addr;
+        AppLogger.Log_To_File_log(_category, $"[EditCard][Confirm_SingleDataLine_setting] target_DataLine.addr = {target_DataLine.addr}, blank_singleDataLine.addr = {blank_singleDataLine.addr}, edit_ChartSetting_Clone.addr = {edit_ChartSetting_Clone.chart_single_data_lines[SingleLine_index]}", AppLogLevel.Trace);
         target_DataLine.mdlName = blank_singleDataLine.mdlName;
         target_DataLine.Cmd = blank_singleDataLine.Cmd;
         target_DataLine.Unit = blank_singleDataLine.Unit;

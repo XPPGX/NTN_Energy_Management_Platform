@@ -532,6 +532,7 @@ namespace demoVer.Services
 
                     // 從 Device_ReadData 抓這個 addr + Cmd 的資料
                     var groups = _globalVar.Device_ReadData.GetCommandGroups(line.addr, line.Cmd);
+                    // Console.WriteLine($"[DataCenter][ApplyRealDataToChart] line.addr = {line.addr}, line.Cmd = {line.Cmd}");
                     if (groups != null)
                     {
                         var decoded = _decoder.Decode(groups, line.Cmd, line.addr);

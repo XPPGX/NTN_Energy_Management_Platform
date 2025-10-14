@@ -168,6 +168,7 @@ namespace demoVer.Models
                     .Select(line => new CHART_SINGLE_DATA_LINE
                     {
                         status = line.status,
+                        addr = line.addr,
                         mdlName = line.mdlName,
                         Cmd = line.Cmd,
                         Unit = line.Unit,

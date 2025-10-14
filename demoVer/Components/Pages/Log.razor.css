@@ -24,126 +24,12 @@
     overflow-x: auto; /* 📱 手機表格/圖表可橫向滑動 */
 }
 
-/* 步驟卡片 */
-.step {
-    height: 100%;
-    background: #2a2a2a;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.8);
-    transition: all 0.5s ease;
-    text-align: center;
-    overflow: hidden;
-    cursor: pointer;
-}
-.step.active {
-    background: #333;
-    flex: 0 0 50%;
-    opacity: 1;
-    z-index: 2;
-    cursor: default;
-}
-/* 左邊 */
-.step.left {
-    flex: 0 0 20%;
-    opacity: 0.6;
-    transform: translateX(-10%);
-    z-index: 1;
-}
-/* 右邊 */
-.step.right {
-    flex: 0 0 20%;
-    opacity: 0.6;
-    transform: translateX(10%);
-    z-index: 1;
-}
-
-label {
-    font-size: 0.9rem;
-    color: #ddd;
-    display: block;
-    margin-bottom: 8px;
-}
-select{
-    width: 100%;
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #444;
-    background: #1f1f1f;
-    color: #f0f0f0;
-    transition: border 0.3s, box-shadow 0.3s;
-}
-
-select:focus {
-    border: 1px solid #33cfff;
-    box-shadow: 0 0 10px #33cfff99;
-    background: #262626;
-    outline: none;
-}
-
-/* 針對 input 分離出的樣式 - 毛玻璃 */
-input {
-    width: 100%;
-    padding: 10px 14px;
-    border-radius: 8px;
-
-    background-color: rgba(255, 255, 255, 0.08); /* 半透明白，背景會透出 */
-    border: 1px solid rgba(255, 255, 255, 0.25); /* 半透明白邊框 */
-    color: #ffffff; /* 白色字 */
-    font-size: 14px;
-
-    backdrop-filter: blur(6px); /* 毛玻璃效果 */
-    -webkit-backdrop-filter: blur(6px); /* Safari 需要加這個 */
-
-    transition: border-color 0.25s, box-shadow 0.25s, background-color 0.25s;
-}
-
-/* placeholder 樣式 */
-input::placeholder {
-    color: rgba(255, 255, 255, 0.5); /* 半透明白，提示文字不搶眼 */
-}
-
-/* focus 狀態 */
-input:focus {
-    outline: none;
-    border-color: rgba(107, 176, 255, 0.7); /* 帶藍光的邊框 */
-    box-shadow: 0 0 12px rgba(107, 176, 255, 0.6); /* 藍色光暈 */
-    background-color: rgba(255, 255, 255, 0.12); /* 稍微加深，凸顯焦點 */
-}
-
-
 .button-row {
     display: flex;
     gap: 10px;
     margin-top: 10px;
 }
-/* .btn {
-    flex: 1;
-    padding: 12px;
-    border-radius: 6px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: 0.3s;
-    border: none;
-} */
-/* .btn-search {
-    background: #1f1f1f;
-    color: #00eaff;
-    border: 1px solid #00eaff;
-}
-.btn-search:hover {
-    background: #00eaff33;
-    box-shadow: 0 0 10px #00eaffaa;
-}
-.btn-export {
-    background: #121212;
-    color: #ff4d4d;
-    border: 1px solid #ff4d4d;
-}
-.btn-export:hover {
-    background: #ff4d4d33;
-    box-shadow: 0 0 8px #ff4d4daa;
-} */
+
 
 .dateCol {
     display: flex;
@@ -199,39 +85,6 @@ input:focus {
     font-weight: bold;
   }
   
-/* 共用基礎樣式 */
-
-/* .multi-option {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    font-size: 0.9rem;
-    color: #eee;
-    padding: 6px 10px;
-    border-radius: 6px;
-    transition: background 0.3s;
-}
-
-.multi-option:hover {
-    background: #2a2a2a;
-}
-
-.multi-option input[type="checkbox"] {
-    appearance: none;
-    width: 16px;
-    height: 16px;
-    border: 1px solid #777;
-    border-radius: 4px;
-    margin-right: 8px;
-    background: #111;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.multi-option input[type="checkbox"]:checked {
-    background: #00eaff;
-    border-color: #00eaff;
-} */
   
 .table-header {
     display: flex;
@@ -239,91 +92,6 @@ input:focus {
     align-items: center;
     margin-bottom: 10px;
 }
-
-/* .btn-columns {
-    background: #1f1f1f;
-    color: #00eaff;
-    border: 1px solid #00eaff66;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.3s;
-
-    min-width: 20%;              
-}
-.btn-columns:hover {
-    background: #00eaff22;
-    box-shadow: 0 0 8px #00eaff66;
-}
-*/
-
-/* .column-chooser {
-    background: #1f1f1f;
-    border: 1px solid #444;
-    border-radius: 6px;
-    padding: 10px;
-    margin-bottom: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-} */
-
-/* 表格樣式 */
-/* .custom-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #121212;
-    border-radius: 6px;
-    overflow: hidden;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.8);
-}
-.custom-table th, .custom-table td {
-    border: 1px solid #444;
-    padding: 10px;
-    text-align: center;
-    color: #e0e0e0;
-}
-.custom-table th {
-    background: #1c1c1c;
-    font-weight: bold;
-    color: #00eaff;
-}
-.custom-table td {
-    color: #f5f5f5;
-}
-.custom-table tr:nth-child(even) {
-    background: #181818;
-} */
-
-/* 📱 手機卡片模式 */
-/* .card-table {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-.card-row {
-    background: #121212;
-    border: 1px solid #444;
-    border-radius: 6px;
-    padding: 10px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.8);
-}
-.card-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 5px 0;
-    border-bottom: 1px solid #333;
-}
-.card-item:last-child {
-    border-bottom: none;
-}
-.card-label {
-    color: #00eaff;
-    font-weight: bold;
-}
-.card-value {
-    color: #fafafa;
-} */
 
 /* 📱 手機專用 Modal */
 .column-chooser-modal {
@@ -347,28 +115,8 @@ input:focus {
     max-height: 80%;
     overflow-y: auto;
 }
-/* .btn-close {
-    margin-top: 15px;
-    background: #ff3333;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 8px 12px;
-    cursor: pointer;
-    min-width: 20%;
-}
-.btn-close:hover {
-    background: #ff1a1a;
-} */
 
-.step-inner {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-  }
-  
-  .pagination-container {
+.pagination-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -381,20 +129,6 @@ input:focus {
     padding: 0.5rem;
     z-index: 50;        /* 確保不被其他東西壓住 */
 }
-
-/* .btn-page {
-    background: #1f1f1f;
-    color: #00eaff;
-    border: 1px solid #00eaff66;
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-.btn-page:hover {
-    background: #00eaff22;
-    box-shadow: 0 0 6px #00eaff66;
-} */
 
 .page-info {
     color: #eee;
@@ -410,53 +144,6 @@ input:focus {
     background: #121212;
     color: #fff;
 }
-.radio-group {
-    display: flex;
-    gap: 12px;
-    margin-top: 10px;
-}
-.radio-option {
-    display: inline-flex;       /* ✅ 保持水平排列 */
-    align-items: center;        /* ✅ 垂直置中 */
-    cursor: pointer;
-    font-size: 0.95rem;
-    color: #eee;
-    padding: 4px 8px;
-    border-radius: 6px;
-    white-space: nowrap;        /* ✅ 文字不允許換行 */
-    gap: 6px;                   /* ✅ 控制圓圈與文字的距離 */
-    transition: background 0.3s;
-}
-
-.radio-option:hover {
-    border-color: #00eaff;
-    box-shadow: 0 0 8px #00eaff55, 0 0 4px #00eaff inset;
-}
-
-.radio-option input[type="radio"] {
-    flex-shrink: 0;             /* ✅ 防止圓圈被壓縮變形 */
-    width: 14px;                /* ✅ 比 16px 小一點，更接近預設 */
-    height: 14px;
-    border: 2px solid #555;
-    border-radius: 50%;
-    background: #111;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    box-shadow: inset 0 0 3px rgba(0,0,0,0.6);
-    vertical-align: middle;
-}
-
-.radio-option input[type="radio"]:checked {
-    border-color: #00eaff;
-    background: radial-gradient(circle at center, #00eaff 60%, #111 62%);
-    box-shadow: 0 0 6px #00eaff88;
-}
-
-.radio-label {
-    color: #ddd;
-    white-space: nowrap;        /* ✅ 文字不換行 */
-}
-
 .export-overlay {
     position: fixed;
     top: 0;
@@ -540,58 +227,12 @@ progress {
         min-height: 0;
     }
 
-    .step {
-        flex: none;
-        width: 100%;
-        opacity: 0.4;
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.5s ease, opacity 0.5s ease;
-        justify-content: center;
-        padding: 0;
-    }
-
-    .step.active {
-        flex:auto;
-        opacity: 1;
-        transform: scaleY(1);
-        max-height: 1000px;
-        padding: 1rem;
-    }
-
-    /* 左邊 */
-    .step.left,
-    .step.right {
-        flex: none;
-        opacity: 0.7;
-        max-height: 80px;
-        transform: none !important;
-        z-index: 1;
-        align-items: center;
-    }
-
-    .step.collapsed {
-        opacity: 0.8;
-        max-height: 100px;
-        overflow: hidden;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        padding: 0.5rem 1rem;
-        background: #1f1f1f;
-        border: 1px solid #444;
-        border-radius: 6px;
-    }
-
     .collapsed-label {
         font-size: 0.95rem;
         color: #ccc;
         flex: 1;
     }
 
-    .step.hidden {
-        display: none; /* 尚未到的步驟直接隱藏 */
-    }
     .dateRow {
         flex-direction: column; /* 改為上下排列 */
     }
@@ -600,9 +241,5 @@ progress {
         flex: unset;
         width: 100%;
         margin-bottom: 5px; /* label 與 inputs 留間距 */
-    }
-    .radio-group {
-        flex-direction: column;
-        gap: 8px;
     }
 }

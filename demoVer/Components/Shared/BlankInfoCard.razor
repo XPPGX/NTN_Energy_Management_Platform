@@ -13,13 +13,11 @@
         <h4>@(string.IsNullOrEmpty(currentCard.cardName) ? "請編輯卡片" : currentCard.cardName)</h4>
         @if(showEditButton)
         {
-            <MudButton Variant="Variant.Text"
-                    Style="position: absolute; top: 4px; right: 4px; padding: 4px 8px; font-size: 16px; z-index: 999;"
-                    OnClick="openEditMenu"
-                    Class="custom-top-right-button"
-                    Color="Color.Default">
+            <button class="btn" 
+                    style="position: absolute; top: 4px; right: 4px; padding: 4px 8px; font-size: 16px; z-index: 999; background-color: #333; color: #fff; border: none; border-radius: 6px; cursor: pointer;"
+                    @onclick="openEditMenu">
                 <MudIcon Icon="@Icons.Material.Filled.MoreHoriz" />
-            </MudButton>
+            </button>
         }
     </div>
     <div class="infoCard-container bottom">

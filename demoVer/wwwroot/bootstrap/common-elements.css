@@ -47,6 +47,65 @@
     box-shadow: 0 0 8px #ff4d4daa;
 }
 
+.btn-teal
+{
+    background: #0f1f1f;
+    color: #26ffe0;
+    border: 1px solid #26ffe0;
+}
+.btn-teal:hover
+{
+    background: #26ffe022;
+    box-shadow: 0 0 10px #26ffe088;
+}
+
+.btn-amber
+{
+    background: #211400;
+    color: #ffba63;
+    border: 1px solid #ffba63;
+}
+.btn-amber:hover
+{
+    background: #ffba6333;
+    box-shadow: 0 0 8px #ffba6388;
+}
+
+.btn-neutral
+{
+    background: #2a2a2a;
+    color: #f0f0f0;
+    border: 1px solid #5a5a5a;
+}
+.btn-neutral:hover
+{
+    background: #3a3a3a;
+    box-shadow: 0 0 6px #5a5a5a88;
+}
+
+.btn-violet {
+    background: #1a1022;
+    color: #caa4ff;
+    border: 1px solid #8b5cf6;  /* 淡一階的霓虹紫 */
+}
+.btn-violet:hover {
+    background: #8b5cf633;
+    box-shadow: 0 0 8px #8b5cf688;
+}
+
+.btn-emerald
+{
+    background: #0f241c;
+    color: #7cffb8;
+    border: 1px solid #44ff9a;
+}
+.btn-emerald:hover
+{
+    background: #44ff9a22;
+    color: #e9fff5;
+    box-shadow: 0 0 10px #44ff9a66;
+}
+
 .btn-bubble-red
 {
     background: #ff3333;
@@ -56,6 +115,28 @@
 {
     background: #ff1a1a;
 }
+
+.btn-primary {
+    background: #306a8d;          /* 更深藍底 */
+    color: white;               
+    border: 1px solid #8cdbfd;    /* 同色邊框 */
+}
+.btn-primary:hover {
+    background: #1a3a4a;          /* hover 時亮一點，但仍實心 */
+    box-shadow: 0 0 6px #3fc7ff55; /* 微光暈 */
+}
+
+.btn-green {
+    background: #3ca08e;          /* 深綠底 */
+    color: white;           
+    border: 1px solid #2fd99b;
+}
+.btn-green:hover {
+    background: #184036;          /* hover 稍亮 */
+    box-shadow: 0 0 6px #2fd99b55;
+}
+
+
 
 /********** multi-option **********/
 /*
@@ -178,12 +259,12 @@
 <div class="card-table">
     @foreach (var row in Records)
     {
-        <div class="card-row">
+        <div class="card-table-row">
             @foreach (var col in Columns)
             {
-                <div class="card-item">
-                    <span class="card-label">@col</span>
-                    <span class="card-value">@row[col]</span>
+                <div class="card-table-item">
+                    <span class="card-table-label">@col</span>
+                    <span class="card-table-value">@row[col]</span>
                 </div>
             }
         </div>
@@ -195,27 +276,433 @@
     flex-direction: column;
     gap: 10px;
 }
-.card-row {
+.card-table-row {
     background: #121212;
     border: 1px solid #444;
     border-radius: 6px;
     padding: 10px;
     box-shadow: 0 4px 14px rgba(0,0,0,0.8);
 }
-.card-item {
+.card-table-item {
     display: flex;
     justify-content: space-between;
     padding: 5px 0;
     border-bottom: 1px solid #333;
 }
-.card-item:last-child {
+.card-table-item:last-child {
     border-bottom: none;
 }
-.card-label {
+.card-table-label {
     color: #00eaff;
     font-weight: bold;
 }
-.card-value {
+.card-table-value {
     color: #fafafa;
+}
+
+/********** radio **********/
+/*
+[Usage]
+
+<div class="radio-group" @onchange:stopPropagation="true" @onclick:stopPropagation="true">
+    <label class="radio-option">
+        <input type="radio" name="DataType" value="CAN" @onchange="DataTypeChanged"/>
+        <span class="radio-label">CAN Data</span>
+    </label>
+
+    <label class="radio-option">
+        <input type="radio" name="DataType" value="MOD" @onchange="DataTypeChanged"/>
+        <span class="radio-label">MOD Data</span>
+    </label>
+</div>
+*/
+.radio-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+.radio-option {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #eee;
+    padding: 4px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    gap: 6px;
+    transition: background 0.3s;
+}
+
+.radio-option:hover {
+    border-color: #00eaff;
+    box-shadow: 0 0 8px #00eaff55, 0 0 4px #00eaff inset;
+}
+
+.radio-option input[type="radio"] {
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    border: 2px solid #555;
+    border-radius: 50%;
+    background: #111;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: inset 0 0 3px rgba(0,0,0,0.6);
+    vertical-align: middle;
+}
+
+.radio-option input[type="radio"]:checked {
+    border-color: #00eaff;
+    background: radial-gradient(circle at center, #00eaff 60%, #111 62%);
+    box-shadow: 0 0 6px #00eaff88;
+}
+
+.radio-label {
+    color: #ddd;
+    white-space: nowrap;
+}
+
+/********** label **********/
+/*
+[Usage]
+
+<label>Start Date:</label>
+*/
+label {
+    font-size: 0.9rem;
+    color: #ddd;
+    display: block;
+    margin-bottom: 8px;
+}
+
+/********** select **********/
+/*
+[Usage]
+
+<select id="logType" @onchange="OnLogTypeChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
+    <option value="">-- Select --</option>
+    <option value="event">Event Log</option>
+    <option value="data">Data Log</option>
+</select>
+*/
+select{
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #444;
+    background: #1f1f1f;
+    color: #f0f0f0;
+    transition: border 0.3s, box-shadow 0.3s;
+}
+
+select:focus {
+    border: 1px solid #33cfff;
+    box-shadow: 0 0 10px #33cfff99;
+    background: #262626;
+    outline: none;
+}
+
+/********** input **********/
+/*
+[Usage]
+
+<input type="date" id="startDate" @bind="selectedStartDate" placeholder="點擊選擇日期" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
+*/
+
+input {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 8px;
+
+    background-color: rgba(255, 255, 255, 0.08); /* 半透明白，背景會透出 */
+    border: 1px solid rgba(255, 255, 255, 0.25); /* 半透明白邊框 */
+    color: #ffffff; /* 白色字 */
+    font-size: 14px;
+
+    backdrop-filter: blur(6px); /* 毛玻璃效果 */
+    -webkit-backdrop-filter: blur(6px); /* Safari 需要加這個 */
+
+    transition: border-color 0.25s, box-shadow 0.25s, background-color 0.25s;
+}
+
+/* placeholder 樣式 */
+input::placeholder {
+    color: rgba(255, 255, 255, 0.5); /* 半透明白，提示文字不搶眼 */
+}
+
+/* focus 狀態 */
+input:focus {
+    outline: none;
+    border-color: rgba(107, 176, 255, 0.7); /* 帶藍光的邊框 */
+    box-shadow: 0 0 12px rgba(107, 176, 255, 0.6); /* 藍色光暈 */
+    background-color: rgba(255, 255, 255, 0.12); /* 稍微加深，凸顯焦點 */
+}
+
+/********** card **********/
+/*
+[Usage]
+
+@code {
+    private int currentStep = 1; // 當前步驟
+
+    private string GetCardClass(int step)
+    {
+        if (step == currentStep) return "card active";
+        if (step < currentStep) return "card left";
+        if (step > currentStep) return "card right";
+        return "card";
+    }
+}
+
+<div class="@GetCardClass(1)">
+    <!-- 第一個卡片內容 -->
+</div>
+
+<div class="@GetCardClass(2)">
+    <!-- 第二個卡片內容 -->
+</div>
+
+<div class="@GetCardClass(3)">
+    <!-- 第三個卡片內容 -->
+</div>
+*/
+.card {
+    height: 100%;
+    background: #2a2a2a;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.8);
+    transition: all 0.5s ease;
+    text-align: center;
+    overflow: hidden;
+    cursor: pointer;
+}
+.card.active {
+    background: #333;
+    flex: 0 0 50%;
+    opacity: 1;
+    z-index: 2;
+    cursor: default;
+}
+/* 左邊 */
+.card.left {
+    flex: 0 0 20%;
+    opacity: 0.6;
+    transform: translateX(-10%);
+    z-index: 1;
+}
+/* 右邊 */
+.card.right {
+    flex: 0 0 20%;
+    opacity: 0.6;
+    transform: translateX(10%);
+    z-index: 1;
+}
+
+.card-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+/********** detail card **********/
+/*
+[Usage] 可被點擊的卡片
+
+<div class="detail-card"> 
+    <div class="detail-card-header">
+        <span class="detail-card-title">Line 1</span>
+        <button class="detail-card-action">刪除</button>
+    </div>
+    <div class="detail-card-body">
+        <div class="detail-card-row">
+            <span class="detail-card-label">標籤</span>
+            <span class="detail-card-value">內容</span>
+        </div>
+        <div class="detail-card-row detail-card-row-color">
+            <span class="detail-card-label">顏色</span>
+            <span class="detail-card-value"><span class="detail-card-color"></span></span>
+        </div>
+    </div>
+</div>
+*/
+.detail-card {
+    background: #1c1c1c;
+    border-left: 4px solid #1976d2;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.detail-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55);
+}
+
+.detail-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.detail-card-title {
+    font-weight: 600;
+    color: #e2e2e2;
+    letter-spacing: 0.5px;
+}
+
+.detail-card-action {
+    background: #2b2b2b;
+    border: 1px solid #ff4d4d;
+    color: #ffb3b3;
+    border-radius: 6px;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.detail-card-action:hover {
+    background: #ff4d4d33;
+    color: #ffffff;
+    box-shadow: 0 0 8px rgba(255, 77, 77, 0.45);
+}
+
+.detail-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: #f5f5f5;
+    font-size: 0.95rem;
+}
+
+.detail-card-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.detail-card-label {
+    min-width: 72px;
+    font-weight: 600;
+    color: #9dd9ff;
+}
+
+.detail-card-value {
+    flex: 1;
+    color: #f5f5f5;
+}
+
+.detail-card-row-color .detail-card-value {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.detail-card-color {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1px solid #cccccc;
+}
+
+/********** custom menu **********/
+/*
+[Usage]
+
+<div class="custom-menu">
+    <div class="custom-menu-item">Option 1</div>
+    <div class="custom-menu-item">Option 2</div>
+    <div class="custom-menu-item">Option 3</div>
+</div>
+*/
+.custom-menu {
+    position: absolute;
+    background-color: #2b2b2b; /* 深色背景，與工業風格搭配 */
+    border: 1px solid #4a4a4a; /* 金屬質感的邊框 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); /* 增加陰影效果 */
+    z-index: 9999;
+    padding: 6px 0;
+    min-width: 140px; /* 調整寬度以適應表格 */
+    border-radius: 6px; /* 輕微圓角，保持現代感 */
+    color: #e0e0e0; /* 柔和的淺灰文字，適合深色背景 */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.custom-menu-item {
+    justify-content: center;
+    text-align: center;
+    padding: 10px 14px; /* 增加內距，提升可點擊範圍 */
+    cursor: pointer;
+    color: #d1d1d1; /* 與custom-menu文字顏色一致 */
+    background-color: transparent; /* 默認透明背景 */
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.custom-menu-item:hover {
+    background-color: #3a3a3a; /* hover效果，稍微變亮 */
+    color: #ffffff; /* 提升文字對比度 */
+}
+
+/********** Media Queries **********/
+@media(max-width: 768px) {
+    .radio-group {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .card {
+        flex: none;
+        width: 100%;
+        opacity: 0.4;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease, opacity 0.5s ease;
+        justify-content: center;
+        padding: 0;
+    }
+
+    .card.active {
+        flex:auto;
+        opacity: 1;
+        transform: scaleY(1);
+        max-height: 1000px;
+        padding: 1rem;
+    }
+
+    /* 左邊 */
+    .card.left,
+    .card.right {
+        flex: none;
+        opacity: 0.7;
+        max-height: 80px;
+        transform: none !important;
+        z-index: 1;
+        align-items: center;
+    }
+
+    .card.collapsed {
+        opacity: 0.8;
+        max-height: 100px;
+        overflow: hidden;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        background: #1f1f1f;
+        border: 1px solid #444;
+        border-radius: 6px;
+    }
+
+    .card.hidden {
+        display: none; /* 尚未到的步驟直接隱藏 */
+    }
 }
 

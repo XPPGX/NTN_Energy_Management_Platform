@@ -11,8 +11,10 @@
     gap:1rem;
     padding: 1rem;
     width: calc(100%);
-    background-color: white;
+    background-color: #2a2a2a;
     border-radius: 8px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.8);
+    transition: all 0.5s ease;
     box-sizing: border-box;
 }
 
@@ -107,6 +109,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    color: #ffffff; /* 亮色字體，適合深色背景 */
 }
 
 /***** Slide Button *****/
@@ -230,17 +233,21 @@
 }
 
 .custom-dialog {
-    background-color: white;
+    background-color: rgba(43, 43, 43, 0.95);
     border-radius: 8px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-
+    animation: scale-in 0.25s ease;
+    text-align: center;
+    border: 1px solid #5a5a5a; /* 金屬質感的邊框 */
+    color: #d1d1d1; /* 柔和的淺灰文字，適合深色背景 */
     width: 300px;
     max-width: 90vw;
     padding: 24px;
 }
 
 .modal-content-edit {
-    background-color: #fff;
+    background-color: rgba(43,43,43,0.95);
+    color: #d1d1d1;
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);

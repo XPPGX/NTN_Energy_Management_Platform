@@ -65,7 +65,7 @@
                 }
                 else
                 {
-                    <div class="step-inner">
+                    <div class="card-inner">
                         <div class="collapsed-label">
                             Log Type: @(selectedLogType ?? "未選擇")
                         </div>
@@ -98,7 +98,7 @@
                 }
                 else
                 {
-                    <div class="step-inner">
+                    <div class="card-inner">
                         <div class="collapsed-label">                            
                             Date: @(selectedStartDate?.ToShortDateString() ?? "未選擇")
                             ~ @(selectedEndDate?.ToShortDateString() ?? "未選擇")
@@ -118,7 +118,7 @@
                 }
                 else
                 {
-                    <div class="step-inner">
+                    <div class="card-inner">
                         <div class="collapsed-label">
                             操作選項
                         </div>
@@ -215,12 +215,12 @@
             <div class="card-table">
                 @foreach (var row in tableData)
                 {
-                    <div class="card-row">
+                    <div class="card-table-row">
                         @foreach (var col in allColumns.Where(c => visibleColumns.Contains(c)))
                         {
-                            <div class="card-item">
-                                <span class="card-label">@col</span>
-                                <span class="card-value">@row[col]</span>
+                            <div class="card-table-item">
+                                <span class="card-table-label">@col</span>
+                                <span class="card-table-value">@row[col]</span>
                             </div>
                         }
                     </div>
@@ -311,10 +311,10 @@
 
     private string GetStepClass(int step)
     {
-        if (step == currentStep) return "step active";
-        if (step < currentStep) return "step left";
-        if (step > currentStep) return "step right";
-        return "step";
+        if (step == currentStep) return "card active";
+        if (step < currentStep) return "card left";
+        if (step > currentStep) return "card right";
+        return "card";
     }
 
     private void TogglePanel()

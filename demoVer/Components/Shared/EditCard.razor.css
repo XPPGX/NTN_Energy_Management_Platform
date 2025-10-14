@@ -215,28 +215,6 @@ table.table input {
     -ms-user-select: none;     /* IE/Edge */
 }
 
-.custom-menu {
-    position: absolute;
-    background-color: white;
-    border: 1px solid #ccc;
-    box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
-    z-index: 9999;
-    padding: 4px 0;
-    min-width: 120px;
-    border-radius: 4px;
-}
-
-.custom-menu-item {
-    justify-content: center;
-    text-align: center;
-    padding: 8px 12px;
-    cursor: pointer;
-}
-
-.custom-menu-item:hover {
-    background-color: #f0f0f0;
-}
-
 .custom-dialog-overlay {
     position: fixed;
     top: 0;
@@ -252,13 +230,15 @@ table.table input {
 }
 
 .custom-dialog {
-    background: white;
+    background: rgba(43, 43, 43, 0.95); /* 深色背景，帶有透明度 */
     border-radius: 8px;
     width: 300px;
     padding: 24px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6); /* 更深的陰影，增加層次感 */
     animation: scale-in 0.25s ease;
     text-align: center;
+    border: 1px solid #5a5a5a; /* 金屬質感的邊框 */
+    color: #d1d1d1; /* 柔和的淺灰文字，適合深色背景 */
 }
 
 .icon-container {

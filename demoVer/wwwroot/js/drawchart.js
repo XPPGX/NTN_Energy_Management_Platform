@@ -204,10 +204,14 @@ window.drawChart_Func = function(config, webFirstRend = false) {
                     title: {
                         display: true,
                         text: config.chartTitle || '',
-                        font: {size : 26}
+                        font: {size : 26},
+                        color: '#ffffff'  // 亮色標題
                     },
                     legend: {
-                        display: true
+                        display: true,
+                        labels: {
+                            color: '#ffffff'  // 亮色圖例文字
+                        }
                     }
                 },
                 scales: {
@@ -216,7 +220,14 @@ window.drawChart_Func = function(config, webFirstRend = false) {
                         title: {
                             display: true,
                             text: "時間",
-                            font: {size : 16}
+                            font: {size : 16},
+                            color: '#ffffff'  // 亮色X軸標題
+                        },
+                        grid: {
+                            color: '#555555'  // 淺灰網格線
+                        },
+                        ticks: {
+                            color: '#ffffff'  // 亮色刻度文字
                         }
                     },
                     y: {
@@ -226,8 +237,15 @@ window.drawChart_Func = function(config, webFirstRend = false) {
                         title:{
                             display: hasLeftData && !!config.y_left_Title,
                             text: hasLeftData ? config.y_left_Title : "",
-                            font: {size : 16}
+                            font: {size : 16},
+                            color: '#ffffff'  // 亮色Y軸標題
                         },
+                        grid: {
+                            color: '#555555'  // 淺灰網格線
+                        },
+                        ticks: {
+                            color: '#ffffff'  // 亮色刻度文字
+                        }
                     },
                     y1: {
                         type: "linear",
@@ -236,8 +254,16 @@ window.drawChart_Func = function(config, webFirstRend = false) {
                         title: {
                             display: hasrightData && !!config.y_right_Title,
                             text: hasrightData ? config.y_right_Title : "",
-                            font: {size: 16}
+                            font: {size: 16},
+                            color: '#ffffff'  // 亮色Y軸標題
                         },
+                        grid: {
+                            drawOnChartArea: false,
+                            color: '#555555'  // 淺灰網格線
+                        },
+                        ticks: {
+                            color: '#ffffff'  // 亮色刻度文字
+                        }
                     }
                 }
             }
