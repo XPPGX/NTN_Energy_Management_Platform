@@ -561,7 +561,10 @@ window.drawChart_Stage = function (webFirstRend = false) {
                 responsive: true,
                 plugins: {
                     legend: {
-                        display: true
+                        display: true,
+                        labels: {
+                            color: '#ffffff'
+                        }
                     }
                 },
                 scales: {
@@ -569,7 +572,14 @@ window.drawChart_Stage = function (webFirstRend = false) {
                         type:'linear',
                         title: {
                             display: true,
-                            text: ""
+                            text: "",
+                            color: '#ffffff'
+                        },
+                        grid: {
+                            color: '#555555'
+                        },
+                        ticks: {
+                            color: '#ffffff'
                         }
                     },
                     y1: {
@@ -577,22 +587,34 @@ window.drawChart_Stage = function (webFirstRend = false) {
                         position: "left",
                         title: {
                             display: true,
-                            text: "電流 (A)"
+                            text: "電流 (A)",
+                            color: '#ffffff'
                         },
                         suggestedMin: 0,
-                        suggestedMax: 100
+                        suggestedMax: 100,
+                        grid: {
+                            color: '#555555'
+                        },
+                        ticks: {
+                            color: '#ffffff'
+                        }
                     },
                     y2: {
                         type: "linear",
                         position: "right",
                         title: {
                             display: true,
-                            text: "電壓 (V)"
+                            text: "電壓 (V)",
+                            color: '#ffffff'
                         },
                         suggestedMin: 0,
                         suggestedMax: 100,
                         grid: {
-                            drawOnChartArea: false
+                            drawOnChartArea: false,
+                            color: '#555555'
+                        },
+                        ticks: {
+                            color: '#ffffff'
                         }
                     }
                 }

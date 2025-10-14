@@ -75,10 +75,10 @@
                 <div class="card-container-stage">
                     <canvas id="stageChart" class="stage-chart"></canvas>
                     <div class="stage-controls">
-                        <MudSelect T="bool" Label="選擇充電段數" Value="selectedStage" Immediate="true" Dense="true" Variant="Variant.Filled" ValueChanged="OnStageChanged">
-                            <MudSelectItem Value="@(true)">2階段</MudSelectItem>
-                            <MudSelectItem Value="@(false)">3階段</MudSelectItem>
-                        </MudSelect>
+                        <select value="@selectedStage" @onchange="OnStageSelectChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
+                            <option value="true">2階段</option>
+                            <option value="false">3階段</option>
+                        </select>
                     </div>
                 </div>
                 
@@ -217,7 +217,7 @@
     private int CV_Timeout_value;
     private int FV_Timeout_value;
 
-    private bool selectedStage = false; //預設為 3段
+    private bool selectedStage = true; //預設為 2段
 
     private string FormatToHourMin(double totalMin)
     {
@@ -226,15 +226,35 @@
         return $"{hours} 小時 {minutes} 分";
     }
 
-    private async Task OnStageChanged(bool value)
+    private async Task OnStageSelectChanged(ChangeEventArgs e)
+    {
+        // 1️⃣ 讀取選擇值
+        var newValue = e.Value?.ToString();
+
+        if (bool.TryParse(newValue, out bool parsedValue))
+        {
+            // 2️⃣ 若值有變化才執行
+            if (selectedStage != parsedValue)
+            {
+                selectedStage = parsedValue;
+
+                Console.WriteLine($"selectedStage = {selectedStage}");
+
+                await JS.InvokeVoidAsync("setStage", selectedStage);
+                await JS.InvokeVoidAsync("drawChart_Stage");
+            }
+        }
+
+        // 3️⃣ 防止事件冒泡 (這部分在 razor tag 裡已處理)
+    }
+    @* private async Task OnStageChanged(bool value)
     {
 
-        selectedStage = value;
         Console.WriteLine($"selectedStage = {selectedStage}");
 
         await JS.InvokeVoidAsync("setStage", selectedStage);
         await JS.InvokeVoidAsync("drawChart_Stage");
-    }
+    } *@
 
 
 

@@ -441,7 +441,7 @@ input:focus {
 
 /********** card **********/
 /*
-[Usage]
+[Usage] 可藉由點擊去切換焦點的卡片
 
 @code {
     private int currentStep = 1; // 當前步驟
