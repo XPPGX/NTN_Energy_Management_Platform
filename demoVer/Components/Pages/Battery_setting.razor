@@ -48,9 +48,9 @@
                     var slider = Sliders[i];
                     <div class="slider-wrapper">
                         <div class="vue-vertical-slider"
-                            style="@(slider.Label == "FV" && selectedStage ? "opacity: 0.5;" : "")"
-                            @onmousedown="@(e => (slider.Label == "FV" && selectedStage) ? Task.CompletedTask : OnSliderMouseDown(e, localIndex, slider.Label))"
-                            @ontouchstart="@(e => (slider.Label == "FV" && selectedStage) ? Task.CompletedTask : OnSliderTouchStart(e, localIndex, slider.Label))">
+                            style="@(slider.Label == "FV" && !selectedStage ? "opacity: 0.5;" : "")"
+                            @onmousedown="@(e => (slider.Label == "FV" && !selectedStage) ? Task.CompletedTask : OnSliderMouseDown(e, localIndex, slider.Label))"
+                            @ontouchstart="@(e => (slider.Label == "FV" && !selectedStage) ? Task.CompletedTask : OnSliderTouchStart(e, localIndex, slider.Label))">
                             <div class="vue-vertical-fill" @ref="@FillRefs[localIndex]"></div>
                             <div class="vue-vertical-thumb" @ref="@ThumbRefs[localIndex]"></div>
                         </div>
@@ -61,7 +61,7 @@
                                 max=""
                                 class="slider-input"
                                 style="text-align: center;"
-                                disabled="@(slider.Label == "FV" && selectedStage)"/>
+                                disabled="@(slider.Label == "FV" && !selectedStage)"/>
                         @* <div class="slider-label">值: @slider.Value</div> *@
                         <label>@slider.Label</label>
                     </div>
@@ -75,28 +75,25 @@
                 <div class="card-container-stage">
                     <canvas id="stageChart" class="stage-chart"></canvas>
                     <div class="stage-controls">
-                        <select value="@selectedStage" @onchange="OnStageSelectChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
-                            <option value="true">2階段</option>
-                            <option value="false">3階段</option>
+                        <select value="@selectedStage.ToString().ToLower()" @onchange="OnStageSelectChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
+                            <option value="false">2階段</option>
+                            <option value="true">3階段</option>
                         </select>
                     </div>
                 </div>
                 
                 <div class="card-container-timeout">
                     <div class="timeout-group">
-                        <MudToggleIconButton @bind-Toggled="@(CCT_Enable)"
-                            Icon="@Icons.Material.Filled.ToggleOff"
-                            Color="@Color.Error"
-                            ToggledIcon="@Icons.Material.Filled.ToggleOn"
-                            ToggledColor="@Color.Success"
-                            title="@(CCT_Enable ? "On" : "Off")"
-                            IconSize="Size.Large"/>
+                        <label class="custom-toggle-button" title="@(CCT_Enable ? "On" : "Off")">
+                            <input type="checkbox" @bind="CCT_Enable" />
+                            <span class="toggle-slider"></span>
+                        </label>
                         @if(!isMobile)
                         {
                             <span style="display: inline-block;">CC timeout</span>
                         }
                         <div class="inputField">
-                            <MudTextField @bind-Value="@CC_Timeout_value" Label="CCT" Variant="Variant.Outlined" Class="small-textField" Adornment="Adornment.End" AdornmentText="Minute"/>
+                            <input type="number" @bind-value="CC_Timeout_value" @bind-value:after="OnCCTimeoutValueChanged" placeholder="CCT" min="0" />
                             @if(!isMobile)
                             {
                                 <MudText Typo="Typo.body1">@FormatToHourMin(CC_Timeout_value)</MudText>
@@ -109,24 +106,21 @@
                         @if(!isMobile)
                         {
                             <div class="responsive-slider">
-                                <MudSlider T="int" @bind-Value="@CC_Timeout_value" ValueLabel="true" Variant="Variant.Filled"
-                                        Min="0" Max="6000" Step="1" Size="Size.Large" />
+                                <input type="range" @bind="CC_Timeout_value" @bind:event="oninput" min="0" max="6000" step="1" class="custom-slider" />
                             </div>
                         }
                     </div>
                     <div class="timeout-group">
-                        <MudToggleIconButton @bind-Toggled="@(CVT_Enable)"
-                            Icon="@Icons.Material.Filled.ToggleOff"
-                            Color="@Color.Error"
-                            ToggledIcon="@Icons.Material.Filled.ToggleOn"
-                            ToggledColor="@Color.Success"
-                            title="@(CVT_Enable ? "On" : "Off")" />
+                        <label class="custom-toggle-button" title="@(CVT_Enable ? "On" : "Off")">
+                            <input type="checkbox" @bind="CVT_Enable" />
+                            <span class="toggle-slider"></span>
+                        </label>
                         @if(!isMobile)
                         {
                             <span style="display: inline-block;">CV timeout</span>
                         }
                         <div class="inputField">
-                            <MudTextField @bind-Value="@CV_Timeout_value" Label="CVT" Variant="Variant.Outlined" Class="small-textField" Adornment="Adornment.End" AdornmentText="Minute"/>
+                            <input type="number" @bind-value="CV_Timeout_value" @bind-value:after="OnCVTimeoutValueChanged" placeholder="CVT" min="0" />
                             @if(!isMobile)
                             {
                                 <MudText Typo="Typo.body1">@FormatToHourMin(CV_Timeout_value)</MudText>
@@ -139,38 +133,34 @@
                         @if(!isMobile)
                         {
                             <div class="responsive-slider">
-                                <MudSlider T="int" @bind-Value="@CV_Timeout_value" ValueLabel="true" Variant="Variant.Filled"
-                                        Min="0" Max="6000" Step="1" Size="Size.Large" />
+                                <input type="range" @bind="CV_Timeout_value" @bind:event="oninput" min="0" max="6000" step="1" class="custom-slider" />
                             </div>
                         }
                     </div>
                     <div class="timeout-group">
-                        <MudToggleIconButton @bind-Toggled="@(FVT_Enable)"
-                            Icon="@Icons.Material.Filled.ToggleOff"
-                            Color="@Color.Error"
-                            ToggledIcon="@Icons.Material.Filled.ToggleOn"
-                            ToggledColor="@Color.Success"
-                            title="@(FVT_Enable ? "On" : "Off")" />
+                        <label class="custom-toggle-button" title="@(FVT_Enable ? "On" : "Off")">
+                            <input type="checkbox" @bind="FVT_Enable" />
+                            <span class="toggle-slider"></span>
+                        </label>
                         @if(!isMobile)
                         {
                             <span style="display: inline-block;">FV timeout</span>
                         }
                         <div class="inputField">
-                            <MudTextField @bind-Value="@FV_Timeout_value" Label="FVT" Variant="Variant.Outlined" Class="small-textField" Adornment="Adornment.End" AdornmentText="Minute"/>
+                            <input type="number" @bind-value="FV_Timeout_value" @bind-value:after="OnFVTimeoutValueChanged" placeholder="FVT" min="0" />
                             @if(!isMobile)
                             {
                                 <MudText Typo="Typo.body1">@FormatToHourMin(FV_Timeout_value)</MudText>
                             }
                             else
-                            {   
+                            {
                                 <div class="dateTime">@FormatToHourMin(FV_Timeout_value)</div>
                             }
                         </div>
                         @if(!isMobile)
                         {
                             <div class="responsive-slider">
-                                <MudSlider T="int" @bind-Value="@FV_Timeout_value" ValueLabel="true" Variant="Variant.Filled"
-                                        Min="0" Max="6000" Step="1" Size="Size.Large" />
+                                <input type="range" @bind="FV_Timeout_value" @bind:event="oninput" min="0" max="6000" step="1" class="custom-slider" />
                             </div>
                         }
                     </div>
@@ -217,7 +207,7 @@
     private int CV_Timeout_value;
     private int FV_Timeout_value;
 
-    private bool selectedStage = true; //預設為 2段
+    private bool selectedStage = false; //預設為 3段
 
     private string FormatToHourMin(double totalMin)
     {
@@ -228,33 +218,17 @@
 
     private async Task OnStageSelectChanged(ChangeEventArgs e)
     {
-        // 1️⃣ 讀取選擇值
-        var newValue = e.Value?.ToString();
-
-        if (bool.TryParse(newValue, out bool parsedValue))
+        Console.WriteLine($"stageChanged");
+        if (e.Value != null && bool.TryParse(e.Value.ToString(), out bool value))
         {
-            // 2️⃣ 若值有變化才執行
-            if (selectedStage != parsedValue)
-            {
-                selectedStage = parsedValue;
+            selectedStage = value;
+            Console.WriteLine($"selectedStage = {selectedStage}");
 
-                Console.WriteLine($"selectedStage = {selectedStage}");
-
-                await JS.InvokeVoidAsync("setStage", selectedStage);
-                await JS.InvokeVoidAsync("drawChart_Stage");
-            }
+            await JS.InvokeVoidAsync("setStage", selectedStage);
+            await JS.InvokeVoidAsync("drawChart_Stage");
+            InvokeAsync(StateHasChanged);
         }
-
-        // 3️⃣ 防止事件冒泡 (這部分在 razor tag 裡已處理)
     }
-    @* private async Task OnStageChanged(bool value)
-    {
-
-        Console.WriteLine($"selectedStage = {selectedStage}");
-
-        await JS.InvokeVoidAsync("setStage", selectedStage);
-        await JS.InvokeVoidAsync("drawChart_Stage");
-    } *@
 
 
 
@@ -454,9 +428,28 @@
         await StartTouchDrag(e, index, min, displayMax);
     }
 
-    private void loadSetting()
+    private void OnCCTimeoutValueChanged()
     {
-        @* 或許這裡也是API去拿資料 *@
+        if (CC_Timeout_value < 0)
+        {
+            CC_Timeout_value = 0;
+        }
+    }
+
+    private void OnCVTimeoutValueChanged()
+    {
+        if (CV_Timeout_value < 0)
+        {
+            CV_Timeout_value = 0;
+        }
+    }
+
+    private void OnFVTimeoutValueChanged()
+    {
+        if (FV_Timeout_value < 0)
+        {
+            FV_Timeout_value = 0;
+        }
     }
 
     private async Task ReceiveFrom_TopRow_SaveBatterySetting()

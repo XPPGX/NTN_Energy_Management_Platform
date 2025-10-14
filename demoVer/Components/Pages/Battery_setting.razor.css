@@ -226,6 +226,11 @@ mud-slider-vertical =>
     z-index: 1000;
 }
 
+
+
+
+
+
 @media(max-width: 1200px)
 {
     .content-container{
@@ -287,10 +292,6 @@ mud-slider-vertical =>
         align-items: center;
         color: #c0c0c0;
     }
-    .responsive-slider{
-        width: 20%;
-        display: inline-block;
-    }
 
     .timeout-group{
         display: flex;
@@ -341,3 +342,5 @@ mud-slider-vertical =>
         color: #c0c0c0;
     }
 }
+
+

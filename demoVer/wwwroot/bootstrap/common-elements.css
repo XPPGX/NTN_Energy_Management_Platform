@@ -651,6 +651,145 @@ input:focus {
     color: #ffffff; /* 提升文字對比度 */
 }
 
+
+/********** Custom Toggle Button **********/
+/*
+[Usage Example from Battery_setting.razor]
+
+<label class="custom-toggle-button" title="@(CCT_Enable ? "On" : "Off")">
+    <input type="checkbox" @bind="CCT_Enable" />
+    <span class="toggle-slider"></span>
+</label>
+
+<label class="custom-toggle-button" title="@(CVT_Enable ? "On" : "Off")">
+    <input type="checkbox" @bind="CVT_Enable" />
+    <span class="toggle-slider"></span>
+</label>
+
+<label class="custom-toggle-button" title="@(FVT_Enable ? "On" : "Off")">
+    <input type="checkbox" @bind="FVT_Enable" />
+    <span class="toggle-slider"></span>
+</label>
+*/
+.custom-toggle-button {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    cursor: pointer;
+}
+
+.custom-toggle-button input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #666, #444);
+    border: 2px solid #777;
+    border-radius: 34px;
+    transition: 0.4s;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 2px;
+    bottom: 2px;
+    background: linear-gradient(135deg, #ff4444, #cc0000);
+    border-radius: 50%;
+    transition: 0.4s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+input:checked + .toggle-slider {
+    background: linear-gradient(135deg, #666, #444);
+    border-color: #777;
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(26px);
+    background: linear-gradient(135deg, #44ff44, #00cc00);
+}
+
+/********** Custom Slider **********/
+/*
+[Usage Example from Battery_setting.razor]
+
+<div class="responsive-slider">
+    <input type="range" @bind="CC_Timeout_value" @bind:event="oninput" min="0" max="6000" step="1" class="custom-slider" />
+</div>
+
+<div class="responsive-slider">
+    <input type="range" @bind="CV_Timeout_value" @bind:event="oninput" min="0" max="6000" step="1" class="custom-slider" />
+</div>
+
+<div class="responsive-slider">
+    <input type="range" @bind="FV_Timeout_value" @bind:event="oninput" min="0" max="6000" step="1" class="custom-slider" />
+</div>
+*/
+.responsive-slider {
+    width: 60%;
+    display: inline-block;
+}
+
+.custom-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(to right, #666, #444);
+    outline: none;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.custom-slider:hover {
+    opacity: 1;
+}
+
+.custom-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1976d2, #42a5f5);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.custom-slider::-webkit-slider-thumb:hover {
+    background: linear-gradient(135deg, #1565c0, #1976d2);
+}
+
+.custom-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1976d2, #42a5f5);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+/* Mobile responsive adjustments for slider */
+@media(max-width: 1200px) {
+    .responsive-slider {
+        width: 20%;
+        display: inline-block;
+    }
+}
+
 /********** Media Queries **********/
 @media(max-width: 768px) {
     .radio-group {
@@ -705,4 +844,3 @@ input:focus {
         display: none; /* 尚未到的步驟直接隱藏 */
     }
 }
-
