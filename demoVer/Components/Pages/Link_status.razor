@@ -19,32 +19,39 @@
 <div class="content-container">
     <div class="card-grid">
         <div class="w50">
-            <div class="card-container">
+            <div class="card-container card-container-base">
                 <MudChart ChartType="ChartType.Donut" Width="250px" Height="250px" LegendPosition="Position.Left" InputData="@data" InputLabels="@labels">
                     <CustomGraphics>
-                        <text class="donut-inner-text" x="50%" y="35%" dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Helvetica" font-size="20">Total</text>
-                        <text class="donut-inner-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Helvetica" font-size="50">@data.Sum().ToString()</text>
+                        <text class="donut-inner-text" x="50%" y="35%" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="Helvetica" font-size="20">Total</text>
+                        <text class="donut-inner-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="Helvetica" font-size="50">@data.Sum().ToString()</text>
                     </CustomGraphics>
                 </MudChart>
             </div>
         </div>
 
         <div class="w50">
-            <div class="card-container">
-                <MudTabs Rounded="true" Centered="false" @bind-ActivePanelIndex="@activeTabIndex" Class="mud-width-full"
-                    PrevIcon="@Icons.Material.Filled.SkipPrevious" NextIcon="@Icons.Material.Filled.SkipNext">
-                    @foreach (var group in TimelineGroups)
-                    {
-                        AppLogger.Log_To_File_log(_category, $"[LinkStatus][html] group = {group.StateName}: {group.Items?.Count} items", AppLogLevel.Trace);
-                        @* foreach (var item in group.Items)
+            <div class="card-container card-container-base custom-tabs">
+                <div class="custom-tabs-toolbar">
+                    <div class="tab-list">
+                        @for (var i = 0; i < TimelineGroups.Count; i++)
                         {
-                            AppLogger.Log_To_File_log(_category, $"--> {item.Address}, {item.Message}, {item.Severity}, {item.Color}", AppLogLevel.Trace);
-                        } *@
-                        <MudTabPanel Text="@group.StateName">
-                            <LinkStatusTimeline Items="@group.Items" IsMobile = "@IsMobile" deviceCheckCompleted = "@checkMobile_complete"/>
-                        </MudTabPanel>
+                            var index = i;
+                            var group = TimelineGroups[index];
+                            var isActive = activeTabIndex == index;
+                            AppLogger.Log_To_File_log(_category, $"[LinkStatus][html] group = {group.StateName}: {group.Items?.Count} items", AppLogLevel.Trace);
+                            <button type="button" class="custom-tab @(isActive ? "active" : string.Empty)" @onclick="(() => SetActiveTab(index))">
+                                @group.StateName
+                            </button>
+                        }
+                    </div>
+                </div>
+                <div class="custom-tab-panel">
+                    @if (TimelineGroups.Count > 0 && activeTabIndex >= 0 && activeTabIndex < TimelineGroups.Count)
+                    {
+                        var activeGroup = TimelineGroups[activeTabIndex];
+                        <LinkStatusTimeline Items="@activeGroup.Items" IsMobile="@IsMobile" deviceCheckCompleted="@checkMobile_complete" />
                     }
-                </MudTabs>
+                </div>
             </div>
         </div>
 
@@ -215,6 +222,18 @@
         await InvokeAsync(StateHasChanged);     
     }
 
+    private void SetActiveTab(int index)
+    {
+        Console.WriteLine($"index = {index}, TimelineGroups.Count = {TimelineGroups.Count}");
+
+        if (index < 0 || index >= TimelineGroups.Count)
+        {
+            return;
+        }
+
+        activeTabIndex = index;
+    }
+
     private void OnLinksChanged()
     {
         _linkedSnapshot = globalVar.LinkedDevices.SnapshotSorted();
@@ -239,12 +258,12 @@
         }
     }
 
-    private void CloseModal()
+    private async Task CloseModal()
     {   
         //close modal
         modal_IsOpen = false;
         InfoCard_isOpen = false;
-        CancelAllSubscriptions();
+        await CancelAllSubscriptions();
     }
 
     private void getINVsLink()
@@ -263,7 +282,11 @@
         {
             //string modelName = decode_ModelName(addr);
             //string runningStatus = decode_INV_Status(addr);
-            Group_CommandRawData tmp_Group = globalVar.Device_ReadData.GetCommandGroups(addr, "MFR_MODEL"); 
+            var tmp_Group = globalVar.Device_ReadData.GetCommandGroups(addr, "MFR_MODEL"); 
+            if(tmp_Group == null)
+            {
+                continue;
+            }
             var modelName = Decoder.Decode(tmp_Group, "MFR_MODEL", addr)?.ToString() ?? "N/A";
             string runningStatus = decode_INV_Status(addr);
 
@@ -474,7 +497,7 @@
         if(Group2 == null){return "N/A";}
         //if(Group1 == null || Group2 == null){return "N/A";}
 
-        string INV_FAULT_tmp = globalVar.Get_INV_Fault(addr);
+    string? INV_FAULT_tmp = globalVar.Get_INV_Fault(addr);
         string INV_STATUS_str = "";
         if(!string.IsNullOrEmpty(INV_FAULT_tmp))
         {
@@ -484,7 +507,7 @@
         {
             uint INV_STATUS_data = (((uint)Group2.Groups[0].Data[1]) << 8) | ((uint)Group2.Groups[0].Data[0]);
             bool returnStr_bool = true;
-            INV_STATUS_str = (string)(globalVar.Get_INV_Status(INV_FAULT_tmp, INV_STATUS_data, returnStr_bool));
+            INV_STATUS_str = (string)(globalVar.Get_INV_Status(INV_FAULT_tmp ?? string.Empty, INV_STATUS_data, returnStr_bool));
         }
 
 

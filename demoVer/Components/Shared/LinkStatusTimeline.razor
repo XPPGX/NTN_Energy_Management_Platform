@@ -1,75 +1,41 @@
 @namespace demoVer.Shared
 @using MudBlazor
 @using demoVer.Models
+@using System.Linq
 
-
-@{
-    if(!deviceCheckCompleted)
+@if (!deviceCheckCompleted)
+{
+    <div class="timeline-loading-overlay">
+        <div class="timeline-spinner" role="status" aria-live="polite" aria-label="Loading timeline"></div>
+    </div>
+}
+else
+{
+    var orderedItems = (Items ?? new List<RunningStateTimelineItem>()).AsEnumerable().Reverse().ToList();
+    if (orderedItems.Count == 0)
     {
-        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                background-color: rgba(255,255,255,0.8);"
-            class="d-flex align-center justify-center">
-            <MudProgressCircular Indeterminate="true" Color="Color.Primary" Size="Size.Large" />
-        </div>
+        <div class="timeline-empty">目前沒有狀態更新</div>
     }
     else
     {
-        if(IsMobile)
-        {
-            <MudTimeline TimelineOrientation="TimelineOrientation.Vertical"
-                TimelinePosition="TimelinePosition.Start"
-                Reverse="true">
-                @foreach (var item in Items)
+        var orientationClass = IsMobile ? "vertical" : "horizontal";
+        <div class="timeline-container @orientationClass">
+            <div class="timeline-track">
+                @foreach (var item in orderedItems)
                 {
-                    <MudTimelineItem Color="@item.Color">
-                        <ItemContent>
-                            @{
-                                if(IsMobile)
-                                {
-                                    <MudAlert>@item.Message</MudAlert>
-                                }
-                                else
-                                {
-                                    <MudAlert Severity="@item.Severity">@item.Message</MudAlert>
-                                }
-                            }
-                        </ItemContent>
-                        <ItemOpposite>
-                            <MudText Color="@item.Color">@item.Timestamp.ToString("HH:mm")</MudText>
-                        </ItemOpposite>
-                    </MudTimelineItem>
+                    var accent = GetColorHex(item.Color);
+                    var severityClass = GetSeverityClass(item.Severity);
+                    <div class="timeline-item" style="--timeline-accent:@accent;">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-body @severityClass">
+                            <div class="timeline-time">@item.Timestamp.ToString("HH:mm")</div>
+                            <div class="timeline-message">@item.Message</div>
+                        </div>
+                    </div>
                 }
-            </MudTimeline>
-        }
-        else
-        {
-            <MudTimeline TimelineOrientation="TimelineOrientation.Horizontal"
-                TimelinePosition="TimelinePosition.Alternate"
-                Reverse="true">
-                @foreach (var item in Items)
-                {
-                    <MudTimelineItem Color="@item.Color">
-                        <ItemContent>
-                            @{
-                                if(IsMobile)
-                                {
-                                    <MudAlert>@item.Message</MudAlert>
-                                }
-                                else
-                                {
-                                    <MudAlert Severity="@item.Severity">@item.Message</MudAlert>
-                                }
-                            }
-                        </ItemContent>
-                        <ItemOpposite>
-                            <MudText Color="@item.Color">@item.Timestamp.ToString("HH:mm")</MudText>
-                        </ItemOpposite>
-                    </MudTimelineItem>
-                }
-            </MudTimeline>
-        }
+            </div>
+        </div>
     }
-    
 }
 
 @code {
@@ -80,4 +46,27 @@
     {
         @* Console.WriteLine($"Timeline"); *@
     }
+
+    private static string GetColorHex(Color color) => color switch
+    {
+        Color.Primary => "#8fd1ff",
+        Color.Secondary => "#c1b2ff",
+    Color.Tertiary => "#f3a7ff",
+    Color.Info => "#7ecbff",
+        Color.Success => "#77d38b",
+        Color.Warning => "#ffcf70",
+        Color.Error => "#ff7a7a",
+        Color.Dark => "#7a8896",
+    Color.Default => "#a0b3c6",
+    _ => "#8aa0b8",
+    };
+
+    private static string GetSeverityClass(Severity severity) => severity switch
+    {
+        Severity.Success => "severity-success",
+        Severity.Info => "severity-info",
+        Severity.Warning => "severity-warning",
+        Severity.Error => "severity-error",
+        _ => "severity-neutral",
+    };
 }
