@@ -789,17 +789,22 @@ window.drawChart_Sin = function(config)
             responsive: true,
             plugins: {
                 legend: {
-                    display: true
+                    display: true,
+                    labels: {
+                        color: '#ffffff'
+                    }
                 }
             },
             scales: {
                 x: {
                     title: {
                         display: false,
-                        text: config.xLabel || "角度 (°)"
+                        text: config.xLabel || "角度 (°)",
+                        color: '#ffffff'
                     },
                     ticks:{
-                        display: false
+                        display: false,
+                        color: '#ffffff'
                     },
                     grid:{
                         display: false
@@ -808,17 +813,19 @@ window.drawChart_Sin = function(config)
                 y: {
                     title: {
                         display: false,
-                        text: config.yLabel || "值"
+                        text: config.yLabel || "值",
+                        color: '#ffffff'
                     },
                     min: config.yMin !== undefined ? config.yMin : -peak,
                     max: config.yMax !== undefined ? config.yMax : peak,
                     // suggestedMin: -peak,
                     // suggestedMax: peak
                     grid:{
-                        display:false
+                        color: '#555555'
                     },
                     ticks:{
-                        stepSize: 10
+                        stepSize: 20,
+                        color: '#ffffff'
                     }
                 }
             }

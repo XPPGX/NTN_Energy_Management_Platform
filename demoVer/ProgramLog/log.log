@@ -6,3 +6,5 @@
 [2025-10-14 19:04:10.107] [Battery_setting][nowUIData_transformTo_apiWriteData] CURVE_CV_TIMEOUT  = 00 00
 [2025-10-14 19:04:10.107] [Battery_setting][nowUIData_transformTo_apiWriteData] CURVE_FV_TIMEOUT  = 00 00
 [2025-10-14 19:04:10.108] [Battery_setting][nowUIData_transformTo_apiWriteData] CURVE_CONFIG      = 00 00
+[2025-10-14 20:28:31.831] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-10-14 20:28:35.966] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN

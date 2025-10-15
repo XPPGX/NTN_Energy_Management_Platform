@@ -679,6 +679,11 @@ input:focus {
     cursor: pointer;
 }
 
+.custom-toggle-button:has(input:disabled) {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
 .custom-toggle-button input {
     opacity: 0;
     width: 0;
@@ -782,6 +787,33 @@ input:checked + .toggle-slider:before {
     box-shadow: 0 2px 6px rgba(0,0,0,0.3);
 }
 
+
+/********** Card Container Base **********/
+/*
+[Usage Example from Battery_setting.razor]
+
+<div class="card-container-layout card-container-base">
+    <!-- card content -->
+</div>
+
+.card-container-layout { //這個請自定義在各頁面的css裡面
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    gap: 0%;
+    align-items: center;
+}
+
+This class provides the common visual styling for card containers.
+*/
+.card-container-base {
+    background: linear-gradient(to bottom, #2c2c2c, #1a1a1a);
+    border: 1px solid #555;
+    border-radius: 0;
+    color: #c0c0c0;
+}
+
+
 /* Mobile responsive adjustments for slider */
 @media(max-width: 1200px) {
     .responsive-slider {
@@ -844,3 +876,4 @@ input:checked + .toggle-slider:before {
         display: none; /* 尚未到的步驟直接隱藏 */
     }
 }
+

@@ -48,44 +48,44 @@
 
     <div class="card-grid">
         <div class="w50">
-            <div class="card-container">
+            <div class="card-container-layout card-container-base">
                 <canvas id="sinChart" class="canvas-width-height-limit"></canvas>
                 <div class="selection-container">
                     <div class="single-selection">
-                        <MudSelect T="string" Label="輸出頻率" Value="selectedFreqType" Immediate="true" Dense="true" Variant="Variant.Filled" ValueChanged="@(v => {selectedFreqType = v; OnChartTypeChanged();})">
+                        <select value="@selectedFreqType" @onchange="OnFreqTypeChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
                             @foreach(var pair in DataCenter.INV.ACF_DisplayMap)
                             {
-                                <MudSelectItem Value="@(pair.Value)">@pair.Value</MudSelectItem>
+                                <option value="@pair.Value">@pair.Value</option>
                             }
-
-                            
-                        </MudSelect>
+                        </select>
                     </div>
                     <div class="single-selection">
-                        <MudSelect T="string" Label="輸出電壓" Value="selectedVoltType" Immediate="true" Dense="true" Variant="Variant.Filled" ValueChanged="@(v => {selectedVoltType = v; OnChartTypeChanged();})">
+                        <select value="@selectedVoltType" @onchange="OnVoltTypeChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
                             @foreach(var pair in DataCenter.INV.ACV_DisplayMap)
                             {
-                                <MudSelectItem Value="@(pair.Value)">@pair.Value</MudSelectItem>
+                                <option value="@pair.Value">@pair.Value</option>
                             }
-                        </MudSelect>
+                        </select>
                     </div>
                 </div>
             </div>
         </div>
         
         <div class="w50">
-            <div class="right-part">
+            <div class="right-part-layout card-container-base">
                 <div class="small-row">
                     <div class="cell">
                         <h3 class="desktop-only">AC模式充電器</h3>
                         <div class="mobile-only">AC模式充電器</div>
                     </div>
                     <div class="cell">
-                        <MudSwitch  T="bool" 
-                                @bind-Value="AC_mode_charging_enable" 
-                                Color="Color.Primary"  
-                                Size="Size.Large"
-                                Disabled="@(!AC_mode_charging_touchable)">@(AC_mode_charging_enable ? "ON" : "OFF")</MudSwitch>
+                        <div class="toggle-with-text">
+                            <label class="custom-toggle-button" title="@(AC_mode_charging_enable ? "On" : "Off")">
+                                <input type="checkbox" @bind="AC_mode_charging_enable" disabled="@(!AC_mode_charging_touchable)" />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span>@(AC_mode_charging_enable ? "ON" : "OFF")</span>
+                        </div>
                     </div>
                 </div>
                 <div class="small-row">
@@ -94,11 +94,13 @@
                         <div class="mobile-only">並網供電</div>
                     </div>
                     <div class="cell">
-                        <MudSwitch  T="bool" 
-                                @bind-Value="Grid_tied_power_feeding_enable" 
-                                Color="Color.Primary"  
-                                Size="Size.Large"
-                                Disabled="@(!Grid_tied_power_feeding_touchable)">@(Grid_tied_power_feeding_enable ? "ON" : "OFF")</MudSwitch>
+                        <div class="toggle-with-text">
+                            <label class="custom-toggle-button" title="@(Grid_tied_power_feeding_enable ? "On" : "Off")">
+                                <input type="checkbox" @bind="Grid_tied_power_feeding_enable" disabled="@(!Grid_tied_power_feeding_touchable)" />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span>@(Grid_tied_power_feeding_enable ? "ON" : "OFF")</span>
+                        </div>
                     </div>
                 </div>
                 <div class="small-row">
@@ -107,16 +109,11 @@
                         <div class="mobile-only">輸出優先級</div>
                     </div>
                     <div class="cell">
-                        <MudSelect T="OUTPUT_PRIORITY" Label="" 
-                                    Value="selectedOutputPriority" Immediate="true" 
-                                    Dense="true" Variant="Variant.Filled" 
-                                    FitContent="true"
-                                    ValueChanged="@(v => {selectedOutputPriority = v; OnOutputPriorityChanged();})"
-                                    Disabled="@(!Output_priority_touchable)">
-                            <MudSelectItem Value="OUTPUT_PRIORITY.Utility">Utility</MudSelectItem>
-                            <MudSelectItem Value="OUTPUT_PRIORITY.Battery">Battery</MudSelectItem>
-                            @* <MudSelectItem Value="OUTPUT_PRIORITY.Solar">Solar</MudSelectItem> *@
-                        </MudSelect>
+                        <select value="@selectedOutputPriority.ToString()" @onchange="OnOutputPrioritySelectChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true" disabled="@(!Output_priority_touchable)" class="priority-select">
+                            <option value="Utility">Utility</option>
+                            <option value="Battery">Battery</option>
+                            @* <option value="Solar">Solar</option> *@
+                        </select>
                     </div>
 
                     
@@ -127,22 +124,17 @@
                         <div class="mobile-only">充電優先級</div>
                     </div>
                     <div class="cell">
-                        <MudSelect T="CHARGING_PRIORITY" Label="" 
-                                    Value="selectedChargingPriority" Immediate="true" 
-                                    Dense="true" Variant="Variant.Filled" 
-                                    FitContent="true"
-                                    ValueChanged="@(v => {selectedChargingPriority = v; OnChargingPriorityChanged();})"
-                                    Disabled="@(!Charge_priority_touchable)">
-                            <MudSelectItem Value="CHARGING_PRIORITY.Utility">Utility</MudSelectItem>
-                            <MudSelectItem Value="CHARGING_PRIORITY.Solar">Solar</MudSelectItem>
-                        </MudSelect>
+                        <select value="@selectedChargingPriority.ToString()" @onchange="OnChargingPrioritySelectChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true" disabled="@(!Charge_priority_touchable)" class="priority-select">
+                            <option value="Utility">Utility</option>
+                            <option value="Solar">Solar</option>
+                        </select>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="w100">
-            <div class="bottom-container">
+            <div class="bottom-container card-container-base">
                 <div class="alarms-col">
                     <div class="alarm-row">
                         <div class="alarm-label">Battery alarm</div>
@@ -225,15 +217,15 @@
     private bool oldScalingFactor_OK = false;
 
     bool modal_IsOpen = false;
-    string AlertMessage_parent = null;
-    string ConfirmBtn_Text_parent = null;
-    string CancelBtn_Text_parent = null;
+    string? AlertMessage_parent = null;
+    string? ConfirmBtn_Text_parent = null;
+    string? CancelBtn_Text_parent = null;
     public EventCallback ConfirmBtn_Func_parent {get; set;}
     public EventCallback CancelBtn_Func_parent {get; set;}
 
     //DataCenter紀錄共用的資料，只有多個user中的某個user按下儲存設定的時候，才會去寫到DataCenter的資料，然後用DataHub去推送到其他User的頁面
-    private string selectedFreqType = null;
-    private string selectedVoltType = null;
+    private string? selectedFreqType = null;
+    private string? selectedVoltType = null;
     private double peak;
     private double period;
     private int waveCount;
@@ -248,7 +240,6 @@
     private OUTPUT_PRIORITY selectedOutputPriority = OUTPUT_PRIORITY.Utility;
     private CHARGING_PRIORITY selectedChargingPriority = CHARGING_PRIORITY.Utility;
     
-
     private MudTextField<double>?   _alarmFieldRef;
     private MudTextField<double>?   _shutdownFieldRef;
     private MudTextField<double>?   _rechargeFieldRef;
@@ -265,11 +256,11 @@
     private double Battery_shutdown_dynamic_upperBound => Math.Min(ScalingComputer.AutoSnapToDecimal_doubleVer(Battery_alarm_value - BAT_ALARM_SHDN_DIFF), DataCenter.INV.BAT_Shutdown_Max_Display);
     private double Battery_recharge_dynamic_upperBound => ScalingComputer.AutoSnapToDecimal_doubleVer(DataCenter.Battery.FV_Display);
 
-    private async Task OnBatteryAlarmChanged(double newValue)   {AlarmValueChange_validation(newValue, "alarm");}
-    private async Task OnBatteryShutdownChanged(double newValue){AlarmValueChange_validation(newValue, "shutdown");}
-    private async Task OnBatteryRechargeChanged(double newValue){AlarmValueChange_validation(newValue, "recharge");}
-    private async Task OnBatteryCapacityChanged(int newValue)   {AlarmValueChange_validation(newValue, "capacity");}
-    private async Task OnBatteryOVAlarmChanged(double newValue) {AlarmValueChange_validation(newValue, "OV_alarm");}
+    private void OnBatteryAlarmChanged(double newValue)   { _ = AlarmValueChange_validation(newValue, "alarm"); }
+    private void OnBatteryShutdownChanged(double newValue){ _ = AlarmValueChange_validation(newValue, "shutdown"); }
+    private void OnBatteryRechargeChanged(double newValue){ _ = AlarmValueChange_validation(newValue, "recharge"); }
+    private void OnBatteryCapacityChanged(int newValue)   { _ = AlarmValueChange_validation(newValue, "capacity"); }
+    private void OnBatteryOVAlarmChanged(double newValue) { _ = AlarmValueChange_validation(newValue, "OV_alarm"); }
 
     private async Task AlarmValueChange_validation(double value, string type)
     {
@@ -425,15 +416,44 @@
         Heartbeat.OnTick -= Check_ScalingFactor_Status;
     }
 
+    private async Task OnFreqTypeChanged(ChangeEventArgs e)
+    {
+        selectedFreqType = e.Value?.ToString() ?? "";
+        await OnChartTypeChanged();
+    }
+
+    private async Task OnVoltTypeChanged(ChangeEventArgs e)
+    {
+        selectedVoltType = e.Value?.ToString() ?? "";
+        await OnChartTypeChanged();
+    }
+
     private void OnOutputPriorityChanged()
     {
-        
         Console.WriteLine($"Output Priority : {selectedOutputPriority}");
+    }
+
+    private void OnOutputPrioritySelectChanged(ChangeEventArgs e)
+    {
+        if (e.Value != null && Enum.TryParse<OUTPUT_PRIORITY>(e.Value.ToString(), out var priority))
+        {
+            selectedOutputPriority = priority;
+            OnOutputPriorityChanged();
+        }
     }
 
     private void OnChargingPriorityChanged()
     {
         Console.WriteLine($"Charge Priority : {selectedChargingPriority}");
+    }
+
+    private void OnChargingPrioritySelectChanged(ChangeEventArgs e)
+    {
+        if (e.Value != null && Enum.TryParse<CHARGING_PRIORITY>(e.Value.ToString(), out var priority))
+        {
+            selectedChargingPriority = priority;
+            OnChargingPriorityChanged();
+        }
     }
 
     private async Task OnChartTypeChanged()
@@ -479,7 +499,7 @@
             dotNetRef = DotNetObjectReference.Create(this);
             await JS.InvokeVoidAsync("startINVHub", dotNetRef);
 
-            OnChartTypeChanged();
+            await OnChartTypeChanged();
             await DrawChart();
             Heartbeat.OnTick += Check_ScalingFactor_Status;
         }
@@ -522,7 +542,7 @@
             Battery_OV_alarm_value              = DataCenter.INV.BAT_OV_Alarm_Display;
             Battery_capacity_value              = DataCenter.INV.BAT_Capacity_Display;
 
-            OnChartTypeChanged();
+            await OnChartTypeChanged();
             await InvokeAsync(StateHasChanged);
             AppLogger.Log_To_File_log(_category, $"[Inverter_setting][Check_ScalingFactor_Status] Refreshed UI", AppLogLevel.Trace);
         }
@@ -731,8 +751,8 @@
         
         INVSetting Data = new INVSetting()
         {
-            new_ACF_Display_str = selectedFreqType,
-            new_ACV_Display_str = selectedVoltType,
+            new_ACF_Display_str = selectedFreqType ?? "",
+            new_ACV_Display_str = selectedVoltType ?? "",
 
             new_AC_mode_charging_enable = AC_mode_charging_enable,
             new_Grid_tied_feeding_enable = Grid_tied_power_feeding_enable,

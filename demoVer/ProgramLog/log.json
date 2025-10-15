@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-10-14 19:04:10.115",
+  "timestamp": "2025-10-14 20:51:17.237",
   "data": [
     {
       "commandName": "CURVE_FV",
@@ -20,7 +20,7 @@
         {
           "addr": 0,
           "value": [
-            0,
+            4,
             0,
             0,
             0
@@ -65,7 +65,7 @@
       "commandName": "Output_ACV_Set",
       "isPerAddr": false,
       "targetValue": [
-        0,
+        2,
         0,
         0,
         0
@@ -87,7 +87,7 @@
       "commandName": "Output_ACF_Set",
       "isPerAddr": false,
       "targetValue": [
-        0,
+        2,
         0,
         0,
         0
@@ -120,8 +120,8 @@
       "commandName": "BAT_RCHG_VOLT",
       "isPerAddr": false,
       "targetValue": [
-        0,
-        0,
+        48,
+        7,
         0,
         0
       ],
@@ -131,8 +131,8 @@
       "commandName": "BAT_ALM_VOLT",
       "isPerAddr": false,
       "targetValue": [
-        0,
-        0,
+        152,
+        8,
         0,
         0
       ],
@@ -153,8 +153,8 @@
       "commandName": "BAT_SHDN_VOLT",
       "isPerAddr": false,
       "targetValue": [
-        0,
-        0,
+        108,
+        7,
         0,
         0
       ],
@@ -186,8 +186,8 @@
       "commandName": "BAT_OV_ALM_VOLT",
       "isPerAddr": false,
       "targetValue": [
-        0,
-        0,
+        28,
+        12,
         0,
         0
       ],
