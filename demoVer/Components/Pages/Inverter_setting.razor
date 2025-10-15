@@ -139,39 +139,30 @@
                     <div class="alarm-row">
                         <div class="alarm-label">Battery alarm</div>
                         <div class="alarm-input">
-                            <MudTextField @ref="_alarmFieldRef" T="double" InputType="InputType.Number" Value="@Battery_alarm_value" ValueChanged="OnBatteryAlarmChanged" ValueExpression="() => Battery_alarm_value" Label="Battery alarm" Variant="Variant.Outlined" Class="small-textField" 
-                                            Min="@(DataCenter.INV.BAT_Alarm_Min_Display)" Max="@(DataCenter.INV.BAT_Alarm_Max_Display)" Step="0.1" Validation="@((double value) => ValidateHint<double>(value, DataCenter.INV.BAT_Alarm_Max_Display, DataCenter.INV.BAT_Alarm_Min_Display))"
-                                            OnBlur="@(() => FixValue(_alarmFieldRef, Battery_alarm_value, DataCenter.INV.BAT_Alarm_Min_Display, DataCenter.INV.BAT_Alarm_Max_Display))"/> 
+                            <input type="number" @bind-value="Battery_alarm_value" @bind-value:after="OnBatteryAlarmChanged" placeholder="Battery alarm" min="@Battery_alarm_now_min" max="@Battery_alarm_now_max" step="0.1" />
                         </div>
                         <div class="alarm-slider">
-                            <MudSlider T="double" Value="@Battery_alarm_value" ValueChanged="OnBatteryAlarmChanged" ValueExpression="() => Battery_alarm_value"
-                                Variant="Variant.Filled" Min="@(DataCenter.INV.BAT_Alarm_Min_Display)" Max="@(DataCenter.INV.BAT_Alarm_Max_Display)" Step="0.1" Size="Size.Large" />
+                            <input type="range" @bind="Battery_alarm_value" @bind:event="oninput" @bind:after="OnBatteryAlarmChanged" min="@Battery_alarm_now_min" max="@Battery_alarm_now_max" step="0.1" class="custom-slider" />
                         </div>
                     </div>
                     
                     <div class="alarm-row">
                         <div class="alarm-label">Battery shutdown</div>
                         <div class="alarm-input">
-                            <MudTextField @ref="_shutdownFieldRef" T="double" Value="@Battery_shutdown_value" ValueChanged="OnBatteryShutdownChanged" ValueExpression="() => Battery_shutdown_value" Label="Battery shutdown" Variant="Variant.Outlined" Class="small-textField" 
-                                            Min="@(DataCenter.INV.BAT_Shutdown_Min_Display)" Max="@(Battery_shutdown_dynamic_upperBound)" Step="0.1" Validation="@((double value) => ValidateHint<double>(value, Battery_shutdown_dynamic_upperBound, DataCenter.INV.BAT_Shutdown_Min_Display))"
-                                            OnBlur="@(() => FixValue(_shutdownFieldRef, Battery_shutdown_value, DataCenter.INV.BAT_Shutdown_Min_Display, Battery_shutdown_dynamic_upperBound))"/>
+                            <input type="number" @bind-value="Battery_shutdown_value" @bind-value:after="OnBatteryShutdownChanged" placeholder="Battery shutdown" min="@(DataCenter.INV.BAT_Shutdown_Min_Display)" max="@(Battery_shutdown_dynamic_upperBound)" step="0.1" />
                         </div>
                         <div class="alarm-slider">
-                            <MudSlider T="double" Value="@Battery_shutdown_value" ValueChanged="OnBatteryShutdownChanged" ValueExpression="() => Battery_shutdown_value"   Variant="Variant.Filled"
-                                    Min="@(DataCenter.INV.BAT_Shutdown_Min_Display)" Max="@(Battery_shutdown_dynamic_upperBound)" Step="0.1" Size="Size.Large" />
+                            <input type="range" @bind="Battery_shutdown_value" @bind:event="oninput" @bind:after="OnBatteryShutdownChanged" min="@(DataCenter.INV.BAT_Shutdown_Min_Display)" max="@(Battery_shutdown_dynamic_upperBound)" step="0.1" class="custom-slider" />
                         </div>
                     </div>
 
                     <div class="alarm-row">
                         <div class="alarm-label">Battery recharge</div>
                         <div class="alarm-input">
-                            <MudTextField @ref="_rechargeFieldRef" T="double" Value="@Battery_recharge_value" ValueChanged="OnBatteryRechargeChanged" ValueExpression="() => Battery_recharge_value" Label="Battery recharge" Variant="Variant.Outlined" Class="small-textField" 
-                                            Min="@(DataCenter.INV.BAT_Recharge_Min_Display)" Max="@(Battery_recharge_dynamic_upperBound)" Step="0.1" Validation="@((double value) => ValidateHint<double>(value, Battery_recharge_dynamic_upperBound, DataCenter.INV.BAT_Recharge_Min_Display))"
-                                            OnBlur="@(() => FixValue(_rechargeFieldRef, Battery_recharge_value, DataCenter.INV.BAT_Recharge_Min_Display, Battery_recharge_dynamic_upperBound))"/>
+                            <input type="number" @bind-value="Battery_recharge_value" @bind-value:after="OnBatteryRechargeChanged" placeholder="Battery recharge" min="@(DataCenter.INV.BAT_Recharge_Min_Display)" max="@(Battery_recharge_dynamic_upperBound)" step="0.1" />
                         </div>
                         <div class="alarm-slider">
-                            <MudSlider T="double" Value="@Battery_recharge_value" ValueChanged="OnBatteryRechargeChanged" ValueExpression="() => Battery_recharge_value"   Variant="Variant.Filled"
-                                    Min="@(DataCenter.INV.BAT_Recharge_Min_Display)" Max="@(Battery_recharge_dynamic_upperBound)" Step="0.1" Size="Size.Large" />
+                            <input type="range" @bind="Battery_recharge_value" @bind:event="oninput" @bind:after="OnBatteryRechargeChanged" min="@(DataCenter.INV.BAT_Recharge_Min_Display)" max="@(Battery_recharge_dynamic_upperBound)" step="0.1" class="custom-slider" />
                         </div>
                     </div>
                 </div>
@@ -253,12 +244,15 @@
     private double  Battery_OV_alarm_value = 0;
     private const double BAT_ALARM_SHDN_DIFF = 0.2;
 
+    private double Battery_alarm_now_min => DataCenter.INV.BAT_Alarm_Min_Display;
+    private double Battery_alarm_now_max => Math.Min(DataCenter.Battery.FV_Display, DataCenter.INV.BAT_Alarm_Max_Display);
+
     private double Battery_shutdown_dynamic_upperBound => Math.Min(ScalingComputer.AutoSnapToDecimal_doubleVer(Battery_alarm_value - BAT_ALARM_SHDN_DIFF), DataCenter.INV.BAT_Shutdown_Max_Display);
     private double Battery_recharge_dynamic_upperBound => ScalingComputer.AutoSnapToDecimal_doubleVer(DataCenter.Battery.FV_Display);
 
-    private void OnBatteryAlarmChanged(double newValue)   { _ = AlarmValueChange_validation(newValue, "alarm"); }
-    private void OnBatteryShutdownChanged(double newValue){ _ = AlarmValueChange_validation(newValue, "shutdown"); }
-    private void OnBatteryRechargeChanged(double newValue){ _ = AlarmValueChange_validation(newValue, "recharge"); }
+    private void OnBatteryAlarmChanged()   { _ = AlarmValueChange_validation(Battery_alarm_value, "alarm"); }
+    private void OnBatteryShutdownChanged() { _ = AlarmValueChange_validation(Battery_shutdown_value, "shutdown"); }
+    private void OnBatteryRechargeChanged() { _ = AlarmValueChange_validation(Battery_recharge_value, "recharge"); }
     private void OnBatteryCapacityChanged(int newValue)   { _ = AlarmValueChange_validation(newValue, "capacity"); }
     private void OnBatteryOVAlarmChanged(double newValue) { _ = AlarmValueChange_validation(newValue, "OV_alarm"); }
 
@@ -272,8 +266,8 @@
         {
             case "alarm":
                 //check BAT_Alarm
-                upperBound = Math.Min(DataCenter.Battery.FV_Display, DataCenter.INV.BAT_Alarm_Max_Display);
-                lowerBound = DataCenter.INV.BAT_Alarm_Min_Display;
+                upperBound = Battery_alarm_now_max;
+                lowerBound = Battery_alarm_now_min;
                 Console.WriteLine($"[alarm changed][Alarm] upperBound = {upperBound}, lowerBound = {lowerBound}");
                 if(value > upperBound){Battery_alarm_value = upperBound;}
                 else if(value < lowerBound){Battery_alarm_value = lowerBound;}

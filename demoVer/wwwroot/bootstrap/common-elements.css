@@ -796,7 +796,9 @@ input:checked + .toggle-slider:before {
     <!-- card content -->
 </div>
 
-.card-container-layout { //這個請自定義在各頁面的css裡面
+//搭配容器的大小、排版請自定義在各頁面的css裡面如下
+
+.card-container-layout { 
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;

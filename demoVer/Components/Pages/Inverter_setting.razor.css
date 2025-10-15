@@ -284,10 +284,12 @@ mud-slider-vertical =>
 }
 
 .alarm-label{
-    width: 15%;
+    min-width: 120px;
+    width: auto;
     text-align: right;
     font-weight: 600;
     white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .alarm-input{
