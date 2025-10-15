@@ -43,7 +43,11 @@ namespace demoVer.Services
                                 // AppLogger.Log_To_File_log($"bit = {bit}, length = {length}, mask = {mask}, extracted = {extracted}, mapped = {mapped}");
                                 if (!string.IsNullOrEmpty(mapped))
                                 {
-                                    activeFields.Add(mapped);
+                                    if (string.Equals(mapped, "True", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        activeFields.Add(mapped);
+                                    }
+                                    // activeFields.Add(mapped);
                                 }
                             }
                         }

@@ -1,12 +1,1 @@
-﻿[2025-10-14 19:04:10.082] [Battery_setting][nowUIData_transformTo_apiWriteData] CURVE_CC          = 2E E0
-[2025-10-14 19:04:10.105] [Battery_setting][nowUIData_transformTo_apiWriteData] CURVE_TC          = 04 B0
-[2025-10-14 19:04:10.105] [Battery_setting][nowUIData_transformTo_apiWriteData] CURVE_CV          = 08 DE
-[2025-10-14 19:04:10.106] [Battery_setting][nowUIData_transformTo_apiWriteData] CURVE_FV          = 08 DE
-[2025-10-14 19:04:10.106] [Battery_setting][nowUIData_transformTo_apiWriteData] CURVE_CC_TIMEOUT  = 00 00
-[2025-10-14 19:04:10.107] [Battery_setting][nowUIData_transformTo_apiWriteData] CURVE_CV_TIMEOUT  = 00 00
-[2025-10-14 19:04:10.107] [Battery_setting][nowUIData_transformTo_apiWriteData] CURVE_FV_TIMEOUT  = 00 00
-[2025-10-14 19:04:10.108] [Battery_setting][nowUIData_transformTo_apiWriteData] CURVE_CONFIG      = 00 00
-[2025-10-14 20:28:31.831] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
-[2025-10-14 20:28:35.966] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
-[2025-10-15 09:54:08.766] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
-[2025-10-15 09:54:12.883] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+﻿

@@ -7,6 +7,7 @@ namespace demoVer.Models
 {
     public class BitMeaning
     {
+        public string? name { get; set; }
         public uint? bit {get; set;}
         public uint? length {get; set;}
         public bool? loggable {get; set;}
@@ -16,6 +17,7 @@ namespace demoVer.Models
         {
             return new BitMeaning
             {
+                name = this.name,
                 bit = this.bit,
                 length = this.length,
                 loggable = this.loggable,

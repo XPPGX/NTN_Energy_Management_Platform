@@ -50,6 +50,10 @@
     justify-content: flex-start;
 }
 
+.infoCard-container.bottom > * + * {
+    margin-top: 8px;
+}
+
 /* 右上角按鈕 */
 .top-right-button {
     position: absolute;
