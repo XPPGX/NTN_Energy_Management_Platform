@@ -204,10 +204,14 @@ window.drawChart_Func = function(config, webFirstRend = false) {
                     title: {
                         display: true,
                         text: config.chartTitle || '',
-                        font: {size : 26}
+                        font: {size : 26},
+                        color: '#ffffff'  // 亮色標題
                     },
                     legend: {
-                        display: true
+                        display: true,
+                        labels: {
+                            color: '#ffffff'  // 亮色圖例文字
+                        }
                     }
                 },
                 scales: {
@@ -216,7 +220,14 @@ window.drawChart_Func = function(config, webFirstRend = false) {
                         title: {
                             display: true,
                             text: "時間",
-                            font: {size : 16}
+                            font: {size : 16},
+                            color: '#ffffff'  // 亮色X軸標題
+                        },
+                        grid: {
+                            color: '#555555'  // 淺灰網格線
+                        },
+                        ticks: {
+                            color: '#ffffff'  // 亮色刻度文字
                         }
                     },
                     y: {
@@ -226,8 +237,15 @@ window.drawChart_Func = function(config, webFirstRend = false) {
                         title:{
                             display: hasLeftData && !!config.y_left_Title,
                             text: hasLeftData ? config.y_left_Title : "",
-                            font: {size : 16}
+                            font: {size : 16},
+                            color: '#ffffff'  // 亮色Y軸標題
                         },
+                        grid: {
+                            color: '#555555'  // 淺灰網格線
+                        },
+                        ticks: {
+                            color: '#ffffff'  // 亮色刻度文字
+                        }
                     },
                     y1: {
                         type: "linear",
@@ -236,8 +254,16 @@ window.drawChart_Func = function(config, webFirstRend = false) {
                         title: {
                             display: hasrightData && !!config.y_right_Title,
                             text: hasrightData ? config.y_right_Title : "",
-                            font: {size: 16}
+                            font: {size: 16},
+                            color: '#ffffff'  // 亮色Y軸標題
                         },
+                        grid: {
+                            drawOnChartArea: false,
+                            color: '#555555'  // 淺灰網格線
+                        },
+                        ticks: {
+                            color: '#ffffff'  // 亮色刻度文字
+                        }
                     }
                 }
             }
@@ -535,7 +561,10 @@ window.drawChart_Stage = function (webFirstRend = false) {
                 responsive: true,
                 plugins: {
                     legend: {
-                        display: true
+                        display: true,
+                        labels: {
+                            color: '#ffffff'
+                        }
                     }
                 },
                 scales: {
@@ -543,7 +572,14 @@ window.drawChart_Stage = function (webFirstRend = false) {
                         type:'linear',
                         title: {
                             display: true,
-                            text: ""
+                            text: "",
+                            color: '#ffffff'
+                        },
+                        grid: {
+                            color: '#555555'
+                        },
+                        ticks: {
+                            color: '#ffffff'
                         }
                     },
                     y1: {
@@ -551,22 +587,34 @@ window.drawChart_Stage = function (webFirstRend = false) {
                         position: "left",
                         title: {
                             display: true,
-                            text: "電流 (A)"
+                            text: "電流 (A)",
+                            color: '#ffffff'
                         },
                         suggestedMin: 0,
-                        suggestedMax: 100
+                        suggestedMax: 100,
+                        grid: {
+                            color: '#555555'
+                        },
+                        ticks: {
+                            color: '#ffffff'
+                        }
                     },
                     y2: {
                         type: "linear",
                         position: "right",
                         title: {
                             display: true,
-                            text: "電壓 (V)"
+                            text: "電壓 (V)",
+                            color: '#ffffff'
                         },
                         suggestedMin: 0,
                         suggestedMax: 100,
                         grid: {
-                            drawOnChartArea: false
+                            drawOnChartArea: false,
+                            color: '#555555'
+                        },
+                        ticks: {
+                            color: '#ffffff'
                         }
                     }
                 }
@@ -741,17 +789,22 @@ window.drawChart_Sin = function(config)
             responsive: true,
             plugins: {
                 legend: {
-                    display: true
+                    display: true,
+                    labels: {
+                        color: '#ffffff'
+                    }
                 }
             },
             scales: {
                 x: {
                     title: {
                         display: false,
-                        text: config.xLabel || "角度 (°)"
+                        text: config.xLabel || "角度 (°)",
+                        color: '#ffffff'
                     },
                     ticks:{
-                        display: false
+                        display: false,
+                        color: '#ffffff'
                     },
                     grid:{
                         display: false
@@ -760,17 +813,19 @@ window.drawChart_Sin = function(config)
                 y: {
                     title: {
                         display: false,
-                        text: config.yLabel || "值"
+                        text: config.yLabel || "值",
+                        color: '#ffffff'
                     },
                     min: config.yMin !== undefined ? config.yMin : -peak,
                     max: config.yMax !== undefined ? config.yMax : peak,
                     // suggestedMin: -peak,
                     // suggestedMax: peak
                     grid:{
-                        display:false
+                        color: '#555555'
                     },
                     ticks:{
-                        stepSize: 10
+                        stepSize: 20,
+                        color: '#ffffff'
                     }
                 }
             }

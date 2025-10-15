@@ -67,23 +67,37 @@
     "Chart_Setting": null
   },
   {
-    "ID": "17a125ec92474921927fc6fc5e2fcfe8",
+    "ID": "85b9981a166a4f8ab59c9740159f50c4",
     "card_Type": 1,
     "widthClass": "w25",
-    "showSequence": 3,
-    "cardName": "NTN CAN2 addr0",
+    "showSequence": 1,
+    "cardName": "NTN MOD2 addr0",
     "Info_DataItems": [
       {
-        "iconPath": "images/user_selections/car-battery.png",
+        "iconPath": "images/user_selections/fridge.png",
         "status": 3,
         "INFO_DataFormats": [
           {
-            "MachineName": "[64] : ",
-            "Addr": 64,
+            "MachineName": "[192] : ",
+            "Addr": 192,
             "UserSettingName": "DEV1",
             "Cmd": "MFR_MODEL",
-            "ValueName": "mdlName",
+            "ValueName": "MODEL",
             "Unit": ""
+          }
+        ]
+      },
+      {
+        "iconPath": "images/user_selections/transmission-tower.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[192] : ",
+            "Addr": 192,
+            "UserSettingName": "DEV1",
+            "Cmd": "READ_VIN",
+            "ValueName": "VIN1",
+            "Unit": "V"
           }
         ]
       },
@@ -92,22 +106,8 @@
         "status": 3,
         "INFO_DataFormats": [
           {
-            "MachineName": "[64] : ",
-            "Addr": 64,
-            "UserSettingName": "DEV1",
-            "Cmd": "READ_VIN",
-            "ValueName": "VIN",
-            "Unit": "V"
-          }
-        ]
-      },
-      {
-        "iconPath": "images/user_selections/car-battery.png",
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "[64] : ",
-            "Addr": 64,
+            "MachineName": "[192] : ",
+            "Addr": 192,
             "UserSettingName": "DEV1",
             "Cmd": "READ_AC_VOUT",
             "ValueName": "VOUT",
@@ -120,8 +120,8 @@
         "status": 3,
         "INFO_DataFormats": [
           {
-            "MachineName": "[64] : ",
-            "Addr": 64,
+            "MachineName": "[192] : ",
+            "Addr": 192,
             "UserSettingName": "DEV1",
             "Cmd": "READ_FAN_SPEED_1",
             "ValueName": "FAN1",
@@ -201,37 +201,23 @@
     "Chart_Setting": null
   },
   {
-    "ID": "85b9981a166a4f8ab59c9740159f50c4",
+    "ID": "17a125ec92474921927fc6fc5e2fcfe8",
     "card_Type": 1,
     "widthClass": "w25",
-    "showSequence": 1,
-    "cardName": "NTN MOD2 addr0",
+    "showSequence": 3,
+    "cardName": "NTN CAN2 addr0",
     "Info_DataItems": [
       {
-        "iconPath": "images/user_selections/fridge.png",
+        "iconPath": "images/user_selections/car-battery.png",
         "status": 3,
         "INFO_DataFormats": [
           {
-            "MachineName": "[192] : ",
-            "Addr": 192,
+            "MachineName": "[64] : ",
+            "Addr": 64,
             "UserSettingName": "DEV1",
             "Cmd": "MFR_MODEL",
-            "ValueName": "MODEL",
+            "ValueName": "mdlName",
             "Unit": ""
-          }
-        ]
-      },
-      {
-        "iconPath": "images/user_selections/transmission-tower.png",
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "[192] : ",
-            "Addr": 192,
-            "UserSettingName": "DEV1",
-            "Cmd": "READ_VIN",
-            "ValueName": "VIN1",
-            "Unit": "V"
           }
         ]
       },
@@ -240,8 +226,22 @@
         "status": 3,
         "INFO_DataFormats": [
           {
-            "MachineName": "[192] : ",
-            "Addr": 192,
+            "MachineName": "[64] : ",
+            "Addr": 64,
+            "UserSettingName": "DEV1",
+            "Cmd": "READ_VIN",
+            "ValueName": "VIN",
+            "Unit": "V"
+          }
+        ]
+      },
+      {
+        "iconPath": "images/user_selections/car-battery.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "[64] : ",
+            "Addr": 64,
             "UserSettingName": "DEV1",
             "Cmd": "READ_AC_VOUT",
             "ValueName": "VOUT",
@@ -254,8 +254,8 @@
         "status": 3,
         "INFO_DataFormats": [
           {
-            "MachineName": "[192] : ",
-            "Addr": 192,
+            "MachineName": "[64] : ",
+            "Addr": 64,
             "UserSettingName": "DEV1",
             "Cmd": "READ_FAN_SPEED_1",
             "ValueName": "FAN1",
@@ -265,6 +265,127 @@
       }
     ],
     "Link_STATUS_Pairs": null,
+    "Chart_Setting": null
+  },
+  {
+    "ID": "9701b761af0641c1bfab1d3f60e2c271",
+    "card_Type": 2,
+    "widthClass": "w50",
+    "showSequence": 4,
+    "cardName": "NewChart",
+    "Info_DataItems": null,
+    "Link_STATUS_Pairs": null,
+    "Chart_Setting": {
+      "canvasID": "Chart_76d9c423749443d1ae9a26d491b5a9e2",
+      "ChartTitle": "NewChart",
+      "XTitle": "\u6642\u9593",
+      "timeGap_selection": 0,
+      "Labels": [
+        "16:15:35",
+        "16:15:36",
+        "16:15:37",
+        "16:15:38",
+        "16:15:40",
+        "16:15:41",
+        "16:15:42",
+        "16:15:43",
+        "16:15:44",
+        "16:15:45",
+        "16:15:46",
+        "16:15:47",
+        "16:15:48",
+        "16:15:49",
+        "16:15:50",
+        "16:15:51",
+        "16:15:52",
+        "16:15:53",
+        "16:15:54",
+        "16:15:55",
+        "16:15:56",
+        "16:15:57",
+        "16:15:58",
+        "16:15:59",
+        "16:16:00",
+        "16:16:01",
+        "16:16:02",
+        "16:16:03",
+        "16:16:04",
+        "16:16:05"
+      ],
+      "Y_left_Title": "VIN",
+      "Y_right_Title": "VIN",
+      "YMin": 0,
+      "YMax": 0,
+      "chart_single_data_lines": [
+        {
+          "status": 3,
+          "addr": 128,
+          "mdlName": "NTN-5K-124  ",
+          "Cmd": "READ_VIN",
+          "Unit": "V",
+          "Y_axis_selection": true,
+          "color": "#f44336",
+          "Data": [
+            1690,
+            1690,
+            2074,
+            2074,
+            1792.4,
+            1792.4,
+            2125.2,
+            2125.2,
+            1869.2,
+            1869.2,
+            1894.8,
+            1894.8,
+            1894.8,
+            1818,
+            1818,
+            1920.4,
+            1920.4,
+            2074,
+            2074,
+            1920.4,
+            1920.4,
+            1792.4,
+            1792.4,
+            1818,
+            1818,
+            2202,
+            2202,
+            1920.4,
+            1920.4,
+            1920.4
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "ID": "c48870e415214675843d663080b4fa49",
+    "card_Type": 3,
+    "widthClass": "w50",
+    "showSequence": 5,
+    "cardName": "RunningDiagram",
+    "Info_DataItems": null,
+    "Link_STATUS_Pairs": [
+      {
+        "iconPath": "images/user_selections/transmission-tower.png",
+        "Label": "TEST"
+      },
+      {
+        "iconPath": "images/user_selections/fridge.png",
+        "Label": ""
+      },
+      {
+        "iconPath": "images/user_selections/plug.png",
+        "Label": ""
+      },
+      {
+        "iconPath": "images/user_selections/car-battery.png",
+        "Label": ""
+      }
+    ],
     "Chart_Setting": null
   }
 ]
