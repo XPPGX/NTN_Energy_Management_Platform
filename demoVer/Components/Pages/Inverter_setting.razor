@@ -75,8 +75,8 @@
             <div class="right-part-layout card-container-base">
                 <div class="small-row">
                     <div class="cell">
-                        <h3 class="desktop-only">AC模式充電器</h3>
-                        <div class="mobile-only">AC模式充電器</div>
+                        @* <h3 class="desktop-only">AC模式充電器</h3> *@
+                        <div class="alarm-label">AC模式充電器</div>
                     </div>
                     <div class="cell">
                         <div class="toggle-with-text">
@@ -90,8 +90,8 @@
                 </div>
                 <div class="small-row">
                     <div class="cell">
-                        <h3 class="desktop-only">並網供電</h3>
-                        <div class="mobile-only">並網供電</div>
+                        @* <h3 class="desktop-only">並網供電</h3> *@
+                        <div class="alarm-label">並網供電</div>
                     </div>
                     <div class="cell">
                         <div class="toggle-with-text">
@@ -105,8 +105,8 @@
                 </div>
                 <div class="small-row">
                     <div class="cell">
-                        <h3 class="desktop-only">輸出優先級</h3>
-                        <div class="mobile-only">輸出優先級</div>
+                        @* <h3 class="desktop-only">輸出優先級</h3> *@
+                        <div class="alarm-label">輸出優先級</div>
                     </div>
                     <div class="cell">
                         <select value="@selectedOutputPriority.ToString()" @onchange="OnOutputPrioritySelectChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true" disabled="@(!Output_priority_touchable)" class="priority-select">
@@ -120,8 +120,8 @@
                 </div>
                 <div class="small-row">
                     <div class="cell">
-                        <h3 class="desktop-only">充電優先級</h3>
-                        <div class="mobile-only">充電優先級</div>
+                        @* <h3 class="desktop-only">充電優先級</h3> *@
+                        <div class="alarm-label">充電優先級</div>
                     </div>
                     <div class="cell">
                         <select value="@selectedChargingPriority.ToString()" @onchange="OnChargingPrioritySelectChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true" disabled="@(!Charge_priority_touchable)" class="priority-select">
@@ -170,25 +170,23 @@
                     <div class="alarm-row">
                         <div class="alarm-label">Battery capacity</div>
                         <div class="alarm-input">
-                            <MudTextField @ref="_capacityFieldRef" T="int" Value="@Battery_capacity_value" ValueChanged="OnBatteryCapacityChanged" ValueExpression="() => Battery_capacity_value" Label="Battery capacity" Variant="Variant.Outlined" Class="small-textField" 
-                                            Min="0" Max="@(DataCenter.INV.BAT_Capacity_Max)" step="1" Validation="@((int value) => ValidateHint<int>(value, DataCenter.INV.BAT_Capacity_Max, 0))"
-                                            OnBlur="@(() => FixValue<int>(_capacityFieldRef, Battery_capacity_value, 0, DataCenter.INV.BAT_Capacity_Max))"/>
+                            <input type="number" @bind-value="Battery_capacity_value" @bind-value:event="oninput" @bind-value:after="OnBatteryCapacityChanged" placeholder="Battery capacity"
+                                   min="0" max="@(DataCenter.INV.BAT_Capacity_Max)" step="1" />
                         </div>
                         <div class="alarm-slider">
-                            <MudSlider T="int" Value="@Battery_capacity_value" ValueChanged="OnBatteryCapacityChanged" ValueExpression="() => Battery_capacity_value"   Variant="Variant.Filled"
-                                    Min="0" Max="@DataCenter.INV.BAT_Capacity_Max" Step="1" Size="Size.Large" />
+                            <input type="range" @bind="Battery_capacity_value" @bind:event="oninput" @bind:after="OnBatteryCapacityChanged"
+                                   min="0" max="@(DataCenter.INV.BAT_Capacity_Max)" step="1" class="custom-slider" />
                         </div>
                     </div>
                     <div class="alarm-row">
                         <div class="alarm-label">Battery OV alarm</div>
                         <div class="alarm-input">
-                            <MudTextField @ref="_OV_alarmFieldRef" T="double" Value="@Battery_OV_alarm_value" ValueChanged="OnBatteryOVAlarmChanged" ValueExpression="() => Battery_OV_alarm_value" Label="Battery OV alarm" Variant="Variant.Outlined" Class="small-textField" 
-                                            Min="@(DataCenter.INV.BAT_OV_Alarm_Min_Display)" Max="@(DataCenter.INV.BAT_OV_Alarm_Max_Display)" step="0.1" Validation="@((double value) => ValidateHint<double>(value, DataCenter.INV.BAT_OV_Alarm_Max_Display, DataCenter.INV.BAT_OV_Alarm_Min_Display))"
-                                            OnBlur="@(() => FixValue<double>(_OV_alarmFieldRef, Battery_OV_alarm_value, DataCenter.INV.BAT_OV_Alarm_Min_Display, DataCenter.INV.BAT_OV_Alarm_Max_Display))" />
+                            <input type="number" @bind-value="Battery_OV_alarm_value" @bind-value:after="OnBatteryOVAlarmChanged" placeholder="Battery OV alarm"
+                                   min="@(DataCenter.INV.BAT_OV_Alarm_Min_Display)" max="@(DataCenter.INV.BAT_OV_Alarm_Max_Display)" step="0.1" />
                         </div>
                         <div class="alarm-slider">
-                            <MudSlider T="double" Value="@Battery_OV_alarm_value" ValueChanged="OnBatteryOVAlarmChanged" ValueExpression="() => Battery_OV_alarm_value"   Variant="Variant.Filled"
-                                    Min="@DataCenter.INV.BAT_OV_Alarm_Min_Display" Max="@DataCenter.INV.BAT_OV_Alarm_Max_Display" Step="0.1" Size="Size.Large" />
+                            <input type="range" @bind="Battery_OV_alarm_value" @bind:event="oninput" @bind:after="OnBatteryOVAlarmChanged"
+                                   min="@(DataCenter.INV.BAT_OV_Alarm_Min_Display)" max="@(DataCenter.INV.BAT_OV_Alarm_Max_Display)" step="0.1" class="custom-slider" />
                         </div>
                     </div>
                 </div>
@@ -231,12 +229,6 @@
     private OUTPUT_PRIORITY selectedOutputPriority = OUTPUT_PRIORITY.Utility;
     private CHARGING_PRIORITY selectedChargingPriority = CHARGING_PRIORITY.Utility;
     
-    private MudTextField<double>?   _alarmFieldRef;
-    private MudTextField<double>?   _shutdownFieldRef;
-    private MudTextField<double>?   _rechargeFieldRef;
-    private MudTextField<int>?      _capacityFieldRef;
-    private MudTextField<double>?   _OV_alarmFieldRef;
-
     private double  Battery_alarm_value = 0;
     private double  Battery_shutdown_value = 0;
     private double  Battery_recharge_value = 0;
@@ -253,8 +245,8 @@
     private void OnBatteryAlarmChanged()   { _ = AlarmValueChange_validation(Battery_alarm_value, "alarm"); }
     private void OnBatteryShutdownChanged() { _ = AlarmValueChange_validation(Battery_shutdown_value, "shutdown"); }
     private void OnBatteryRechargeChanged() { _ = AlarmValueChange_validation(Battery_recharge_value, "recharge"); }
-    private void OnBatteryCapacityChanged(int newValue)   { _ = AlarmValueChange_validation(newValue, "capacity"); }
-    private void OnBatteryOVAlarmChanged(double newValue) { _ = AlarmValueChange_validation(newValue, "OV_alarm"); }
+    private void OnBatteryCapacityChanged()   { _ = AlarmValueChange_validation(Battery_capacity_value, "capacity"); }
+    private void OnBatteryOVAlarmChanged() { _ = AlarmValueChange_validation(Battery_OV_alarm_value, "OV_alarm"); }
 
     private async Task AlarmValueChange_validation(double value, string type)
     {

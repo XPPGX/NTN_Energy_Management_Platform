@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 var builder = WebApplication.CreateBuilder(args);
 
 // builder.WebHost.UseUrls("http://127.0.0.1:5070");
-builder.WebHost.UseUrls("http://0.0.0.0:5040");
+builder.WebHost.UseUrls("http://0.0.0.0:5042");
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -51,7 +51,7 @@ builder.Services.AddHttpClient("ApiClient", client =>
 {
     if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
     {
-        client.BaseAddress = new Uri("http://192.168.102.205:5039/"); //local debug with python
+        client.BaseAddress = new Uri("http://127.0.0.1:5050/"); //local debug with python
         // client.BaseAddress = new Uri("http://192.168.102.210:5039"); 
         // client.BaseAddress = new Uri("http://192.168.31.184:5039/"); //CMU3 test
         // client.BaseAddress = new Uri("http://192.168.102.201:5039/"); //windows debug with remote linux
