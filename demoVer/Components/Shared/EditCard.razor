@@ -343,7 +343,7 @@ edit-container是用來綁以下javascript事件的 id :
                         <div class="chart-selector-panel">
                             <div class="chart-selector-grid">
                                 <div class="custom-select-wrapper">
-                                    <label for="chartMachineSelect" style="color: #ffffff;">Machine</label>
+                                    <label for="chartMachineSelect" style="color: var(--text-primary);">Machine</label>
                                     <select id="chartMachineSelect"
                                             class="custom-select"
                                             style="color: #2a2a2a;"
@@ -358,7 +358,7 @@ edit-container是用來綁以下javascript事件的 id :
                                 </div>
 
                                 <div class="custom-select-wrapper">
-                                    <label for="chartCmdSelect" style="color: #ffffff;">CMD</label>
+                                    <label for="chartCmdSelect" style="color: var(--text-primary);">CMD</label>
                                     <select id="chartCmdSelect"
                                             class="custom-select"
                                             style="color: #2a2a2a;"
@@ -474,22 +474,57 @@ edit-container是用來綁以下javascript事件的 id :
                     <div class="chartForm">
                         @{
                             string paper_style = (isMobile) ? "" : "width: 400px; max-height: 400px;" ;
-                            <MudPaper Elevation="2" Class="pa-2 rounded" Style="@paper_style">
-                                <MudForm @ref="form" @bind-IsValid="@success">
-                                    <MudTextField T="string" @bind-Value="temp_Y_singleTitle" Label="Y-Title" Required="true" RequiredError="Y-Title is required!" />
-                                    <MudRadioGroup T="bool?" @bind-Value="blank_singleDataLine.Y_axis_selection" Required="true" RequiredError="Y-axis is required!">
-                                        <MudRadio T="bool?" Value="@(true)">Left-axis</MudRadio>
-                                        <MudRadio T="bool?" Value="@(false)">Right-axis</MudRadio>
-                                    </MudRadioGroup>
-                                    <MudColorPicker Label="Data-Color" @bind-Text="blank_singleDataLine.color" ColorPickerView="ColorPickerView.Palette" Style="@($"color: {blank_singleDataLine.color};")" Required="true"/>
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="Confirm_SingleDataLine_setting">確定</MudButton>
-                                </MudForm>
-                            </MudPaper>
+                            <div class="chart-display-card" style="@paper_style">
+                                <form class="custom-form">
+                                    <div class="form-group">
+                                        <label for="yTitleInput" class="form-label">Y-Title</label>
+                                        <input type="text" id="yTitleInput" class="form-input" @bind="temp_Y_singleTitle" required />
+                                        @if (!string.IsNullOrEmpty(yTitleError))
+                                        {
+                                            <div class="error-text">@yTitleError</div>
+                                        }
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Y-axis</label>
+                                        <div class="radio-group" @onchange:stopPropagation="true" @onclick:stopPropagation="true">
+                                            <label class="radio-option">
+                                                <input type="radio"
+                                                       name="yAxis"
+                                                       value="true"
+                                                       @onchange="YAxisChanged"
+                                                       checked="@(blank_singleDataLine.Y_axis_selection == true)" />
+                                                <span class="radio-label">Left-axis</span>
+                                            </label>
+                                            <label class="radio-option">
+                                                <input type="radio"
+                                                       name="yAxis"
+                                                       value="false"
+                                                       @onchange="YAxisChanged"
+                                                       checked="@(blank_singleDataLine.Y_axis_selection == false)" />
+                                                <span class="radio-label">Right-axis</span>
+                                            </label>
+                                        </div>
+                                        @if (!string.IsNullOrEmpty(yAxisError))
+                                        {
+                                            <div class="error-text">@yAxisError</div>
+                                        }
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="colorPicker" class="form-label">Data-Color</label>
+                                        <input type="color" id="colorPicker" class="form-input color-input" @bind="blank_singleDataLine.color" style="@($"color: {blank_singleDataLine.color};")" required />
+                                        @if (!string.IsNullOrEmpty(colorError))
+                                        {
+                                            <div class="error-text">@colorError</div>
+                                        }
+                                    </div>
+                                    <button type="button" class="btn btn-primary ml-auto" @onclick="Confirm_SingleDataLine_setting">確定</button>
+                                </form>
+                            </div>
                         }
                     </div>  
                     @if(!string.IsNullOrEmpty(chartForm_errorMessage))
                     {
-                        <MudText Class="mud-error-text mt-2">@chartForm_errorMessage</MudText>
+                        <div class="error-text mt-2">@chartForm_errorMessage</div>
                     }
                 </div>
                 break;
@@ -610,7 +645,6 @@ edit-container是用來綁以下javascript事件的 id :
 
 </div>
 
-
 @code{
     
     //For log
@@ -633,7 +667,7 @@ edit-container是用來綁以下javascript事件的 id :
     private Dictionary<string, string>? show_cmd_unit_Dict_ref;
     private JObject cmdDict;
     string Cmd_filePath = "CMD_and_Unit.json";
-    private List<string> UnitLists;
+    private List<string> UnitLists = new();
 
     
     
@@ -706,7 +740,7 @@ edit-container是用來綁以下javascript事件的 id :
                         }
                         break;
                     case CardType.Status:
-                        edit_Link_STATUS_Pairs = currentCardInfo.Link_STATUS_Pairs?.Select(pair => pair.DeepClone()).ToList(); //edit_Link_STATUS_Pairs 與 currentCardInfo.Link_STATUS_Pairs 不同記憶體
+                        edit_Link_STATUS_Pairs = currentCardInfo.Link_STATUS_Pairs?.Select(pair => pair.DeepClone()).ToList() ?? new List<LINK_STATUS_Pair>(); //edit_Link_STATUS_Pairs 與 currentCardInfo.Link_STATUS_Pairs 不同記憶體
                         break;
                     default:
                         break;
@@ -774,7 +808,8 @@ edit-container是用來綁以下javascript事件的 id :
                 {
                     oneDevice_cmd_unit_Dict.Clear();
                 }
-                oneDevice_cmd_unit_Dict = globalVar.Get_oneDevice_Cmd_unit_Dict(currentSelected_Addr);
+                var deviceDict = globalVar.Get_oneDevice_Cmd_unit_Dict(currentSelected_Addr);
+                oneDevice_cmd_unit_Dict = deviceDict ?? new Dictionary<string, string>();
                 AppLogger.Log_To_File_log(_category, $"[EditCard][getCMDs] oneDevice_cmd_unit_Dict.Count = {oneDevice_cmd_unit_Dict.Count}", AppLogLevel.Trace);
 
                 show_cmd_unit_Dict_ref = oneDevice_cmd_unit_Dict;
@@ -962,11 +997,11 @@ edit-container是用來綁以下javascript事件的 id :
 
                         blank_singleDataLine.addr = 9999;
                         blank_singleDataLine.mdlName = "";
-                        blank_singleDataLine.Cmd = null;
-                        blank_singleDataLine.Unit = null;
+                        blank_singleDataLine.Cmd = string.Empty;
+                        blank_singleDataLine.Unit = string.Empty;
                         blank_singleDataLine.Y_axis_selection = null;
-                        blank_singleDataLine.color = null;
-                        temp_Y_singleTitle = null;
+                        blank_singleDataLine.color = string.Empty;
+                        temp_Y_singleTitle = string.Empty;
                         @* CHART_setting_stage = CHART_SETTING_STAGE.SELECT_CMD_STAGE; *@
                         
                         Console.WriteLine($"deviceAddr_List.Count = {deviceAddr_List.Count}");
@@ -1130,19 +1165,19 @@ edit-container是用來綁以下javascript事件的 id :
         if(!string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Cmd))
         {
             Console.WriteLine("selectUnit : currentEdit_INFO_DataFormat_ref.Cmd = " + currentEdit_INFO_DataFormat_ref.Cmd);
-            if(cmdDict.ContainsKey(currentEdit_INFO_DataFormat_ref.Cmd))
+            if(cmdDict != null && cmdDict.TryGetValue(currentEdit_INFO_DataFormat_ref.Cmd, out var cmdToken))
             {
-                var unitToken = cmdDict[currentEdit_INFO_DataFormat_ref.Cmd]["Unit"];
+                var unitToken = cmdToken?["Unit"];
                 if(unitToken != null)
                 {
-                    UnitLists = cmdDict[currentEdit_INFO_DataFormat_ref.Cmd]["Unit"].ToObject<List<string>>();
+                    UnitLists = unitToken.ToObject<List<string>>() ?? new List<string>();
+                    INFO_setting_stage = INFO_SETTING_STAGE.UNIT_SELECTION_STAGE;
                 }
             }
-            INFO_setting_stage = INFO_SETTING_STAGE.UNIT_SELECTION_STAGE;
         }
         else
         {
-            Console.WriteLine("selectUnit : 尚未選擇CMD (這邊可以跳個Alert框)");
+            Console.WriteLine("selectUnit : 尚未選擇命令 (這邊可以跳個Alert框)");
         }
     }
 
@@ -1288,10 +1323,12 @@ edit-container是用來綁以下javascript事件的 id :
     private int SingleLine_index = 0;
     private MudForm form;
     private bool success;
-    private string chartCMD;
-    private string temp_Y_singleTitle = null;
-    private string temp_chartTitle = null;
-    private string chartForm_errorMessage = null;
+    private string yTitleError = string.Empty;
+    private string yAxisError = string.Empty;
+    private string colorError = string.Empty;
+    private string temp_Y_singleTitle = string.Empty;
+    private string temp_chartTitle = string.Empty;
+    private string chartForm_errorMessage = string.Empty;
     private List<CurveSetting> _curves = new List<CurveSetting>();
     private string chartMachineCmdError = string.Empty;
 
@@ -1306,6 +1343,22 @@ edit-container是用來綁以下javascript事件的 id :
     private void ToggleDropdown_CHART()
     {
         
+    }
+
+    private void YAxisChanged(ChangeEventArgs args)
+    {
+        if (bool.TryParse(args.Value?.ToString(), out var parsedValue))
+        {
+            blank_singleDataLine.Y_axis_selection = parsedValue;
+            yAxisError = string.Empty;
+            chartForm_errorMessage = string.Empty;
+        }
+        else
+        {
+            blank_singleDataLine.Y_axis_selection = null;
+        }
+
+        StateHasChanged();
     }
 
     private void ProceedToDisplaySetting()
@@ -1562,7 +1615,7 @@ edit-container是用來綁以下javascript事件的 id :
     {
         var target_DataLine = edit_ChartSetting_Clone.chart_single_data_lines[SingleLine_index];
         target_DataLine.Unit = _selected_Unit;
-        chartForm_errorMessage = null;
+        chartForm_errorMessage = string.Empty;
         CHART_setting_stage = CHART_SETTING_STAGE.DISPLAY_SETTING;
         
     }
@@ -1587,7 +1640,7 @@ edit-container是用來綁以下javascript事件的 id :
             Unit = "",
             Y_axis_selection = true,
             color = "",
-            Data = null,
+            Data = Array.Empty<double?>(),
         });
     }
 
@@ -1613,9 +1666,11 @@ edit-container是用來綁以下javascript事件的 id :
 
     private async Task Confirm_SingleDataLine_setting()
     {
-        await form.Validate();
+        // Manual validation
+        yTitleError = string.IsNullOrEmpty(temp_Y_singleTitle) ? "Y-Title is required!" : "";
+        yAxisError = blank_singleDataLine.Y_axis_selection == null ? "Y-axis is required!" : "";
+        colorError = string.IsNullOrEmpty(blank_singleDataLine.color) ? "Data-Color is required!" : "";
         
-        string colorError = string.IsNullOrEmpty(blank_singleDataLine.color) ? "Y-Data Color is required" : null;
         var target_DataLine = edit_ChartSetting_Clone.chart_single_data_lines[SingleLine_index];
         bool sameAxis_Flag = false;
         if(edit_ChartSetting_Clone.chart_single_data_lines.Count == 2)
@@ -1627,12 +1682,13 @@ edit-container是用來綁以下javascript事件的 id :
         
         
 
-        if(!success || colorError != null || sameAxis_Flag == true)
+        if(!string.IsNullOrEmpty(yTitleError) || !string.IsNullOrEmpty(yAxisError) || !string.IsNullOrEmpty(colorError) || sameAxis_Flag == true)
         {
             Console.WriteLine("表單驗證失敗");
             target_DataLine.status = SettingStatus.PROGRESS;
-            if(!success){chartForm_errorMessage = "請確認所有欄位皆已填寫";}
-            else if(colorError != null){chartForm_errorMessage = "未選擇資料顏色";}
+            if(!string.IsNullOrEmpty(yTitleError)){chartForm_errorMessage = yTitleError;}
+            else if(!string.IsNullOrEmpty(yAxisError)){chartForm_errorMessage = yAxisError;}
+            else if(!string.IsNullOrEmpty(colorError)){chartForm_errorMessage = colorError;}
             else if(sameAxis_Flag){chartForm_errorMessage = "兩組資料不可位於同一側";}
             return;
         }

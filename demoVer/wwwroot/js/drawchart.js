@@ -155,6 +155,14 @@ window.drawChart_Func = function(config, webFirstRend = false) {
         window.chartInstances = {};
     }
 
+    // 獲取 CSS 變數的顏色值
+    const root = document.body;
+    const textPrimary = getComputedStyle(root).getPropertyValue('--text-primary').trim();
+    const textSecondary = getComputedStyle(root).getPropertyValue('--text-secondary').trim();
+    const borderColor = getComputedStyle(root).getPropertyValue('--border-color').trim();
+
+    console.log(`Text Primary: ${textPrimary}, Text Secondary: ${textSecondary}, Border Color: ${borderColor}`);
+
     const existingChart = window.chartInstances[config.canvasID];
     
     const datasets = config.chart_single_data_lines.map((line, index) => ({
@@ -172,7 +180,26 @@ window.drawChart_Func = function(config, webFirstRend = false) {
 
     if(existingChart && webFirstRend == false)
     {   
+        // 重新獲取當前主題的顏色
+        const currentTextPrimary = getComputedStyle(root).getPropertyValue('--text-primary').trim();
+        const currentBorderColor = getComputedStyle(root).getPropertyValue('--border-color').trim();
+        
         existingChart.options.plugins.title.text = config.chartTitle;
+        existingChart.options.plugins.title.color = currentTextPrimary;
+        existingChart.options.plugins.legend.labels.color = currentTextPrimary;
+        
+        existingChart.options.scales.x.title.color = currentTextPrimary;
+        existingChart.options.scales.x.grid.color = currentBorderColor;
+        existingChart.options.scales.x.ticks.color = currentTextPrimary;
+        
+        existingChart.options.scales.y.title.color = currentTextPrimary;
+        existingChart.options.scales.y.grid.color = currentBorderColor;
+        existingChart.options.scales.y.ticks.color = currentTextPrimary;
+        
+        existingChart.options.scales.y1.title.color = currentTextPrimary;
+        existingChart.options.scales.y1.grid.color = currentBorderColor;
+        existingChart.options.scales.y1.ticks.color = currentTextPrimary;
+        
         existingChart.data.labels = config.labels;
         existingChart.data.datasets = datasets;
 
@@ -205,12 +232,12 @@ window.drawChart_Func = function(config, webFirstRend = false) {
                         display: true,
                         text: config.chartTitle || '',
                         font: {size : 26},
-                        color: '#ffffff'  // 亮色標題
+                        color: textPrimary  // 使用主題文字顏色
                     },
                     legend: {
                         display: true,
                         labels: {
-                            color: '#ffffff'  // 亮色圖例文字
+                            color: textPrimary  // 使用主題文字顏色
                         }
                     }
                 },
@@ -221,13 +248,13 @@ window.drawChart_Func = function(config, webFirstRend = false) {
                             display: true,
                             text: "時間",
                             font: {size : 16},
-                            color: '#ffffff'  // 亮色X軸標題
+                            color: textPrimary  // 使用主題文字顏色
                         },
                         grid: {
-                            color: '#555555'  // 淺灰網格線
+                            color: borderColor  // 使用主題邊框顏色
                         },
                         ticks: {
-                            color: '#ffffff'  // 亮色刻度文字
+                            color: textPrimary  // 使用主題文字顏色
                         }
                     },
                     y: {
@@ -238,13 +265,13 @@ window.drawChart_Func = function(config, webFirstRend = false) {
                             display: hasLeftData && !!config.y_left_Title,
                             text: hasLeftData ? config.y_left_Title : "",
                             font: {size : 16},
-                            color: '#ffffff'  // 亮色Y軸標題
+                            color: textPrimary  // 使用主題文字顏色
                         },
                         grid: {
-                            color: '#555555'  // 淺灰網格線
+                            color: borderColor  // 使用主題邊框顏色
                         },
                         ticks: {
-                            color: '#ffffff'  // 亮色刻度文字
+                            color: textPrimary  // 使用主題文字顏色
                         }
                     },
                     y1: {
@@ -255,14 +282,14 @@ window.drawChart_Func = function(config, webFirstRend = false) {
                             display: hasrightData && !!config.y_right_Title,
                             text: hasrightData ? config.y_right_Title : "",
                             font: {size: 16},
-                            color: '#ffffff'  // 亮色Y軸標題
+                            color: textPrimary  // 使用主題文字顏色
                         },
                         grid: {
                             drawOnChartArea: false,
-                            color: '#555555'  // 淺灰網格線
+                            color: borderColor  // 使用主題邊框顏色
                         },
                         ticks: {
-                            color: '#ffffff'  // 亮色刻度文字
+                            color: textPrimary  // 使用主題文字顏色
                         }
                     }
                 }
@@ -836,4 +863,84 @@ window.drawChart_Sin = function(config)
 window.destroyAllCharts = function () {
     console.log("[destoryAllCharts]");
     console.log(window.chartInstances);
+};
+
+window.redrawAllCharts = function () {
+    console.log("[redrawAllCharts] 重新渲染所有圖表以應用新主題");
+    
+    if (!window.chartInstances) {
+        console.log("沒有圖表實例");
+        return;
+    }
+
+    const root = document.body;
+    
+    // 獲取當前主題的顏色
+    const textPrimary = getComputedStyle(root).getPropertyValue('--text-primary').trim();
+    const borderColor = getComputedStyle(root).getPropertyValue('--border-color').trim();
+    
+    console.log(`[redrawAllCharts] 當前主題顏色 - 文字: ${textPrimary}, 邊框: ${borderColor}`);
+
+    // 遍歷所有圖表實例並更新顏色
+    for (const [canvasID, chart] of Object.entries(window.chartInstances)) {
+        if (chart && !chart.destroyed) {
+            console.log(`更新圖表: ${canvasID}`);
+            
+            // 更新插件顏色
+            if (chart.options.plugins) {
+                if (chart.options.plugins.title) {
+                    chart.options.plugins.title.color = textPrimary;
+                }
+                if (chart.options.plugins.legend && chart.options.plugins.legend.labels) {
+                    chart.options.plugins.legend.labels.color = textPrimary;
+                }
+            }
+            
+            // 更新軸顏色
+            if (chart.options.scales) {
+                // X軸
+                if (chart.options.scales.x) {
+                    if (chart.options.scales.x.title) {
+                        chart.options.scales.x.title.color = textPrimary;
+                    }
+                    if (chart.options.scales.x.grid) {
+                        chart.options.scales.x.grid.color = borderColor;
+                    }
+                    if (chart.options.scales.x.ticks) {
+                        chart.options.scales.x.ticks.color = textPrimary;
+                    }
+                }
+                
+                // Y軸
+                if (chart.options.scales.y) {
+                    if (chart.options.scales.y.title) {
+                        chart.options.scales.y.title.color = textPrimary;
+                    }
+                    if (chart.options.scales.y.grid) {
+                        chart.options.scales.y.grid.color = borderColor;
+                    }
+                    if (chart.options.scales.y.ticks) {
+                        chart.options.scales.y.ticks.color = textPrimary;
+                    }
+                }
+                
+                // Y1軸 (右側Y軸)
+                if (chart.options.scales.y1) {
+                    if (chart.options.scales.y1.title) {
+                        chart.options.scales.y1.title.color = textPrimary;
+                    }
+                    if (chart.options.scales.y1.grid) {
+                        chart.options.scales.y1.grid.color = borderColor;
+                    }
+                    if (chart.options.scales.y1.ticks) {
+                        chart.options.scales.y1.ticks.color = textPrimary;
+                    }
+                }
+            }
+            
+            // 重新渲染圖表
+            chart.update();
+            console.log(`圖表 ${canvasID} 已更新`);
+        }
+    }
 };

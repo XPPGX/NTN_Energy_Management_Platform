@@ -314,6 +314,63 @@ table.table input {
     transition: border-color 0.2s;
 }
 
+.chart-display-card {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 8px 24px var(--shadow-color);
+    width: 100%;
+    max-width: 420px;
+}
+
+.custom-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.form-input {
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(var(--accent-color-rgb), 0.25);
+    outline: none;
+}
+
+.error-text {
+    color: var(--error-color);
+    font-size: 0.875rem;
+}
+
+.chart-step-error {
+    color: var(--error-color);
+    margin-top: 0.5rem;
+}
+
+.color-input {
+    height: 48px;
+    padding: 0;
+}
+
 .custom-select:focus {
     border-color: #1976d2;
     outline: none;

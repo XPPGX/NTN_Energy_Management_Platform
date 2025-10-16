@@ -11,8 +11,7 @@
     <canvas id="@currentCard.Chart_Setting.canvasID"></canvas>
     @if(showEditButton)
     {
-        <button class="btn" 
-                style="position: absolute; top: 4px; right: 4px; padding: 4px 8px; font-size: 16px; z-index: 999; background-color: #333; color: #fff; border: none; border-radius: 6px; cursor: pointer;"
+        <button class="btn top-right-button"
                 @onclick="openEditMenu">
             <MudIcon Icon="@Icons.Material.Filled.MoreHoriz" />
         </button>

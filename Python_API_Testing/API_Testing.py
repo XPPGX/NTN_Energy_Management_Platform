@@ -144,9 +144,9 @@ def read_memory():
                 #     data = _MFR_MODEL_G1[:dlen] + [32] * max(0, dlen - len(_MFR_MODEL_G1))
             else:
                 if gix == 0:
-                    data = _MFR_MODEL_G0[:dlen] + [32] * max(0, dlen - len(_MFR_MODEL_G0))  # 不足補空白
+                    data = _MFR_MODEL_G0_Y[:dlen] + [32] * max(0, dlen - len(_MFR_MODEL_G0_Y))  # 不足補空白
                 elif gix == 1:
-                    data = _MFR_MODEL_G1[:dlen] + [32] * max(0, dlen - len(_MFR_MODEL_G1))
+                    data = _MFR_MODEL_G1_Y[:dlen] + [32] * max(0, dlen - len(_MFR_MODEL_G1_Y))
             
 
         # 特例：INV_FAULT 固定回 [0, 0]

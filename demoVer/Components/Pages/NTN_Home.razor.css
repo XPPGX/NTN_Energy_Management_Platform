@@ -11,10 +11,10 @@
     gap:1rem;
     padding: 1rem;
     width: calc(100%);
-    background-color: #2a2a2a;
+    background-color: var(--bg-primary);
     border-radius: 8px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.8);
-    transition: all 0.5s ease;
+    box-shadow: 0 4px 14px var(--shadow-color);
+    /* transition: all 0.1s ease; */
     box-sizing: border-box;
 }
 
@@ -109,7 +109,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: #ffffff; /* 亮色字體，適合深色背景 */
+    color: var(--text-primary); /* 亮色字體，適合深色背景 */
 }
 
 /***** Slide Button *****/
@@ -132,7 +132,7 @@
   .slider {
     position: absolute;
     cursor: pointer;
-    background-color: #ccc;
+    background-color: var(--border-color);
     border-radius: 26px;
     top: 0;
     left: 0;
@@ -149,7 +149,7 @@
     width: 20px;
     left: 3px;
     bottom: 3px;
-    background-color: white;
+    background-color: var(--text-primary);
     transition: 0.4s;
     border-radius: 50%;
   }
@@ -166,11 +166,11 @@
 
 /***** ModelName *****/
 .highlighted-content {
-    background-color: #ffe5d9;  /* 柔和珊瑚橘淺色 */
-    color: #d94f28;             /* 濃郁珊瑚橘字體 */
+    background-color: var(--bg-secondary);  /* 柔和珊瑚橘淺色 */
+    color: var(--accent-color);             /* 濃郁珊瑚橘字體 */
     padding: 2px;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(217, 79, 40, 0.2);
+    box-shadow: 0 4px 12px var(--shadow-color);
     transition: background-color 0.3s ease, color 0.3s ease;
     font-weight: 600;
 }
@@ -181,7 +181,7 @@
 .module-card-dragable{
     user-select: none;
     cursor: grab;
-    box-shadow: 0 2px 8px #0001;
+    box-shadow: 0 2px 8px var(--shadow-color);
     transition: box-shadow 0.2s;
 }
 /*******************/
@@ -193,7 +193,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.4); /* 模糊遮罩 */
+    background-color: var(--shadow-color); /* 模糊遮罩 */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -201,10 +201,10 @@
 }
 
 .modal-content {
-    background-color: #fff;
+    background-color: var(--bg-primary);
     padding: 30px;
     border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 5px 15px var(--shadow-color);
     width: 300px;
     max-width: 90vw;
     display: flex;
@@ -225,7 +225,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0,0,0,0.5);
+    background: var(--shadow-color);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -233,24 +233,24 @@
 }
 
 .custom-dialog {
-    background-color: rgba(43, 43, 43, 0.95);
+    background-color: var(--bg-primary);
     border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 5px 15px var(--shadow-color);
     animation: scale-in 0.25s ease;
     text-align: center;
-    border: 1px solid #5a5a5a; /* 金屬質感的邊框 */
-    color: #d1d1d1; /* 柔和的淺灰文字，適合深色背景 */
+    border: 1px solid var(--border-color); /* 金屬質感的邊框 */
+    color: var(--text-primary); /* 柔和的淺灰文字，適合深色背景 */
     width: 300px;
     max-width: 90vw;
     padding: 24px;
 }
 
 .modal-content-edit {
-    background-color: rgba(43,43,43,0.95);
-    color: #d1d1d1;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
     padding: 30px;
     border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 5px 15px var(--shadow-color);
     width: 600px;
     max-width: 90vw;
     display: flex;
@@ -379,10 +379,10 @@
 
     width: 90px;
     height: 90px;
-    border: none;
-    background-color: #ffffff;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-primary);
     border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 4px 8px var(--shadow-color);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     cursor: pointer;
     padding: 10px;
@@ -390,8 +390,8 @@
 
 .addCard-selection-img-label-col:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
-    background-color: #f7f7f7;
+    box-shadow: 0 6px 14px var(--shadow-color);
+    background-color: var(--bg-secondary);
 }
 
 .addCard-selection-img {
@@ -402,7 +402,7 @@
 
 .addCard-selection-label {
     font-size: 13px;
-    color: #333;
+    color: var(--text-primary);
     font-weight: 500;
 }
 
@@ -579,11 +579,11 @@
     }
 
     .modal-content-edit {
-        background-color: rgba(43,43,43,0.95);
-        color: #d1d1d1;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
         padding: 30px;
         border-radius: 8px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 5px 15px var(--shadow-color);
         width: 600px;
         max-width: 90vw;
         display: flex;

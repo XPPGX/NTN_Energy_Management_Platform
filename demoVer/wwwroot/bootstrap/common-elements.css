@@ -1,3 +1,53 @@
+/* CSS 變數定義 - 暗色主題 */
+:root {
+    --bg-primary: #121212;
+    --bg-secondary: #1e1e1e;
+    --bg-tertiary: #2a2a2a;
+    --bg-accent: #3a3a3a;
+    --text-primary: #ffffff;
+    --text-secondary: #e0e0e0;
+    --text-muted: #9ba7b4;
+    --border-color: #444444;
+    --border-light: #555555;
+    --accent-color: #6fc7ff;
+    --accent-color-rgb: 111, 200, 255;
+    --accent-hover: #8fd1ff;
+    --success-color: #4caf50;
+    --error-color: #f44336;
+    --warning-color: #ff9800;
+    --shadow-color: rgba(0, 0, 0, 0.5);
+}
+
+/* 亮色主題 - 工業風金屬質感 */
+.theme-light {
+    --bg-primary: #f8f9fa;
+    --bg-secondary: #e9ecef;
+    --bg-tertiary: #dee2e6;
+    --bg-accent: #ced4da;
+    --text-primary: #212529;
+    --text-secondary: #495057;
+    --text-muted: #6c757d;
+    --border-color: #adb5bd;
+    --border-light: #d6d8db;
+    --accent-color: #495057;
+    --accent-color-rgb: 73, 80, 87;
+    --accent-hover: #343a40;
+    --success-color: #28a745;
+    --error-color: #dc3545;
+    --warning-color: #ffc107;
+    --shadow-color: rgba(0, 0, 0, 0.15);
+    
+    /* 工業風金屬質感額外變數 */
+    --metal-primary: #c0c0c0;      /* 銀色金屬 */
+    --metal-secondary: #a8a8a8;    /* 深銀色 */
+    --metal-accent: #808080;       /* 灰色金屬 */
+    --metal-dark: #606060;         /* 深灰金屬 */
+    --metal-light: #e8e8e8;        /* 亮銀色 */
+    --industrial-bg: #f5f5f5;      /* 工業背景 */
+    --industrial-border: #b8b8b8;  /* 工業邊框 */
+    --industrial-shadow: rgba(0, 0, 0, 0.1); /* 工業陰影 */
+}
+
 /********** stretch **********/
 .no-flex
 {
@@ -21,119 +71,121 @@
     font-size: 1rem;
     cursor: pointer;
     transition: 0.3s;
-    border: none;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
 }
 .btn-blue
 {
-    background: #1f1f1f;
-    color: #00eeff;
-    border: 1px solid #00eaff;
+    background: var(--bg-secondary);
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
 }
 .btn-blue:hover
 {
-    background: #00eaff33;
-    box-shadow: 0 0 10px #00eaffaa;
+    background: var(--bg-accent);
+    box-shadow: 0 0 10px var(--accent-color);
 }
 
 .btn-red
 {
-    background: #121212;
-    color: #ff4d4d;
-    border: 1px solid #ff4d4d;
+    background: var(--bg-secondary);
+    color: var(--error-color);
+    border: 1px solid var(--error-color);
 }
 .btn-red:hover
 {
-    background: #ff4d4d33;
-    box-shadow: 0 0 8px #ff4d4daa;
+    background: var(--bg-accent);
+    box-shadow: 0 0 8px var(--error-color);
 }
 
 .btn-teal
 {
-    background: #0f1f1f;
-    color: #26ffe0;
-    border: 1px solid #26ffe0;
+    background: var(--bg-secondary);
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
 }
 .btn-teal:hover
 {
-    background: #26ffe022;
-    box-shadow: 0 0 10px #26ffe088;
+    background: var(--bg-accent);
+    box-shadow: 0 0 10px var(--success-color);
 }
 
 .btn-amber
 {
-    background: #211400;
-    color: #ffba63;
-    border: 1px solid #ffba63;
+    background: var(--bg-secondary);
+    color: var(--warning-color);
+    border: 1px solid var(--warning-color);
 }
 .btn-amber:hover
 {
-    background: #ffba6333;
-    box-shadow: 0 0 8px #ffba6388;
+    background: var(--bg-accent);
+    box-shadow: 0 0 8px var(--warning-color);
 }
 
 .btn-neutral
 {
-    background: #2a2a2a;
-    color: #f0f0f0;
-    border: 1px solid #5a5a5a;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
 }
 .btn-neutral:hover
 {
-    background: #3a3a3a;
-    box-shadow: 0 0 6px #5a5a5a88;
+    background: var(--bg-accent);
+    box-shadow: 0 0 6px var(--border-color);
 }
 
 .btn-violet {
-    background: #1a1022;
-    color: #caa4ff;
-    border: 1px solid #8b5cf6;  /* 淡一階的霓虹紫 */
+    background: var(--bg-secondary);
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
 }
 .btn-violet:hover {
-    background: #8b5cf633;
-    box-shadow: 0 0 8px #8b5cf688;
+    background: var(--bg-accent);
+    box-shadow: 0 0 8px var(--accent-color);
 }
 
 .btn-emerald
 {
-    background: #0f241c;
-    color: #7cffb8;
-    border: 1px solid #44ff9a;
+    background: var(--bg-secondary);
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
 }
 .btn-emerald:hover
 {
-    background: #44ff9a22;
-    color: #e9fff5;
-    box-shadow: 0 0 10px #44ff9a66;
+    background: var(--bg-accent);
+    color: var(--text-primary);
+    box-shadow: 0 0 10px var(--success-color);
 }
 
 .btn-bubble-red
 {
-    background: #ff3333;
-    color: white;
+    background: var(--error-color);
+    color: var(--bg-primary);
 }
 .btn-bubble-red:hover
 {
-    background: #ff1a1a;
+    background: var(--accent-hover);
 }
 
 .btn-primary {
-    background: #306a8d;          /* 更深藍底 */
-    color: white;               
-    border: 1px solid #8cdbfd;    /* 同色邊框 */
+    background: var(--accent-color);
+    color: var(--bg-primary);
+    border: 1px solid var(--accent-color);
 }
 .btn-primary:hover {
-    background: #1a3a4a;          /* hover 時亮一點，但仍實心 */
-    box-shadow: 0 0 6px #3fc7ff55; /* 微光暈 */
+    background: var(--accent-hover);
+    box-shadow: 0 0 6px var(--accent-color);
 }
 
 .btn-green {
-    background: #3ca08e;          /* 深綠底 */
-    color: white;           
-    border: 1px solid #2fd99b;
+    background: var(--success-color);
+    color: var(--bg-primary);
+    border: 1px solid var(--success-color);
 }
 .btn-green:hover {
-    background: #184036;          /* hover 稍亮 */
-    box-shadow: 0 0 6px #2fd99b55;
+    background: var(--accent-hover);
+    box-shadow: 0 0 6px var(--success-color);
 }
 
 
@@ -156,14 +208,15 @@
 </div>
 */
 .column-chooser {
-    background: #1f1f1f;
-    border: 1px solid #444;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     padding: 10px;
     margin-bottom: 10px;
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+    box-shadow: 0 2px 8px var(--shadow-color);
 }
 
 .multi-option {
@@ -173,31 +226,31 @@
     justify-content: flex-start;
     cursor: pointer;
     font-size: 0.9rem;
-    color: #eee;
+    color: var(--text-primary);
     padding: 6px 10px;
     border-radius: 6px;
     transition: background 0.3s;
 }
 
 .multi-option:hover {
-    background: #2a2a2a;
+    background: var(--bg-accent);
 }
 
 .multi-option input[type="checkbox"] {
     appearance: none;
     width: 16px;
     height: 16px;
-    border: 1px solid #777;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     margin-right: 8px;
-    background: #111;
+    background: var(--bg-primary);
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
 .multi-option input[type="checkbox"]:checked {
-    background: #00eaff;
-    border-color: #00eaff;
+    background: var(--accent-color);
+    border-color: var(--accent-color);
 }
 
 /********** table (on computer) **********/
@@ -229,27 +282,28 @@
 .custom-table {
     width: 100%;
     border-collapse: collapse;
-    background: #121212;
+    background: var(--bg-primary);
     border-radius: 6px;
     overflow: hidden;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.8);
+    box-shadow: 0 4px 14px var(--shadow-color);
+    border: 1px solid var(--border-color);
 }
 .custom-table th, .custom-table td {
-    border: 1px solid #444;
+    border: 1px solid var(--border-light);
     padding: 10px;
     text-align: center;
-    color: #e0e0e0;
+    color: var(--text-primary);
 }
 .custom-table th {
-    background: #1c1c1c;
+    background: var(--bg-secondary);
     font-weight: bold;
-    color: #00eaff;
+    color: var(--text-primary);
 }
 .custom-table td {
-    color: #f5f5f5;
+    color: var(--text-secondary);
 }
 .custom-table tr:nth-child(even) {
-    background: #181818;
+    background: var(--bg-accent);
 }
 
 /********** table (Mobile) **********/
@@ -277,27 +331,28 @@
     gap: 10px;
 }
 .card-table-row {
-    background: #121212;
-    border: 1px solid #444;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     padding: 10px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.8);
+    box-shadow: 0 4px 14px var(--shadow-color);
+    margin-bottom: 8px;
 }
 .card-table-item {
     display: flex;
     justify-content: space-between;
     padding: 5px 0;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid var(--border-light);
 }
 .card-table-item:last-child {
     border-bottom: none;
 }
 .card-table-label {
-    color: #00eaff;
+    color: var(--accent-color);
     font-weight: bold;
 }
 .card-table-value {
-    color: #fafafa;
+    color: var(--text-primary);
 }
 
 /********** radio **********/
@@ -326,7 +381,7 @@
     align-items: center;
     cursor: pointer;
     font-size: 0.95rem;
-    color: #eee;
+    color: var(--text-primary);
     padding: 4px 8px;
     border-radius: 6px;
     white-space: nowrap;
@@ -335,31 +390,31 @@
 }
 
 .radio-option:hover {
-    border-color: #00eaff;
-    box-shadow: 0 0 8px #00eaff55, 0 0 4px #00eaff inset;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 8px var(--accent-color);
 }
 
 .radio-option input[type="radio"] {
     flex-shrink: 0;
     width: 14px;
     height: 14px;
-    border: 2px solid #555;
+    border: 2px solid var(--border-color);
     border-radius: 50%;
-    background: #111;
+    background: var(--bg-primary);
     cursor: pointer;
     transition: all 0.25s ease;
-    box-shadow: inset 0 0 3px rgba(0,0,0,0.6);
+    box-shadow: inset 0 0 3px var(--shadow-color);
     vertical-align: middle;
 }
 
 .radio-option input[type="radio"]:checked {
-    border-color: #00eaff;
-    background: radial-gradient(circle at center, #00eaff 60%, #111 62%);
-    box-shadow: 0 0 6px #00eaff88;
+    border-color: var(--accent-color);
+    background: radial-gradient(circle at center, var(--accent-color) 60%, var(--bg-primary) 62%);
+    box-shadow: 0 0 6px var(--accent-color);
 }
 
 .radio-label {
-    color: #ddd;
+    color: var(--text-secondary);
     white-space: nowrap;
 }
 
@@ -371,7 +426,7 @@
 */
 label {
     font-size: 0.9rem;
-    color: #ddd;
+    color: var(--text-primary);
     display: block;
     margin-bottom: 8px;
 }
@@ -390,16 +445,16 @@ select{
     width: 100%;
     padding: 10px;
     border-radius: 6px;
-    border: 1px solid #444;
-    background: #1f1f1f;
-    color: #f0f0f0;
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    color: var(--text-primary);
     transition: border 0.3s, box-shadow 0.3s;
 }
 
 select:focus {
     border: 1px solid #33cfff;
     box-shadow: 0 0 10px #33cfff99;
-    background: #262626;
+    background: var(--bg-secondary);
     outline: none;
 }
 
@@ -415,9 +470,9 @@ input {
     padding: 10px 14px;
     border-radius: 8px;
 
-    background-color: rgba(255, 255, 255, 0.08); /* 半透明白，背景會透出 */
-    border: 1px solid rgba(255, 255, 255, 0.25); /* 半透明白邊框 */
-    color: #ffffff; /* 白色字 */
+    background-color: var(--bg-primary); /* 使用主題背景色 */
+    border: 1px solid var(--border-color); /* 使用主題邊框色 */
+    color: var(--text-primary); /* 使用主題文字色 */
     font-size: 14px;
 
     backdrop-filter: blur(6px); /* 毛玻璃效果 */
@@ -428,15 +483,15 @@ input {
 
 /* placeholder 樣式 */
 input::placeholder {
-    color: rgba(255, 255, 255, 0.5); /* 半透明白，提示文字不搶眼 */
+    color: var(--text-secondary); /* 使用主題次要文字色 */
 }
 
 /* focus 狀態 */
 input:focus {
     outline: none;
-    border-color: rgba(107, 176, 255, 0.7); /* 帶藍光的邊框 */
-    box-shadow: 0 0 12px rgba(107, 176, 255, 0.6); /* 藍色光暈 */
-    background-color: rgba(255, 255, 255, 0.12); /* 稍微加深，凸顯焦點 */
+    border-color: var(--accent-color); /* 使用主題強調色 */
+    box-shadow: 0 0 12px rgba(var(--accent-color-rgb), 0.6); /* 使用主題強調色 */
+    background-color: var(--bg-secondary); /* 使用主題次要背景色 */
 }
 
 /********** card **********/
@@ -469,7 +524,7 @@ input:focus {
 */
 .card {
     height: 100%;
-    background: #2a2a2a;
+    background: var(--bg-primary);
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 14px rgba(0,0,0,0.8);
@@ -479,7 +534,7 @@ input:focus {
     cursor: pointer;
 }
 .card.active {
-    background: #333;
+    background: var(--bg-secondary);
     flex: 0 0 50%;
     opacity: 1;
     z-index: 2;
@@ -529,7 +584,7 @@ input:focus {
 </div>
 */
 .detail-card {
-    background: #1c1c1c;
+    background: var(--bg-primary);
     border-left: 4px solid #1976d2;
     border-radius: 8px;
     padding: 16px 20px;
@@ -553,32 +608,34 @@ input:focus {
 
 .detail-card-title {
     font-weight: 600;
-    color: #e2e2e2;
+    color: var(--text-primary);
     letter-spacing: 0.5px;
 }
 
 .detail-card-action {
-    background: #2b2b2b;
-    border: 1px solid #ff4d4d;
-    color: #ffb3b3;
+    background: var(--bg-secondary);
+    border: 1px solid var(--error-color);
+    color: var(--error-color);
     border-radius: 6px;
     padding: 6px 14px;
     cursor: pointer;
     font-size: 0.85rem;
     transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 4px var(--shadow-color);
 }
 
 .detail-card-action:hover {
-    background: #ff4d4d33;
-    color: #ffffff;
-    box-shadow: 0 0 8px rgba(255, 77, 77, 0.45);
+    background: rgba(244, 67, 54, 0.1); /* 半透明紅色背景 */
+    color: var(--error-color);
+    box-shadow: 0 4px 8px var(--shadow-color);
 }
+
 
 .detail-card-body {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    color: #f5f5f5;
+    color: var(--text-primary);
     font-size: 0.95rem;
 }
 
@@ -591,12 +648,12 @@ input:focus {
 .detail-card-label {
     min-width: 72px;
     font-weight: 600;
-    color: #9dd9ff;
+    color: var(--accent-color);
 }
 
 .detail-card-value {
     flex: 1;
-    color: #f5f5f5;
+    color: var(--text-primary);
 }
 
 .detail-card-row-color .detail-card-value {
@@ -625,14 +682,14 @@ input:focus {
 */
 .custom-menu {
     position: absolute;
-    background-color: #2b2b2b; /* 深色背景，與工業風格搭配 */
-    border: 1px solid #4a4a4a; /* 金屬質感的邊框 */
+    background-color: var(--bg-primary); /* 深色背景，與工業風格搭配 */
+    border: 1px solid var(--border-color); /* 金屬質感的邊框 */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); /* 增加陰影效果 */
     z-index: 9999;
     padding: 6px 0;
     min-width: 140px; /* 調整寬度以適應表格 */
     border-radius: 6px; /* 輕微圓角，保持現代感 */
-    color: #e0e0e0; /* 柔和的淺灰文字，適合深色背景 */
+    color: var(--text-primary); /* 柔和的淺灰文字，適合深色背景 */
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -641,14 +698,14 @@ input:focus {
     text-align: center;
     padding: 10px 14px; /* 增加內距，提升可點擊範圍 */
     cursor: pointer;
-    color: #d1d1d1; /* 與custom-menu文字顏色一致 */
+    color: var(--text-secondary); /* 與custom-menu文字顏色一致 */
     background-color: transparent; /* 默認透明背景 */
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .custom-menu-item:hover {
-    background-color: #3a3a3a; /* hover效果，稍微變亮 */
-    color: #ffffff; /* 提升文字對比度 */
+    background-color: var(--bg-secondary); /* hover效果，稍微變亮 */
+    color: var(--text-primary); /* 提升文字對比度 */
 }
 
 
@@ -796,7 +853,7 @@ input:checked + .toggle-slider:before {
     <!-- card content -->
 </div>
 
-//搭配容器的大小、排版請自定義在各頁面的css裡面如下
+//容器的大小、排版，請自定義在各頁面的css裡面如下
 
 .card-container-layout { 
     display: flex;
@@ -809,19 +866,106 @@ input:checked + .toggle-slider:before {
 This class provides the common visual styling for card containers.
 */
 .card-container-base {
-    background: linear-gradient(to bottom, #2c2c2c, #1a1a1a);
-    border: 1px solid #555;
+    background: linear-gradient(to bottom, var(--bg-primary), var(--bg-secondary));
+    border: 1px solid var(--border-color);
     border-radius: 0;
-    color: #c0c0c0;
+    color: var(--text-primary);
 }
 
 
-/* Mobile responsive adjustments for slider */
-@media(max-width: 1200px) {
-    .responsive-slider {
-        width: 20%;
-        display: inline-block;
+/********** jumpInfo-card **********/
+/*
+[Usage] 用於顯示跳出資訊卡片的顏色和特效樣式
+
+<div class="jumpInfo-card">
+    <div class="card-title" id="Address"></div>
+    <div class="card-body">
+        <div class="info-item">
+            <span class="label">ModelName</span>
+            <span class="value" id="modelname-display"></span>
+        </div>
+        <div class="info-item">
+            <span class="label">Revision:</span>
+            <span class="value" id="Revision-display"></span>
+        </div>
+        <div class="info-item">
+            <span class="label">Status:</span>
+            <span class="value" id="InvSetting-display"></span>
+        </div>
+        <div class="info-item">
+            <span class="label">Error:</span>
+            <span class="value" id="ErrorMessage"></span>
+        </div>
+        <div class="info-item">
+            <span class="label">Load Current:</span>
+            <span class="value" id="Load_Current"></span>
+        </div>
+        <div class="info-item">
+            <span class="label">Load Power:</span>
+            <span class="value" id="Load_Power"></span>
+        </div>
+        <div class="info-item">
+            <span class="label">DC current:</span>
+            <span class="value" id="DC_Current"></span>
+        </div>
+        <div class="info-item">
+            <span class="label">Battery Voltage:</span>
+            <span class="value" id="V_BAT"></span>
+        </div>
+        <div class="info-item">
+            <span class="label">Temperature:</span>
+            <span class="value" id="Temperature_display"></span>
+        </div>
+        <div class="info-item">
+            <span class="label">FAN SPEED 1:</span>
+            <span class="value" id="FAN_SPEED_1"></span>
+        </div>
+        <div class="info-item">
+            <span class="label">FAN SPEED 2</span>
+            <span class="value" id="FAN_SPEED_2"></span>
+        </div>
+    </div>
+</div>
+
+搭配說明：
+- 排版樣式（padding, border-radius, width, max-width, display, grid-template-columns 等）請在各頁面的 CSS 文件中定義，例如 Link_status.razor.css
+- 顏色和特效樣式（background, border, box-shadow, backdrop-filter, color, text-shadow 等）在此 common-elements.css 中定義
+- 使用時只需在 HTML 中添加 class="jumpInfo-card"，即可自動應用顏色和特效；排版則需在對應頁面 CSS 中補充
+- 範例，在 Link_status.razor.css 中定義排版樣式如下：
+    .jumpInfo-card .card-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            letter-spacing: 0.05rem;
+            margin-bottom: 1.1rem;
+            text-align: center;
+            text-transform: uppercase;
     }
+*/
+.jumpInfo-card {
+    background: linear-gradient(145deg, rgba(30, 38, 48, 0.95), rgba(10, 14, 18, 0.92));
+    border: 1px solid rgba(111, 200, 255, 0.35);
+    box-shadow: 0 28px 60px rgba(0, 0, 0, 0.65), 0 0 22px rgba(111, 200, 255, 0.22);
+    backdrop-filter: blur(14px);
+    color: #dce9f6;
+}
+
+.jumpInfo-card .card-title {
+    color: #9ad8ff;
+}
+
+.jumpInfo-card .info-item {
+    background: linear-gradient(150deg, rgba(18, 26, 36, 0.86), rgba(11, 16, 22, 0.9));
+    border: 1px solid rgba(86, 122, 164, 0.35);
+    box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.35);
+}
+
+.jumpInfo-card .label {
+    color: #7fcaff;
+}
+
+.jumpInfo-card .value {
+    color: #f3f9ff;
+    text-shadow: 0 0 6px rgba(111, 200, 255, 0.25);
 }
 
 /********** Media Queries **********/
@@ -869,8 +1013,8 @@ This class provides the common visual styling for card containers.
         display: flex;
         align-items: center;
         padding: 0.5rem 1rem;
-        background: #1f1f1f;
-        border: 1px solid #444;
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
         border-radius: 6px;
     }
 

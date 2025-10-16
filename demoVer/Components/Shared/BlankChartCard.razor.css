@@ -5,7 +5,7 @@
     align-items: center;
     justify-content: center;
     gap: 2px;
-    background: #2a2a2a; /* 深灰背景，適合深色主題 */
+    background: var(--bg-primary); /* 深灰背景，適合深色主題 */
     border-radius: 12px;
     width: 100%;
     height: 100%;
@@ -13,7 +13,7 @@
     overflow: hidden;
 
     /* 陰影與動畫 */
-    box-shadow: 0 2px 8px rgba(0,0,0,0.8);
+    box-shadow: 0 2px 8px var(--shadow-color);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -27,9 +27,9 @@
     top: 4px;
     right: 4px;
     padding: 4px 8px;
-    background-color: #333; /* 深灰背景，適合暗色主題 */
-    color: #fff; /* 白色字體 */
-    border: none;
+    background-color: var(--bg-secondary); /* 深灰背景，適合暗色主題 */
+    color: var(--text-primary); /* 白色字體 */
+    border: 1px solid var(--border-color);
     cursor: pointer;
     font-size: 16px;
     border-radius: 6px;
@@ -37,14 +37,14 @@
     transition: background-color 0.2s;
 }
 .top-right-button:hover {
-    background-color: #555; /* 稍亮的深灰 */
+    background-color: var(--bg-primary); /* 稍亮的深灰 */
 }
 
 
 .chart-container .modal-backdrop {
     position: absolute;
     inset: 0; /* 填滿子元件容器 */
-    background: rgba(0, 0, 0, 0.45);
+    background: var(--shadow-color);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -53,10 +53,10 @@
 }
 
 .chart-container .modal-box {
-    background: #fff;
+    background: var(--bg-primary);
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 6px 20px rgba(0,0,0,.25);
+    box-shadow: 0 6px 20px var(--shadow-color);
     min-width: 200px;
 }
 /*********************************/
@@ -67,14 +67,14 @@
         align-items: center;
         /* justify-content: center; */
         gap: 2px;
-        background: #2a2a2a; /* 深灰背景，適合深色主題 */
+        background: var(--bg-primary); /* 深灰背景，適合深色主題 */
         border-radius: 12px;
         width: 100%;
         height: 330px;
         position: relative;
 
         /* 陰影與動畫 */
-        box-shadow: 0 2px 8px rgba(0,0,0,0.8);
+        box-shadow: 0 2px 8px var(--shadow-color);
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 

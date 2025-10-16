@@ -2,6 +2,14 @@ window.checkIsMobile = function () {
     return window.matchMedia("(max-width: 1200px)").matches;
 }
 
+window.getThemePreference = function () {
+    return localStorage.getItem('theme') || 'dark';
+}
+
+window.setThemePreference = function (isDark) {
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+
 window.scrollToElement = (id, offset = 60) => {
     const el = document.getElementById(id);
     if (el) {

@@ -9,9 +9,11 @@
 @using System.Text.Json
 @using demoVer.Models
 @using demoVer.Utils
+@using System.Linq
 @inject HeartbeatService Heartbeat
 @using demoVer.Interfaces
 @inject IGroupsDataDecoder Decoder
+@using Microsoft.AspNetCore.Components.Web
 <MudPopoverProvider/>
 <PageTitle>Link Status</PageTitle>
 <TopRow />
@@ -56,57 +58,95 @@
         </div>
 
         <div class="table-wrapper">
-            <MudTable @ref="mudTable" Items="@Elements"
-                    Dense="true" Hover="true" Striped="true"
-                    RowClass="cursor-pointer" RowClassFunc="@SelectedRow_cssClassFunc" 
-                    OnRowClick="@((TableRowClickEventArgs<Element> e) => RowClickEvent(e))">
-                <HeaderContent>
-                    <MudTh>Address</MudTh>
-                    <MudTh>ModelName</MudTh>
-                    <MudTh>LinkStatus</MudTh>
-                    <MudTh>RunningState</MudTh>
-                </HeaderContent>
-                <RowTemplate>
-                    <MudTd DataLabel="Address">@((context.Address == 9999) ? "N/A" : context.Address)</MudTd>
-                    <MudTd DataLabel="ModelName">@context.ModelName</MudTd>
-                    <MudTd DataLabel="LinkStatus">
-                        @{
-                            Color tempColor;
-                            switch(context.LinkStatus)
+            <div class="link-status-table-container">
+                @if (!IsMobile)
+                {
+                    <table class="custom-table link-status-table">
+                        <thead>
+                            <tr>
+                                <th>Address</th>
+                                <th>ModelName</th>
+                                <th>LinkStatus</th>
+                                <th>RunningState</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (CurrentPageItems.Any())
                             {
-                                case "Linked" :
-                                    tempColor = Color.Success;
-                                    break;
-                                case "Error" :
-                                    tempColor = Color.Error;
-                                    break;
-                                default :
-                                    tempColor = Color.Default;
-                                    break;
+                                foreach (var element in CurrentPageItems)
+                                {
+                                    <tr class="@GetRowClass(element)" @onclick="() => OnRowClick(element)">
+                                        <td data-label="Address">@FormatAddress(element.Address)</td>
+                                        <td data-label="ModelName">@element.ModelName</td>
+                                        <td data-label="LinkStatus">
+                                            <span class="status-pill @GetStatusClass(element.LinkStatus)">@element.LinkStatus</span>
+                                        </td>
+                                        <td data-label="RunningState">@element.RunningState</td>
+                                    </tr>
+                                }
                             }
-                            <MudChip T="string" Color="@tempColor" Size="Size.Small">
-                                @context.LinkStatus
-                            </MudChip>
-                        }
-                        
-                    </MudTd>
-                    <MudTd DataLabel="RunningState">@context.RunningState</MudTd>
-                </RowTemplate>
-                @* <FooterContent>
-                    @if (Elements.Count < 10)
-                    {
-                        foreach (var _ in Enumerable.Range(0, 10 - Elements.Count))
+                            else
+                            {
+                                <tr class="link-status-empty-row">
+                                    <td colspan="4">目前沒有裝置資料</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="card-table link-status-card-table">
+                        @if (CurrentPageItems.Any())
                         {
-                            <MudTr class="non-clickable-row">
-                                <MudTd colspan="4" style="height: 40px; width: 25%; background-color: transparent;"></MudTd>
-                            </MudTr>
+                            foreach (var element in CurrentPageItems)
+                            {
+                                <div class="card-table-row link-status-card-row @(selectedAddr == element.Address ? "selected" : string.Empty)" @onclick="() => OnRowClick(element)">
+                                    <div class="card-table-item">
+                                        <span class="card-table-label">Address</span>
+                                        <span class="card-table-value">@FormatAddress(element.Address)</span>
+                                    </div>
+                                    <div class="card-table-item">
+                                        <span class="card-table-label">ModelName</span>
+                                        <span class="card-table-value">@element.ModelName</span>
+                                    </div>
+                                    <div class="card-table-item">
+                                        <span class="card-table-label">LinkStatus</span>
+                                        <span class="card-table-value">
+                                            <span class="status-pill @GetStatusClass(element.LinkStatus)">@element.LinkStatus</span>
+                                        </span>
+                                    </div>
+                                    <div class="card-table-item">
+                                        <span class="card-table-label">RunningState</span>
+                                        <span class="card-table-value">@element.RunningState</span>
+                                    </div>
+                                </div>
+                            }
                         }
-                    }
-                </FooterContent> *@
-                <PagerContent>
-                    <MudTablePager />
-                </PagerContent>
-            </MudTable>
+                        else
+                        {
+                            <div class="link-status-card-empty">目前沒有裝置資料</div>
+                        }
+                    </div>
+                }
+
+                <div class="link-status-pagination">
+                    <button type="button" class="link-status-page-btn" @onclick="PreviousPage" disabled="@(!CanGoPrevious)">⟨</button>
+                    <div class="link-status-page-info">
+                        第
+                        <input type="number"
+                               min="1"
+                               max="@TotalPages"
+                               class="link-status-page-input"
+                               @bind="pageInput"
+                               @bind:event="oninput"
+                               @onkeydown="OnPageInputKeyDown"
+                               @onblur="ResetPageInput" />
+                        頁 / @TotalPages
+                    </div>
+                    <button type="button" class="link-status-page-btn" @onclick="NextPage" disabled="@(!CanGoNext)">⟩</button>
+                </div>
+            </div>
         </div>
     </div>
     @if(modal_IsOpen)
@@ -114,7 +154,7 @@
         <div @ref="jumpWindow" class="modal-overlay" @onclick="CloseModal">
             @if(InfoCard_isOpen)
             {
-                <div class="info-card" @onclick:stopPropagation>
+                <div class="jumpInfo-card" @onclick:stopPropagation>
                     <div class="card-title" id="Address"></div>
                     <div class="card-body">
                         <div class="info-item">
@@ -189,9 +229,7 @@
 
     private Dictionary<uint, string> allDevicesRunningStatus = new();
     private uint pageTimer_Cnt = 0;
-    private MudTable<Element> mudTable;
     private int activeTabIndex = 0;
-    private int selectedRowNumber = -1;
 
     private bool InfoCard_isOpen = false;
     private bool modal_IsOpen = false;
@@ -200,6 +238,9 @@
     private ElementReference jumpWindow;
     private bool IsMobile = false;
     private bool checkMobile_complete = false;
+    private const int PageSize = 10;
+    private int currentPage = 1;
+    private int pageInput = 1;
     public class Element
     {
         public uint Address {get; set;}
@@ -232,6 +273,118 @@
         }
 
         activeTabIndex = index;
+    }
+
+    private IEnumerable<Element> CurrentPageItems => Elements
+        .Skip((Math.Max(currentPage, 1) - 1) * PageSize)
+        .Take(PageSize);
+
+    private int TotalPages => Elements.Count == 0 ? 1 : (int)Math.Ceiling(Elements.Count / (double)PageSize);
+
+    private bool CanGoPrevious => Elements.Count > 0 && currentPage > 1;
+
+    private bool CanGoNext => Elements.Count > 0 && currentPage < TotalPages;
+
+    private string GetRowClass(Element element)
+    {
+        var classes = "link-status-row";
+        if (selectedAddr != 0 && element.Address == selectedAddr)
+        {
+            classes += " selected";
+        }
+
+        return classes;
+    }
+
+    private static string FormatAddress(uint address) => address == 9999 ? "N/A" : address.ToString();
+
+    private static string GetStatusClass(string status) => status switch
+    {
+        "Linked" => "status-linked",
+        "Error" => "status-error",
+        _ => "status-default",
+    };
+
+    private async Task PreviousPage()
+    {
+        if (!CanGoPrevious)
+        {
+            return;
+        }
+
+        await GoToPage(currentPage - 1);
+    }
+
+    private async Task NextPage()
+    {
+        if (!CanGoNext)
+        {
+            return;
+        }
+
+        await GoToPage(currentPage + 1);
+    }
+
+    private async Task GoToPage(int page)
+    {
+        if (Elements.Count == 0)
+        {
+            currentPage = 1;
+            pageInput = 1;
+            await InvokeAsync(StateHasChanged);
+            return;
+        }
+
+        var clamped = Math.Clamp(page, 1, TotalPages);
+        currentPage = clamped;
+        pageInput = clamped;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void ResetPageInput()
+    {
+        pageInput = currentPage;
+    }
+
+    private async Task OnPageInputKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await GoToPage(pageInput);
+        }
+    }
+
+    private void SyncPaginationAfterDataRefresh()
+    {
+        if (Elements.Count == 0)
+        {
+            currentPage = 1;
+            pageInput = 1;
+
+            if (selectedAddr != 0)
+            {
+                selectedAddr = 0;
+            }
+
+            return;
+        }
+
+        var totalPages = TotalPages;
+        if (currentPage > totalPages)
+        {
+            currentPage = totalPages;
+        }
+        if (currentPage < 1)
+        {
+            currentPage = 1;
+        }
+
+        pageInput = currentPage;
+
+        if (selectedAddr != 0 && !Elements.Any(e => e.Address == selectedAddr))
+        {
+            selectedAddr = 0;
+        }
     }
 
     private void OnLinksChanged()
@@ -323,17 +476,7 @@
             }
         }
         
-        int paddingCount = 10 - (Elements.Count % 10);
-        AppLogger.Log_To_File_log(_category, $"[Link_status][getINVsLink] : Element.Count = {Elements.Count}, paddingCount = {paddingCount}", AppLogLevel.Trace);
-        for(int i = 0 ; i < paddingCount ; i ++)
-        {
-            Elements.Add(new Element{
-                Address = 9999,
-                ModelName = "N/A",
-                LinkStatus = "N/A",
-                RunningState = "N/A",
-            });
-        }
+        SyncPaginationAfterDataRefresh();
     }
 
     private List<Element> Elements = new List<Element>()
@@ -376,21 +519,18 @@
         }
     };
 
-    private async void RowClickEvent(TableRowClickEventArgs<Element> args)
+    private async Task OnRowClick(Element element)
     {
-        @* Elements.Where(e => e.LinkStatus != "Linked" || e.RunningState == "Error") *@
-        if(args.Item == null)
+        if (element == null || element.Address == 9999 || string.Equals(element.LinkStatus, "N/A", StringComparison.OrdinalIgnoreCase))
         {
             return;
         }
-        
+
         try
         {
-            AppLogger.Log_To_File_log(_category, $"[Link_status][RowClickEvent] : selectedAddr = {args.Item.Address}", AppLogLevel.Trace);
+            AppLogger.Log_To_File_log(_category, $"[Link_status][OnRowClick] : selectedAddr = {element.Address}", AppLogLevel.Trace);
 
-            selectedAddr = args.Item.Address;
-            mudTable.SetSelectedItem(args.Item); // <-- 關鍵這一行
-            
+            selectedAddr = element.Address;
             modal_IsOpen = true;
             InfoCard_isOpen = true;
             NotifyJS = false;
@@ -400,23 +540,8 @@
         }
         catch(Exception ex)
         {
-            AppLogger.Log_To_File_log(_category, $"[Link_status][RowClickEvent] : Error, {ex}", AppLogLevel.Error);
+            AppLogger.Log_To_File_log(_category, $"[Link_status][OnRowClick] : Error, {ex}", AppLogLevel.Error);
         }
-        
-        
-        @* await JS.InvokeVoidAsync("startSignalR"); *@
-        @* await JS.InvokeVoidAsync("subscribeCommands_fixedCommand_dynamicAddr", SubscribeCommands, selectedAddr); *@
-        
-    }
-
-
-    private string SelectedRow_cssClassFunc(Element element, int rowNumber)
-    {
-        var result = mudTable?.SelectedItem == element ? "selected" : string.Empty;
-        AppLogger.Log_To_File_log(_category, $"[LinkStatus][SelectedRow_cssClassFunc] RowClassFunc → Address={element.Address}, Class={result}", AppLogLevel.Trace);
-        return result;
-
-        @* Color="Color.Success"Severity="Severity.Success" *@
     }
     
 

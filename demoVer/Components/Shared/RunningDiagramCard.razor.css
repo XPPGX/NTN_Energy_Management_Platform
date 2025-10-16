@@ -4,18 +4,18 @@
     flex-direction: column;
     width: 100%;
     gap:2px;
-    background: #2a2a2a; /* 深灰背景，適合深色主題 */
+    background: var(--bg-primary); /* 回到純白 */
     height: 100%;
     border-radius: 12px;
 
     /* 陰影與動畫 */
-    box-shadow: 0 2px 8px rgba(0,0,0,0.8);
+    box-shadow: 0 2px 8px var(--shadow-color);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .running-diagram-container:hover {
     transform: translateY(-4px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    box-shadow: 0 6px 16px var(--shadow-color);
 }
 .running-diagram-container.top{
     width: 100%;
@@ -29,9 +29,9 @@
     position: relative;
     font-weight: 600;
     font-size: 1.05rem;
-    background: #1c1c1c;
-    border-bottom: 1px solid #555;
-    color: #f5f5f5;
+    background: var(--bg-secondary);            /* 深灰背景，適合深色主題 */
+    border-bottom: 1px solid var(--border-color); /* 深色分隔線 */
+    color: var(--text-primary);               /* 亮色字體，適合深色背景 */
     border-radius: 12px 12px 0 0;
     box-sizing: border-box;
 }
@@ -43,7 +43,7 @@
     justify-content: flex-start;
     align-items: center;
     gap: clamp(0.5rem, 1.1vw, 1rem);
-    color: #f5f5f5;
+    color: var(--text-primary);
 }
 .rightPart{
     display: flex;
@@ -52,7 +52,7 @@
     justify-content: flex-end;
     align-items: center;
     gap: clamp(0.5rem, 1.1vw, 1rem);
-    color: #f5f5f5;
+    color: var(--text-primary);
 }
 .running-diagram-container.bottom{
     width: 100%;
@@ -103,7 +103,7 @@
     word-wrap: break-word;
     overflow-wrap: break-word;
     font-size: 12px;
-    color: #f5f5f5;
+    color: var(--text-primary);
   }
   
   .placeholder {
@@ -141,7 +141,7 @@
     height: 0;
     border-top: 12px solid transparent;
     border-bottom: 12px solid transparent;
-    border-left: 20px solid gray;
+    border-left: 20px solid var(--border-color);
     opacity: 0.3;
     transition: opacity 0.4s, border-left-color 0.4s;
 }
@@ -168,7 +168,7 @@
     height: 0;
     border-left: 12px solid transparent;
     border-right: 12px solid transparent;
-    border-top: 20px solid gray;
+    border-top: 20px solid var(--border-color);
     opacity: 0.3;
     transition: opacity 0.4s, border-top-color .4s;
 }
@@ -183,9 +183,9 @@
     top: 4px;
     right: 4px;
     padding: 4px 8px;
-    background-color: #333; /* 深灰背景，適合暗色主題 */
-    color: #fff; /* 白色字體 */
-    border: none;
+    background-color: var(--bg-secondary); /* 深灰背景，適合暗色主題 */
+    color: var(--text-primary); /* 白色字體 */
+    border: 1px solid var(--border-color);
     cursor: pointer;
     font-size: 16px;
     border-radius: 6px;
@@ -193,7 +193,7 @@
     transition: background-color 0.2s;
 }
 .top-right-button:hover {
-    background-color: #555; /* 稍亮的深灰 */
+    background-color: var(--bg-primary); /* 稍亮的深灰 */
 }
 
 .arrows-in-cell{
@@ -244,17 +244,17 @@ transform: rotate(180deg);
         flex-direction: column;
         width: 100%;
         gap:2px;
-        background: #2a2a2a; /* 深灰背景，適合深色主題 */
+        background: var(--bg-primary); /* 回到純白 */
         border-radius: 12px;
 
         /* 陰影與動畫 */
-        box-shadow: 0 2px 8px rgba(0,0,0,0.8);
+        box-shadow: 0 2px 8px var(--shadow-color);
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .running-diagram-container:hover {
         transform: translateY(-4px);
-        box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        box-shadow: 0 6px 16px var(--shadow-color);
     }
     .running-diagram-container.top{
         display: flex;

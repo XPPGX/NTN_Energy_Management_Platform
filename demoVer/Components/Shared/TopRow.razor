@@ -87,6 +87,10 @@
             }
         }
 
+        <button class="theme-toggle-btn" @onclick="ToggleTheme" title="@(IsDarkTheme ? "切換到亮色模式" : "切換到暗色模式")">
+            @(IsDarkTheme ? "☀️" : "🌙")
+        </button>
+
         <button class="btn" @onclick="GoTo_Framework">
             <img src="images/logo.png" alt="logo" style="width:36px; height:24px"/>
         </button>
@@ -111,6 +115,8 @@
     private bool showEditBtn_Flag = false;
     private bool showAddBtn_Flag = false;
 
+    private bool IsDarkTheme { get; set; } = true; // 默認暗色主題
+
 
     [Parameter] public EventCallback<bool> OnSendToParent {get; set;}
     [Parameter] public EventCallback InformParentTo_OpenAddCard {get; set;}
@@ -118,6 +124,25 @@
 
     [Parameter] public EventCallback InformParentTo_ApplySetting {get; set;}
     [Parameter] public EventCallback InformParentTo_UseDefaultValue{get; set;}
+
+    private async Task ToggleTheme()
+    {
+        IsDarkTheme = !IsDarkTheme;
+        await JS.InvokeVoidAsync("setThemePreference", IsDarkTheme);
+        
+        // 直接切換頁面主題
+        if (IsDarkTheme)
+        {
+            await JS.InvokeVoidAsync("document.body.classList.remove", "theme-light");
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("document.body.classList.add", "theme-light");
+        }
+
+        // 重新渲染所有圖表以應用新主題
+        await JS.InvokeVoidAsync("redrawAllCharts");
+    }
 
     private async Task apply_INV_setting()
     {
@@ -161,6 +186,24 @@
         {
             afterFirstRender_Flag = true;
             isMobile = await JS.InvokeAsync<bool>("checkIsMobile");
+            
+            // 從 localStorage 讀取主題偏好
+            var storedTheme = await JS.InvokeAsync<string>("getThemePreference");
+            if (!string.IsNullOrEmpty(storedTheme))
+            {
+                IsDarkTheme = storedTheme == "dark";
+                
+                // 直接應用主題
+                if (IsDarkTheme)
+                {
+                    await JS.InvokeVoidAsync("document.body.classList.remove", "theme-light");
+                }
+                else
+                {
+                    await JS.InvokeVoidAsync("document.body.classList.add", "theme-light");
+                }
+            }
+            
             StateHasChanged(); // 讓頁面更新
         }
     }
