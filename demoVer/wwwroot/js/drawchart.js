@@ -538,6 +538,13 @@ window.drawChart_Stage = function (webFirstRend = false) {
         window.chartInstances = {};
     }
 
+    // 獲取 CSS 變數的顏色值
+    const root = document.body;
+    const textPrimary = getComputedStyle(root).getPropertyValue('--text-primary').trim();
+    const borderColor = getComputedStyle(root).getPropertyValue('--border-color').trim();
+
+    console.log(`[drawChart_Stage] Text Primary: ${textPrimary}, Border Color: ${borderColor}`);
+
     const existingChart = window.chartInstances[stageCanvasID];
     // if (window.chartInstances[config.canvasID]) {
     //     window.chartInstances[config.canvasID].destroy();
@@ -545,7 +552,23 @@ window.drawChart_Stage = function (webFirstRend = false) {
     updateStageData_Init();
     if(existingChart && webFirstRend == false)
     {
-        console.log(existingChart)
+        console.log(existingChart);
+        
+        // 更新現有圖表的顏色
+        existingChart.options.plugins.legend.labels.color = textPrimary;
+        
+        existingChart.options.scales.x.title.color = textPrimary;
+        existingChart.options.scales.x.grid.color = borderColor;
+        existingChart.options.scales.x.ticks.color = textPrimary;
+        
+        existingChart.options.scales.y1.title.color = textPrimary;
+        existingChart.options.scales.y1.grid.color = borderColor;
+        existingChart.options.scales.y1.ticks.color = textPrimary;
+        
+        existingChart.options.scales.y2.title.color = textPrimary;
+        existingChart.options.scales.y2.grid.color = borderColor;
+        existingChart.options.scales.y2.ticks.color = textPrimary;
+        
         existingChart.data.labels = stageData.labels;
         existingChart.data.datasets[0].data = stageData.y1Data;
         existingChart.data.datasets[1].data = stageData.y2Data;
@@ -590,7 +613,7 @@ window.drawChart_Stage = function (webFirstRend = false) {
                     legend: {
                         display: true,
                         labels: {
-                            color: '#ffffff'
+                            color: textPrimary
                         }
                     }
                 },
@@ -600,13 +623,13 @@ window.drawChart_Stage = function (webFirstRend = false) {
                         title: {
                             display: true,
                             text: "",
-                            color: '#ffffff'
+                            color: textPrimary
                         },
                         grid: {
-                            color: '#555555'
+                            color: borderColor
                         },
                         ticks: {
-                            color: '#ffffff'
+                            color: textPrimary
                         }
                     },
                     y1: {
@@ -615,15 +638,15 @@ window.drawChart_Stage = function (webFirstRend = false) {
                         title: {
                             display: true,
                             text: "電流 (A)",
-                            color: '#ffffff'
+                            color: textPrimary
                         },
                         suggestedMin: 0,
                         suggestedMax: 100,
                         grid: {
-                            color: '#555555'
+                            color: borderColor
                         },
                         ticks: {
-                            color: '#ffffff'
+                            color: textPrimary
                         }
                     },
                     y2: {
@@ -632,16 +655,16 @@ window.drawChart_Stage = function (webFirstRend = false) {
                         title: {
                             display: true,
                             text: "電壓 (V)",
-                            color: '#ffffff'
+                            color: textPrimary
                         },
                         suggestedMin: 0,
                         suggestedMax: 100,
                         grid: {
                             drawOnChartArea: false,
-                            color: '#555555'
+                            color: borderColor
                         },
                         ticks: {
-                            color: '#ffffff'
+                            color: textPrimary
                         }
                     }
                 }
@@ -934,6 +957,19 @@ window.redrawAllCharts = function () {
                     }
                     if (chart.options.scales.y1.ticks) {
                         chart.options.scales.y1.ticks.color = textPrimary;
+                    }
+                }
+                
+                // Y2軸 (另一個右側Y軸，用於 stage chart)
+                if (chart.options.scales.y2) {
+                    if (chart.options.scales.y2.title) {
+                        chart.options.scales.y2.title.color = textPrimary;
+                    }
+                    if (chart.options.scales.y2.grid) {
+                        chart.options.scales.y2.grid.color = borderColor;
+                    }
+                    if (chart.options.scales.y2.ticks) {
+                        chart.options.scales.y2.ticks.color = textPrimary;
                     }
                 }
             }

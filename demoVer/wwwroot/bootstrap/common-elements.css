@@ -16,6 +16,13 @@
     --error-color: #f44336;
     --warning-color: #ff9800;
     --shadow-color: rgba(0, 0, 0, 0.5);
+    
+    /* Vue Slider 顏色變數 */
+    --slider-track-bg: #2a2a2a;
+    --slider-track-border: #555555;
+    --slider-fill-primary: #6fc7ff;
+    --slider-fill-secondary: rgba(111, 200, 255, 0.7);
+    --slider-thumb: #8fd1ff;
 }
 
 /* 亮色主題 - 工業風金屬質感 */
@@ -46,6 +53,13 @@
     --industrial-bg: #f5f5f5;      /* 工業背景 */
     --industrial-border: #b8b8b8;  /* 工業邊框 */
     --industrial-shadow: rgba(0, 0, 0, 0.1); /* 工業陰影 */
+    
+    /* Vue Slider 顏色變數 */
+    --slider-track-bg: #e9ecef;
+    --slider-track-border: #adb5bd;
+    --slider-fill-primary: #495057;
+    --slider-fill-secondary: rgba(73, 80, 87, 0.7);
+    --slider-thumb: #343a40;
 }
 
 /********** stretch **********/

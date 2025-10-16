@@ -673,7 +673,9 @@ input:focus {
 */
 .custom-toggle-button {
     position: relative;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 60px;
     height: 34px;
     cursor: pointer;

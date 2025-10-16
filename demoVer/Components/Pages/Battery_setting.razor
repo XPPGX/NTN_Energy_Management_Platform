@@ -72,7 +72,7 @@
         <div class="cell8">
             <div class="right-part">
 
-                <div class="card-container-stage">
+                <div class="card-container-stage card-container-base">
                     <canvas id="stageChart" class="stage-chart"></canvas>
                     <div class="stage-controls">
                         <select value="@selectedStage.ToString().ToLower()" @onchange="OnStageSelectChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
@@ -82,16 +82,13 @@
                     </div>
                 </div>
                 
-                <div class="card-container-timeout">
+                <div class="card-container-timeout card-container-base">
                     <div class="timeout-group">
                         <label class="custom-toggle-button" title="@(CCT_Enable ? "On" : "Off")">
                             <input type="checkbox" @bind="CCT_Enable" />
                             <span class="toggle-slider"></span>
                         </label>
-                        @if(!isMobile)
-                        {
-                            <span style="display: inline-block;">CC timeout</span>
-                        }
+                        <span style="display: inline-block;">@(!isMobile ? "CC timeout" : "CCT")</span>
                         <div class="inputField">
                             <input type="number" @bind-value="CC_Timeout_value" @bind-value:after="OnCCTimeoutValueChanged" placeholder="CCT" min="0" />
                             @if(!isMobile)
@@ -115,10 +112,7 @@
                             <input type="checkbox" @bind="CVT_Enable" />
                             <span class="toggle-slider"></span>
                         </label>
-                        @if(!isMobile)
-                        {
-                            <span style="display: inline-block;">CV timeout</span>
-                        }
+                        <span style="display: inline-block;">@(!isMobile ? "CV timeout" : "CVT")</span>
                         <div class="inputField">
                             <input type="number" @bind-value="CV_Timeout_value" @bind-value:after="OnCVTimeoutValueChanged" placeholder="CVT" min="0" />
                             @if(!isMobile)
@@ -142,12 +136,9 @@
                             <input type="checkbox" @bind="FVT_Enable" />
                             <span class="toggle-slider"></span>
                         </label>
-                        @if(!isMobile)
-                        {
-                            <span style="display: inline-block;">FV timeout</span>
-                        }
+                        <span style="display: inline-block;">@(!isMobile ? "FV timeout" : "FVT")</span>
                         <div class="inputField">
-                            <input type="number" @bind-value="FV_Timeout_value" @bind-value:after="OnFVTimeoutValueChanged" placeholder="FVT" min="0" />
+                            <input type="number" @bind-value="FV_Timeout_value" @bind-value:after="OnFVTimeoutValueChanged" placeholder="FVT" min="0"/>
                             @if(!isMobile)
                             {
                                 <MudText Typo="Typo.body1">@FormatToHourMin(FV_Timeout_value)</MudText>
