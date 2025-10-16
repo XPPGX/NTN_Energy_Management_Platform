@@ -76,7 +76,7 @@
                 <div class="small-row">
                     <div class="cell">
                         @* <h3 class="desktop-only">AC模式充電器</h3> *@
-                        <div class="alarm-label">AC模式充電器</div>
+                        <div class="alarm-label" style="font-size: 1.2rem; font-weight: bold;">AC模式充電器</div>
                     </div>
                     <div class="cell">
                         <div class="toggle-with-text">
@@ -91,7 +91,7 @@
                 <div class="small-row">
                     <div class="cell">
                         @* <h3 class="desktop-only">並網供電</h3> *@
-                        <div class="alarm-label">並網供電</div>
+                        <div class="alarm-label" style="font-size: 1.2rem; font-weight: bold;">並網供電</div>
                     </div>
                     <div class="cell">
                         <div class="toggle-with-text">
@@ -106,7 +106,7 @@
                 <div class="small-row">
                     <div class="cell">
                         @* <h3 class="desktop-only">輸出優先級</h3> *@
-                        <div class="alarm-label">輸出優先級</div>
+                        <div class="alarm-label" style="font-size: 1.2rem; font-weight: bold;">輸出優先級</div>
                     </div>
                     <div class="cell">
                         <select value="@selectedOutputPriority.ToString()" @onchange="OnOutputPrioritySelectChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true" disabled="@(!Output_priority_touchable)" class="priority-select">
@@ -121,7 +121,7 @@
                 <div class="small-row">
                     <div class="cell">
                         @* <h3 class="desktop-only">充電優先級</h3> *@
-                        <div class="alarm-label">充電優先級</div>
+                        <div class="alarm-label" style="font-size: 1.2rem; font-weight: bold;">充電優先級</div>
                     </div>
                     <div class="cell">
                         <select value="@selectedChargingPriority.ToString()" @onchange="OnChargingPrioritySelectChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true" disabled="@(!Charge_priority_touchable)" class="priority-select">

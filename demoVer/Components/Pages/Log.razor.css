@@ -2,8 +2,8 @@
     display: grid;
     grid-template-rows: 30% 70%; /* 桌機預設比例 */
     height: 100vh; /* 滿版高度 */
-    background: #0f0f0f; /* 更深的底色，對比更高 */
-    color: #f5f5f5;     /* 提升文字亮度 */
+    background: var(--bg-primary); /* 更深的底色，對比更高 */
+    color: var(--text-primary);     /* 提升文字亮度 */
     position: relative;
 }
 
@@ -13,11 +13,11 @@
     justify-content: center;
     align-items: center;
     gap: 10px;
-    background: #1c1c1c;
+    background: var(--bg-secondary);
     padding: 1rem;
 }
 .bottom-panel {
-    background: #222;
+    background: var(--bg-secondary);
     padding: 1rem;
     position: relative;
     align-items: center;
@@ -69,8 +69,8 @@
 .multi-select {
     margin-top: 15px;
     text-align: left;
-    background: #1f1f1f;
-    border: 1px solid #444;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     padding: 10px;
     display: flex;
@@ -80,7 +80,7 @@
   
   .section-title {
     font-size: 0.9rem;
-    color: #00eaff;
+    color: var(--accent-color);
     margin: 0 0 8px 0;
     font-weight: bold;
   }
@@ -100,15 +100,15 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.8);
+    background: rgba(0, 0, 0, 0.8);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 100;
 }
 .modal-content {
-    background: #121212;
-    border: 1px solid #555;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 20px;
     width: 90%;
@@ -125,13 +125,13 @@
 
     position: sticky;   /* 或 fixed */
     bottom: calc(env(safe-area-inset-bottom, 0px) + 0.5rem);
-    background: #333;   /* 背景蓋住下面的內容 */
+    background: var(--bg-secondary);   /* 背景蓋住下面的內容 */
     padding: 0.5rem;
     z-index: 50;        /* 確保不被其他東西壓住 */
 }
 
 .page-info {
-    color: #eee;
+    color: var(--text-primary);
     font-size: 0.9rem;
 }
 .page-input {
@@ -140,9 +140,9 @@
     margin: 0 5px;
     text-align: center;
     border-radius: 4px;
-    border: 1px solid #444;
-    background: #121212;
-    color: #fff;
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    color: var(--text-primary);
 }
 .export-overlay {
     position: fixed;
@@ -190,7 +190,7 @@ progress {
         justify-content: flex-start;
         /* ✨ 新增動畫效果 */
         overflow: hidden;
-        background: #2a2a2a;
+        background: var(--bg-tertiary);
         border-radius: 6px;
         transition: max-height 0.6s ease, padding 0.6s ease, opacity 0.4s ease;
     }
@@ -209,7 +209,7 @@ progress {
     }
 
     .collapsed-label-only {
-        color: #00eaff;
+        color: var(--accent-color);
         font-size: 1rem;
         font-weight: bold;
         text-align: center;
@@ -218,7 +218,7 @@ progress {
 
     .bottom-panel {
         flex: 1; /*佔滿剩餘高度*/
-        background: #333;
+        background: var(--bg-secondary);
         padding: 1rem;
         position: relative;
         align-items: center;
@@ -229,7 +229,7 @@ progress {
 
     .collapsed-label {
         font-size: 0.95rem;
-        color: #ccc;
+        color: var(--text-primary);
         flex: 1;
     }
 

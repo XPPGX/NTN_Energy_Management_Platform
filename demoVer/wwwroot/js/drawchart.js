@@ -788,6 +788,13 @@ window.drawChart_Sin = function(config)
         window.chartInstances = {};
     }
 
+    // 獲取 CSS 變數的顏色值
+    const root = document.body;
+    const textPrimary = getComputedStyle(root).getPropertyValue('--text-primary').trim();
+    const borderColor = getComputedStyle(root).getPropertyValue('--border-color').trim();
+
+    console.log(`[drawChart_Sin] Text Primary: ${textPrimary}, Border Color: ${borderColor}`);
+
     if (window.chartInstances[config.canvasID]) {
         window.chartInstances[config.canvasID].destroy();
     }
@@ -841,7 +848,7 @@ window.drawChart_Sin = function(config)
                 legend: {
                     display: true,
                     labels: {
-                        color: '#ffffff'
+                        color: textPrimary  // 使用主題文字顏色
                     }
                 }
             },
@@ -850,11 +857,11 @@ window.drawChart_Sin = function(config)
                     title: {
                         display: false,
                         text: config.xLabel || "角度 (°)",
-                        color: '#ffffff'
+                        color: textPrimary  // 使用主題文字顏色
                     },
                     ticks:{
                         display: false,
-                        color: '#ffffff'
+                        color: textPrimary  // 使用主題文字顏色
                     },
                     grid:{
                         display: false
@@ -864,18 +871,18 @@ window.drawChart_Sin = function(config)
                     title: {
                         display: false,
                         text: config.yLabel || "值",
-                        color: '#ffffff'
+                        color: textPrimary  // 使用主題文字顏色
                     },
                     min: config.yMin !== undefined ? config.yMin : -peak,
                     max: config.yMax !== undefined ? config.yMax : peak,
                     // suggestedMin: -peak,
                     // suggestedMax: peak
                     grid:{
-                        color: '#555555'
+                        color: borderColor  // 使用主題邊框顏色
                     },
                     ticks:{
                         stepSize: 20,
-                        color: '#ffffff'
+                        color: textPrimary  // 使用主題文字顏色
                     }
                 }
             }

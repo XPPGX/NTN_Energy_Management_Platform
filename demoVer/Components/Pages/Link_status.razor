@@ -24,8 +24,8 @@
             <div class="card-container card-container-base">
                 <MudChart ChartType="ChartType.Donut" Width="250px" Height="250px" LegendPosition="Position.Left" InputData="@data" InputLabels="@labels">
                     <CustomGraphics>
-                        <text class="donut-inner-text" x="50%" y="35%" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="Helvetica" font-size="20">Total</text>
-                        <text class="donut-inner-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="Helvetica" font-size="50">@data.Sum().ToString()</text>
+                        <text class="donut-inner-text" x="50%" y="35%" dominant-baseline="middle" text-anchor="middle" fill="var(--text-primary)" font-family="Helvetica" font-size="20">Total</text>
+                        <text class="donut-inner-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="var(--text-primary)" font-family="Helvetica" font-size="50">@data.Sum().ToString()</text>
                     </CustomGraphics>
                 </MudChart>
             </div>
@@ -41,13 +41,13 @@
                             var group = TimelineGroups[index];
                             var isActive = activeTabIndex == index;
                             AppLogger.Log_To_File_log(_category, $"[LinkStatus][html] group = {group.StateName}: {group.Items?.Count} items", AppLogLevel.Trace);
-                            <button type="button" class="custom-tab @(isActive ? "active" : string.Empty)" @onclick="(() => SetActiveTab(index))">
+                            <button type="button" class="custom-tab theme-tab @(isActive ? "active" : string.Empty)" @onclick="(() => SetActiveTab(index))">
                                 @group.StateName
                             </button>
                         }
                     </div>
                 </div>
-                <div class="custom-tab-panel">
+                <div class="custom-tab-panel theme-tab-panel">
                     @if (TimelineGroups.Count > 0 && activeTabIndex >= 0 && activeTabIndex < TimelineGroups.Count)
                     {
                         var activeGroup = TimelineGroups[activeTabIndex];

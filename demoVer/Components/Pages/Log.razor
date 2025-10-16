@@ -285,6 +285,9 @@
             await InvokeAsync(StateHasChanged);
             
             await InitColumn();
+            
+            // 添加假資料用於測試
+            await AddTestData();
         }
     }
     
@@ -1038,6 +1041,61 @@
 
         //捲軸捲至最上方
         await JS.InvokeVoidAsync("scrollToTop", "log-table-container");
+    }
+
+    private async Task AddTestData()
+    {
+        // 設置測試資料
+        tableHeader = "Event Log";
+        allColumns = new List<string> { "id", "time", "level", "message", "source" };
+        visibleColumns = new HashSet<string> { "id", "time", "level", "message" };
+        
+        tableData = new List<Dictionary<string, object>>
+        {
+            new Dictionary<string, object>
+            {
+                ["id"] = 1,
+                ["time"] = DateTime.Now.AddMinutes(-10),
+                ["level"] = "INFO",
+                ["message"] = "系統啟動成功",
+                ["source"] = "System"
+            },
+            new Dictionary<string, object>
+            {
+                ["id"] = 2,
+                ["time"] = DateTime.Now.AddMinutes(-8),
+                ["level"] = "WARNING",
+                ["message"] = "電池電壓偏低",
+                ["source"] = "Battery"
+            },
+            new Dictionary<string, object>
+            {
+                ["id"] = 3,
+                ["time"] = DateTime.Now.AddMinutes(-6),
+                ["level"] = "ERROR",
+                ["message"] = "通訊中斷",
+                ["source"] = "Network"
+            },
+            new Dictionary<string, object>
+            {
+                ["id"] = 4,
+                ["time"] = DateTime.Now.AddMinutes(-4),
+                ["level"] = "INFO",
+                ["message"] = "數據同步完成",
+                ["source"] = "Database"
+            },
+            new Dictionary<string, object>
+            {
+                ["id"] = 5,
+                ["time"] = DateTime.Now.AddMinutes(-2),
+                ["level"] = "DEBUG",
+                ["message"] = "配置更新",
+                ["source"] = "Config"
+            }
+        };
+        
+        TCB.nowTotalPages = 1;
+        await InvokeAsync(StateHasChanged);
     }
     #endregion //Logic
 }

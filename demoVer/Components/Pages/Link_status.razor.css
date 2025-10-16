@@ -248,61 +248,16 @@
     min-width: 96px;
     padding: 0.45rem 1.1rem;
     border-radius: 999px;
-    border: 1px solid rgba(136, 136, 136, 0.4);
-    background: rgba(44, 44, 44, 0.85);
-    color: #cdd5dd;
     font-weight: 600;
     letter-spacing: 0.05rem;
     text-transform: uppercase;
-    transition: all 0.2s ease;
     cursor: pointer;
-}
-
-.custom-tab:hover {
-    color: #ffffff;
-    border-color: rgba(135, 206, 250, 0.6);
-    box-shadow: 0 0 10px rgba(135, 206, 250, 0.35);
-}
-
-.custom-tab.active {
-    color: #8fd1ff;
-    border-color: rgba(111, 200, 255, 0.75);
-    background: linear-gradient(135deg, rgba(61, 110, 152, 0.55), rgba(35, 71, 104, 0.55));
-    box-shadow: 0 0 12px rgba(111, 200, 255, 0.4);
-}
-
-.tab-nav {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 1px solid rgba(136, 136, 136, 0.45);
-    background: rgba(35, 35, 35, 0.95);
-    color: #cfd8e3;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.tab-nav:hover:not(:disabled) {
-    color: #8fd1ff;
-    border-color: rgba(111, 200, 255, 0.7);
-    box-shadow: 0 0 10px rgba(111, 200, 255, 0.4);
-}
-
-.tab-nav:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
 }
 
 .custom-tab-panel {
     width: 100%;
     padding: 1rem;
-    background: rgba(24, 24, 24, 0.85);
-    border: 1px solid rgba(68, 68, 68, 0.7);
     border-radius: 10px;
-    box-shadow: inset 0 0 20px var(--shadow-color);
 }
 
 .card-container-stage{
@@ -443,11 +398,6 @@
         justify-content: flex-start;
         overflow-x: auto;
         padding-bottom: 0.25rem;
-    }
-
-    .tab-nav {
-        width: 36px;
-        height: 36px;
     }
 
     .custom-tab {

@@ -23,35 +23,11 @@ main {
     background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
 }
 
-/* .top-row {
-    background-color: #808080;
-    border-bottom: 1px solid #C0C0C0;
-    justify-content: flex-end;
-    height: 3.0rem;
-    display: flex;
-    align-items: center;
-}
-
-    .top-row ::deep a, .top-row ::deep .btn-link {
-        white-space: nowrap;
-        margin-left: 1.5rem;
-        text-decoration: none;
-    }
-
-    .top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
-        text-decoration: underline;
-    }
-
-    .top-row ::deep a:first-child {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    } */
-
 .content{
     flex: 1;
     display: flex;
     flex-direction: column;
-    background-color: #1c1c1c;
+    background-color: var(--bg-primary);
     margin: 0;
     padding: 0;
     position: relative;
@@ -59,19 +35,7 @@ main {
     width: 100%;
     /* top: 0; */
 }
-/* .top-bar {
-    background-color: #;
-    border-bottom: 1px solid 
-} */
-@media (max-width: 640.98px) {
-    .top-row {
-        justify-content: space-between;
-    }
 
-    .top-row ::deep a, .top-row ::deep .btn-link {
-        margin-left: 0;
-    }
-}
 
 @media (min-width: 641px) {
     .page {
@@ -104,7 +68,7 @@ main {
 }
 
 #blazor-error-ui {
-    background: lightyellow;
+    background: var(--bg-secondary);
     bottom: 0;
     box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
     display: none;
