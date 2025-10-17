@@ -1,67 +1,121 @@
 ﻿@inherits LayoutComponentBase
+@using demoVer.Shared
+@using System
+@using System.Threading.Tasks
+@rendermode InteractiveServer
+<CascadingValue Value="this" Name="MainLayout">
+    <div class="page">
+        <main>
+            <TopRow @ref="_topRow"
+                    OnSendToParent="HandleTopRowEditModeChanged"
+                    InformParentTo_OpenAddCard="HandleTopRowRequestOpenAddCard"
+                    InformParentTo_SaveCardsInfo="HandleTopRowRequestSaveCardsInfo"
+                    InformParentTo_ApplySetting="HandleTopRowRequestApplySetting"
+                    InformParentTo_UseDefaultValue="HandleTopRowRequestUseDefaultValue" />
 
-<div class="page">
-    <!-- <div class="sidebar">
-        <NavMenu />
-    </div> -->
+            <!-- ✅ 確保 @Body 在 CascadingValue 裡 -->
+            <div class="content">
+                @Body
+            </div>
+        </main>
+    </div>
 
-    <main>
-        <!-- <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div> -->
-        
-        <div class="content">
-            @Body
-        </div>
-    </main>
-</div>
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+</CascadingValue>
 
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
-</div>
 
-@* <MudThemeProvider>
-    <MudDialogProvider>
-        <MudSnackbarProvider>
-            <MudPopoverProvider>
+@code {
+    //以下是 以MainLayout 為中介，讓 TopRow 與各 Page 溝通的相關程式碼
+    private TopRow? _topRow;
+    private object? _topRowCallbacksOwner;
+    private Func<bool, Task>? _onSendToParent;
+    private Func<Task>? _onOpenAddCard;
+    private Func<Task>? _onSaveCardsInfo;
+    private Func<Task>? _onApplySetting;
+    private Func<Task>? _onUseDefaultValue;
 
-                <div class="page">
-                    <!-- <div class="sidebar">
-                        <NavMenu />
-                    </div> -->
+    public void HideTopRowMenu()
+    {
+        _topRow?.HideMenu();
+    }
 
-                    <main>
-                        <!-- <div class="top-row px-4">
-                            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-                        </div> -->
-                        
-                        <div class="content">
-                            @Body
-                        </div>
-                    </main>
-                </div>
+    public void RegisterTopRowCallbacks(
+        object owner,
+        Func<bool, Task>? onSendToParent = null,
+        Func<Task>? informParentToOpenAddCard = null,
+        Func<Task>? informParentToSaveCardsInfo = null,
+        Func<Task>? informParentToApplySetting = null,
+        Func<Task>? informParentToUseDefaultValue = null)
+    {
+        _topRowCallbacksOwner = owner;
+        _onSendToParent = onSendToParent;
+        _onOpenAddCard = informParentToOpenAddCard;
+        _onSaveCardsInfo = informParentToSaveCardsInfo;
+        _onApplySetting = informParentToApplySetting;
+        _onUseDefaultValue = informParentToUseDefaultValue;
+    }
 
-                <div id="blazor-error-ui">
-                    An unhandled error has occurred.
-                    <a href="" class="reload">Reload</a>
-                    <a class="dismiss">🗙</a>
-                </div>
+    public void ClearTopRowCallbacks(object owner)
+    {
+        if (!ReferenceEquals(_topRowCallbacksOwner, owner))
+        {
+            return;
+        }
 
-            </MudPopoverProvider>
-        </MudSnackbarProvider>
-    </MudDialogProvider>
-</MudThemeProvider> *@
+        ResetTopRowCallbacks();
+    }
 
-@* @inherits LayoutComponentBase *@
+    private void ResetTopRowCallbacks()
+    {
+        _topRowCallbacksOwner = null;
+        _onSendToParent = null;
+        _onOpenAddCard = null;
+        _onSaveCardsInfo = null;
+        _onApplySetting = null;
+        _onUseDefaultValue = null;
+    }
 
-@* <MudLayout>
-    <MudAppBar Color="Color.Primary" Elevation="4">
-        <MudText Typo="Typo.h6">My MudBlazor App</MudText>
-    </MudAppBar>
+    private async Task HandleTopRowEditModeChanged(bool isEditing)
+    {
+        if (_onSendToParent != null)
+        {
+            await _onSendToParent.Invoke(isEditing);
+        }
+    }
 
-    <MudMainContent>
-        @Body
-    </MudMainContent>
-</MudLayout> *@
+    private async Task HandleTopRowRequestOpenAddCard()
+    {
+        if (_onOpenAddCard != null)
+        {
+            await _onOpenAddCard.Invoke();
+        }
+    }
+
+    private async Task HandleTopRowRequestSaveCardsInfo()
+    {
+        if (_onSaveCardsInfo != null)
+        {
+            await _onSaveCardsInfo.Invoke();
+        }
+    }
+
+    private async Task HandleTopRowRequestApplySetting()
+    {
+        if (_onApplySetting != null)
+        {
+            await _onApplySetting.Invoke();
+        }
+    }
+
+    private async Task HandleTopRowRequestUseDefaultValue()
+    {
+        if (_onUseDefaultValue != null)
+        {
+            await _onUseDefaultValue.Invoke();
+        }
+    }
+}

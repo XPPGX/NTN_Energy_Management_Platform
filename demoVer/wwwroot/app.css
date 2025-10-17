@@ -19,6 +19,7 @@
     --error-color: #f44336;
     --warning-color: #ff9800;
     --shadow-color: rgba(0, 0, 0, 0.5);
+    --toprow-btn-bg: #666666;
     
     /* Vue Slider 顏色變數 */
     --slider-track-bg: #2a2a2a;
@@ -49,6 +50,7 @@
     --error-color: #dc3545;
     --warning-color: #ffc107;
     --shadow-color: rgba(0, 0, 0, 0.15);
+    --toprow-btn-bg: #cccccc;
     
     /* 工業風金屬質感額外變數 */
     --metal-primary: #c0c0c0;      /* 銀色金屬 */

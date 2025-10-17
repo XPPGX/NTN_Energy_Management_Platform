@@ -8,21 +8,24 @@
 
 <div class="top-row">
     <div class="left-items">
-        <button class="btn" @onclick="toggleMenu">
+        <button class="topRow-btn" @onclick="toggleMenu">
             <!-- <i class="fas fa-th-large"></i> -->
-            <img src="images/shapes.png" alt="menu" style="width:24px; height:24px"/>
+            <img src="@(IsDarkTheme ? "images/menu-forDark.png" : "images/menu-forLight.png")" alt="menu"/>
         </button>
         @if(Page_index == PAGE.HOME)
         {
-            <button class="btn @(showEditBtn_Flag ? "editing-mode" : "")" @onclick="showEditButtons">
-                <img src="images/pen.png" alt="edit" style="width:24px; height:24px"/>
+            <button class="topRow-btn" @onclick="showEditButtons">
+                <img src="images/edit.png" alt="edit"/>
             </button>
         }
         @if(menuOpen)
         {
             <div class="dropdown-menu">
                 <button class="nav-link" @onclick="GoTo_NTN_HOME">NTN首頁</button>
-                <button class="nav-link expandable" @onclick="Toggle_expand_sys_setting">系統設定</button>
+                <button class="nav-link expandable" @onclick="Toggle_expand_sys_setting">
+                    <span>系統設定</span>
+                    <span class="caret">▾</span>
+                </button>
                 @if(expand_sys_setting)
                 {
                     <div class="sub-menu">
@@ -30,7 +33,10 @@
                         <button class="nav-link" @onclick="GoTo_Inverter_setting">INV設定</button>
                     </div>
                 }
-                <button class="nav-link expandable" @onclick="Toggle_expand_management">機型管理</button>
+                <button class="nav-link expandable" @onclick="Toggle_expand_management">
+                    <span>機型管理</span>
+                    <span class="caret">▾</span>
+                </button>
                 @if(expand_management)
                 {
                     <div class="sub-menu">
@@ -49,35 +55,39 @@
     <div class="right-items">
         @if(afterFirstRender_Flag)
         {
-            if(showEditBtn_Flag)
+            if(showEditBtn_Flag && Page_index == PAGE.HOME)
             {
                 //show "+" button
-                <button class="btn" @onclick="saveCardsInfo">
-                    <img src="images/save-as.png" alt="save-edit" style="width:24px; height:24px"/>
+                <button class="topRow-btn" @onclick="saveCardsInfo">
+                    <img src="images/diskette.png" alt="save-edit"/>
                 </button>
-                <button class="btn" @onclick="showAddCard">
-                    <img src="images/plus.png" alt="plus" style="width:24px; height:24px"/>
+                <button class="topRow-btn" @onclick="showAddCard">
+                    <img src="images/add.png" alt="plus"/>
                 </button>
             }
             if( Page_index == PAGE.BATTERY_SETTING)
             {
-                <button class="btn" @onclick="apply_battery_setting">
-                    <img src="images/checked.png" alt="apply" style="width:24px; height:24px"/>
+                <button class="topRow-btn" @onclick="apply_battery_setting">
+                    <img src="images/checked.png" alt="apply"/>
                 </button>
-                <button class="btn" @onclick="UseDefault_battery_setting">
-                    <img src="images/settings.png" alt="restore" style="width:24px; height:24px"/>
+                <button class="topRow-btn" @onclick="UseDefault_battery_setting">
+                    <img src="images/settings.png" alt="restore"/>
                 </button>
             }
 
             if( Page_index == PAGE.INV_SETTING)
             {
-                <button class="btn" @onclick="apply_INV_setting">
-                    <img src="images/checked.png" alt="apply" style="width:24px; height:24px"/>
+                <button class="topRow-btn" @onclick="apply_INV_setting">
+                    <img src="images/checked.png" alt="apply"/>
                 </button>
-                <button class="btn" @onclick="UseDefault_INV_setting">
-                    <img src="images/settings.png" alt="restore" style="width:24px; height:24px"/>
+                <button class="topRow-btn" @onclick="UseDefault_INV_setting">
+                    <img src="images/settings.png" alt="restore"/>
                 </button>
             }
+
+            <button class="topRow-btn" @onclick="ToggleTheme" title="@(IsDarkTheme ? "切換到亮色模式" : "切換到暗色模式")">
+                <img src="images/night-mode.png"/>
+            </button>
 
             if(!isMobile)
             {
@@ -87,12 +97,8 @@
             }
         }
 
-        <button class="theme-toggle-btn" @onclick="ToggleTheme" title="@(IsDarkTheme ? "切換到亮色模式" : "切換到暗色模式")">
-            @(IsDarkTheme ? "☀️" : "🌙")
-        </button>
-
-        <button class="btn" @onclick="GoTo_Framework">
-            <img src="images/logo.png" alt="logo" style="width:36px; height:24px"/>
+        <button class="logo-btn" @onclick="GoTo_Framework">
+            <img src="images/logo.png" alt="logo"/>
         </button>
     </div>
 </div>
@@ -224,34 +230,45 @@
     }
 
     
+    @* private void GoTo_NTN_HOME()
+    {
+        NavManager.NavigateTo("/");
+    } *@
+
     private void GoTo_NTN_HOME()
     {
+        showEditBtn_Flag = false;
         NavManager.NavigateTo("/");
     }
 
     private void GoTo_Battery_setting()
     {
+        showEditBtn_Flag = false;
         NavManager.NavigateTo("/Battery_setting");
     }
 
     private void GoTo_Inverter_setting()
     {
+        showEditBtn_Flag = false;
         NavManager.NavigateTo("/Inverter_setting");
     }
 
     private void GoTo_Link_status()
     {
+        showEditBtn_Flag = false;
         NavManager.NavigateTo("/Link_status");
     }
 
     private void GoTo_Log()
     {
+        showEditBtn_Flag = false;
         NavManager.NavigateTo("/Log");
     }
 
     private void GoTo_Use_strategy()
     {
-        @* NavManager.NavigateTo("/Use_strategy"); *@
+        @* showEditBtn_Flag = false;
+        NavManager.NavigateTo("/Use_strategy"); *@
     }
 
     protected override void OnInitialized()
@@ -282,7 +299,7 @@
 		}
 	}
 
-    private void OnLocationChanged(object sender, LocationChangedEventArgs e)
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
         UpdatePageLabel();
         StateHasChanged();
@@ -341,12 +358,14 @@
 
     public void HideMenu()
     {
+        Console.WriteLine($"[TopRow][HideMenu] menuOpen = {menuOpen}");
         if(menuOpen == false)
         {
             return;
         }
 
         menuOpen = false;
+        StateHasChanged();
     }
 
     public void Dispose()

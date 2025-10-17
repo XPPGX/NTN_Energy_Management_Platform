@@ -15,8 +15,6 @@
 <MudPopoverProvider/>
 @*Web Content*@
 <PageTitle>Battery Setting</PageTitle>
-<TopRow InformParentTo_ApplySetting="ReceiveFrom_TopRow_SaveBatterySetting"
-        InformParentTo_UseDefaultValue="ReceiveFrom_TopRow_ApplyDefaultValue"/>
 
 
 
@@ -164,6 +162,8 @@
 
 @code
 {
+    [CascadingParameter(Name = "MainLayout")] public MainLayout? MainLayout { get; set; }
+
     private string _category = "";
 
     bool modal_IsOpen = false;
@@ -199,6 +199,7 @@
     private int FV_Timeout_value;
 
     private bool selectedStage = false; //預設為 3段
+    private bool topRowCallbacksRegistered = false;
 
     private string FormatToHourMin(double totalMin)
     {
@@ -248,6 +249,18 @@
         
     }
 
+    protected override void OnParametersSet()
+    {
+        if (!topRowCallbacksRegistered && MainLayout != null)
+        {
+            MainLayout.RegisterTopRowCallbacks(
+                this,
+                informParentToApplySetting: ReceiveFrom_TopRow_SaveBatterySetting,
+                informParentToUseDefaultValue: ReceiveFrom_TopRow_ApplyDefaultValue);
+            topRowCallbacksRegistered = true;
+        }
+    }
+
     private void OnBatteryChanged()
     {
         InvokeAsync(StateHasChanged);
@@ -256,6 +269,11 @@
     public void Dispose()
     {
         DataCenter.Battery.OnUpdated -= OnBatteryChanged;
+        if (topRowCallbacksRegistered)
+        {
+            MainLayout?.ClearTopRowCallbacks(this);
+            topRowCallbacksRegistered = false;
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

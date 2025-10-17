@@ -1,13 +1,12 @@
 @page "/"
-
 @rendermode InteractiveServer
-
 @using demoVer.Components.Layout
 @using demoVer.Models
 @using System
 @using System.IO
 @using System.Text.Json
 @using demoVer.Utils
+@using demoVer.Shared
 
 @inject GlobalVar globalVar
 @inject IJSRuntime JS
@@ -17,12 +16,13 @@
 @inject HeartbeatService heartbeat
 @inject DataCenter dataCenter
 
+
 <PageTitle>NTN module</PageTitle>
 
-<TopRow OnSendToParent="ReceiveFrom_TopRow"
+@* <TopRow OnSendToParent="ReceiveFrom_TopRow"
         InformParentTo_OpenAddCard="ReceiveFrom_TopRow_OpenAddCard"
         InformParentTo_SaveCardsInfo="ReceiveFrom_TopRow_SaveCardsInfo"
-        @ref="refChild_TopRow"/>
+        @ref="refChild_TopRow"/> *@
 
 <!-- Independent of the HOME arrangement-->
 @if(!string.IsNullOrEmpty(AlertMessage_parent))
@@ -148,7 +148,7 @@
     <div id="sortable-modules" class="module-grid" @ref="ref_module_container">
         @foreach(var card in CardInfos)
         {
-            Type componentType_Temp = null;
+            Type? componentType_Temp = null;
             switch(card.card_Type)
             {
                 case CardType.Info:
@@ -193,6 +193,8 @@
 
 @code
 {
+    [CascadingParameter(Name = "MainLayout")] public MainLayout? MainLayout { get; set; }
+
     //For Log Control
     private string _category            = "";
 
@@ -205,14 +207,14 @@
     private bool editCard_IsOpen        = false;
     private string editingCard_ID       = "";
     private byte cardRenderCounter      = 0;
-    private TopRow refChild_TopRow;
     private string local_modelName      = "";
     private bool isAllOn                = true;
+    private bool topRowCallbacksRegistered = false;
 
 
-    private string AlertMessage_parent      = "";
-    private string ConfirmBtn_Text_parent   = "";
-    private string CancelBtn_Text_parent    = "";
+    private string? AlertMessage_parent      = "";
+    private string? ConfirmBtn_Text_parent   = "";
+    private string? CancelBtn_Text_parent    = "";
     public EventCallback ConfirmBtn_Func_parent {get; set;}
     public EventCallback CancelBtn_Func_parent {get; set;}
 
@@ -290,7 +292,7 @@
         //每次StateHasChanged()重新渲染後，會執行以下
         if(afterAddCard_Flag)
         {
-            ScrollToBottomAsync();
+            await ScrollToBottomAsync();
             afterAddCard_Flag = false;
         }
 
@@ -319,7 +321,6 @@
     {
         _category = GetType().FullName!;
         globalVar.Sys_ModelName_OnChanged += hookTask;
-        
 
         await hookTask();
         await Read_CardInfos_FromJsonFile();
@@ -342,6 +343,22 @@
     public void Dispose()
     {
         globalVar.Sys_ModelName_OnChanged -= hookTask;
+        MainLayout?.ClearTopRowCallbacks(this);
+        topRowCallbacksRegistered = false;
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (!topRowCallbacksRegistered && MainLayout != null)
+        {
+            MainLayout.RegisterTopRowCallbacks(
+                this,
+                onSendToParent: ReceiveFrom_TopRow,
+                informParentToOpenAddCard: ReceiveFrom_TopRow_OpenAddCard,
+                informParentToSaveCardsInfo: ReceiveFrom_TopRow_SaveCardsInfo);
+
+            topRowCallbacksRegistered = true;
+        }
     }
 
     [JSInvokable] public void UpdateCardOrderFromJS(List<string> newOrder)
@@ -375,18 +392,20 @@
     {
         showEditBtn_Flag = _FromTopRow_showEditBtn_Flag;
         await JS.InvokeVoidAsync("initSortable", showEditBtn_Flag); //enable or disable sortableJS
+        Console.WriteLine("[NTN_Home] ReceiveFrom_TopRow : showEditBtn_Flag = " + showEditBtn_Flag);
     }
 
     private async Task ReceiveFrom_TopRow_OpenAddCard()
     {
         modal_IsOpen = true;
         addSelection_IsOpen = true;
-        Console.WriteLine("TETSTSETSETSETSETSET");
+        Console.WriteLine("[NTN_Home] ReceiveFrom_TopRow_OpenAddCard");
     }
 
     private async Task ReceiveFrom_TopRow_SaveCardsInfo()
     {
         TriggerAlert("save");
+        Console.WriteLine("[NTN_Home] ReceiveFrom_TopRow_SaveCardsInfo");
     }
 
     private void Handle_Inform_Home_openEditMenu(string _editingCard_ID_FromChild)
@@ -624,8 +643,7 @@
 
     private void HandleGlobalClick()
     {
-        
-        refChild_TopRow?.HideMenu();
+        MainLayout?.HideTopRowMenu();
     }
 
     private void addCard(CardType _selection)

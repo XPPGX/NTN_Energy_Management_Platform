@@ -16,9 +16,6 @@
 @*Web Content*@
 <PageTitle>Inverter Setting</PageTitle>
 
-<TopRow InformParentTo_ApplySetting="ReceiveFrom_TopRow_SaveINVSetting"
-        InformParentTo_UseDefaultValue="ReceiveFrom_TopRow_ApplyDefaultValue"/>
-
 @if(modal_IsOpen)
 {
     <div class="modal-overlay" @onclick="CloseModal">
@@ -197,6 +194,8 @@
 
 @code
 {
+    [CascadingParameter(Name = "MainLayout")] public MainLayout? MainLayout { get; set; }
+
     //For log
     private string _category = "";
 
@@ -235,6 +234,7 @@
     private int    Battery_capacity_value = 0;
     private double  Battery_OV_alarm_value = 0;
     private const double BAT_ALARM_SHDN_DIFF = 0.2;
+    private bool topRowCallbacksRegistered = false;
 
     private double Battery_alarm_now_min => DataCenter.INV.BAT_Alarm_Min_Display;
     private double Battery_alarm_now_max => Math.Min(DataCenter.Battery.FV_Display, DataCenter.INV.BAT_Alarm_Max_Display);
@@ -391,6 +391,18 @@
         Console.WriteLine($"Grid_touchable = {Grid_tied_power_feeding_touchable}, AC_mode_touchable = {AC_mode_charging_touchable}");
     }
 
+    protected override void OnParametersSet()
+    {
+        if (!topRowCallbacksRegistered && MainLayout != null)
+        {
+            MainLayout.RegisterTopRowCallbacks(
+                this,
+                informParentToApplySetting: ReceiveFrom_TopRow_SaveINVSetting,
+                informParentToUseDefaultValue: ReceiveFrom_TopRow_ApplyDefaultValue);
+            topRowCallbacksRegistered = true;
+        }
+    }
+
     private void OnINVChanged()
     {
         InvokeAsync(StateHasChanged);
@@ -400,6 +412,11 @@
     {
         DataCenter.INV.OnUpdated -= OnINVChanged;
         Heartbeat.OnTick -= Check_ScalingFactor_Status;
+        if (topRowCallbacksRegistered)
+        {
+            MainLayout?.ClearTopRowCallbacks(this);
+            topRowCallbacksRegistered = false;
+        }
     }
 
     private async Task OnFreqTypeChanged(ChangeEventArgs e)

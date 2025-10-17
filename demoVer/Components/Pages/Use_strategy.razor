@@ -1,10 +1,29 @@
 @page "/Use_strategy"
 
 @inject IJSRuntime JS
+@using demoVer.Components.Layout
 
 <PageTitle>Use_strategy</PageTitle>
 
-<TopRow />
-
 @code {
+	[CascadingParameter(Name = "MainLayout")] public MainLayout? MainLayout { get; set; }
+	private bool topRowCallbacksRegistered;
+
+	protected override void OnParametersSet()
+	{
+		if (!topRowCallbacksRegistered && MainLayout != null)
+		{
+			MainLayout.RegisterTopRowCallbacks(this);
+			topRowCallbacksRegistered = true;
+		}
+	}
+
+	public void Dispose()
+	{
+		if (topRowCallbacksRegistered)
+		{
+			MainLayout?.ClearTopRowCallbacks(this);
+			topRowCallbacksRegistered = false;
+		}
+	}
 }

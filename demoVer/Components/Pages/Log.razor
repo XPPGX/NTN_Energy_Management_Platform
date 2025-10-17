@@ -13,7 +13,6 @@
 
 @*Web Content*@
 <PageTitle>Log</PageTitle>
-<TopRow />
 
 @if(showExportDialog)
 {
@@ -240,6 +239,8 @@
 
 @code
 {
+    [CascadingParameter(Name = "MainLayout")] public MainLayout? MainLayout { get; set; }
+
     private string _category    = "";
     
     private const int LogType   = 1;
@@ -271,10 +272,20 @@
     private bool showExportDialog = false;
     private int exportProgress = 0;
     private CancellationTokenSource? exportCts;
+    private bool topRowCallbacksRegistered = false;
 
     protected override void OnInitialized()
     {
         _category = GetType().FullName!;
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (!topRowCallbacksRegistered && MainLayout != null)
+        {
+            MainLayout.RegisterTopRowCallbacks(this);
+            topRowCallbacksRegistered = true;
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -597,6 +608,15 @@
     private void CancelExport()
     {
         exportCts?.Cancel();
+    }
+
+    public void Dispose()
+    {
+        if (topRowCallbacksRegistered)
+        {
+            MainLayout?.ClearTopRowCallbacks(this);
+            topRowCallbacksRegistered = false;
+        }
     }
 
     private async Task QueryFromDB_InitTCB()
