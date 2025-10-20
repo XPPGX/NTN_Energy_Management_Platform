@@ -22,7 +22,7 @@ namespace demoVer.Services
             {
                 string url = $"api/memory/link-status";
                 var result = await _http.GetFromJsonAsync<LinkStatus_JsonFormat>(url);
-                
+            
                 if(result == null)
                 {
                     throw new Exception($"[apiRead_LinkStatus] Read_API_JSON == null");

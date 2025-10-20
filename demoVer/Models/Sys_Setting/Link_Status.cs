@@ -3,6 +3,41 @@ using System.Text.Json.Serialization;
 
 namespace demoVer.Models
 {
+    public class LinkStatus_JsonFormat
+    {
+        [JsonPropertyName("updatedUtc")]
+        public DateTime UpdatedUtc { get; set; }
+
+        [JsonPropertyName("products")]
+        public Dictionary<string, portLinkDetail> Products { get; set; } = new();
+
+        [JsonPropertyName("partitions")]
+        public List<SinglePartition> Partitions { get; set; } = new();
+    }
+
+    public class portLinkDetail
+    {
+        [JsonPropertyName("CAN1")]
+        [JsonConverter(typeof(HexToUlongConverter))]
+        public ulong CAN1_LINK { get; set; }
+
+        [JsonPropertyName("CAN2")]
+        [JsonConverter(typeof(HexToUlongConverter))]
+        public ulong CAN2_LINK { get; set; }
+
+        [JsonPropertyName("MOD1")]
+        [JsonConverter(typeof(HexToUlongConverter))]
+        public ulong MOD1_LINK { get; set; }
+
+        [JsonPropertyName("MOD2")]
+        [JsonConverter(typeof(HexToUlongConverter))]
+        public ulong MOD2_LINK { get; set; }
+
+        [JsonPropertyName("PM1")]
+        [JsonConverter(typeof(HexToUlongConverter))]
+        public ulong PM1_LINK { get; set; }
+    }
+
     public class HexToUlongConverter : JsonConverter<ulong>
     {
         public override ulong Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -21,35 +56,27 @@ namespace demoVer.Models
         }
     }
 
-    public class LinkStatus_JsonFormat
+    public class SinglePartition
     {
-        [JsonPropertyName("updatedUtc")]
-        public DateTime UpdatedUtc {get; set;}
+        [JsonPropertyName("port")]
+        public string Port { get; set; } = string.Empty;
 
-        [JsonPropertyName("products")]
-        public Dictionary<string, portLinkDetail> Products {get; set;} = new();
-    }
+        [JsonPropertyName("protocol")]
+        public string Protocol { get; set; } = string.Empty;
 
-    public class portLinkDetail
-    {
-        [JsonPropertyName("CAN1")]
-        [JsonConverter(typeof(HexToUlongConverter))]
-        public ulong CAN1_LINK {get; set;}
+        [JsonPropertyName("addr")]
+        public List<uint> Addr { get; set; } = new();
 
-        [JsonPropertyName("CAN2")]
-        [JsonConverter(typeof(HexToUlongConverter))]
-        public ulong CAN2_LINK {get; set;}
+        [JsonPropertyName("checkOK")]
+        public bool CheckOK { get; set; } = false;
 
-        [JsonPropertyName("MOD1")]
-        [JsonConverter(typeof(HexToUlongConverter))]
-        public ulong MOD1_LINK {get; set;}
+        [JsonPropertyName("modelError")]
+        public bool ModelError { get; set; } = false;
 
-        [JsonPropertyName("MOD2")]
-        [JsonConverter(typeof(HexToUlongConverter))]
-        public ulong MOD2_LINK {get; set;}
+        [JsonPropertyName("rangeOK")]
+        public bool rangeOK { get; set; } = false;
 
-        [JsonPropertyName("PM1")]
-        [JsonConverter(typeof(HexToUlongConverter))]
-        public ulong PM1_LINK {get; set;}
+        [JsonPropertyName("modelName")]
+        public string ModelName { get; set; } = string.Empty;
     }
 }

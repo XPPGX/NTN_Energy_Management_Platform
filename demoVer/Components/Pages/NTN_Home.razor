@@ -7,6 +7,8 @@
 @using System.Text.Json
 @using demoVer.Utils
 @using demoVer.Shared
+@using demoVer.Services
+@using demoVer.Interfaces
 
 @inject GlobalVar globalVar
 @inject IJSRuntime JS
@@ -15,6 +17,7 @@
 @inject ApiManager apiManager
 @inject HeartbeatService heartbeat
 @inject DataCenter dataCenter
+@inject ICardDefinitionRegistry CardDefinitionRegistry
 
 
 <PageTitle>NTN module</PageTitle>
@@ -148,24 +151,12 @@
     <div id="sortable-modules" class="module-grid" @ref="ref_module_container">
         @foreach(var card in CardInfos)
         {
-            Type? componentType_Temp = null;
-            switch(card.card_Type)
+            if(!CardDefinitionRegistry.TryGet(card.card_Type, out var cardDefinition))
             {
-                case CardType.Info:
-                    componentType_Temp = typeof(BlankInfoCard);
-                    break;
-                case CardType.Chart:
-                    componentType_Temp = typeof(BlankChartCard);
-                    break;
-                case CardType.Status:
-                    componentType_Temp = typeof(RunningDiagramCard);
-                    break;
-                default:
-                    componentType_Temp = null;
-                    break;
+                continue;
             }
 
-            if(componentType_Temp == null){continue;}
+            var componentType_Temp = cardDefinition!.DisplayComponent;
             
             //把 chartcard BAN掉
             //if(componentType_Temp == typeof(BlankChartCard)){continue;}
@@ -651,42 +642,21 @@
         MainLayout?.HideTopRowMenu();
     }
 
-    private void addCard(CardType _selection)
+    private void addCard(CardType selection)
     {
-        CardInfo newCard = new();
-        switch(_selection)
+        if(!CardDefinitionRegistry.TryGet(selection, out var definition))
         {
-            case CardType.Info: //infoCard
-                newCard.card_Type = CardType.Info;
-                newCard.widthClass = "w25";
-                newCard.cardName = "";
-                break;
-            case CardType.Chart: //chart
-                newCard.card_Type = CardType.Chart;
-                newCard.widthClass = "w50";
-                newCard.cardName = "NewChart";
-                newCard.Chart_Setting = new CHART_SETTING();
-                newCard.Chart_Setting.canvasID = $"Chart_{Guid.NewGuid().ToString("N")}";
-                newCard.Chart_Setting.ChartTitle = "NewChart";
-                break;
-            case CardType.Status: //status
-                newCard.card_Type = CardType.Status;
-                newCard.widthClass = "w50";
-                newCard.cardName = "RunningDiagram";
-                break;
-            default:
-                break;
-        }
-        newCard.ID = Guid.NewGuid().ToString("N");
-        newCard.showSequence = (byte)(CardInfos.Count);
-        
-        
-        Console.WriteLine("[addCard][1]");
-        @* if(_selection == CardType.Chart)
-        {
-            CloseModal();
+            Console.WriteLine($"[addCard] No definition found for {selection}");
             return;
-        } *@
+        }
+
+        var newCard = definition!.CreateDefaultCard();
+        newCard.card_Type = definition.CardType;
+        newCard.widthClass ??= definition.DefaultWidthClass;
+        newCard.ID = Guid.NewGuid().ToString("N");
+        newCard.showSequence = (byte)CardInfos.Count;
+
+        Console.WriteLine("[addCard][1]");
         CardInfos.Add(newCard);
         Console.WriteLine("[addCard][2]");
         afterAddCard_Flag = true;

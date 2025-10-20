@@ -303,7 +303,7 @@ namespace demoVer.Services
                     return;
                 }
 
-                var INV_products = rcv_linkStatus.Products["INV"];
+                var INV_products = rcv_linkStatus.Products["All"];
 
                 for(uint i = 0 ; i < 64 ; i ++)
                 {

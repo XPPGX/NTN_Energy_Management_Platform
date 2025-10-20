@@ -23,6 +23,10 @@ builder.Logging.AddFilter("System.Net.Http.HttpClient", LogLevel.None);
 builder.Services.AddSingleton<CardUpdateNotifier>();
 builder.Services.AddSingleton<ArrowAnimationService>();
 builder.Services.AddMudServices();
+builder.Services.AddSingleton<ICardDefinition, InfoCardDefinition>();
+builder.Services.AddSingleton<ICardDefinition, ChartCardDefinition>();
+builder.Services.AddSingleton<ICardDefinition, RunningDiagramCardDefinition>();
+builder.Services.AddSingleton<ICardDefinitionRegistry, CardDefinitionRegistry>();
 
 builder.Services.AddSingleton<HeartbeatService>();
 builder.Services.AddHostedService(provider => provider.GetRequiredService<HeartbeatService>());

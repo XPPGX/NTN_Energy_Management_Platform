@@ -1,10 +1,10 @@
 {
-    "updatedUtc": "2019-02-14T12:12:01.4427611Z",
+    "updatedUtc": "2025-10-20T05:23:59.0920704Z",
     "products": {
         "INV": {
-            "CAN1": "0x0000000000000FFF",
+            "CAN1": "0x00000000000000",
             "CAN2": "0x0000000000000000",
-            "MOD1": "0x000000000000001F",
+            "MOD1": "0x0000000000000000",
             "MOD2": "0x0000000000000000",
             "PM1": "0x0000000000000000"
         },
@@ -21,6 +21,61 @@
             "MOD1": "0x0000000000000000",
             "MOD2": "0x0000000000000000",
             "PM1": "0x0000000000000000"
+        },
+        "All": {
+            "CAN1": "0x0000000000000011",
+            "CAN2": "0x0000000000000000",
+            "MOD1": "0x0000000000000000",
+            "MOD2": "0x0000000000000000",
+            "PM1": "0x0000000000000000"
         }
-    }
+    },
+    "partitions": [
+        {
+            "port": "CAN1",
+            "protocol": "NTN-5K_CAN.json",
+            "addr": [
+                0,
+                1,
+                2
+            ],
+            "checkOK": false,
+            "modelError": false,
+            "rangeOK": false,
+            "modelName": null
+        },
+        {
+            "port": "CAN2",
+            "protocol": "NTN-5K_CAN.json",
+            "addr": [
+                0
+            ],
+            "checkOK": false,
+            "modelError": false,
+            "rangeOK": false,
+            "modelName": null
+        },
+        {
+            "port": "MOD1",
+            "protocol": "NTN-5K_MOD.json",
+            "addr": [
+                0
+            ],
+            "checkOK": false,
+            "modelError": false,
+            "rangeOK": false,
+            "modelName": null
+        },
+        {
+            "port": "MOD2",
+            "protocol": "NTN-5K_MOD.json",
+            "addr": [
+                0
+            ],
+            "checkOK": false,
+            "modelError": false,
+            "rangeOK": false,
+            "modelName": null
+        }
+    ]
 }
