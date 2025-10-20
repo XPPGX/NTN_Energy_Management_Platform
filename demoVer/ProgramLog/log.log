@@ -20,3 +20,5 @@
    at demoVer.Shared.EditCard.getCMDs() in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Components\Shared\EditCard.razor:line 778
 [2025-10-16 15:21:05.634] [EditCard][getCMDs] Error : System.NullReferenceException: Object reference not set to an instance of an object.
    at demoVer.Shared.EditCard.getCMDs() in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Components\Shared\EditCard.razor:line 778
+[2025-10-20 11:50:31.840] [PollingRead][PollNowLinkAddr] Error : System.Threading.Tasks.TaskCanceledException: A task was canceled.
+   at demoVer.Services.PollingRead.PollNowLinkAddr(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\PollingRead.cs:line 302

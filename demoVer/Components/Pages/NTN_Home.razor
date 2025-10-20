@@ -278,9 +278,14 @@
             try{
                 //[Debug] try drag function
                 // var dotNetRef = DotNetObjectReference.Create(this);
+                
+                @* Console.WriteLine("TEST1");
+                await new ThemeLoader().ApplyTheme(JS);
+                Console.WriteLine("TEST2"); *@
                 await JS.InvokeVoidAsync("initSortable", showEditBtn_Flag);
                 await JS.InvokeVoidAsync("DotNetHelperRegister", DotNetObjectReference.Create(this));
                 await JS.InvokeVoidAsync("getCardOrder");
+
                 //await JS.InvokeVoidAsync("sortableHelper.initSortable", showEditBtn_Flag);
             }
             catch(Exception ex)
