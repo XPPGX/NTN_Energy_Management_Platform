@@ -1,0 +1,33 @@
+/********** 主題適應標籤樣式 - Theme Adaptive Tab Styles **********/
+/* 用法：在 HTML 中添加類別 .theme-tab 到標籤元素，.theme-tab-panel 到面板元素 */
+/* 範例：
+   <button type="button" class="custom-tab theme-tab">標籤</button>
+   <div class="custom-tab-panel theme-tab-panel">內容</div>
+   其中 .custom-tab 和 .custom-tab-panel 負責排版樣式，.theme-tab 和 .theme-tab-panel 負責顏色主題適應
+*/
+
+.theme-tab {
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+}
+
+.theme-tab:hover {
+    color: var(--text-primary);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px var(--accent-color);
+}
+
+.theme-tab.active {
+    color: var(--accent-hover);
+    border-color: var(--accent-color);
+    background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary));
+    box-shadow: 0 0 12px var(--accent-color);
+}
+
+.theme-tab-panel {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    box-shadow: inset 0 0 20px var(--shadow-color);
+}

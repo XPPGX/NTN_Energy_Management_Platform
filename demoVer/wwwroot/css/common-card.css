@@ -1,0 +1,348 @@
+/********** Card Container Base **********/
+/*
+[Usage Example from Battery_setting.razor]
+
+<div class="card-container-layout card-container-base">
+    <!-- card content -->
+</div>
+
+//容器的大小、排版，請自定義在各頁面的css裡面如下
+
+.card-container-layout { 
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    gap: 0%;
+    align-items: center;
+}
+
+This class provides the common visual styling for card containers.
+*/
+.card-container-base {
+    background: linear-gradient(to bottom, var(--bg-primary), var(--bg-secondary));
+    border: 1px solid var(--border-color);
+    border-radius: 0;
+    color: var(--text-primary);
+}
+
+/********** detail card **********/
+/*
+[Usage] 可被點擊的卡片
+
+<div class="detail-card"> 
+    <div class="detail-card-header">
+        <span class="detail-card-title">Line 1</span>
+        <button class="detail-card-action">刪除</button>
+    </div>
+    <div class="detail-card-body">
+        <div class="detail-card-row">
+            <span class="detail-card-label">標籤</span>
+            <span class="detail-card-value">內容</span>
+        </div>
+        <div class="detail-card-row detail-card-row-color">
+            <span class="detail-card-label">顏色</span>
+            <span class="detail-card-value"><span class="detail-card-color"></span></span>
+        </div>
+    </div>
+</div>
+*/
+.detail-card {
+    background: var(--bg-primary);
+    border-left: 4px solid #1976d2;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.detail-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55);
+}
+
+.detail-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.detail-card-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
+}
+
+.detail-card-action {
+    background: var(--bg-secondary);
+    border: 1px solid var(--error-color);
+    color: var(--error-color);
+    border-radius: 6px;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.detail-card-action:hover {
+    background: rgba(244, 67, 54, 0.1); /* 半透明紅色背景 */
+    color: var(--error-color);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+
+.detail-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.detail-card-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.detail-card-label {
+    min-width: 72px;
+    font-weight: 600;
+    color: var(--accent-color);
+}
+
+.detail-card-value {
+    flex: 1;
+    color: var(--text-primary);
+}
+
+.detail-card-row-color .detail-card-value {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.detail-card-color {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1px solid #cccccc;
+}
+
+/********** jumpInfo-card **********/
+/*
+[Usage] 用於顯示跳出資訊卡片的顏色和特效樣式
+
+<div class="jumpInfo-card">
+    <div class="card-title" id="Address"></div>
+    <div class="card-body">
+        <div class="info-item">
+            <span class="label">ModelName</span>
+            <span class="value" id="modelname-display"></span>
+        </div>
+        <div class="info-item">
+            <span class="label">Revision:</span>
+            <span class="value" id="Revision-display"></span>
+        </div>
+        <div class="info-item">
+            <span class="label">Status:</span>
+            <span class="value" id="InvSetting-display"></span>
+        </div>
+        <div class="info-item">
+            <span class="label">Error:</span>
+            <span class="value" id="ErrorMessage"></span>
+        </div>
+        <div class="info-item">
+            <span class="label">Load Current:</span>
+            <span class="value" id="Load_Current"></span>
+        </div>
+        <div class="info-item">
+            <span class="label">Load Power:</span>
+            <span class="value" id="Load_Power"></span>
+        </div>
+        <div class="info-item">
+            <span class="label">DC current:</span>
+            <span class="value" id="DC_Current"></span>
+        </div>
+        <div class="info-item">
+            <span class="label">Battery Voltage:</span>
+            <span class="value" id="V_BAT"></span>
+        </div>
+        <div class="info-item">
+            <span class="label">Temperature:</span>
+            <span class="value" id="Temperature_display"></span>
+        </div>
+        <div class="info-item">
+            <span class="label">FAN SPEED 1:</span>
+            <span class="value" id="FAN_SPEED_1"></span>
+        </div>
+        <div class="info-item">
+            <span class="label">FAN SPEED 2</span>
+            <span class="value" id="FAN_SPEED_2"></span>
+        </div>
+    </div>
+</div>
+
+搭配說明：
+- 排版樣式（padding, border-radius, width, max-width, display, grid-template-columns 等）請在各頁面的 CSS 文件中定義，例如 Link_status.razor.css
+- 顏色和特效樣式（background, border, box-shadow, backdrop-filter, color, text-shadow 等）在此 common-elements.css 中定義
+- 使用時只需在 HTML 中添加 class="jumpInfo-card"，即可自動應用顏色和特效；排版則需在對應頁面 CSS 中補充
+- 範例，在 Link_status.razor.css 中定義排版樣式如下：
+    .jumpInfo-card .card-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            letter-spacing: 0.05rem;
+            margin-bottom: 1.1rem;
+            text-align: center;
+            text-transform: uppercase;
+    }
+*/
+.jumpInfo-card {
+    background: linear-gradient(145deg, rgba(var(--bg-primary-rgb), 0.95), rgba(var(--bg-secondary-rgb), 0.92));
+    border: 1px solid rgba(var(--accent-color-rgb), 0.35);
+    box-shadow: 0 28px 60px var(--shadow-color), 0 0 22px rgba(var(--accent-color-rgb), 0.22);
+    backdrop-filter: blur(14px);
+    color: var(--text-primary);
+}
+
+.jumpInfo-card .card-title {
+    color: var(--accent-hover);
+}
+
+.jumpInfo-card .info-item {
+    background: linear-gradient(150deg, rgba(var(--bg-secondary-rgb), 0.86), rgba(var(--bg-primary-rgb), 0.9));
+    border: 1px solid rgba(var(--border-color-rgb), 0.35);
+    box-shadow: inset 0 0 18px var(--shadow-color);
+}
+
+.jumpInfo-card .label {
+    color: var(--accent-color);
+}
+
+.jumpInfo-card .value {
+    color: var(--text-primary);
+    text-shadow: 0 0 6px rgba(var(--accent-color-rgb), 0.25);
+}
+
+/********** card **********/
+/*
+[Usage] 可藉由點擊去切換焦點的卡片
+
+@code {
+    private int currentStep = 1; // 當前步驟
+
+    private string GetCardClass(int step)
+    {
+        if (step == currentStep) return "card active";
+        if (step < currentStep) return "card left";
+        if (step > currentStep) return "card right";
+        return "card";
+    }
+}
+
+<div class="@GetCardClass(1)">
+    <!-- 第一個卡片內容 -->
+</div>
+
+<div class="@GetCardClass(2)">
+    <!-- 第二個卡片內容 -->
+</div>
+
+<div class="@GetCardClass(3)">
+    <!-- 第三個卡片內容 -->
+</div>
+*/
+.card {
+    height: 100%;
+    background: var(--bg-primary);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.8);
+    transition: all 0.5s ease;
+    text-align: center;
+    overflow: hidden;
+    cursor: pointer;
+}
+.card.active {
+    background: var(--bg-secondary);
+    flex: 0 0 50%;
+    opacity: 1;
+    z-index: 2;
+    cursor: default;
+}
+/* 左邊 */
+.card.left {
+    flex: 0 0 20%;
+    opacity: 0.6;
+    transform: translateX(-10%);
+    z-index: 1;
+}
+/* 右邊 */
+.card.right {
+    flex: 0 0 20%;
+    opacity: 0.6;
+    transform: translateX(10%);
+    z-index: 1;
+}
+
+.card-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+/********** Media Queries **********/
+@media(max-width: 768px) {
+    .card {
+        flex: none;
+        width: 100%;
+        opacity: 0.4;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease, opacity 0.5s ease;
+        justify-content: center;
+        padding: 0;
+    }
+
+    .card.active {
+        flex:auto;
+        opacity: 1;
+        transform: scaleY(1);
+        max-height: 1000px;
+        padding: 1rem;
+    }
+
+    /* 左邊 */
+    .card.left,
+    .card.right {
+        flex: none;
+        opacity: 0.7;
+        max-height: 80px;
+        transform: none !important;
+        z-index: 1;
+        align-items: center;
+    }
+
+    .card.collapsed {
+        opacity: 0.8;
+        max-height: 100px;
+        overflow: hidden;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+    }
+
+    .card.hidden {
+        display: none; /* 尚未到的步驟直接隱藏 */
+    }
+}
+

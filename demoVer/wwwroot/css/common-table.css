@@ -1,0 +1,101 @@
+/********** table (on computer) **********/
+/*
+[Usage]
+
+<table class="custom-table">
+    <thead>
+        <tr>
+            @foreach (var col in Columns)
+            {
+                <th>@col</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var row in records)
+        {
+            <tr>
+                @foreach (var col in columns)
+                {
+                    <td>@row[col]</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+*/
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg-primary);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 4px 14px var(--shadow-color);
+    border: 1px solid var(--border-color);
+}
+.custom-table th, .custom-table td {
+    border: 1px solid var(--border-light);
+    padding: 10px;
+    text-align: center;
+    color: var(--text-primary);
+}
+.custom-table th {
+    background: var(--bg-secondary);
+    font-weight: bold;
+    color: var(--text-primary);
+}
+.custom-table td {
+    color: var(--text-secondary);
+}
+.custom-table tr:nth-child(even) {
+    background: var(--bg-accent);
+}
+
+/********** table (Mobile) **********/
+/*
+[Usage] 
+
+<div class="card-table">
+    @foreach (var row in Records)
+    {
+        <div class="card-table-row">
+            @foreach (var col in Columns)
+            {
+                <div class="card-table-item">
+                    <span class="card-table-label">@col</span>
+                    <span class="card-table-value">@row[col]</span>
+                </div>
+            }
+        </div>
+    }
+</div>
+*/
+.card-table {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.card-table-row {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 10px;
+    box-shadow: 0 4px 14px var(--shadow-color);
+    margin-bottom: 8px;
+}
+.card-table-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border-light);
+}
+.card-table-item:last-child {
+    border-bottom: none;
+}
+.card-table-label {
+    color: var(--accent-color);
+    font-weight: bold;
+}
+.card-table-value {
+    color: var(--text-primary);
+}

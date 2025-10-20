@@ -16,16 +16,27 @@
 
 ## 🧩 2. CSS 結構原則
 
-| 類型         | 放置位置                  | 範例                                     |
-| ---------- | --------------------- | -------------------------------------- |
-| 🎨 主題與顏色變數 | `app.css`             | `--accent-color`, `--bg-primary`       |
-| 🧱 通用元件樣式  | `common-elements.css` | `.btn`, `.card`, `.custom-table`       |
-| 📄 頁面專屬排版  | `*.razor.css`         | `.card-container-layout`, `.top-panel` |
+| 類型         | 放置位置             | 範例                                     |
+| ------------ | -------------------- | ---------------------------------------- |
+| 🎨 主題與顏色變數 | `app.css`            | `--accent-color`, `--bg-primary`         |
+| 🧱 通用元件模組  | `common-*.css`       | `.btn-primary`, `.card-container-base`, `.custom-table` |
+| 📄 頁面專屬排版  | `*.razor.css`        | `.card-container-layout`, `.top-panel`   |
+
+### 📚 通用模組對照表
+
+- `common-elements.css`：提供 `.no-flex`、`label`、`input` 等基礎表單樣式與工具類別。
+- `common-button.css`：集中管理 `.btn-*` 系列按鈕與 `.custom-toggle-button`。
+- `common-card.css`：定義 `.card`、`.detail-card`、`.jumpInfo-card`、`.card-container-base` 等卡片樣式。
+- `common-table.css`：收錄 `.custom-table`、`.card-table` 與行動版表格樣式。
+- `common-select.css`：涵蓋 `<select>`、`.column-chooser`、`.multi-option`、`.radio-group`。
+- `common-slider.css`：提供 `.custom-slider` 與 `.responsive-slider`。
+- `common-menu.css`：提供 `.custom-menu` 與 `.custom-menu-item`。
+- `common-tab.css`：包含 `.theme-tab`、`.theme-tab-panel`。
 
 ### 📌 原則
 
 1. **app.css** 僅定義變數，不放具體樣式。
-2. **common-elements.css** 為組件庫，不直接綁定頁面。
+2. **common-*.css** 模組負責視覺造型，依元件類型拆分管理；新增樣式時選擇對應檔案。
 3. **頁面 CSS** 僅負責位置與尺寸，不改動配色。
 
 ---
@@ -55,9 +66,9 @@
 ## 🧱 4. 新增組件步驟
 
 1. **設計元件結構**：決定 HTML 架構與交互邏輯。
-2. **在 `common-elements.css` 新增基礎樣式**：
+2. **在 `wwwroot/css` 下選擇對應的 `common-*.css` 模組新增視覺樣式**：
 
-   * 背景、邊框、陰影、顏色。
+    * 例如：按鈕放入 `common-button.css`、卡片放入 `common-card.css`、表格放入 `common-table.css`，若為表單基礎樣式則放在 `common-elements.css`。
 3. **在各頁 CSS 中定義布局**：
 
    * 位置、排列方向、間距。
@@ -68,7 +79,7 @@
 ### 範例：新增「通知卡片」
 
 ```css
-/* common-elements.css */
+/* common-card.css */
 .notification-card {
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
@@ -104,9 +115,9 @@
 }
 ```
 
-### 🧱 common-elements.css
+### 🧱 common-button.css
 
-（通用樣式）
+（通用按鈕樣式）
 
 ```css
 .btn-primary {
@@ -122,7 +133,13 @@
 .btn-primary:hover {
     background: var(--accent-hover);
 }
+```
 
+### 🃏 common-card.css
+
+（通用卡片樣式）
+
+```css
 .info-card {
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
@@ -178,12 +195,13 @@
 
 📂 **檔案對應說明：**
 
-| 類型       | 檔案                    | 內容                   |
-| -------- | --------------------- | -------------------- |
-| 🎨 顏色與主題 | `app.css`             | 定義主題變數（如背景、文字、強調色）   |
-| 🧱 通用樣式  | `common-elements.css` | 定義按鈕、卡片外觀、陰影、顏色等視覺樣式 |
-| 📄 排版樣式  | `MyPage.razor.css`    | 定義頁面布局（flex、gap、位置）  |
-| ⚙️ 程式邏輯  | `MyPage.razor`        | 定義 Blazor 結構與互動邏輯    |
+| 類型       | 檔案                                      | 內容                                   |
+| ---------- | ----------------------------------------- | -------------------------------------- |
+| 🎨 顏色與主題 | `app.css`                                 | 定義主題變數（如背景、文字、強調色）         |
+| 🧱 基礎樣式  | `common-elements.css`                   | 定義表單元件、工具類別（label、input、.no-flex） |
+| 🧱 元件樣式  | `common-button.css`, `common-card.css` | 定義按鈕、卡片外觀、陰影、顏色等視覺樣式       |
+| 📄 排版樣式  | `MyPage.razor.css`                      | 定義頁面布局（flex、gap、位置）            |
+| ⚙️ 程式邏輯  | `MyPage.razor`                          | 定義 Blazor 結構與互動邏輯              |
 
 ---
 
@@ -193,18 +211,16 @@
 
 ### 🔹 Step 1：複製主題檔案
 
-將以下兩個檔案加入專案：
-
-```
-wwwroot/css/app.css
-wwwroot/css/common-elements.css
-```
+確保 `wwwroot/css/` 底下的主題與共用模組檔案已納入專案（至少包含 `app.css`、`common-elements.css`、`common-button.css`、`common-card.css`，其餘 `common-*.css` 依實際使用情境加入）。
 
 ### 🔹 Step 2：在 `_Layout.cshtml` 或 `index.html` 中引入
 
 ```html
 <link href="~/css/app.css" rel="stylesheet" />
 <link href="~/css/common-elements.css" rel="stylesheet" />
+<link href="~/css/common-button.css" rel="stylesheet" />
+<link href="~/css/common-card.css" rel="stylesheet" />
+<!-- 依需要再引入 common-table.css、common-select.css、common-tab.css... -->
 ```
 
 ### 🔹 Step 3：建立 Razor 頁面
@@ -258,8 +274,8 @@ document.body.classList.add("theme-light");
 ### ✅ 完成後效果
 
 * 自動套用全域主題變數 (`app.css`)
-* 通用組件樣式 (`common-elements.css`)
+* 通用組件樣式（`common-elements.css` + 對應的 `common-*.css` 模組）
 * 自訂頁面布局 (`*.razor.css`)
 * Razor 控制互動邏輯（C#）
 
-> 📘 **提示**：Codex 若偵測到 `.btn-`, `.card-`, `.theme-tab` 類別，可自動建議從 `common-elements.css` 引用樣式，確保一致的 UI。
+> 📘 **提示**：Codex 若偵測到 `.btn-`, `.card-`, `.theme-tab` 類別，可自動建議引用 `common-button.css`、`common-card.css`、`common-tab.css` 等模組，確保一致的 UI。

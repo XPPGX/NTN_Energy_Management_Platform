@@ -1,0 +1,37 @@
+/********** custom menu **********/
+/*
+[Usage]
+
+<div class="custom-menu">
+    <div class="custom-menu-item">Option 1</div>
+    <div class="custom-menu-item">Option 2</div>
+    <div class="custom-menu-item">Option 3</div>
+</div>
+*/
+.custom-menu {
+    position: absolute;
+    background-color: var(--bg-primary); /* 深色背景，與工業風格搭配 */
+    border: 1px solid var(--border-color); /* 金屬質感的邊框 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); /* 增加陰影效果 */
+    z-index: 9999;
+    padding: 6px 0;
+    min-width: 140px; /* 調整寬度以適應表格 */
+    border-radius: 6px; /* 輕微圓角，保持現代感 */
+    color: var(--text-primary); /* 柔和的淺灰文字，適合深色背景 */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.custom-menu-item {
+    justify-content: center;
+    text-align: center;
+    padding: 10px 14px; /* 增加內距，提升可點擊範圍 */
+    cursor: pointer;
+    color: var(--text-secondary); /* 與custom-menu文字顏色一致 */
+    background-color: transparent; /* 默認透明背景 */
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.custom-menu-item:hover {
+    background-color: var(--bg-secondary); /* hover效果，稍微變亮 */
+    color: var(--text-primary); /* 提升文字對比度 */
+}

@@ -1,0 +1,56 @@
+/********** stretch **********/
+.no-flex
+{
+    flex:0 0 auto !important;
+    display: inline-flex !important;
+}
+
+
+/********** label **********/
+/*
+[Usage]
+
+<label>Start Date:</label>
+*/
+label {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    display: block;
+    margin-bottom: 8px;
+}
+
+/********** input **********/
+/*
+[Usage]
+
+<input type="date" id="startDate" @bind="selectedStartDate" placeholder="點擊選擇日期" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
+*/
+
+input {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 8px;
+
+    background-color: var(--bg-primary); /* 使用主題背景色 */
+    border: 1px solid var(--border-color); /* 使用主題邊框色 */
+    color: var(--text-primary); /* 使用主題文字色 */
+    font-size: 14px;
+
+    backdrop-filter: blur(6px); /* 毛玻璃效果 */
+    -webkit-backdrop-filter: blur(6px); /* Safari 需要加這個 */
+
+    transition: border-color 0.25s, box-shadow 0.25s, background-color 0.25s;
+}
+
+/* placeholder 樣式 */
+input::placeholder {
+    color: var(--text-secondary); /* 使用主題次要文字色 */
+}
+
+/* focus 狀態 */
+input:focus {
+    outline: none;
+    border-color: var(--accent-color); /* 使用主題強調色 */
+    box-shadow: 0 0 12px rgba(var(--accent-color-rgb), 0.6); /* 使用主題強調色 */
+    background-color: var(--bg-secondary); /* 使用主題次要背景色 */
+}

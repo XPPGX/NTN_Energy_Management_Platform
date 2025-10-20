@@ -1,0 +1,205 @@
+/********** Button **********/
+/*
+[Usage]
+
+<button class="btn btn-blue">@Var1_Text</button>
+
+<button class="btn btn-blue no-flex">@Var1_Text</button>
+*/
+.btn
+{
+    flex: 1;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+.btn-blue
+{
+    background: var(--bg-secondary);
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+}
+.btn-blue:hover
+{
+    background: var(--bg-accent);
+    box-shadow: 0 0 10px var(--accent-color);
+}
+
+.btn-red
+{
+    background: var(--bg-secondary);
+    color: var(--error-color);
+    border: 1px solid var(--error-color);
+}
+.btn-red:hover
+{
+    background: var(--bg-accent);
+    box-shadow: 0 0 8px var(--error-color);
+}
+
+.btn-teal
+{
+    background: var(--bg-secondary);
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
+}
+.btn-teal:hover
+{
+    background: var(--bg-accent);
+    box-shadow: 0 0 10px var(--success-color);
+}
+
+.btn-amber
+{
+    background: var(--bg-secondary);
+    color: var(--warning-color);
+    border: 1px solid var(--warning-color);
+}
+.btn-amber:hover
+{
+    background: var(--bg-accent);
+    box-shadow: 0 0 8px var(--warning-color);
+}
+
+.btn-neutral
+{
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+.btn-neutral:hover
+{
+    background: var(--bg-accent);
+    box-shadow: 0 0 6px var(--border-color);
+}
+
+.btn-violet {
+    background: var(--bg-secondary);
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+}
+.btn-violet:hover {
+    background: var(--bg-accent);
+    box-shadow: 0 0 8px var(--accent-color);
+}
+
+.btn-emerald
+{
+    background: var(--bg-secondary);
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
+}
+.btn-emerald:hover
+{
+    background: var(--bg-accent);
+    color: var(--text-primary);
+    box-shadow: 0 0 10px var(--success-color);
+}
+
+.btn-bubble-red
+{
+    background: var(--error-color);
+    color: var(--bg-primary);
+}
+.btn-bubble-red:hover
+{
+    background: var(--accent-hover);
+}
+
+.btn-primary {
+    background: var(--accent-color);
+    color: var(--bg-primary);
+    border: 1px solid var(--accent-color);
+}
+.btn-primary:hover {
+    background: var(--accent-hover);
+    box-shadow: 0 0 6px var(--accent-color);
+}
+
+.btn-green {
+    background: var(--success-color);
+    color: var(--bg-primary);
+    border: 1px solid var(--success-color);
+}
+.btn-green:hover {
+    background: var(--accent-hover);
+    box-shadow: 0 0 6px var(--success-color);
+}
+
+/********** Custom Toggle Button **********/
+/*
+[Usage Example from Battery_setting.razor]
+
+<label class="custom-toggle-button" title="@(CCT_Enable ? "On" : "Off")">
+    <input type="checkbox" @bind="CCT_Enable" />
+    <span class="toggle-slider"></span>
+</label>
+
+<label class="custom-toggle-button" title="@(CVT_Enable ? "On" : "Off")">
+    <input type="checkbox" @bind="CVT_Enable" />
+    <span class="toggle-slider"></span>
+</label>
+
+<label class="custom-toggle-button" title="@(FVT_Enable ? "On" : "Off")">
+    <input type="checkbox" @bind="FVT_Enable" />
+    <span class="toggle-slider"></span>
+</label>
+*/
+.custom-toggle-button {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    cursor: pointer;
+}
+
+.custom-toggle-button:has(input:disabled) {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.custom-toggle-button input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #666, #444);
+    border: 2px solid #777;
+    border-radius: 34px;
+    transition: 0.4s;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 2px;
+    bottom: 2px;
+    background: linear-gradient(135deg, #ff4444, #cc0000);
+    border-radius: 50%;
+    transition: 0.4s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+input:checked + .toggle-slider {
+    background: linear-gradient(135deg, #666, #444);
+    border-color: #777;
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(26px);
+    background: linear-gradient(135deg, #44ff44, #00cc00);
+}

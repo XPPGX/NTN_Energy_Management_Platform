@@ -1,0 +1,61 @@
+/********** Custom Slider **********/
+/*
+[Usage Example from Battery_setting.razor]
+
+<div class="responsive-slider">
+    <input type="range" @bind="CC_Timeout_value" @bind:event="oninput" min="0" max="6000" step="1" class="custom-slider" />
+</div>
+
+<div class="responsive-slider">
+    <input type="range" @bind="CV_Timeout_value" @bind:event="oninput" min="0" max="6000" step="1" class="custom-slider" />
+</div>
+
+<div class="responsive-slider">
+    <input type="range" @bind="FV_Timeout_value" @bind:event="oninput" min="0" max="6000" step="1" class="custom-slider" />
+</div>
+*/
+.responsive-slider {
+    width: 60%;
+    display: inline-block;
+}
+
+.custom-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(to right, #666, #444);
+    outline: none;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.custom-slider:hover {
+    opacity: 1;
+}
+
+.custom-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1976d2, #42a5f5);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.custom-slider::-webkit-slider-thumb:hover {
+    background: linear-gradient(135deg, #1565c0, #1976d2);
+}
+
+.custom-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1976d2, #42a5f5);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
