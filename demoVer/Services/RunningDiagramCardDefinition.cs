@@ -10,6 +10,8 @@ public sealed class RunningDiagramCardDefinition : ICardDefinition
 {
     public CardType CardType => CardType.Status;
     public Type DisplayComponent => typeof(RunningDiagramCard);
+    public string DisplayName => "連接狀態";
+    public string ThumbnailPath => "images/cardSelection-status.png";
     public string DefaultWidthClass => "w50";
 
     public CardInfo CreateDefaultCard() => new()

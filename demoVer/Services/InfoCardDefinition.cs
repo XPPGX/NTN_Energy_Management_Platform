@@ -10,6 +10,8 @@ public sealed class InfoCardDefinition : ICardDefinition
 {
     public CardType CardType => CardType.Info;
     public Type DisplayComponent => typeof(BlankInfoCard);
+    public string DisplayName => "資訊";
+    public string ThumbnailPath => "images/cardSelection-info.png";
     public string DefaultWidthClass => "w25";
 
     public CardInfo CreateDefaultCard() => new()

@@ -67,18 +67,15 @@
             <div class="modal-content" @onclick:stopPropagation>
                 <h3>選擇卡片</h3>
                 <div class="selection-group">
-                    <div class="addCard-selection-img-label-col" type="button" @onclick="() => addCard(CardType.Info)">
-                        <img src="images/cardSelection-info.png" alt="plus" class="addCard-selection-img"/>
-                        <div class="addCard-selection-label">資訊</div>
-                    </div>
-                    <div class="addCard-selection-img-label-col" type="button" @onclick="() => addCard(CardType.Chart)">
-                        <img src="images/cardSelection-chart.png" alt="plus" class="addCard-selection-img"/>
-                        <div class="addCard-selection-label">圖表</div>
-                    </div>
-                    <div class="addCard-selection-img-label-col" type="button" @onclick="() => addCard(CardType.Status)">
-                        <img src="images/cardSelection-status.png" alt="plus" class="addCard-selection-img"/>
-                        <div class="addCard-selection-label">連接狀態</div>
-                    </div>
+                    @foreach (var definition in CardDefinitionRegistry.Definitions.OrderBy(d => d.CardType))
+                    {
+                        <div class="addCard-selection-img-label-col"
+                             type="button"
+                             @onclick="() => addCard(definition.CardType)">
+                            <img src="@ResolveThumbnail(definition)" alt="plus" class="addCard-selection-img"/>
+                            <div class="addCard-selection-label">@ResolveDisplayName(definition)</div>
+                        </div>
+                    }
                 </div>
             </div>
         }
@@ -670,6 +667,14 @@
         Console.WriteLine("Scroll to bottom C#");
         await JS.InvokeVoidAsync("scrollToBottom");
     }
+
+    private const string DefaultCardThumbnail = "images/cardSelection-default.png";
+
+    private static string ResolveDisplayName(ICardDefinition definition) =>
+        string.IsNullOrWhiteSpace(definition.DisplayName) ? definition.CardType.ToString() : definition.DisplayName;
+
+    private static string ResolveThumbnail(ICardDefinition definition) =>
+        string.IsNullOrWhiteSpace(definition.ThumbnailPath) ? DefaultCardThumbnail : definition.ThumbnailPath;
 
     private void HandleCardUpdate(CardInfo _updatedCard)
     {
