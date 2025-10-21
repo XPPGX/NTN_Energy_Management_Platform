@@ -1,0 +1,665 @@
+@namespace demoVer.Shared
+@inherits LayoutComponentBase
+@implements IDisposable
+
+@using demoVer.Models
+@using demoVer.Utils
+@using Microsoft.AspNetCore.Components
+@using Microsoft.JSInterop
+@using MudBlazor
+@using MudBlazor.Utilities
+@using Newtonsoft.Json.Linq
+@using System
+@using System.Collections.Generic
+@using System.Globalization
+@using System.IO
+@using System.Linq
+@using System.Text.Json
+
+@inject IWebHostEnvironment WebHostEnvironment
+@inject IJSRuntime JS
+@inject IDialogService DialogService
+@inject GlobalVar globalVar
+@inject HeartbeatService Heartbeat
+
+<div id="edit-container" @onclick="CloseMenu">
+	@if (showMenu)
+	{
+		<div class="custom-menu" style="top:@($"{menuY}px"); left:@($"{menuX}px");" @onclick:stopPropagation="true">
+			<div class="custom-menu-item" @onclick="Edit_inCorrespondingStage">編輯</div>
+			<div class="custom-menu-item" @onclick="Delete_inCorrespondingStage">刪除</div>
+		</div>
+	}
+
+	@if (ConfirmDialog)
+	{
+		<div id="confirmDialog" class="custom-dialog-overlay">
+			<div class="custom-dialog">
+				<div class="custom-dialog-content">
+					<div class="icon-container">
+						⚠️
+					</div>
+					<p id="dialogMessage" class="dialog-message">@AlertMessage</p>
+				</div>
+				<div class="custom-dialog-actions">
+					<button class="btn btn-neutral" @onclick="Cancel">取消</button>
+					<button class="btn btn-green" @onclick="Confirm">確定</button>
+				</div>
+			</div>
+		</div>
+	}
+
+	@switch (INFO_setting_stage)
+	{
+		case INFO_SETTING_STAGE.ADD_ROW_STAGE:
+			<div class="edit-info-top">
+				<input class="input-edit" @bind=edit_CardName placeholder="輸入卡片名稱" style="text-align: center;" />
+			</div>
+			<br>
+			<table class="custom-table" id="table-settingInfoDataItem">
+				<thead>
+					<tr>
+						<th>圖示</th>
+						<th>內容設定</th>
+					</tr>
+				</thead>
+				<tbody>
+					@for (int i = 0; i < edit_INFO_DataItems.Count; i++)
+					{
+						var temp = edit_INFO_DataItems[i];
+						var iconPath = string.IsNullOrEmpty(temp.iconPath) ? "images/square.png" : temp.iconPath;
+						<tr>
+							<td>
+								<button class="icon-button" @onclick="() => selectImg(temp)">
+									<img src=@iconPath alt="waitImg" />
+								</button>
+							</td>
+							<td class="long-press-row" data-table="table-settingInfoDataItem" data-index="@i">
+								@{
+									var hint = temp.status switch
+									{
+										SettingStatus.YET => isMobile ? "長按此處編輯" : "右鍵編輯",
+										SettingStatus.PROGRESS => isMobile ? "未完成:長按此處編輯" : "未完成:右鍵編輯",
+										SettingStatus.DONE => "設定完成",
+										_ => string.Empty
+									};
+									@hint
+								}
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+			<div class="confirm-cancel-container">
+				<button type="button" class="btn btn-add info-action-button" disabled="@ItemIsOverFour" @onclick="Add_INFO_DataItem">
+					新增
+				</button>
+				<button type="button" class="btn btn-green info-action-button" @onclick="Confirm_INFO_DataItem">
+					確定
+				</button>
+			</div>
+			break;
+
+		case INFO_SETTING_STAGE.SELECT_ICON_STAGE:
+			<div class="img-select-grid">
+				@foreach (var imgPath in imgRelativePaths)
+				{
+					<div class="img-select-icon">
+						<button class="icon-button" @onclick="() => selectedImgFile(imgPath)">
+							<img src=@imgPath alt="waiting" />
+						</button>
+					</div>
+				}
+			</div>
+			break;
+
+		case INFO_SETTING_STAGE.SETTING_VALUE_AND_CMD_STAGE:
+			<div class="edit-info-top">
+				<h3>數值與命令設定</h3>
+			</div>
+			<table class="custom-table">
+				<tbody>
+					@if (currentEdit_INFO_DataFormat_ref != null)
+					{
+						<tr>
+							<th>設備選擇</th>
+							<td style="cursor:pointer;" @onclick="selectMachine">
+								@(string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.MachineName) ? "設定" : currentEdit_INFO_DataFormat_ref.MachineName)
+							</td>
+						</tr>
+						<tr>
+							<th>設備名稱</th>
+							<td>
+								<input @bind="currentEdit_INFO_DataFormat_ref.UserSettingName" style="text-align: center;" />
+							</td>
+						</tr>
+						<tr>
+							<th>命令選擇</th>
+							<td style="cursor:pointer;" @onclick="selectCMD">
+								@(string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Cmd) ? "設定" : currentEdit_INFO_DataFormat_ref.Cmd)
+							</td>
+						</tr>
+						<tr>
+							<th>數值名稱</th>
+							<td>
+								<input @bind="currentEdit_INFO_DataFormat_ref.ValueName" style="text-align: center;" />
+							</td>
+						</tr>
+						<tr>
+							<th>單位</th>
+							<td style="text-align: center;">
+								@(string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Cmd) ? "Please select a CMD" : currentEdit_INFO_DataFormat_ref.Unit)
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+			<div class="confirm-cancel-container">
+				<MudButton OnClick="confirm_INFO_DataFormat_ValueSetting"
+						   Variant="Variant.Filled"
+						   Color="Color.Success">
+					確定
+				</MudButton>
+			</div>
+			break;
+
+		case INFO_SETTING_STAGE.MACHINE_SELECTION_STAGE:
+			<MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 250px; max-height: 240px; overflow-y: auto;">
+				<MudList T="string" Dense="true" Hover="true">
+					@foreach (var (addr, modelName) in deviceAddr_List)
+					{
+						<MudListItem T="string"
+									 @onclick="() => clickMachineName(addr, modelName)"
+									 Style="cursor: pointer;">
+							<MudIcon Icon="@Icons.Material.Filled.KeyboardCommandKey" Class="mr-2" />
+							<MudText>@($"[{addr}]: {modelName}")</MudText>
+						</MudListItem>
+					}
+				</MudList>
+			</MudPaper>
+			break;
+
+		case INFO_SETTING_STAGE.CMD_SELECTION_STAGE:
+			<MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 300px; max-height: 240px; overflow-y: auto;">
+				<MudList T="string" Dense="true" Hover="true">
+					@foreach (var (cmd, unit) in show_cmd_unit_Dict_ref ?? Enumerable.Empty<KeyValuePair<string, string>>())
+					{
+						<MudListItem T="string"
+									 @onclick="() => clickCmd(cmd, unit)"
+									 Style="cursor: pointer;">
+							<MudIcon Icon="@Icons.Material.Filled.Code" Class="mr-2" />
+							<MudText>@cmd</MudText>
+						</MudListItem>
+					}
+				</MudList>
+			</MudPaper>
+			break;
+
+		case INFO_SETTING_STAGE.UNIT_SELECTION_STAGE:
+			<MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 200px; max-height: 240px; overflow-y: auto;">
+				<MudList T="string" Dense="true" Hover="true">
+					@foreach (var unit in UnitLists)
+					{
+						<MudListItem T="string"
+									 @onclick="() => clickUnit(unit)"
+									 Style="cursor: pointer;">
+							<MudIcon Icon="@Icons.Material.Filled.Sensors" Class="mr-2" />
+							<MudText>@unit</MudText>
+						</MudListItem>
+					}
+				</MudList>
+			</MudPaper>
+			break;
+
+		default:
+			break;
+	}
+</div>
+
+@code {
+	[Parameter] public CardInfo currentCardInfo { get; set; } = default!;
+	[Parameter] public EventCallback<CardInfo> OnCardInfoUpdated { get; set; }
+
+	private string _category = string.Empty;
+	private DotNetObjectReference<InfoCardEdit>? objRef;
+	private bool _isFirstParameterSet = true;
+	private int HeartBeatCounter = 0;
+
+	private INFO_SETTING_STAGE INFO_setting_stage = INFO_SETTING_STAGE.ADD_ROW_STAGE;
+	private INFO_DataItem? currentEdit_INFO_DataItem_ref;
+	private INFO_DataFormat? currentEdit_INFO_DataFormat_ref;
+	private uint currentSelected_Addr;
+	private string edit_CardName = string.Empty;
+	private bool showMenu = false;
+	private double menuX;
+	private double menuY;
+	private int InfoData_index;
+	private bool ConfirmDialog = false;
+	private string AlertMessage = string.Empty;
+	private Action? ConfirmCallback;
+
+	private List<(uint, string)> deviceAddr_List = new();
+	private List<INFO_DataItem> edit_INFO_DataItems = new();
+	private string imgFolderPath = string.Empty;
+	private List<string> imgRelativePaths = new();
+	private bool isMobile = false;
+
+    private bool ItemIsOverFour => (edit_INFO_DataItems.Count >= 4) ? true : false;
+	private Dictionary<string, string> oneDevice_cmd_unit_Dict = new();
+	private Dictionary<string, string> Summary_cmd_unit_Dict = new();
+	private Dictionary<string, string>? show_cmd_unit_Dict_ref;
+	private JObject? cmdDict;
+	private readonly string Cmd_filePath = "CMD_and_Unit.json";
+	private readonly List<string> UnitLists = new();
+
+	protected override void OnInitialized()
+	{
+		_category = GetType().FullName ?? nameof(InfoCardEdit);
+		Heartbeat.OnTick += OnHeartbeatTick;
+		imgFolderPath = Path.Combine(WebHostEnvironment.WebRootPath, "images/user_selections");
+		getImgFiles();
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			objRef = DotNetObjectReference.Create(this);
+			await JS.InvokeVoidAsync("registerGroupedTableTouchAndRightClick", "edit-container", objRef);
+			isMobile = await JS.InvokeAsync<bool>("checkIsMobile");
+		}
+	}
+
+	protected override void OnParametersSet()
+	{
+		if (currentCardInfo is null)
+		{
+			return;
+		}
+
+		if (_isFirstParameterSet)
+		{
+			_isFirstParameterSet = false;
+
+			edit_CardName = currentCardInfo.cardName ?? string.Empty;
+			edit_INFO_DataItems = currentCardInfo.Info_DataItems ?? new List<INFO_DataItem>();
+		}
+	}
+
+	private async Task OnHeartbeatTick()
+	{
+		if (HeartBeatCounter == 0)
+		{
+			refreshDevicesList();
+		}
+
+		HeartBeatCounter = (HeartBeatCounter + 1) % 3;
+		await InvokeAsync(StateHasChanged);
+	}
+
+	public void Dispose()
+	{
+		Heartbeat.OnTick -= OnHeartbeatTick;
+		objRef?.Dispose();
+	}
+
+	[JSInvokable]
+	public void JS_Console(string debugMessage)
+	{
+		Console.WriteLine(debugMessage);
+	}
+
+	private void refreshDevicesList()
+	{
+		try
+		{
+			var tempDeviceAddr_List = globalVar.Get_addr_and_ModelNames_List();
+			deviceAddr_List = tempDeviceAddr_List ?? new List<(uint, string)>();
+		}
+		catch (Exception e)
+		{
+			AppLogger.Log_To_File_log(_category, $"[InfoCardEdit][refreshDevicesList] Error : {e}", AppLogLevel.Error);
+		}
+	}
+
+	private void getImgFiles()
+	{
+		if (Directory.Exists(imgFolderPath))
+		{
+			imgRelativePaths = Directory.GetFiles(imgFolderPath)
+										.Select(path => "images/user_selections/" + Path.GetFileName(path))
+										.ToList();
+		}
+		else
+		{
+			Console.WriteLine("[InfoCardEdit] FAIL : getImgFiles");
+		}
+	}
+
+	private bool getCMDs()
+	{
+		try
+		{
+			if (currentSelected_Addr == 256)
+			{
+				show_cmd_unit_Dict_ref = Summary_cmd_unit_Dict;
+			}
+			else if (currentSelected_Addr < 256)
+			{
+				if (oneDevice_cmd_unit_Dict != null)
+				{
+					oneDevice_cmd_unit_Dict.Clear();
+				}
+
+				var deviceDict = globalVar.Get_oneDevice_Cmd_unit_Dict(currentSelected_Addr);
+				oneDevice_cmd_unit_Dict = deviceDict ?? new Dictionary<string, string>();
+				show_cmd_unit_Dict_ref = oneDevice_cmd_unit_Dict;
+			}
+			else
+			{
+				AppLogger.Log_To_File_log(_category, $"[InfoCardEdit][getCMDs] Got wrong addr : {currentSelected_Addr}", AppLogLevel.Information);
+				return false;
+			}
+
+			return true;
+		}
+		catch (Exception e)
+		{
+			AppLogger.Log_To_File_log(_category, $"[InfoCardEdit][getCMDs] Error : {e}", AppLogLevel.Error);
+			return false;
+		}
+	}
+
+	[JSInvokable]
+	public void OnShowContextMenu(string table, int index, double x, double y)
+	{
+		menuX = x;
+		menuY = y;
+		showMenu = true;
+		InfoData_index = index;
+		StateHasChanged();
+	}
+
+	private void ShowDialog(string message, Action confirmAction)
+	{
+		AlertMessage = message;
+		ConfirmCallback = confirmAction;
+		ConfirmDialog = true;
+	}
+
+	private void Confirm()
+	{
+		ConfirmDialog = false;
+		ConfirmCallback?.Invoke();
+	}
+
+	private void Cancel()
+	{
+		ConfirmDialog = false;
+	}
+
+	private void CloseMenu()
+	{
+		if (showMenu)
+		{
+			showMenu = false;
+		}
+	}
+
+	private void Edit_inCorrespondingStage()
+	{
+		showMenu = false;
+
+		switch (INFO_setting_stage)
+		{
+			case INFO_SETTING_STAGE.ADD_ROW_STAGE:
+				if (InfoData_index >= 0 && InfoData_index < edit_INFO_DataItems.Count)
+				{
+					var tempINFO_DataItem = edit_INFO_DataItems[InfoData_index];
+					AdjustValueCmdRow(tempINFO_DataItem);
+				}
+				break;
+			default:
+				break;
+		}
+	}
+
+	private void Delete_inCorrespondingStage()
+	{
+		showMenu = false;
+
+		switch (INFO_setting_stage)
+		{
+			case INFO_SETTING_STAGE.ADD_ROW_STAGE:
+				ShowDialog("確定要刪除?", DeleteAction_In_ADD_ROW_STAGE);
+				break;
+			default:
+				break;
+		}
+	}
+
+	private void DeleteAction_In_ADD_ROW_STAGE()
+	{
+		if (InfoData_index >= 0 && InfoData_index < edit_INFO_DataItems.Count)
+		{
+			edit_INFO_DataItems.RemoveAt(InfoData_index);
+		}
+	}
+
+	private void Add_INFO_DataItem()
+	{
+		if (edit_INFO_DataItems.Count >= 4)
+		{
+			return;
+		}
+
+		edit_INFO_DataItems.Add(new INFO_DataItem());
+	}
+
+	private void selectImg(INFO_DataItem tempInfoDataItem)
+	{
+		currentEdit_INFO_DataItem_ref = tempInfoDataItem;
+		INFO_setting_stage = INFO_SETTING_STAGE.SELECT_ICON_STAGE;
+	}
+
+	private void selectedImgFile(string imgPath)
+	{
+		if (currentEdit_INFO_DataItem_ref != null)
+		{
+			currentEdit_INFO_DataItem_ref.iconPath = imgPath;
+		}
+
+		INFO_setting_stage = INFO_SETTING_STAGE.ADD_ROW_STAGE;
+	}
+
+	private void AdjustValueCmdRow(INFO_DataItem tempInfoDataItem)
+	{
+		currentEdit_INFO_DataItem_ref = tempInfoDataItem;
+		currentEdit_INFO_DataItem_ref.status = SettingStatus.PROGRESS;
+
+		if (currentEdit_INFO_DataItem_ref.INFO_DataFormats.Count == 0)
+		{
+			currentEdit_INFO_DataItem_ref.INFO_DataFormats.Add(new INFO_DataFormat());
+		}
+
+		currentEdit_INFO_DataFormat_ref = currentEdit_INFO_DataItem_ref.INFO_DataFormats[0];
+		currentSelected_Addr = currentEdit_INFO_DataFormat_ref.Addr ?? 9999;
+		setValueAndCmd(currentEdit_INFO_DataFormat_ref);
+	}
+
+	private void setValueAndCmd(INFO_DataFormat tempDataFormat)
+	{
+		currentEdit_INFO_DataFormat_ref = tempDataFormat;
+
+		try
+		{
+			if (!string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.MachineName) &&
+				TryParseAddr_fromAddrModelName(currentEdit_INFO_DataFormat_ref.MachineName, out var addr))
+			{
+				currentSelected_Addr = addr;
+				_ = getCMDs();
+			}
+		}
+		catch (Exception e)
+		{
+			AppLogger.Log_To_File_log(_category, $"[InfoCardEdit][setValueAndCmd] Error : {e}", AppLogLevel.Error);
+		}
+
+		INFO_setting_stage = INFO_SETTING_STAGE.SETTING_VALUE_AND_CMD_STAGE;
+	}
+
+	private void selectMachine()
+	{
+		if (deviceAddr_List.Count == 0)
+		{
+			return;
+		}
+
+		INFO_setting_stage = INFO_SETTING_STAGE.MACHINE_SELECTION_STAGE;
+	}
+
+	private void selectCMD()
+	{
+		if (currentEdit_INFO_DataFormat_ref == null)
+		{
+			return;
+		}
+
+		if (string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.MachineName))
+		{
+			return;
+		}
+
+		if (getCMDs())
+		{
+			INFO_setting_stage = INFO_SETTING_STAGE.CMD_SELECTION_STAGE;
+		}
+	}
+
+	private void selectUnit()
+	{
+		if (currentEdit_INFO_DataFormat_ref == null)
+		{
+			return;
+		}
+
+		if (!string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Cmd) && cmdDict != null && cmdDict.TryGetValue(currentEdit_INFO_DataFormat_ref.Cmd, out var cmdToken))
+		{
+			var unitToken = cmdToken?["Unit"];
+			if (unitToken != null)
+			{
+				UnitLists.Clear();
+				UnitLists.AddRange(unitToken.ToObject<List<string>>() ?? new List<string>());
+				INFO_setting_stage = INFO_SETTING_STAGE.UNIT_SELECTION_STAGE;
+			}
+		}
+	}
+
+	private static bool TryParseAddr_fromAddrModelName(string addrModelName, out uint value)
+	{
+		value = 0;
+		if (string.IsNullOrEmpty(addrModelName))
+		{
+			return false;
+		}
+
+		var l = addrModelName.IndexOf('[');
+		if (l < 0)
+		{
+			return false;
+		}
+
+		var r = addrModelName.IndexOf(']', l + 1);
+		if (r < 0 || r == l + 1)
+		{
+			return false;
+		}
+
+		var span = addrModelName.AsSpan(l + 1, r - l - 1).Trim();
+		return uint.TryParse(span, out value);
+	}
+
+	private void clickMachineName(uint addr, string selectedMachineName)
+	{
+		if (currentEdit_INFO_DataFormat_ref == null)
+		{
+			return;
+		}
+
+		var modelName = $"[{addr}] : {selectedMachineName}";
+		if (!string.Equals(currentEdit_INFO_DataFormat_ref.MachineName, modelName, StringComparison.Ordinal))
+		{
+			currentEdit_INFO_DataFormat_ref.MachineName = modelName;
+			currentEdit_INFO_DataFormat_ref.Addr = addr;
+			currentEdit_INFO_DataFormat_ref.Cmd = string.Empty;
+			currentEdit_INFO_DataFormat_ref.Unit = string.Empty;
+		}
+
+		currentSelected_Addr = addr;
+		INFO_setting_stage = INFO_SETTING_STAGE.SETTING_VALUE_AND_CMD_STAGE;
+	}
+
+	private void clickCmd(string cmd, string unit)
+	{
+		if (currentEdit_INFO_DataFormat_ref == null)
+		{
+			return;
+		}
+
+		if (currentEdit_INFO_DataFormat_ref.Cmd != cmd)
+		{
+			currentEdit_INFO_DataFormat_ref.Cmd = cmd;
+			currentEdit_INFO_DataFormat_ref.Unit = unit;
+		}
+
+		INFO_setting_stage = INFO_SETTING_STAGE.SETTING_VALUE_AND_CMD_STAGE;
+	}
+
+	private void clickUnit(string unit)
+	{
+		if (currentEdit_INFO_DataFormat_ref == null)
+		{
+			return;
+		}
+
+		currentEdit_INFO_DataFormat_ref.Unit = unit;
+		INFO_setting_stage = INFO_SETTING_STAGE.SETTING_VALUE_AND_CMD_STAGE;
+	}
+
+	private void confirm_INFO_DataFormat_ValueSetting()
+	{
+		if (currentEdit_INFO_DataFormat_ref == null)
+		{
+			return;
+		}
+
+		if (string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.MachineName) ||
+			string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Cmd) ||
+			string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.ValueName) ||
+			string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.UserSettingName))
+		{
+			Console.WriteLine("[InfoCardEdit] 有數值沒有設定");
+			return;
+		}
+
+		if (currentEdit_INFO_DataItem_ref != null)
+		{
+			currentEdit_INFO_DataItem_ref.status = SettingStatus.DONE;
+		}
+
+		INFO_setting_stage = INFO_SETTING_STAGE.ADD_ROW_STAGE;
+	}
+
+	private void Confirm_INFO_DataItem()
+	{
+		if (currentCardInfo is null)
+		{
+			return;
+		}
+
+		currentCardInfo.cardName = edit_CardName;
+		currentCardInfo.Info_DataItems = edit_INFO_DataItems;
+
+		OnCardInfoUpdated.InvokeAsync(currentCardInfo);
+	}
+}

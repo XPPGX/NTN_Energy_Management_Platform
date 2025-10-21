@@ -82,22 +82,27 @@
         
         @if(editCard_IsOpen)
         {
-            <div class="modal-content-edit" @onclick:stopPropagation> 
+            <div class="modal-content-edit" @onclick:stopPropagation>
                 @{
                     var targetCard = CardInfos.Find(c => c.ID == editingCard_ID);
                     Console.WriteLine(targetCard);
                     Console.WriteLine("OpenEditCard");
                     if(targetCard != null)
                     {
-                        @((RenderFragment)(builder => {
-                            builder.OpenComponent(0, typeof(EditCard)); //Create Card
-
-                            //Parameters passed into each card(razor component)
-                            builder.AddAttribute(1, "currentCardInfo", targetCard);
-                            builder.AddAttribute(2, "OnCardInfoUpdated", EventCallback.Factory.Create<CardInfo>(this, HandleCardUpdate));
-                            builder.CloseComponent();
-                        }));
-
+                        if(!CardDefinitionRegistry.TryGet(targetCard.card_Type, out var cardDefinition) || cardDefinition?.EditorComponent is null)
+                        {
+                            Console.WriteLine($"[NTN_Home] No CardType defined for card type {targetCard.card_Type}");
+                        }
+                        else
+                        {
+                            var editorComponent = cardDefinition.EditorComponent;
+                            @((RenderFragment)(builder => {
+                                builder.OpenComponent(0, editorComponent);
+                                builder.AddAttribute(1, "currentCardInfo", targetCard);
+                                builder.AddAttribute(2, "OnCardInfoUpdated", EventCallback.Factory.Create<CardInfo>(this, HandleCardUpdate));
+                                builder.CloseComponent();
+                            }));
+                        }
                     }
                     else
                     {

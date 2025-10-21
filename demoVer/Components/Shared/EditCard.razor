@@ -10,6 +10,7 @@
 @using Newtonsoft.Json.Linq
 @using demoVer.Utils
 @using System.Globalization
+@using System.Linq
 
 @inject IWebHostEnvironment WebHostEnvironment
 @inject IJSRuntime JS
@@ -34,280 +35,7 @@ edit-container是用來綁以下javascript事件的 id :
 @switch(currentCardInfo.card_Type)
 {
     case CardType.Info:
-        @if(showMenu)
-        {
-            <div class="custom-menu" style="top:@($"{menuY}px"); left:@($"{menuX}px");" @onclick:stopPropagation="true">
-                <div class="custom-menu-item" @onclick="Edit_inCorrespondingStage">編輯</div>
-                <div class="custom-menu-item" @onclick="Delete_inCorrespondingStage">刪除</div>
-            </div>
-            
-        }
-        @if(ConfirmDialog)
-        {
-            <div id="confirmDialog" class="custom-dialog-overlay">
-                <div class="custom-dialog">
-                    <div class="custom-dialog-content">
-                        <div class="icon-container">
-                            ⚠️
-                        </div>
-                        <p id="dialogMessage" class="dialog-message">@AlertMessage</p>
-                    </div>
-                    <div class="custom-dialog-actions">
-                        <button class="btn cancel-btn" @onclick="Cancel">取消</button>
-                        <button class="btn confirm-btn" @onclick="Confirm">確定</button>
-                    </div>
-                </div>
-            </div>
-        }
-
-        switch(INFO_setting_stage)
-        {
-            case INFO_SETTING_STAGE.ADD_ROW_STAGE:
-                <div class="edit-info-top">
-                    <input class="input-edit" @bind=edit_CardName placeholder="輸入卡片名稱" style="text-align: center;"/>
-                </div>
-                <br>
-                @* <div class="underline"></div> *@
-                <table class="custom-table" id="table-settingInfoDataItem">
-                    <thead>
-                        <tr>
-                            <th>圖示</th>
-                            <th>內容設定</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for(int i = 0 ; i < edit_INFO_DataItems.Count ; i ++)
-                        {
-                            var temp = edit_INFO_DataItems[i];
-                            string iconPath;
-                            iconPath = (string.IsNullOrEmpty(temp.iconPath)) ? "images/square.png" : temp.iconPath;
-                            <tr>
-                                <td>
-                                    <button class="icon-button" @onclick="() => selectImg(temp)">
-                                        <img src=@iconPath alt="waitImg"/>
-                                    </button>
-                                </td>
-                                <td class="long-press-row" data-table="table-settingInfoDataItem" data-index="@i">
-                                @* <td class="clickable-td" @onclick="() => AdjustValueCmdRow(temp)"> *@
-                                    @{
-                                        string hint = "";
-                                        switch(temp.status)
-                                        {
-                                            case SettingStatus.YET:
-                                                if(isMobile){hint = "長按此處編輯";}
-                                                else{hint = "右鍵編輯";}
-                                                break;
-                                            case SettingStatus.PROGRESS:
-                                                if(isMobile){hint = "未完成:長按此處編輯";}
-                                                else{hint = "未完成:右鍵編輯";}
-                                                break;
-                                            case SettingStatus.DONE:
-                                                hint = "設定完成";
-                                                break;
-                                            default:
-                                                hint = "";
-                                                break;
-                                        }
-                                    }
-                                    @hint
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-                <div class="confirm-cancel-container">
-                    <MudButton Class="no-transform"
-                            OnClick="Add_INFO_DataItem"
-                            Variant="Variant.Filled"
-                            Color="Color.Primary"
-                            StartIcon="@Icons.Material.Filled.Add"
-                            Style="width: 120px;">
-                        新增
-                    </MudButton>
-                    <MudButton Class="no-transform" 
-                            OnClick="Confirm_INFO_DataItem"
-                            Variant="Variant.Filled"
-                            Color="Color.Success"
-                            Style="width: 120px;">
-                        確定
-                    </MudButton>
-                </div>
-                break;
-            case INFO_SETTING_STAGE.SELECT_ICON_STAGE:
-                <div class="img-select-grid">
-                    @foreach(var imgPath in imgRelativePaths)
-                    {
-                        <div class="img-select-icon">
-                            <button class="icon-button" @onclick="() => selectedImgFile(imgPath)">
-                                <img src=@imgPath alt="waiting"/>
-                            </button>
-                        </div>
-                    }
-                </div>
-                break;
-            case INFO_SETTING_STAGE.SETTING_VALUE_AND_CMD_STAGE:
-                <div class="edit-info-top">
-                    <h3>數值與命令設定</h3>
-                </div>
-                <table class="custom-table">
-                    <tbody>
-                        @if(currentEdit_INFO_DataFormat_ref != null)
-                        {
-                            <tr>
-                                <th>設備選擇</th>
-                                <td style="cursor:pointer;" @onclick="() => selectMachine()">
-                                    @(string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.MachineName) ? "設定" : currentEdit_INFO_DataFormat_ref.MachineName)
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>設備名稱</th>
-                                <td>
-                                    <input @bind="currentEdit_INFO_DataFormat_ref.UserSettingName" style="text-align: center;"/>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>命令選擇</th>
-                                <td style="cursor:pointer;" @onclick="() => selectCMD()">
-                                    @(string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Cmd) ? "設定" : currentEdit_INFO_DataFormat_ref.Cmd)
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>數值名稱</th>
-                                <td>
-                                    <input @bind="currentEdit_INFO_DataFormat_ref.ValueName" style="text-align: center;"/>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>單位</th>
-                                <td style="text-align: center;">
-                                    @{
-                                        string Uint_To_show = "";
-                                        Uint_To_show = string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Unit) ? "Please select a CMD" : currentEdit_INFO_DataFormat_ref.Unit;
-                                        @* if(string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Cmd))
-                                        {
-                                            Uint_To_show = "請先選擇命令";
-                                        }
-                                        else
-                                        {
-                                            if(string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Unit))
-                                            {
-                                                Uint_To_show = "設定";
-                                            }
-                                            else
-                                            {
-                                                Uint_To_show = currentEdit_INFO_DataFormat_ref.Unit;
-                                            }
-                                        } *@
-                                    }
-                                    @Uint_To_show
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-                <div class="confirm-cancel-container">
-                     <MudButton OnClick="confirm_INFO_DataFormat_ValueSetting"
-                            Variant="Variant.Filled"
-                            Color="Color.Success">
-                        確定
-                    </MudButton>
-                    @* <button @onclick="confirm_INFO_DataFormat_ValueSetting">確認</button> *@
-                </div>
-                break;
-            case INFO_SETTING_STAGE.MACHINE_SELECTION_STAGE:
-                <MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 250px; max-height: 240px; overflow-y: auto;">
-                    <MudList T="string" Dense="true" Hover="true">
-                        @foreach (var (addr, modelName) in deviceAddr_List)
-                        {
-                            <MudListItem T="string"
-                                        @onclick="() => clickMachineName(addr, modelName)"
-                                        Style="cursor: pointer;">
-                                <MudListItemIcon>
-                                    <MudIcon Icon="@Icons.Material.Filled.KeyboardCommandKey" />
-                                </MudListItemIcon>
-                                <MudText Class="ml-2">@($"[{addr}]: {modelName}")</MudText>
-                            </MudListItem>
-                        }
-                    </MudList>
-                </MudPaper>
-                
-                break;
-            case INFO_SETTING_STAGE.CMD_SELECTION_STAGE:
-                <MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 300px; max-height: 240px; overflow-y: auto;">
-                    <MudList T="string" Dense="true" Hover="true">
-                        @foreach (var (cmd, unit) in show_cmd_unit_Dict_ref ?? Enumerable.Empty<KeyValuePair<string, string>>())
-                        {
-                            <MudListItem T="string"
-                                        @onclick="() => clickCmd(cmd, unit)"
-                                        Style="cursor: pointer;">
-                                <MudListItemIcon>
-                                    <MudIcon Icon="@Icons.Material.Filled.Code" />
-                                </MudListItemIcon>
-                                <MudText Class="ml-2">@cmd</MudText>
-                            </MudListItem>
-                        }
-                    </MudList>
-                </MudPaper>
-                break;
-            case INFO_SETTING_STAGE.UNIT_SELECTION_STAGE:
-                <MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 200px; max-height: 240px; overflow-y: auto;">
-                    <MudList T="string" Dense="true" Hover="true">
-                        @foreach (var unit in UnitLists)
-                        {
-                            <MudListItem T="string"
-                                        @onclick="() => clickUnit(unit)"
-                                        Style="cursor: pointer;">
-                                <MudListItemIcon>
-                                    <MudIcon Icon="@Icons.Material.Filled.Sensors" />
-                                </MudListItemIcon>
-                                <MudText Class="ml-2">@unit</MudText>
-                            </MudListItem>
-                        }
-                    </MudList>
-                </MudPaper>
-                break;
-            
-            case INFO_SETTING_STAGE.ADD_VALUE_AND_CMD_ROW_STAGE:
-                <div style="max-height: 300px; overflow-y: auto;">
-                    <h4>@(isMobile? "長按編輯" : "右鍵編輯")</h4>
-                    <table class="custom-table no-text-select" id="table-settingInfoDataFormat">
-                        <thead>
-                            <th>數值名稱</th>
-                            <th>單位</th>
-                        </thead>
-                        <tbody @onclick:stopPropagation="true">
-                            @for(int i = 0 ; i < currentEdit_INFO_DataItem_ref.INFO_DataFormats.Count ; i ++)
-                            {
-                                var tempDataFormat = currentEdit_INFO_DataItem_ref.INFO_DataFormats[i];
-                                <tr class="long-press-row" data-table="table-settingInfoDataFormat" data-index="@i">
-                                    <td>
-                                        @(string.IsNullOrEmpty(tempDataFormat.ValueName) ? "" : tempDataFormat.ValueName)
-                                    </td>
-                                    <td>
-                                        @(string.IsNullOrEmpty(tempDataFormat.Unit) ? "" : tempDataFormat.Unit)
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-                <div class="confirm-cancel-container">
-                    <button class="btn btn-green no-flex" style="width: 120px;"
-                            type="button"
-                            @onclick="AddRow_ValueAndCmd">
-                        新增
-                    </button>
-                    <button class="btn btn-primary no-flex" style="width: 120px;"
-                            type="button"
-                            @onclick="confirm_INFO_DataFormats_Setting">
-                        確認
-                    </button>
-                </div>
-                break;
-            default:
-                break;
-        }
-        
+        <div class="editcard-warning">此卡片編輯器已移轉至 InfoCardEdit。</div>
         break;
     case CardType.Chart:
         @if(showMenu)
@@ -536,10 +264,8 @@ edit-container是用來綁以下javascript事件的 id :
                             <MudListItem T="string"
                                         @onclick="() => clickCmd_CHART(item.Key)"
                                         Style="cursor: pointer;">
-                                <MudListItemIcon>
-                                    <MudIcon Icon="@Icons.Material.Filled.Code" />
-                                </MudListItemIcon>
-                                <MudText Class="ml-2">@item.Key</MudText>
+                                <MudIcon Icon="@Icons.Material.Filled.Code" Class="mr-2" />
+                                <MudText>@item.Key</MudText>
                             </MudListItem>
                         }
                     </MudList>
@@ -553,10 +279,8 @@ edit-container是用來綁以下javascript事件的 id :
                             <MudListItem T="string"
                                         @onclick="() => clickUnit_CHART(unit)"
                                         Style="cursor: pointer;">
-                                <MudListItemIcon>
-                                    <MudIcon Icon="@Icons.Material.Filled.Sensors" />
-                                </MudListItemIcon>
-                                <MudText Class="ml-2">@unit</MudText>
+                                <MudIcon Icon="@Icons.Material.Filled.Sensors" Class="mr-2" />
+                                <MudText>@unit</MudText>
                             </MudListItem>
                         }
                     </MudList>
@@ -656,20 +380,199 @@ edit-container是用來綁以下javascript事件的 id :
     #region Common_Variables_and_Functions
     [Parameter] public CardInfo currentCardInfo {get; set;}
     [Parameter] public EventCallback<CardInfo> OnCardInfoUpdated {get; set;}
-    private DotNetObjectReference<object>? objRef;
+    private DotNetObjectReference<EditCard>? objRef;
 
     private bool _isFirstParameterSet = true;
     private string imgFolderPath = "";
-    private List<string> imgRelativePaths = new List<string>();
-    private bool isMobile = false;
-    private Dictionary<string, string> oneDevice_cmd_unit_Dict = new Dictionary<string, string>();
-    private Dictionary<string, string> Summary_cmd_unit_Dict = new Dictionary<string, string>();
+    private List<string> imgRelativePaths = new();
+    private bool isMobile;
+    private Dictionary<string, string> oneDevice_cmd_unit_Dict = new();
+    private Dictionary<string, string> Summary_cmd_unit_Dict = new();
     private Dictionary<string, string>? show_cmd_unit_Dict_ref;
     private JObject cmdDict;
-    string Cmd_filePath = "CMD_and_Unit.json";
+    private List<(uint, string)> deviceAddr_List = new();
     private List<string> UnitLists = new();
+    private bool showMenu;
+    private double menuX;
+    private double menuY;
+    private string? _contextTable;
+    private int _contextIndex = -1;
+    private int _hoveredRow = -1;
+    private bool disableConfirmButton;
+    private bool _confirmDialog;
+    private string AlertMessage = string.Empty;
+    private Action? ConfirmCallback;
+    private uint currentSelected_Addr = 9999;
+    private string Cmd_filePath = "CMD_and_Unit.json";
+    private string edit_CardName = string.Empty;
+    private bool ConfirmDialog
+    {
+        get => _confirmDialog;
+        set => _confirmDialog = value;
+    }
 
     
+    private void CloseMenu()
+    {
+        if (!showMenu)
+        {
+            return;
+        }
+
+        showMenu = false;
+        _hoveredRow = -1;
+        _contextIndex = -1;
+        _contextTable = null;
+    }
+
+    [JSInvokable]
+    public void OnShowContextMenu(string table, int index, double x, double y)
+    {
+        menuX = x;
+        menuY = y;
+        showMenu = true;
+        _contextTable = table;
+        _contextIndex = index;
+        _hoveredRow = index;
+
+        if (currentCardInfo?.card_Type == CardType.Chart &&
+            index >= 0 &&
+            index < edit_ChartSetting_Clone.chart_single_data_lines.Count)
+        {
+            SingleLine_index = index;
+        }
+
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void Edit_inCorrespondingStage()
+    {
+        showMenu = false;
+
+        switch (currentCardInfo.card_Type)
+        {
+            case CardType.Chart:
+                BeginChartEditing();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void Delete_inCorrespondingStage()
+    {
+        showMenu = false;
+
+        switch (currentCardInfo.card_Type)
+        {
+            case CardType.Chart:
+                ShowDialog("確定要刪除?", DeleteAction_In_CHART_OVERVIEW_STAGE);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void ShowDialog(string message, Action confirmAction)
+    {
+        AlertMessage = message;
+        ConfirmCallback = confirmAction;
+        disableConfirmButton = false;
+        ConfirmDialog = true;
+    }
+
+    private void Confirm()
+    {
+        if (disableConfirmButton)
+        {
+            return;
+        }
+
+        disableConfirmButton = true;
+        ConfirmDialog = false;
+        ConfirmCallback?.Invoke();
+    }
+
+    private void Cancel()
+    {
+        ConfirmDialog = false;
+        disableConfirmButton = false;
+    }
+
+    private void BeginChartEditing()
+    {
+        if (SingleLine_index < 0 || SingleLine_index >= edit_ChartSetting_Clone.chart_single_data_lines.Count)
+        {
+            return;
+        }
+
+        var target = edit_ChartSetting_Clone.chart_single_data_lines[SingleLine_index];
+
+        blank_singleDataLine = new CHART_SINGLE_DATA_LINE
+        {
+            status = target.status,
+            addr = target.addr,
+            mdlName = target.mdlName,
+            Cmd = target.Cmd ?? string.Empty,
+            Unit = target.Unit ?? string.Empty,
+            Y_axis_selection = target.Y_axis_selection,
+            color = target.color ?? "#000000",
+            Data = target.Data?.ToArray() ?? Array.Empty<double?>()
+        };
+
+        currentSelected_Addr = target.addr;
+        chartNowSelectedAddr = target.addr;
+        chartNowSelectedCMD = target.Cmd ?? string.Empty;
+
+        temp_chartTitle = edit_ChartSetting_Clone.ChartTitle ?? string.Empty;
+
+        if (target.Y_axis_selection == true)
+        {
+            temp_Y_singleTitle = edit_ChartSetting_Clone.Y_left_Title ?? string.Empty;
+        }
+        else if (target.Y_axis_selection == false)
+        {
+            temp_Y_singleTitle = edit_ChartSetting_Clone.Y_right_Title ?? string.Empty;
+        }
+        else
+        {
+            temp_Y_singleTitle = string.Empty;
+        }
+
+        chartForm_errorMessage = string.Empty;
+        chartMachineCmdError = string.Empty;
+        yTitleError = string.Empty;
+        yAxisError = string.Empty;
+        colorError = string.Empty;
+
+        if (currentSelected_Addr <= 256)
+        {
+            if (!getCMDs())
+            {
+                chartMachineCmdError = "此設備沒有可用命令";
+            }
+        }
+        else
+        {
+            show_cmd_unit_Dict_ref = null;
+        }
+
+        CHART_setting_stage = CHART_SETTING_STAGE.SELECT_MACHINE_CMD;
+    }
+
+    private void refreshDevicesList()
+    {
+        try
+        {
+            var tempDeviceAddr_List = globalVar.Get_addr_and_ModelNames_List();
+            deviceAddr_List = tempDeviceAddr_List ?? new List<(uint, string)>();
+        }
+        catch (Exception e)
+        {
+            AppLogger.Log_To_File_log(_category, $"[EditCard][refreshDevicesList] Error : {e}", AppLogLevel.Error);
+        }
+    }
+
     
     private async Task OnHeartbeatTick()
     {
@@ -705,7 +608,7 @@ edit-container是用來綁以下javascript事件的 id :
     {
         if(firstRender)
         {
-            objRef = DotNetObjectReference.Create<object>(this);
+            objRef = DotNetObjectReference.Create(this);
             await JS.InvokeVoidAsync("registerGroupedTableTouchAndRightClick", "edit-container", objRef);
             isMobile = await JS.InvokeAsync<bool>("checkIsMobile");
         }
@@ -726,10 +629,6 @@ edit-container是用來綁以下javascript事件的 id :
 
                 switch(currentCardInfo.card_Type)
                 {
-                    case CardType.Info:
-                        edit_INFO_DataItems = currentCardInfo.Info_DataItems; //edit_INFO_DataItems 與 currentCardInfo.Info_DataItems 同一塊記憶體
-                        Console.WriteLine("[OnParameterSet]CardType.Info");
-                        break;
                     case CardType.Chart:
                         edit_ChartSetting_Clone = currentCardInfo.Chart_Setting.DeepClone(); //edit_ChartSetting_Clone 與 currentCardInfo.Chart_Setting 不同塊記憶體
                         temp_chartTitle = edit_ChartSetting_Clone.ChartTitle;
@@ -815,14 +714,8 @@ edit-container是用來綁以下javascript事件的 id :
                 show_cmd_unit_Dict_ref = oneDevice_cmd_unit_Dict;
                 AppLogger.Log_To_File_log(_category, $"[EditCard][getCMDs] show_cmd_unit_Dict_ref.Count = {show_cmd_unit_Dict_ref.Count}", AppLogLevel.Trace);
 
-                if(currentEdit_INFO_DataFormat_ref is not null)
-                {
-                    AppLogger.Log_To_File_log(_category, $"[EditCard][getCMDs] Select : addr = {currentSelected_Addr}, mdlName = {currentEdit_INFO_DataFormat_ref.MachineName}", AppLogLevel.Trace);
-                }
-                else
-                {
-                    AppLogger.Log_To_File_log(_category, $"[EditCard][getCMDs] Select : addr = {currentSelected_Addr}", AppLogLevel.Trace);
-                } 
+                var mdlName = blank_singleDataLine.mdlName ?? string.Empty;
+                AppLogger.Log_To_File_log(_category, $"[EditCard][getCMDs] Select : addr = {currentSelected_Addr}, mdlName = {mdlName}", AppLogLevel.Trace);
             }
             else
             {
@@ -853,431 +746,6 @@ edit-container是用來綁以下javascript事件的 id :
     }
     #endregion Common_Variables_and_Functions
 
-
-    #region INFO_CARD_Variables_and_Functions
-    private INFO_SETTING_STAGE INFO_setting_stage = INFO_SETTING_STAGE.ADD_ROW_STAGE;
-    private string title;
-    private INFO_DataItem currentEdit_INFO_DataItem_ref; //reference, modify in memory
-    private INFO_DataItem temp_INFO_DataItem_Backend;
-    private INFO_DataFormat currentEdit_INFO_DataFormat_ref; //This is point to the one DataFormat of temp_INFO_DataItem_Backend.INFO_DataFormats
-    private uint currentSelected_Addr;
-    private string edit_CardName;
-    private bool showMenu = false;
-    private double menuX;
-    private double menuY;
-    private int InfoData_index; //紀錄 InfoDataItem, InfoDataFormat 被選擇到的index，依照Stage而代表不同的index
-
-    private bool ConfirmDialog = false;
-    private string AlertMessage = "";
-    private Action? ConfirmCallback;
-
-    private List<(uint, string)> deviceAddr_List = new List<(uint, string)>()
-    {
-        
-    };
-
-    private List<INFO_DataItem> edit_INFO_DataItems = new List<INFO_DataItem>
-    {
-
-    };
-
-    private void refreshDevicesList()
-    {
-
-        try
-        {
-            var tempDeviceAddr_List = globalVar.Get_addr_and_ModelNames_List();
-            
-            deviceAddr_List = (tempDeviceAddr_List is null) ? new List<(uint, string)>() : tempDeviceAddr_List;
-
-            @* deviceAddr_List = globalVar.Get_addr_and_ModelNames_List(); *@
-            @* deviceAddr_List.Add((256, "Summary")); *@
-        }
-        catch(Exception e)
-        {
-            AppLogger.Log_To_File_log(_category, $"[EditCard][refreshDevicesList] Error : {e}", AppLogLevel.Error);
-        }
-        
-        
-    }
-
-    [JSInvokable]
-    public void OnShowContextMenu(string table, int index, double x, double y)
-    {
-        menuX = x;
-        menuY = y;
-        showMenu = true;
-        Console.WriteLine($"[OnShowContextMenu] table : {table}, index : {index}");
-        switch(currentCardInfo.card_Type)
-        {
-            case CardType.Info:
-                InfoData_index = index;
-                break;
-            case CardType.Chart:
-                SingleLine_index = index;
-                break;
-            case CardType.Status:
-                break;
-            default:
-                break;
-        }
-        StateHasChanged();
-    }
-
-    private void ShowDialog(string _message, Action _ConfirmAction)
-    {
-        AlertMessage = _message;
-        ConfirmCallback = _ConfirmAction;
-        ConfirmDialog = true;
-    }
-
-    private void Confirm()
-    {
-        ConfirmDialog = false;
-        ConfirmCallback?.Invoke();
-    }
-
-    private void Cancel()
-    {
-        ConfirmDialog = false;
-    }
-    
-    private void DeleteAction_In_ADD_ROW_STAGE()
-    {
-        Console.WriteLine("執行刪除");
-        if(InfoData_index >= 0 && InfoData_index < currentCardInfo.Info_DataItems.Count)
-        {
-            currentCardInfo.Info_DataItems.RemoveAt(InfoData_index);
-        }
-    }
-
-    private void DeleteAction_In_ADD_VALUE_AND_CMD_ROW_STAGE()
-    {
-        Console.WriteLine("執行刪除");
-        if(InfoData_index >= 0 && InfoData_index < currentEdit_INFO_DataItem_ref.INFO_DataFormats.Count)
-        {
-            currentEdit_INFO_DataItem_ref.INFO_DataFormats.RemoveAt(InfoData_index);
-        }
-    }
-
-    private void CloseMenu()
-    {
-        if(showMenu)
-        {
-            showMenu = false;
-        }
-    }
-
-    private void Edit_inCorrespondingStage()
-    {
-        showMenu = false;
-        Console.WriteLine("[EditCard][Edit_inCorrespondingStage]");
-        switch(currentCardInfo.card_Type)
-        {
-            case CardType.Info:
-                switch(INFO_setting_stage)
-                {
-                    case INFO_SETTING_STAGE.ADD_ROW_STAGE:
-                        var tempINFO_DataItem = edit_INFO_DataItems[InfoData_index];
-                        AdjustValueCmdRow(tempINFO_DataItem);
-                        break;
-                    case INFO_SETTING_STAGE.ADD_VALUE_AND_CMD_ROW_STAGE:
-                        var tempDataFormat = currentEdit_INFO_DataItem_ref.INFO_DataFormats[InfoData_index];
-                        setValueAndCmd(tempDataFormat);
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case CardType.Chart:
-                switch(CHART_setting_stage)
-                {
-                    case CHART_SETTING_STAGE.OVERVIEW:
-                        //reset blank_singleDataLine
-
-                        blank_singleDataLine.addr = 9999;
-                        blank_singleDataLine.mdlName = "";
-                        blank_singleDataLine.Cmd = string.Empty;
-                        blank_singleDataLine.Unit = string.Empty;
-                        blank_singleDataLine.Y_axis_selection = null;
-                        blank_singleDataLine.color = string.Empty;
-                        temp_Y_singleTitle = string.Empty;
-                        @* CHART_setting_stage = CHART_SETTING_STAGE.SELECT_CMD_STAGE; *@
-                        
-                        Console.WriteLine($"deviceAddr_List.Count = {deviceAddr_List.Count}");
-                        if(deviceAddr_List.Count > 0)
-                        {
-                            Console.WriteLine($"[EditCard][Edit_inCorrespondingStage] CHART_setting_stage => SELECT_MACHINE_CMD");
-                            CHART_setting_stage = CHART_SETTING_STAGE.SELECT_MACHINE_CMD;
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case CardType.Status:
-                break;
-            default:
-                break;
-        }
-        
-    }
-
-    private void Delete_inCorrespondingStage()
-    {
-        showMenu = false;
-        Console.WriteLine("點了選項2");
-         switch(currentCardInfo.card_Type)
-        {
-            case CardType.Info:
-                switch(INFO_setting_stage)
-                {
-                    case INFO_SETTING_STAGE.ADD_ROW_STAGE:
-                        ShowDialog("確定要刪除?", DeleteAction_In_ADD_ROW_STAGE);
-                        break;
-                    case INFO_SETTING_STAGE.ADD_VALUE_AND_CMD_ROW_STAGE:
-                        Console.WriteLine("[Delete_inCorrespondingStage] Stage = INFO_SETTING_STAGE.ADD_VALUE_AND_CMD_ROW_STAGE");
-                        ShowDialog("確定要刪除?", DeleteAction_In_ADD_VALUE_AND_CMD_ROW_STAGE);
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case CardType.Chart:
-                switch(CHART_setting_stage)
-                {
-                    case CHART_SETTING_STAGE.OVERVIEW:
-                        Console.WriteLine("[DELETE] CHART_SETTING_STAGE.OVERVIEW");
-                        ShowDialog("確定要刪除?", DeleteAction_In_CHART_OVERVIEW_STAGE);
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case CardType.Status:
-                break;
-            default:
-                break;
-        }
-        
-    }
-
-    private void Add_INFO_DataItem()
-    {
-        if(edit_INFO_DataItems.Count >= 4)
-        {
-            return;
-        }
-        edit_INFO_DataItems.Add(new INFO_DataItem());
-    }
-
-    private void selectImg(INFO_DataItem _temp_Info_DataItem)
-    {
-        currentEdit_INFO_DataItem_ref = _temp_Info_DataItem; 
-        INFO_setting_stage = INFO_SETTING_STAGE.SELECT_ICON_STAGE;
-    }
-
-    private void selectedImgFile(string _imgPath)
-    {
-        Console.WriteLine(_imgPath);
-
-        currentEdit_INFO_DataItem_ref.iconPath = _imgPath;
-        INFO_setting_stage = INFO_SETTING_STAGE.ADD_ROW_STAGE;
-    }
-
-    private void AdjustValueCmdRow(INFO_DataItem _temp_Info_DataItem)
-    {
-        Console.WriteLine("AdjustValueCmdRow");
-
-        //如果是已經存在的 currentEdit_INFO_DataItem，則
-
-        currentEdit_INFO_DataItem_ref = _temp_Info_DataItem;
-        
-        INFO_setting_stage = INFO_SETTING_STAGE.ADD_VALUE_AND_CMD_ROW_STAGE;
-    }
-
-    private void AddRow_ValueAndCmd()
-    {
-        if(currentEdit_INFO_DataItem_ref.INFO_DataFormats.Count >= 1)
-        {
-            return;
-        }
-        currentEdit_INFO_DataItem_ref.INFO_DataFormats.Add(new INFO_DataFormat());
-    }
-
-    private void setValueAndCmd(INFO_DataFormat _temp_DataFormat)
-    {
-        Console.WriteLine("setValueAndCmd");
-        currentEdit_INFO_DataFormat_ref = _temp_DataFormat;
-        try
-        {
-            if(!string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.MachineName))
-            {
-                AppLogger.Log_To_File_log(_category, $"[EditCard][setValueAndCmd] ModelName = {currentEdit_INFO_DataFormat_ref.MachineName}", AppLogLevel.Trace);
-                if(TryParseAddr_fromAddrModelName(currentEdit_INFO_DataFormat_ref.MachineName, out uint addr))
-                {
-                    AppLogger.Log_To_File_log(_category, $"[EditCard][setValueAndCmd] ModelName = {currentEdit_INFO_DataFormat_ref.MachineName}, addr = {addr}", AppLogLevel.Trace);
-                    
-                    currentSelected_Addr = addr;
-
-                    var Flag = getCMDs();
-                }
-            }
-            else
-            {
-                AppLogger.Log_To_File_log(_category, $"[EditCard][setValueAndCmd] ModelName = null", AppLogLevel.Trace);
-            }
-        }
-        catch(Exception e)
-        {
-            AppLogger.Log_To_File_log(_category, $"[EditCard][setValueAndCmd] Error : {e}");
-        }
-        
-
-        INFO_setting_stage = INFO_SETTING_STAGE.SETTING_VALUE_AND_CMD_STAGE;
-    }
-
-    private void selectMachine()
-    {
-        Console.WriteLine("selectMachine");
-        if(deviceAddr_List is null) return;
-        if(deviceAddr_List.Count <= 0) return;
-        
-        INFO_setting_stage = INFO_SETTING_STAGE.MACHINE_SELECTION_STAGE;
-    }
-
-    private void selectCMD()
-    {
-        Console.WriteLine("selectCMD");
-        if(string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.MachineName)) return; 
-
-        
-
-        if(getCMDs())
-        {
-            INFO_setting_stage = INFO_SETTING_STAGE.CMD_SELECTION_STAGE;
-        }
-    }
-
-    private void selectUnit()
-    {
-        Console.WriteLine("selectUnit");
-        if(!string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Cmd))
-        {
-            Console.WriteLine("selectUnit : currentEdit_INFO_DataFormat_ref.Cmd = " + currentEdit_INFO_DataFormat_ref.Cmd);
-            if(cmdDict != null && cmdDict.TryGetValue(currentEdit_INFO_DataFormat_ref.Cmd, out var cmdToken))
-            {
-                var unitToken = cmdToken?["Unit"];
-                if(unitToken != null)
-                {
-                    UnitLists = unitToken.ToObject<List<string>>() ?? new List<string>();
-                    INFO_setting_stage = INFO_SETTING_STAGE.UNIT_SELECTION_STAGE;
-                }
-            }
-        }
-        else
-        {
-            Console.WriteLine("selectUnit : 尚未選擇命令 (這邊可以跳個Alert框)");
-        }
-    }
-
-    private bool TryParseAddr_fromAddrModelName(string _addrModelName, out uint value)
-    {
-        value = 0;
-        if(string.IsNullOrEmpty(_addrModelName)) return false;
-        AppLogger.Log_To_File_log(_category, $"[EditCard][TryParseAddr_fromAddrModelName] _addrModelName not null or empty", AppLogLevel.Trace);
-
-        int l = _addrModelName.IndexOf('[');
-        if(l < 0) return false;
-        AppLogger.Log_To_File_log(_category, $"[EditCard][TryParseAddr_fromAddrModelName] [ found", AppLogLevel.Trace);
-
-        int r = _addrModelName.IndexOf(']', l +1);
-        if(r < 0 || r == l + 1) return false;
-        AppLogger.Log_To_File_log(_category, $"[EditCard][TryParseAddr_fromAddrModelName] ] found", AppLogLevel.Trace);
-
-        ReadOnlySpan<char> span = _addrModelName.AsSpan(l + 1, r - l - 1).Trim();
-        var tmp_return_val = uint.TryParse(span, out value);
-        AppLogger.Log_To_File_log(_category, $"[EditCard][TryParseAddr_fromAddrModelName] tmp_return_val = {tmp_return_val}", AppLogLevel.Trace);
-        return tmp_return_val;
-    }
-
-    private void clickMachineName(uint addr, string _selectedMachineName)
-    {
-        string tmp_modelName = $"[{addr}] : {_selectedMachineName}";
-        if(!(string.Equals(currentEdit_INFO_DataFormat_ref.MachineName, tmp_modelName, StringComparison.Ordinal)))
-        {
-            currentEdit_INFO_DataFormat_ref.MachineName = tmp_modelName;
-            currentEdit_INFO_DataFormat_ref.Addr = addr;
-            currentEdit_INFO_DataFormat_ref.Cmd = "";
-            currentEdit_INFO_DataFormat_ref.Unit = "";
-        }
-        currentSelected_Addr = addr;
-
-        INFO_setting_stage = INFO_SETTING_STAGE.SETTING_VALUE_AND_CMD_STAGE;
-    }
-    private void clickCmd(string _cmd, string _unit)
-    {
-        if(currentEdit_INFO_DataFormat_ref.Cmd != _cmd)
-        {
-            currentEdit_INFO_DataFormat_ref.Cmd = _cmd;
-            currentEdit_INFO_DataFormat_ref.Unit = _unit;
-        }
-        
-
-        INFO_setting_stage = INFO_SETTING_STAGE.SETTING_VALUE_AND_CMD_STAGE;
-    }
-    private void clickUnit(string _unit)
-    {
-        currentEdit_INFO_DataFormat_ref.Unit = _unit;
-        INFO_setting_stage = INFO_SETTING_STAGE.SETTING_VALUE_AND_CMD_STAGE;
-    }
-
-    private void confirm_INFO_DataFormat_ValueSetting()
-    {
-        if( string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.MachineName)      ||
-            string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Cmd)              ||
-            string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.ValueName)        ||
-            string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.UserSettingName)) 
-        {
-            //string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Unit) 
-            Console.WriteLine("有數值沒有設定");
-            return;
-        }
-        
-        Console.WriteLine("[currentEdit_INFO_DataItem_ref] :");
-        string json = JsonSerializer.Serialize(currentEdit_INFO_DataItem_ref, new JsonSerializerOptions{
-            WriteIndented = true
-        });
-        Console.WriteLine(json);
-
-
-        INFO_setting_stage = INFO_SETTING_STAGE.ADD_VALUE_AND_CMD_ROW_STAGE;
-    }
-    
-    private void confirm_INFO_DataFormats_Setting()
-    {
-        currentEdit_INFO_DataItem_ref.status = SettingStatus.DONE;
-        INFO_setting_stage = INFO_SETTING_STAGE.ADD_ROW_STAGE;
-    }
-
-    private void Confirm_INFO_DataItem()
-    {
-        Console.WriteLine("[edit_INFO_DataItems] : ");
-        string json = JsonSerializer.Serialize(edit_INFO_DataItems, new JsonSerializerOptions{
-            WriteIndented = true
-        });
-        Console.WriteLine(json);
-    
-        currentCardInfo.cardName = edit_CardName;
-        currentCardInfo.Info_DataItems = edit_INFO_DataItems;
-        
-        // 通知父元件更新 currentCardInfo
-        OnCardInfoUpdated.InvokeAsync(currentCardInfo);
-    }
-
-    #endregion INFO_CARD_Variables_and_Functions
-    
-
     #region LINK_STATUS_Variables_and_Functions
     private STATUS_SETTING_STAGE STATUS_setting_stage = STATUS_SETTING_STAGE.OVERVIEW;
     private LINK_STATUS_Pair currentEdit_LINK_STATUS_pair_ref;
@@ -1301,13 +769,9 @@ edit-container是用來綁以下javascript事件的 id :
 
     private void Confirm_LINK_STATUS()
     {
-        Console.WriteLine("[edit_INFO_DataItems] : ");
-        string json = JsonSerializer.Serialize(edit_INFO_DataItems, new JsonSerializerOptions{
-            WriteIndented = true
-        });
-        Console.WriteLine(json);
-        
-        currentCardInfo.Link_STATUS_Pairs = edit_Link_STATUS_Pairs;
+        currentCardInfo.Link_STATUS_Pairs = edit_Link_STATUS_Pairs
+            .Select(pair => pair.DeepClone())
+            .ToList();
 
         OnCardInfoUpdated.InvokeAsync(currentCardInfo);
     }

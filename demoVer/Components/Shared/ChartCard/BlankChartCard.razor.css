@@ -5,15 +5,20 @@
     align-items: center;
     justify-content: center;
     gap: 2px;
-    background: var(--bg-primary); /* 深灰背景，適合深色主題 */
+    background: linear-gradient(145deg,
+            var(--info-card-surface-start),
+            var(--info-card-surface-end));
     border-radius: 12px;
+    border: 1px solid var(--info-card-border);
     width: 100%;
     height: 100%;
     position: relative;
     overflow: hidden;
 
     /* 陰影與動畫 */
-    box-shadow: 0 2px 8px var(--shadow-color);
+    box-shadow:
+        inset 0 1px 0 var(--info-card-inset),
+        0 4px 8px var(--info-card-shadow);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -67,15 +72,20 @@
         align-items: center;
         /* justify-content: center; */
         gap: 2px;
-        background: var(--bg-primary); /* 深灰背景，適合深色主題 */
-        border-radius: 12px;
-        width: 100%;
-        height: 330px;
-        position: relative;
+    background: linear-gradient(145deg,
+        var(--info-card-surface-start),
+        var(--info-card-surface-end));
+    border-radius: 12px;
+    border: 1px solid var(--info-card-border);
+    width: 100%;
+    height: 330px;
+    position: relative;
 
-        /* 陰影與動畫 */
-        box-shadow: 0 2px 8px var(--shadow-color);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    /* 陰影與動畫 */
+    box-shadow:
+        inset 0 1px 0 var(--info-card-inset),
+        0 4px 8px var(--info-card-shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .chart-container:hover {

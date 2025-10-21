@@ -2,7 +2,14 @@
 @inherits LayoutComponentBase
 <div class="overview-inner-card">
     <div class="smallIcon">
-        <img src="@IconPath"/>
+        @if(string.Equals(IconPath, "images/square.png", StringComparison.OrdinalIgnoreCase))
+        {
+            <div class="icon-placeholder"></div>
+        }
+        else
+        {
+            <img src="@IconPath" alt="Icon" />
+        }
     </div>
     <div class="overview-inner-card rightPart">
         @foreach(var cell in Cells)

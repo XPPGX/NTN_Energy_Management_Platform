@@ -10,12 +10,12 @@
     <div class="left-items">
         <button class="topRow-btn" @onclick="toggleMenu">
             <!-- <i class="fas fa-th-large"></i> -->
-            <img src="@(IsDarkTheme ? "images/menu-forDark.png" : "images/menu-forLight.png")" alt="menu"/>
+            <img src="@(IsDarkTheme ? "images/menu-forDark.png" : "images/menu-forLight.png")" alt="menu" class="iconBtn"/>
         </button>
         @if(Page_index == PAGE.HOME)
         {
             <button class="topRow-btn" @onclick="showEditButtons">
-                <img src="images/edit.png" alt="edit"/>
+                <img src="images/edit.png" alt="edit" class="iconBtn"/>
             </button>
         }
         @if(menuOpen)
@@ -59,34 +59,34 @@
             {
                 //show "+" button
                 <button class="topRow-btn" @onclick="saveCardsInfo">
-                    <img src="images/diskette.png" alt="save-edit"/>
+                    <img src="images/diskette.png" alt="save-edit" class="iconBtn"/>
                 </button>
                 <button class="topRow-btn" @onclick="showAddCard">
-                    <img src="images/add.png" alt="plus"/>
+                    <img src="images/add.png" alt="plus" class="iconBtn"/>
                 </button>
             }
             if( Page_index == PAGE.BATTERY_SETTING)
             {
                 <button class="topRow-btn" @onclick="apply_battery_setting">
-                    <img src="images/checked.png" alt="apply"/>
+                    <img src="images/checked.png" alt="apply" class="iconBtn"/>
                 </button>
                 <button class="topRow-btn" @onclick="UseDefault_battery_setting">
-                    <img src="images/settings.png" alt="restore"/>
+                    <img src="images/settings.png" alt="restore" class="iconBtn"/>
                 </button>
             }
 
             if( Page_index == PAGE.INV_SETTING)
             {
                 <button class="topRow-btn" @onclick="apply_INV_setting">
-                    <img src="images/checked.png" alt="apply"/>
+                    <img src="images/checked.png" alt="apply" class="iconBtn"/>
                 </button>
                 <button class="topRow-btn" @onclick="UseDefault_INV_setting">
-                    <img src="images/settings.png" alt="restore"/>
+                    <img src="images/settings.png" alt="restore" class="iconBtn"/>
                 </button>
             }
 
             <button class="topRow-btn" @onclick="ToggleTheme" title="@(IsDarkTheme ? "切換到亮色模式" : "切換到暗色模式")">
-                <img src="images/night-mode.png"/>
+                <img src="images/night-mode.png" class="iconBtn"/>
             </button>
 
             if(!isMobile)
@@ -97,9 +97,7 @@
             }
         }
 
-        <button class="logo-btn" @onclick="GoTo_Framework">
-            <img src="images/logo.png" alt="logo"/>
-        </button>
+        <img src="images/logo.png" alt="logo" class="clickable-logo" @onclick="GoTo_Framework"/>
     </div>
 </div>
 

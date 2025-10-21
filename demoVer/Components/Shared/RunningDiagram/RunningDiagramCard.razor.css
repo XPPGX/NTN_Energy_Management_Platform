@@ -4,18 +4,23 @@
     flex-direction: column;
     width: 100%;
     gap:2px;
-    background: var(--bg-primary); /* 回到純白 */
+    background: linear-gradient(145deg,
+            var(--info-card-surface-start),
+            var(--info-card-surface-end));
     height: 100%;
     border-radius: 12px;
+    border: 1px solid var(--info-card-border);
 
     /* 陰影與動畫 */
-    box-shadow: 0 2px 8px var(--shadow-color);
+    box-shadow:
+        inset 0 1px 0 var(--info-card-inset),
+        0 4px 8px var(--info-card-shadow);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .running-diagram-container:hover {
     transform: translateY(-4px);
-    box-shadow: 0 6px 16px var(--shadow-color);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
 }
 .running-diagram-container.top{
     width: 100%;
@@ -63,6 +68,7 @@
     justify-content: center;
     align-items: center;
     position: relative;
+    padding-top: 20px;
 }
 
 .grid-container {
@@ -223,6 +229,7 @@ transform: rotate(180deg);
     justify-content:center;
     pointer-events:none;
     z-index:2;
+    padding-bottom: 20px;
   }
   
   /* 垂直排列（↓ 或 ↑） */
@@ -244,12 +251,17 @@ transform: rotate(180deg);
         flex-direction: column;
         width: 100%;
         gap:2px;
-        background: var(--bg-primary); /* 回到純白 */
-        border-radius: 12px;
+    background: linear-gradient(145deg,
+        var(--info-card-surface-start),
+        var(--info-card-surface-end));
+    border-radius: 12px;
+    border: 1px solid var(--info-card-border);
 
-        /* 陰影與動畫 */
-        box-shadow: 0 2px 8px var(--shadow-color);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    /* 陰影與動畫 */
+    box-shadow:
+        inset 0 1px 0 var(--info-card-inset),
+        0 4px 8px var(--info-card-shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .running-diagram-container:hover {
@@ -259,6 +271,7 @@ transform: rotate(180deg);
     .running-diagram-container.top{
         display: flex;
         width: 100%;
+        min-height: 44px;
         flex-direction: row;
         justify-content: flex-start;
         gap: 1rem;

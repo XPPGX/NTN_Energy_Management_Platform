@@ -3,13 +3,18 @@
     display: flex;
     flex-direction: column;
     gap: 2px;
-    background: var(--bg-primary); /* 回到純白 */
+    background: linear-gradient(145deg,
+            var(--info-card-surface-start),
+            var(--info-card-surface-end));
     border-radius: 12px;
+    border: 1px solid var(--info-card-border);
     width: 100%;
     height: 100%;
-
+    min-height: 430px;
     /* 陰影與動畫 */
-    box-shadow: 0 2px 8px var(--shadow-color);
+    box-shadow:
+        inset 0 1px 0 var(--info-card-inset),
+        0 4px 8px var(--info-card-shadow);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -20,14 +25,16 @@
 
 /* 上方標題列 */
 .infoCard-container.top {
-    height: 44px;
+    min-height: 44px;
     width: 100%;
     padding: 0 12px;
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: clamp(0.5rem, 1vw, 1rem);
     position: relative;
-
+    box-sizing: border-box;
+    height: 44px;
     font-weight: 600;
     font-size: 1.05rem;
     background: var(--bg-secondary);            /* 深灰背景，適合深色主題 */
@@ -36,13 +43,17 @@
     border-radius: 12px 12px 0 0;
 }
 
+.infoCard-container.top h4 {
+    margin: 0;
+    line-height: 1.25;
+}
+
 /* 內容區塊 */
 .infoCard-container.bottom {
     flex: 1;
     width: 100%;
     padding-top: 12px;
     padding-bottom: 12px;
-    padding-right: 12px;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -55,10 +66,14 @@
 }
 
 /* 右上角按鈕 */
-.top-right-button {
+.infoCard-container.top .top-right-button {
     position: absolute;
-    top: 6px;
+    top: 50%;
     right: 6px;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     padding: 4px 8px;
     background-color: var(--bg-secondary); /* 深灰背景，適合暗色主題 */
     color: var(--text-primary); /* 白色字體 */
@@ -68,7 +83,7 @@
     border-radius: 6px;
     transition: background-color 0.2s;
 }
-.top-right-button:hover {
+.infoCard-container.top .top-right-button:hover {
     background-color: var(--bg-primary); /* 稍亮的深灰 */
 }
 

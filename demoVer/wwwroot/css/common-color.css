@@ -20,6 +20,12 @@
     --warning-color: #ff9800;
     --shadow-color: rgba(0, 0, 0, 0.5);
     --toprow-btn-bg: #666666;
+
+    --info-card-surface-start: #1a1a1a;
+    --info-card-surface-end: #2b2b2b;
+    --info-card-border: #3c3c3c;
+    --info-card-shadow: rgba(0, 0, 0, 0.5);
+    --info-card-inset: rgba(255, 255, 255, 0.05);
     
     /* Vue Slider 顏色變數 */
     --slider-track-bg: #2a2a2a;
@@ -51,6 +57,12 @@
     --warning-color: #ffc107;
     --shadow-color: rgba(0, 0, 0, 0.15);
     --toprow-btn-bg: #cccccc;
+    
+    --info-card-surface-start: var(--bg-primary);
+    --info-card-surface-end: var(--bg-secondary);
+    --info-card-border: var(--border-color);
+    --info-card-shadow: var(--shadow-color);
+    --info-card-inset: rgba(255, 255, 255, 0.25);
     
     /* 工業風金屬質感額外變數 */
     --metal-primary: #c0c0c0;      /* 銀色金屬 */

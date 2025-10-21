@@ -9,14 +9,20 @@
 .btn
 {
     flex: 1;
-    padding: 12px;
+    padding: 10px 12px;
     border-radius: 6px;
-    font-size: 1rem;
+    font-size: 0.95rem;
     cursor: pointer;
-    transition: 0.3s;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
     border: 1px solid var(--border-color);
     background: var(--bg-secondary);
     color: var(--text-primary);
+}
+
+.btn:hover
+{
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 .btn-blue
 {
@@ -127,8 +133,38 @@
     border: 1px solid var(--success-color);
 }
 .btn-green:hover {
-    background: var(--accent-hover);
+    background: var(--success-hover, var(--success-color));
     box-shadow: 0 0 6px var(--success-color);
+}
+
+.btn.no-flex
+{
+    flex: initial;
+}
+
+.info-action-button
+{
+    width: 120px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+.btn-add {
+    background: var(--accent-color);
+    color: var(--bg-primary);
+    border: 1px solid var(--accent-color);
+}
+
+.btn-add:hover:not(:disabled) {
+    background: var(--accent-hover);
+    box-shadow: 0 0 6px var(--accent-color);
+}
+
+.btn-add:disabled {
+    background: #cccccc;
+    color: #ffffff;
+    border: 1px solid #cccccc;
+    cursor: not-allowed;
 }
 
 /********** Custom Toggle Button **********/

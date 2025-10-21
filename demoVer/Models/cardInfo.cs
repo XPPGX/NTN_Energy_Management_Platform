@@ -46,7 +46,6 @@ namespace demoVer.Models
         MACHINE_SELECTION_STAGE         = 4,
         CMD_SELECTION_STAGE             = 5,
         UNIT_SELECTION_STAGE            = 6,
-        ADD_VALUE_AND_CMD_ROW_STAGE     = 7,
     }
     
     public enum STATUS_SETTING_STAGE
@@ -143,7 +142,7 @@ namespace demoVer.Models
         //X軸相關
         public string XTitle {get; set;} = "時間";
         public timeGap timeGap_selection {get; set;}
-        public string[] Labels {get; set;} //X軸資料，目前只支援顯示時間
+    public string[] Labels {get; set;} //X軸資料，目前只支援顯示時間
         //Y軸相關
         public string Y_left_Title {get; set;}
         public string Y_right_Title {get; set;}
@@ -159,7 +158,7 @@ namespace demoVer.Models
                 ChartTitle = this.ChartTitle,
                 XTitle = this.XTitle,
                 timeGap_selection = this.timeGap_selection,
-                Labels = this.Labels?.ToArray(),
+                Labels = this.Labels?.ToArray() ?? Array.Empty<string>(),
                 Y_left_Title = this.Y_left_Title,
                 Y_right_Title = this.Y_right_Title,
                 YMin = this.YMin,
@@ -174,8 +173,8 @@ namespace demoVer.Models
                         Unit = line.Unit,
                         Y_axis_selection = line.Y_axis_selection,
                         color = line.color,
-                        Data = line.Data?.ToArray()
-                    }).ToList()
+                        Data = line.Data?.ToArray() ?? Array.Empty<double?>()
+                    }).ToList() ?? new List<CHART_SINGLE_DATA_LINE>()
             };
         }
     }
@@ -195,10 +194,10 @@ namespace demoVer.Models
         public SettingStatus status {get; set; } = SettingStatus.YET;
         public uint addr {get; set;}
         public string mdlName {get; set;}
-        public string Cmd{get; set;} = null;
-        public string Unit{get; set;} = null;
+    public string Cmd{get; set;} = string.Empty;
+    public string Unit{get; set;} = string.Empty;
         public bool? Y_axis_selection {get; set;} = null; //選擇要Y_left還是Y_right
-        public string color {get; set;} = null;
+    public string color {get; set;} = string.Empty;
         public double?[] Data{get; set;} //Y軸資料
     }
 
