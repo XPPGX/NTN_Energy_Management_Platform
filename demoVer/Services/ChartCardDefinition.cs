@@ -10,7 +10,7 @@ public sealed class ChartCardDefinition : ICardDefinition
 {
     public CardType CardType => CardType.Chart;
     public Type DisplayComponent => typeof(BlankChartCard);
-    public Type EditorComponent => typeof(EditCard);
+    public Type EditorComponent => typeof(ChartCardEdit);
     public string DisplayName => "圖表";
     public string ThumbnailPath => "images/cardSelection-chart.png";
     public string DefaultWidthClass => "w50";

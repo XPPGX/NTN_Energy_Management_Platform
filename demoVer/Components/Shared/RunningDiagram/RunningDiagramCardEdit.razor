@@ -1,0 +1,183 @@
+@namespace demoVer.Shared
+@inherits LayoutComponentBase
+
+@using System
+@using System.Collections.Generic
+@using System.IO
+@using System.Linq
+@using demoVer.Models
+@using Microsoft.AspNetCore.Components
+@using MudBlazor
+
+@inject IWebHostEnvironment WebHostEnvironment
+
+<div class="status-editor">
+	@if (STATUS_setting_stage == STATUS_SETTING_STAGE.OVERVIEW)
+	{
+		<h3>編輯 : 連接狀態</h3>
+		<table class="custom-table no-text-select" id="table-linkingStatus">
+			<colgroup>
+				<col style="width: 20%;" />
+				<col style="width: 30%;" />
+				<col style="width: 60%;" />
+			</colgroup>
+			<thead>
+				<tr>
+					<th>No.</th>
+					<th>圖示</th>
+					<th>文字</th>
+				</tr>
+			</thead>
+			<tbody>
+				@for (var i = 0; i < edit_Link_STATUS_Pairs.Count; i++)
+				{
+					var pair = edit_Link_STATUS_Pairs[i];
+					var iconPath = string.IsNullOrEmpty(pair.iconPath) ? "images/square.png" : pair.iconPath;
+
+					<tr>
+						<td>@(i + 1)</td>
+						<td>
+							<button class="icon-button" @onclick="() => selectImg_LINK_STATUS(pair)">
+								<img src="@iconPath" alt="status icon" />
+							</button>
+						</td>
+						<td>
+							<input @bind="pair.Label" class="td-input" />
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+
+		<MudButton Class="no-transform"
+				   OnClick="Confirm_LINK_STATUS"
+				   Variant="Variant.Filled"
+				   Color="Color.Success"
+				   Style="width: 120px;">
+			確定
+		</MudButton>
+	}
+	else if (STATUS_setting_stage == STATUS_SETTING_STAGE.SELECT_ICON_STAGE)
+	{
+		<div class="img-select-grid">
+			@foreach (var icon in imgRelativePaths)
+			{
+				<div class="img-select-icon">
+					<button class="icon-button" @onclick="() => selectedImgFile_LINK_STATUS(icon)">
+						<img src="@icon" alt="icon option" />
+					</button>
+				</div>
+			}
+		</div>
+	}
+</div>
+
+@code {
+	[Parameter] public CardInfo currentCardInfo { get; set; } = default!;
+	[Parameter] public EventCallback<CardInfo> OnCardInfoUpdated { get; set; }
+
+	private string imgFolderPath = string.Empty;
+	private List<string> imgRelativePaths = new();
+	private STATUS_SETTING_STAGE STATUS_setting_stage = STATUS_SETTING_STAGE.OVERVIEW;
+	private LINK_STATUS_Pair? currentEdit_LINK_STATUS_pair_ref;
+	private List<LINK_STATUS_Pair> edit_Link_STATUS_Pairs = new();
+
+    private bool _isFirstParameterSet = false;
+
+	protected override void OnInitialized()
+	{
+		imgFolderPath = Path.Combine(WebHostEnvironment.WebRootPath, "images/user_selections");
+		LoadIconPaths();
+        
+        edit_Link_STATUS_Pairs = currentCardInfo.Link_STATUS_Pairs?
+            .Select(pair => pair.DeepClone()).ToList() ?? new List<LINK_STATUS_Pair>();
+
+        EnsureStatusSlots();
+        STATUS_setting_stage = STATUS_SETTING_STAGE.OVERVIEW;
+        currentEdit_LINK_STATUS_pair_ref = null;
+        Console.WriteLine($"[3]RunningDiagramCardEdit OnAfterRender STATUS_setting_stage  = {STATUS_setting_stage}");
+	}
+
+	protected override void OnParametersSet()
+	{
+        if(!_isFirstParameterSet)
+        {
+            _isFirstParameterSet = true;
+            if (currentCardInfo.card_Type != CardType.Status)
+            {
+                return;
+            }
+
+            edit_Link_STATUS_Pairs = currentCardInfo.Link_STATUS_Pairs?
+                .Select(pair => pair.DeepClone()).ToList() ?? new List<LINK_STATUS_Pair>();
+
+            EnsureStatusSlots();
+            STATUS_setting_stage = STATUS_SETTING_STAGE.OVERVIEW;
+            currentEdit_LINK_STATUS_pair_ref = null;
+            Console.WriteLine($"[3]RunningDiagramCardEdit OnAfterRender STATUS_setting_stage  = {STATUS_setting_stage}");
+        }
+	}
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            
+        }
+    }
+
+	private void LoadIconPaths()
+	{
+		if (!Directory.Exists(imgFolderPath))
+		{
+			return;
+		}
+
+		imgRelativePaths = Directory.GetFiles(imgFolderPath)
+			.Select(path => $"images/user_selections/{Path.GetFileName(path)}")
+			.ToList();
+	}
+
+	private void EnsureStatusSlots()
+	{
+		if (edit_Link_STATUS_Pairs.Count > 4)
+		{
+			edit_Link_STATUS_Pairs = edit_Link_STATUS_Pairs.Take(4).ToList();
+		}
+
+		while (edit_Link_STATUS_Pairs.Count < 4)
+		{
+			edit_Link_STATUS_Pairs.Add(new LINK_STATUS_Pair
+			{
+				iconPath = string.Empty,
+				Label = string.Empty
+			});
+		}
+	}
+
+	private void selectImg_LINK_STATUS(LINK_STATUS_Pair item)
+	{
+		currentEdit_LINK_STATUS_pair_ref = item;
+		STATUS_setting_stage = STATUS_SETTING_STAGE.SELECT_ICON_STAGE;
+	}
+
+	private void selectedImgFile_LINK_STATUS(string imgPath)
+	{
+		if (currentEdit_LINK_STATUS_pair_ref is null)
+		{
+			return;
+		}
+
+		currentEdit_LINK_STATUS_pair_ref.iconPath = imgPath;
+		STATUS_setting_stage = STATUS_SETTING_STAGE.OVERVIEW;
+	}
+
+	private void Confirm_LINK_STATUS()
+	{
+		currentCardInfo.Link_STATUS_Pairs = edit_Link_STATUS_Pairs
+			.Select(pair => pair.DeepClone())
+			.ToList();
+
+		OnCardInfoUpdated.InvokeAsync(currentCardInfo);
+	}
+}

@@ -1,0 +1,114 @@
+.status-editor {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+.status-editor h3 {
+	margin: 0;
+	color: var(--text-primary);
+}
+
+.custom-table {
+	width: 100%;
+	border-collapse: collapse;
+	table-layout: fixed;
+	border: 1px solid var(--border-color);
+	border-radius: 12px;
+	background: var(--bg-primary);
+	overflow: hidden;
+}
+
+.custom-table thead {
+	background: var(--bg-secondary);
+}
+
+.custom-table th,
+.custom-table td {
+	padding: 0.75rem;
+	text-align: center;
+	border-bottom: 1px solid var(--border-color);
+	color: var(--text-primary);
+}
+
+.custom-table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+.td-input {
+	width: 100%;
+	padding: 0.4rem 0.5rem;
+	border: 1px solid var(--border-color);
+	border-radius: 6px;
+	background: var(--bg-secondary);
+	color: var(--text-primary);
+	text-align: center;
+	box-sizing: border-box;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.td-input:focus {
+	border-color: var(--accent-color);
+	box-shadow: 0 0 0 3px rgba(var(--accent-color-rgb), 0.25);
+	outline: none;
+}
+
+.icon-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.25rem;
+	border: 1px solid var(--border-color);
+	border-radius: 8px;
+	background: #ffffff;
+	cursor: pointer;
+	transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.icon-button:hover {
+	background: var(--bg-accent);
+	box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.icon-button:active {
+	background: var(--border-light);
+}
+
+.icon-button img {
+	width: 40px;
+	height: 40px;
+	object-fit: contain;
+}
+
+.img-select-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 0.75rem;
+}
+
+.img-select-icon {
+	display: flex;
+	justify-content: center;
+}
+
+.no-text-select {
+	user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+}
+
+#table-linkingStatus td {
+	height: 60px;
+	vertical-align: middle;
+}
+
+@media (max-width: 768px) {
+	.img-select-grid {
+		grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
+	}
+
+	.icon-button img {
+		width: 32px;
+		height: 32px;
+	}
+}

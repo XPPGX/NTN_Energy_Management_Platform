@@ -12,10 +12,10 @@ namespace demoVer.Models
 
         public int subSystem_WriteMemory_ID {get; set;}
 
-        //READ API Data structure
+        //The Data structure, which is READ from WriteMemory in framework
         public ConcurrentDictionary<string, settingCommandRawData> Setting_Check {get; set;}
         
-        //Write API Data structure
+        //The Data structure, which will be Written to WriteMemory in framework
         public ConcurrentDictionary<string, settingCommandRawData> Setting_Write {get; set;}
 
         //The Scaling Factors got from globalVar.Device_ReadData

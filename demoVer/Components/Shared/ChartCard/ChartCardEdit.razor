@@ -1,0 +1,803 @@
+@namespace demoVer.Shared
+@inherits LayoutComponentBase
+@implements IDisposable
+
+@using demoVer.Models
+@using demoVer.Utils
+@using Microsoft.AspNetCore.Components
+@using Microsoft.JSInterop
+@using MudBlazor
+@using System
+@using System.Collections.Generic
+@using System.Linq
+@using System.Text.Json
+@using System.Threading.Tasks
+
+@inject IJSRuntime JS
+@inject GlobalVar globalVar
+@inject HeartbeatService Heartbeat
+
+<div id="edit-container" @onclick="CloseMenu">
+    @if (showMenu)
+    {
+        <div class="custom-menu" style="top:@($"{menuY}px"); left:@($"{menuX}px");" @onclick:stopPropagation="true">
+            <div class="custom-menu-item" @onclick="Edit_inCorrespondingStage">編輯</div>
+            <div class="custom-menu-item" @onclick="Delete_inCorrespondingStage">刪除</div>
+        </div>
+    }
+
+    @if (ConfirmDialog)
+    {
+        <div id="confirmDialog" class="custom-dialog-overlay">
+            <div class="custom-dialog">
+                <div class="custom-dialog-content">
+                    <div class="icon-container">⚠️</div>
+                    <p id="dialogMessage" class="dialog-message">@AlertMessage</p>
+                </div>
+                <div class="custom-dialog-actions">
+                    <button class="btn btn-neutral" @onclick="Cancel">取消</button>
+                    <button class="btn btn-green" @onclick="Confirm">確定</button>
+                </div>
+            </div>
+        </div>
+    }
+
+    @switch (CHART_setting_stage)
+    {
+        case CHART_SETTING_STAGE.SELECT_MACHINE_CMD:
+            <div class="chart-machine-cmd-setting">
+                <h3>選擇設備與命令</h3>
+                <div class="chartForm">
+                    <div class="chart-selector-panel">
+                        <div class="chart-selector-grid">
+                            <div class="custom-select-wrapper">
+                                <label for="chartMachineSelect" style="color: var(--text-primary);">Machine</label>
+                                <select id="chartMachineSelect"
+                                        class="custom-select"
+                                        value="@blank_singleDataLine.addr"
+                                        @onchange="MachineChanged">
+                                    <option value="9999">請選擇一個機器</option>
+                                    @foreach (var (addr, mdlName) in deviceAddr_List)
+                                    {
+                                        <option value="@addr">[@addr]: @mdlName</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="custom-select-wrapper">
+                                <label for="chartCmdSelect" style="color: var(--text-primary);">CMD</label>
+                                <select id="chartCmdSelect"
+                                        class="custom-select"
+                                        value="@blank_singleDataLine.Cmd"
+                                        @onchange="ChartCmdChanged"
+                                        disabled="@(show_cmd_unit_Dict_ref?.Any() != true)">
+                                    <option value="">請選擇一個命令</option>
+                                    @foreach (var (cmd, unit) in show_cmd_unit_Dict_ref ?? Enumerable.Empty<KeyValuePair<string, string>>())
+                                    {
+                                        <option value="@cmd">@cmd</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(chartMachineCmdError))
+                        {
+                            <div class="chart-step-error">@chartMachineCmdError</div>
+                        }
+
+                        <div class="chart-stepper-actions">
+                            <button class="btn btn-add no-flex"
+                                    type="button"
+                                    @onclick="ProceedToDisplaySetting">
+                                下一步
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            break;
+
+        case CHART_SETTING_STAGE.OVERVIEW:
+            <h5>編輯 : 圖表</h5>
+            <div class="input-container">
+                <label for="tempChartTitle" class="input-label">圖表標題</label>
+                <input id="tempChartTitle" type="text" class="input" @bind="temp_chartTitle" required placeholder="輸入圖表標題" />
+            </div>
+
+            @for (int i = 0; i < edit_ChartSetting_Clone.chart_single_data_lines.Count; i++)
+            {
+                var index = i;
+                var temp = edit_ChartSetting_Clone.chart_single_data_lines[i];
+
+                var addr_mdlName_str = $"[{temp.addr}]{temp.mdlName}";
+                var hint_cmd = temp.status switch
+                {
+                    SettingStatus.YET => isMobile ? "長按此處編輯" : "右鍵編輯",
+                    SettingStatus.PROGRESS => isMobile ? "未完成:長按此處編輯" : "未完成:右鍵編輯",
+                    SettingStatus.DONE => $"{temp.Cmd}({temp.Unit})",
+                    _ => string.Empty
+                };
+                var hint = temp.Y_axis_selection == true
+                    ? edit_ChartSetting_Clone.Y_left_Title
+                    : edit_ChartSetting_Clone.Y_right_Title;
+                var hint_axis = temp.Y_axis_selection == true ? "左" : "右";
+                var hint_color = string.IsNullOrEmpty(temp.color) ? "#000000" : temp.color;
+                <div class="detail-card" @onclick="() => OnLineClick(index, temp)">
+                    <div class="detail-card-header">
+                        <span class="detail-card-title">Line @(index + 1)</span>
+                        <button type="button"
+                                class="detail-card-action"
+                                @onclick="() => DeleteCurve(temp)"
+                                @onclick:stopPropagation="true">
+                            刪除
+                        </button>
+                    </div>
+                    <div class="detail-card-body">
+                        <div class="detail-card-row">
+                            <span class="detail-card-label">設備 :</span>
+                            <span class="detail-card-value">@(string.IsNullOrEmpty(addr_mdlName_str) ? "未設定" : addr_mdlName_str)</span>
+                        </div>
+                        <div class="detail-card-row">
+                            <span class="detail-card-label">命令 :</span>
+                            <span class="detail-card-value">@hint_cmd</span>
+                        </div>
+                        <div class="detail-card-row">
+                            <span class="detail-card-label">Y軸標題:</span>
+                            <span class="detail-card-value">@hint</span>
+                        </div>
+                        <div class="detail-card-row">
+                            <span class="detail-card-label">參照軸:</span>
+                            <span class="detail-card-value">@hint_axis</span>
+                        </div>
+                        <div class="detail-card-row detail-card-row-color">
+                            <span class="detail-card-label">顏色:</span>
+                            <span class="detail-card-value">
+                                <span class="detail-card-color" style="background-color:@hint_color;"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div class="confirm-cancel-container">
+                <button class="btn btn-add no-flex" style="width: 120px;"
+                        type="button"
+                        @onclick="Add_Curve">
+                    新增
+                </button>
+                <button class="btn btn-green no-flex" style="width: 120px;"
+                        type="button"
+                        @onclick="Confirm_CurveSetting">
+                    確定
+                </button>
+            </div>
+            break;
+
+        case CHART_SETTING_STAGE.DISPLAY_SETTING:
+            <div class="chart-display-setting">
+                <h3>顯示設定</h3>
+                <div class="chartForm">
+                    @{ string paper_style = isMobile ? string.Empty : "width: 400px; max-height: 400px;"; }
+                    <div class="chart-display-card" style="@paper_style">
+                        <form class="custom-form">
+                            <div class="form-group">
+                                <label for="yTitleInput" class="form-label">Y-Title</label>
+                                <input type="text" id="yTitleInput" class="form-input" @bind="temp_Y_singleTitle" required />
+                                @if (!string.IsNullOrEmpty(yTitleError))
+                                {
+                                    <div class="error-text">@yTitleError</div>
+                                }
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Y-axis</label>
+                                <div class="radio-group" @onchange:stopPropagation="true" @onclick:stopPropagation="true">
+                                    <label class="radio-option">
+                                        <input type="radio"
+                                               name="yAxis"
+                                               value="true"
+                                               @onchange="YAxisChanged"
+                                               checked="@(blank_singleDataLine.Y_axis_selection == true)" />
+                                        <span class="radio-label">Left-axis</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio"
+                                               name="yAxis"
+                                               value="false"
+                                               @onchange="YAxisChanged"
+                                               checked="@(blank_singleDataLine.Y_axis_selection == false)" />
+                                        <span class="radio-label">Right-axis</span>
+                                    </label>
+                                </div>
+                                @if (!string.IsNullOrEmpty(yAxisError))
+                                {
+                                    <div class="error-text">@yAxisError</div>
+                                }
+                            </div>
+                            <div class="form-group">
+                                <label for="colorPicker" class="form-label">Data-Color</label>
+                                <input type="color" id="colorPicker" class="form-input color-input" @bind="blank_singleDataLine.color" style="@($"color: {blank_singleDataLine.color};")" required />
+                                @if (!string.IsNullOrEmpty(colorError))
+                                {
+                                    <div class="error-text">@colorError</div>
+                                }
+                            </div>
+                            <button type="button" class="btn btn-add ml-auto" @onclick="Confirm_SingleDataLine_setting">確定</button>
+                        </form>
+                    </div>
+                </div>
+                @if (!string.IsNullOrEmpty(chartForm_errorMessage))
+                {
+                    <div class="error-text mt-2">@chartForm_errorMessage</div>
+                }
+            </div>
+            break;
+
+        case CHART_SETTING_STAGE.SELECT_CMD_STAGE:
+            <MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 200px; max-height: 240px; overflow-y: auto;">
+                <MudList T="string" Dense="true" Hover="true">
+                    @foreach (var item in show_cmd_unit_Dict_ref ?? Enumerable.Empty<KeyValuePair<string, string>>())
+                    {
+                        <MudListItem T="string"
+                                     @onclick="() => clickCmd_CHART(item.Key)"
+                                     Style="cursor: pointer;">
+                            <MudIcon Icon="@Icons.Material.Filled.Code" Class="mr-2" />
+                            <MudText>@item.Key</MudText>
+                        </MudListItem>
+                    }
+                </MudList>
+            </MudPaper>
+            break;
+
+        case CHART_SETTING_STAGE.UNIT_SELECTION_STAGE:
+            <MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 200px; max-height: 240px; overflow-y: auto;">
+                <MudList T="string" Dense="true" Hover="true">
+                    @foreach (var unit in UnitLists)
+                    {
+                        <MudListItem T="string"
+                                     @onclick="() => clickUnit_CHART(unit)"
+                                     Style="cursor: pointer;">
+                            <MudIcon Icon="@Icons.Material.Filled.Sensors" Class="mr-2" />
+                            <MudText>@unit</MudText>
+                        </MudListItem>
+                    }
+                </MudList>
+            </MudPaper>
+            break;
+    }
+</div>
+
+@code {
+    [Parameter] public CardInfo currentCardInfo { get; set; } = default!;
+    [Parameter] public EventCallback<CardInfo> OnCardInfoUpdated { get; set; }
+
+    private string _category = string.Empty;
+    private DotNetObjectReference<ChartCardEdit>? objRef;
+    private bool _isFirstParameterSet = true;
+    private int HeartBeatCounter = 0;
+    private bool isMobile = false;
+
+    private bool showMenu = false;
+    private double menuX;
+    private double menuY;
+
+    private bool ConfirmDialog = false;
+    private string AlertMessage = string.Empty;
+    private bool disableConfirmButton = false;
+    private Action? ConfirmCallback;
+
+    private List<(uint, string)> deviceAddr_List = new();
+    private Dictionary<string, string> oneDevice_cmd_unit_Dict = new();
+    private Dictionary<string, string> Summary_cmd_unit_Dict = new();
+    private Dictionary<string, string>? show_cmd_unit_Dict_ref;
+    private List<string> UnitLists = new();
+
+    private CHART_SETTING_STAGE CHART_setting_stage = CHART_SETTING_STAGE.OVERVIEW;
+    private CHART_SETTING edit_ChartSetting_Clone = new();
+    private CHART_SINGLE_DATA_LINE blank_singleDataLine = new();
+    private int SingleLine_index = 0;
+    private string temp_Y_singleTitle = string.Empty;
+    private string temp_chartTitle = string.Empty;
+    private string chartForm_errorMessage = string.Empty;
+    private string chartMachineCmdError = string.Empty;
+    private string yTitleError = string.Empty;
+    private string yAxisError = string.Empty;
+    private string colorError = string.Empty;
+
+    private uint currentSelected_Addr = 9999;
+    private uint chartNowSelectedAddr = 9999;
+    private string chartNowSelectedCMD = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        _category = GetType().FullName ?? nameof(ChartCardEdit);
+        Heartbeat.OnTick += OnHeartbeatTick;
+        InitSummaryCMDs();
+        refreshDevicesList();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            objRef = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("registerGroupedTableTouchAndRightClick", "edit-container", objRef);
+            isMobile = await JS.InvokeAsync<bool>("checkIsMobile");
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (currentCardInfo is null)
+        {
+            return;
+        }
+
+        if (_isFirstParameterSet)
+        {
+            _isFirstParameterSet = false;
+
+            edit_ChartSetting_Clone = currentCardInfo.Chart_Setting?.DeepClone() ?? new CHART_SETTING();
+            temp_chartTitle = edit_ChartSetting_Clone.ChartTitle ?? currentCardInfo.cardName ?? string.Empty;
+
+            if (edit_ChartSetting_Clone.chart_single_data_lines is null)
+            {
+                edit_ChartSetting_Clone.chart_single_data_lines = new List<CHART_SINGLE_DATA_LINE>();
+            }
+        }
+    }
+
+    private async Task OnHeartbeatTick()
+    {
+        if (HeartBeatCounter == 0)
+        {
+            refreshDevicesList();
+        }
+
+        HeartBeatCounter = (HeartBeatCounter + 1) % 3;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        Heartbeat.OnTick -= OnHeartbeatTick;
+        objRef?.Dispose();
+    }
+
+    private void refreshDevicesList()
+    {
+        try
+        {
+            var tempDeviceAddr_List = globalVar.Get_addr_and_ModelNames_List();
+            deviceAddr_List = tempDeviceAddr_List ?? new List<(uint, string)>();
+        }
+        catch (Exception e)
+        {
+            AppLogger.Log_To_File_log(_category, $"[ChartCardEdit][refreshDevicesList] Error : {e}", AppLogLevel.Error);
+        }
+    }
+
+    private void CloseMenu()
+    {
+        if (!showMenu)
+        {
+            return;
+        }
+
+        showMenu = false;
+    }
+
+    [JSInvokable]
+    public void OnShowContextMenu(string table, int index, double x, double y)
+    {
+        menuX = x;
+        menuY = y;
+        showMenu = true;
+
+        if (index >= 0 && index < edit_ChartSetting_Clone.chart_single_data_lines.Count)
+        {
+            SingleLine_index = index;
+        }
+
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void Edit_inCorrespondingStage()
+    {
+        showMenu = false;
+        BeginChartEditing();
+    }
+
+    private void Delete_inCorrespondingStage()
+    {
+        showMenu = false;
+        ShowDialog("確定要刪除?", DeleteAction_In_CHART_OVERVIEW_STAGE);
+    }
+
+    private void ShowDialog(string message, Action confirmAction)
+    {
+        AlertMessage = message;
+        ConfirmCallback = confirmAction;
+        disableConfirmButton = false;
+        ConfirmDialog = true;
+    }
+
+    private void Confirm()
+    {
+        if (disableConfirmButton)
+        {
+            return;
+        }
+
+        disableConfirmButton = true;
+        ConfirmDialog = false;
+        ConfirmCallback?.Invoke();
+    }
+
+    private void Cancel()
+    {
+        ConfirmDialog = false;
+        disableConfirmButton = false;
+    }
+
+    private void BeginChartEditing()
+    {
+        if (SingleLine_index < 0 || SingleLine_index >= edit_ChartSetting_Clone.chart_single_data_lines.Count)
+        {
+            return;
+        }
+
+        var target = edit_ChartSetting_Clone.chart_single_data_lines[SingleLine_index];
+
+        blank_singleDataLine = new CHART_SINGLE_DATA_LINE
+        {
+            status = target.status,
+            addr = target.addr,
+            mdlName = target.mdlName,
+            Cmd = target.Cmd ?? string.Empty,
+            Unit = target.Unit ?? string.Empty,
+            Y_axis_selection = target.Y_axis_selection,
+            color = target.color ?? "#000000",
+            Data = target.Data?.ToArray() ?? Array.Empty<double?>()
+        };
+
+        currentSelected_Addr = target.addr;
+        chartNowSelectedAddr = target.addr;
+        chartNowSelectedCMD = target.Cmd ?? string.Empty;
+
+        temp_chartTitle = edit_ChartSetting_Clone.ChartTitle ?? string.Empty;
+
+        if (target.Y_axis_selection == true)
+        {
+            temp_Y_singleTitle = edit_ChartSetting_Clone.Y_left_Title ?? string.Empty;
+        }
+        else if (target.Y_axis_selection == false)
+        {
+            temp_Y_singleTitle = edit_ChartSetting_Clone.Y_right_Title ?? string.Empty;
+        }
+        else
+        {
+            temp_Y_singleTitle = string.Empty;
+        }
+
+        chartForm_errorMessage = string.Empty;
+        chartMachineCmdError = string.Empty;
+        yTitleError = string.Empty;
+        yAxisError = string.Empty;
+        colorError = string.Empty;
+
+        if (currentSelected_Addr <= 256)
+        {
+            if (!getCMDs())
+            {
+                chartMachineCmdError = "此設備沒有可用命令";
+            }
+        }
+        else
+        {
+            show_cmd_unit_Dict_ref = null;
+        }
+
+        CHART_setting_stage = CHART_SETTING_STAGE.SELECT_MACHINE_CMD;
+    }
+
+    private void InitSummaryCMDs()
+    {
+        Summary_cmd_unit_Dict["Number of INV"] = "Unit";
+        Summary_cmd_unit_Dict["Input Voltage"] = "VAC";
+        Summary_cmd_unit_Dict["Output Voltage"] = "VAC";
+    }
+
+    private bool getCMDs()
+    {
+        try
+        {
+            if (currentSelected_Addr == 256)
+            {
+                show_cmd_unit_Dict_ref = Summary_cmd_unit_Dict;
+            }
+            else if (currentSelected_Addr < 256)
+            {
+                oneDevice_cmd_unit_Dict.Clear();
+                var deviceDict = globalVar.Get_oneDevice_Cmd_unit_Dict(currentSelected_Addr);
+                oneDevice_cmd_unit_Dict = deviceDict ?? new Dictionary<string, string>();
+                show_cmd_unit_Dict_ref = oneDevice_cmd_unit_Dict;
+            }
+            else
+            {
+                AppLogger.Log_To_File_log(_category, $"[ChartCardEdit][getCMDs] Got wrong addr : {currentSelected_Addr}", AppLogLevel.Information);
+                return false;
+            }
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            AppLogger.Log_To_File_log(_category, $"[ChartCardEdit][getCMDs] Error : {e}", AppLogLevel.Error);
+            return false;
+        }
+    }
+
+    private void MachineChanged(ChangeEventArgs e)
+    {
+        chartMachineCmdError = string.Empty;
+
+        if (uint.TryParse(e.Value?.ToString(), out var selected))
+        {
+            blank_singleDataLine.addr = selected;
+        }
+        else
+        {
+            blank_singleDataLine.addr = 9999;
+        }
+
+        blank_singleDataLine.Cmd = string.Empty;
+        blank_singleDataLine.Unit = string.Empty;
+
+        show_cmd_unit_Dict_ref = null;
+
+        if (blank_singleDataLine.addr < 256)
+        {
+            var deviceInfo = deviceAddr_List.FirstOrDefault(x => x.Item1 == blank_singleDataLine.addr);
+            blank_singleDataLine.mdlName = deviceInfo.Item2 ?? string.Empty;
+            currentSelected_Addr = blank_singleDataLine.addr;
+
+            if (!getCMDs())
+            {
+                chartMachineCmdError = "此設備沒有可用命令";
+            }
+        }
+        else if (blank_singleDataLine.addr == 256)
+        {
+            currentSelected_Addr = blank_singleDataLine.addr;
+            if (!getCMDs())
+            {
+                chartMachineCmdError = "此設備沒有可用命令";
+            }
+        }
+        else
+        {
+            blank_singleDataLine.mdlName = string.Empty;
+        }
+
+        AppLogger.Log_To_File_log(_category, $"[ChartCardEdit][MachineChanged] blank_singleDataLine.addr = {blank_singleDataLine.addr}, blank_singleDataLine.mdlName = {blank_singleDataLine.mdlName}", AppLogLevel.Trace);
+    }
+
+    private void ChartCmdChanged(ChangeEventArgs e)
+    {
+        chartMachineCmdError = string.Empty;
+
+        if (show_cmd_unit_Dict_ref is null)
+        {
+            blank_singleDataLine.Cmd = string.Empty;
+            blank_singleDataLine.Unit = string.Empty;
+            return;
+        }
+
+        var selectedCmd = e.Value?.ToString() ?? string.Empty;
+        blank_singleDataLine.Cmd = selectedCmd;
+        blank_singleDataLine.Unit = string.Empty;
+
+        if (string.IsNullOrEmpty(blank_singleDataLine.Cmd))
+        {
+            return;
+        }
+
+        if (show_cmd_unit_Dict_ref.TryGetValue(blank_singleDataLine.Cmd, out var unit))
+        {
+            blank_singleDataLine.Unit = unit;
+            Console.WriteLine($"[ChartCardEdit][ChartCmdChanged] : Cmd = {blank_singleDataLine.Cmd}, Unit = {blank_singleDataLine.Unit}");
+        }
+        else
+        {
+            chartMachineCmdError = "找不到對應的命令資訊";
+        }
+    }
+
+    private void ProceedToDisplaySetting()
+    {
+        chartMachineCmdError = string.Empty;
+
+        if (blank_singleDataLine.addr == 9999)
+        {
+            chartMachineCmdError = "請先選擇機器";
+            return;
+        }
+
+        currentSelected_Addr = blank_singleDataLine.addr;
+
+        if (show_cmd_unit_Dict_ref is null || show_cmd_unit_Dict_ref.Count == 0)
+        {
+            chartMachineCmdError = "此設備沒有可選命令";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(blank_singleDataLine.Cmd))
+        {
+            chartMachineCmdError = "請先選擇命令";
+            return;
+        }
+
+        if (!show_cmd_unit_Dict_ref.TryGetValue(blank_singleDataLine.Cmd, out var unit))
+        {
+            chartMachineCmdError = "找不到對應的命令資訊";
+            return;
+        }
+
+        blank_singleDataLine.Unit = unit;
+        CHART_setting_stage = CHART_SETTING_STAGE.DISPLAY_SETTING;
+    }
+
+    private void OnLineClick(int index, CHART_SINGLE_DATA_LINE temp)
+    {
+        SingleLine_index = index;
+        Edit_inCorrespondingStage();
+    }
+
+    private void DeleteCurve(CHART_SINGLE_DATA_LINE line)
+    {
+        if (edit_ChartSetting_Clone.chart_single_data_lines.Contains(line))
+        {
+            edit_ChartSetting_Clone.chart_single_data_lines.Remove(line);
+        }
+    }
+
+    private void DeleteAction_In_CHART_OVERVIEW_STAGE()
+    {
+        if (SingleLine_index >= 0 && SingleLine_index < edit_ChartSetting_Clone.chart_single_data_lines.Count)
+        {
+            edit_ChartSetting_Clone.chart_single_data_lines.RemoveAt(SingleLine_index);
+        }
+    }
+
+    private void Add_Curve()
+    {
+        if (edit_ChartSetting_Clone.chart_single_data_lines.Count >= 2)
+        {
+            return;
+        }
+
+        edit_ChartSetting_Clone.chart_single_data_lines.Add(new CHART_SINGLE_DATA_LINE
+        {
+            addr = 9999,
+            mdlName = string.Empty,
+            Cmd = string.Empty,
+            Unit = string.Empty,
+            Y_axis_selection = true,
+            color = string.Empty,
+            Data = Array.Empty<double?>(),
+            status = SettingStatus.YET
+        });
+    }
+
+    private void Confirm_CurveSetting()
+    {
+        Console.WriteLine("[edit_ChartSetting_Clone] : ");
+        string json = JsonSerializer.Serialize(edit_ChartSetting_Clone, new JsonSerializerOptions
+        {
+            WriteIndented = true
+        });
+        Console.WriteLine(json);
+
+        edit_ChartSetting_Clone.ChartTitle = temp_chartTitle;
+
+        currentCardInfo.Chart_Setting = edit_ChartSetting_Clone.DeepClone();
+        currentCardInfo.cardName = temp_chartTitle;
+
+        OnCardInfoUpdated.InvokeAsync(currentCardInfo);
+    }
+
+    private void YAxisChanged(ChangeEventArgs args)
+    {
+        if (bool.TryParse(args.Value?.ToString(), out var parsedValue))
+        {
+            blank_singleDataLine.Y_axis_selection = parsedValue;
+            yAxisError = string.Empty;
+            chartForm_errorMessage = string.Empty;
+        }
+        else
+        {
+            blank_singleDataLine.Y_axis_selection = null;
+        }
+
+        StateHasChanged();
+    }
+
+    private void clickUnit_CHART(string unit)
+    {
+        var target_DataLine = edit_ChartSetting_Clone.chart_single_data_lines[SingleLine_index];
+        target_DataLine.Unit = unit;
+        chartForm_errorMessage = string.Empty;
+        CHART_setting_stage = CHART_SETTING_STAGE.DISPLAY_SETTING;
+    }
+
+    private void clickCmd_CHART(string selectedCmd)
+    {
+        Console.WriteLine($"[ChartCardEdit][clickCmd_CHART] selectedCmd = {selectedCmd}");
+    }
+
+    private async Task Confirm_SingleDataLine_setting()
+    {
+        yTitleError = string.IsNullOrEmpty(temp_Y_singleTitle) ? "Y-Title is required!" : string.Empty;
+        yAxisError = blank_singleDataLine.Y_axis_selection == null ? "Y-axis is required!" : string.Empty;
+        colorError = string.IsNullOrEmpty(blank_singleDataLine.color) ? "Data-Color is required!" : string.Empty;
+
+        var target_DataLine = edit_ChartSetting_Clone.chart_single_data_lines[SingleLine_index];
+        bool sameAxis_Flag = false;
+        if (edit_ChartSetting_Clone.chart_single_data_lines.Count == 2)
+        {
+            int opposite_index = SingleLine_index == 0 ? 1 : 0;
+            sameAxis_Flag = blank_singleDataLine.Y_axis_selection == edit_ChartSetting_Clone.chart_single_data_lines[opposite_index].Y_axis_selection;
+        }
+
+        if (!string.IsNullOrEmpty(yTitleError) || !string.IsNullOrEmpty(yAxisError) || !string.IsNullOrEmpty(colorError) || sameAxis_Flag)
+        {
+            target_DataLine.status = SettingStatus.PROGRESS;
+            if (!string.IsNullOrEmpty(yTitleError))
+            {
+                chartForm_errorMessage = yTitleError;
+            }
+            else if (!string.IsNullOrEmpty(yAxisError))
+            {
+                chartForm_errorMessage = yAxisError;
+            }
+            else if (!string.IsNullOrEmpty(colorError))
+            {
+                chartForm_errorMessage = colorError;
+            }
+            else if (sameAxis_Flag)
+            {
+                chartForm_errorMessage = "兩組資料不可位於同一側";
+            }
+            return;
+        }
+
+        target_DataLine.addr = blank_singleDataLine.addr;
+        AppLogger.Log_To_File_log(_category, $"[ChartCardEdit][Confirm_SingleDataLine_setting] target_DataLine.addr = {target_DataLine.addr}", AppLogLevel.Trace);
+        target_DataLine.mdlName = blank_singleDataLine.mdlName;
+        target_DataLine.Cmd = blank_singleDataLine.Cmd;
+        target_DataLine.Unit = blank_singleDataLine.Unit;
+        target_DataLine.Y_axis_selection = blank_singleDataLine.Y_axis_selection;
+        target_DataLine.color = blank_singleDataLine.color;
+
+        if (target_DataLine.Y_axis_selection == true)
+        {
+            edit_ChartSetting_Clone.Y_left_Title = temp_Y_singleTitle;
+        }
+        else if (target_DataLine.Y_axis_selection == false)
+        {
+            edit_ChartSetting_Clone.Y_right_Title = temp_Y_singleTitle;
+        }
+
+        target_DataLine.status = SettingStatus.DONE;
+        CHART_setting_stage = CHART_SETTING_STAGE.OVERVIEW;
+
+        chartForm_errorMessage = string.Empty;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    [JSInvokable]
+    public void JS_Console(string debugMessage)
+    {
+        Console.WriteLine(debugMessage);
+    }
+}
