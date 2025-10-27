@@ -85,8 +85,6 @@
             <div class="modal-content-edit" @onclick:stopPropagation>
                 @{
                     var targetCard = CardInfos.Find(c => c.ID == editingCard_ID);
-                    Console.WriteLine(targetCard);
-                    Console.WriteLine("OpenEditCard");
                     if(targetCard != null)
                     {
                         if(!CardDefinitionRegistry.TryGet(targetCard.card_Type, out var cardDefinition) || cardDefinition?.EditorComponent is null)

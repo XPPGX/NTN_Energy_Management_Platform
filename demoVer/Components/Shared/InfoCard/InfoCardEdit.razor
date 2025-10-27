@@ -168,11 +168,13 @@
 				<MudList T="string" Dense="true" Hover="true">
 					@foreach (var (addr, modelName) in deviceAddr_List)
 					{
+						(string port, uint realAddr) = GetPortByAddr(addr);
+						string displayName = $"{port, -5} ({realAddr, 3}) → {modelName}";
 						<MudListItem T="string"
-									 @onclick="() => clickMachineName(addr, modelName)"
+									 @onclick="() => clickMachineName(addr, modelName, displayName)"
 									 Style="cursor: pointer;">
-							<MudIcon Icon="@Icons.Material.Filled.KeyboardCommandKey" Class="mr-2" />
-							<MudText>@($"[{addr}]: {modelName}")</MudText>
+							@* <MudIcon Icon="@Icons.Material.Filled.KeyboardCommandKey" Class="mr-2" /> *@
+							<MudText>@(displayName)</MudText>
 						</MudListItem>
 					}
 				</MudList>
@@ -368,6 +370,15 @@
 			AppLogger.Log_To_File_log(_category, $"[InfoCardEdit][getCMDs] Error : {e}", AppLogLevel.Error);
 			return false;
 		}
+	}
+
+	private (string, uint) GetPortByAddr(uint addr)
+	{
+		if(addr >= GlobalVar.MOD2_addr) {return ("MOD2", addr - GlobalVar.MOD2_addr);}
+		if(addr >= GlobalVar.MOD1_addr) {return ("MOD1", addr - GlobalVar.MOD1_addr);}
+		if(addr >= GlobalVar.CAN2_addr) {return ("CAN2", addr - GlobalVar.CAN2_addr);}
+		if(addr >= GlobalVar.CAN1_addr)	{return ("CAN1", addr - GlobalVar.CAN1_addr);}
+		return (string.Empty, addr);
 	}
 
 	[JSInvokable]
@@ -579,14 +590,15 @@
 		return uint.TryParse(span, out value);
 	}
 
-	private void clickMachineName(uint addr, string selectedMachineName)
+	private void clickMachineName(uint addr, string selectedMachineName, string selectedDisplay)
 	{
 		if (currentEdit_INFO_DataFormat_ref == null)
 		{
 			return;
 		}
 
-		var modelName = $"[{addr}] : {selectedMachineName}";
+		@* var modelName = $"[{addr}] : {selectedMachineName}"; *@
+		var modelName = selectedDisplay;
 		if (!string.Equals(currentEdit_INFO_DataFormat_ref.MachineName, modelName, StringComparison.Ordinal))
 		{
 			currentEdit_INFO_DataFormat_ref.MachineName = modelName;

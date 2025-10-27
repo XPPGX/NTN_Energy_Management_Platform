@@ -22,12 +22,11 @@ namespace demoVer.Services
         public string CommandName = string.Empty;
     }
 
-    public sealed record GroupDataChangedArgs
+    public sealed record CmdDataChangeArgs
     (
         uint Addr,
         string CommandName,
-        object DecodedValue,
-        IReadOnlyList<byte> RawBytes,
+        object RealValue,
         DateTimeOffset Timestamp
     );
 
@@ -46,12 +45,13 @@ namespace demoVer.Services
         private readonly ConcurrentDictionary<string , List<CmdLevelSubscription>> _clientSubscriptions = new();
         // JS : 每個 SingleCommandData 資料變動時要通知哪些連線(一個Cmd可被多人訂閱)
         private readonly ConcurrentDictionary<(uint addr, string cmd), HashSet<string>> _cmdsSubscribers = new();
-        // Actions : 每個 (addr, cmd) 變動時要執行的動作
+
+        // 每個CmdData的變動事件處理器，只會綁定一次
         private readonly ConcurrentDictionary<(uint addr, string cmd), Action> _hookedHandlers = new();
 
         // C# : 訂閱(addr, cmd) -> handlers
-        // private readonly ConcurrentDictionary<(uint addr, string cmd), List<Action<GroupDataChangedArgs>>> _groupsSubscribersCs = new();
-
+        // private readonly ConcurrentDictionary<(uint addr, string cmd), List<Action<CmdDataChangeArgs>>> _groupsSubscribersCs = new();
+        private readonly ConcurrentDictionary<(uint addr, string cmd), List<Action<CmdDataChangeArgs>>> _cmdDataCsSubscriptions = new();
         // 已經綁過事件的 CommandRawData(避免重複綁)
         private readonly HashSet<SingleCommandData> _alreadyHooked = new();
 
@@ -134,7 +134,7 @@ namespace demoVer.Services
         //         foreach (var raw in groups.Groups.Values)
         //             bytes.AddRange(raw.Data);
 
-        //         var args = new GroupDataChangedArgs(addr, cmdName, decoded, bytes, DateTimeOffset.UtcNow);
+        //         var args = new CmdDataChangeArgs(addr, cmdName, decoded, bytes, DateTimeOffset.UtcNow);
 
         //         // 2) JS：SignalR 批次送
         //         if (_groupsSubscribers.TryGetValue(key, out var jsConnIds) && jsConnIds.Count > 0)
@@ -147,7 +147,7 @@ namespace demoVer.Services
         //         // 3) C#：呼叫所有委派
         //         if (_groupsSubscribersCs.TryGetValue(key, out var handlers) && handlers.Count > 0)
         //         {
-        //             List<Action<GroupDataChangedArgs>> snapshot;
+        //             List<Action<CmdDataChangeArgs>> snapshot;
         //             lock (handlers)
         //                 snapshot = handlers.ToList();
 
@@ -307,7 +307,7 @@ namespace demoVer.Services
                 // 1. 取資料
                 string valueType = cmdData.type ?? string.Empty;
                 object sendValue;
-                switch(valueType)
+                switch (valueType)
                 {
                     case "Numeric":
                         //在第2步送出時，直接送value
@@ -327,15 +327,36 @@ namespace demoVer.Services
                         sendValue = cmdData.value ?? string.Empty;
                         break;
                 }
+
                 // 2. JS：SignalR 批次送
-                if(_cmdsSubscribers.TryGetValue(key, out var jsConnIds) && jsConnIds.Count > 0)
+                if (_cmdsSubscribers.TryGetValue(key, out var jsConnIds) && jsConnIds.Count > 0)
                 {
                     _hubContext.Clients.Clients(jsConnIds).SendAsync(
                         "UpdateDecodedVal", addr, cmdName, sendValue
                     );
                 }
+                
+                // 3. C#: 呼叫所有委派
+                if (_cmdDataCsSubscriptions.TryGetValue(key, out var handlers) && handlers.Count > 0)
+                {
+                    List<Action<CmdDataChangeArgs>> snapshot;
+                    lock (handlers)
+                        snapshot = handlers.ToList();
+
+                    var args = new CmdDataChangeArgs(
+                        Addr: addr,
+                        CommandName: cmdName,
+                        RealValue: sendValue,
+                        Timestamp: DateTimeOffset.UtcNow
+                    );
+
+                    foreach (var h in snapshot)
+                    {
+                        try { h(args); } catch { /* 避免單一 handler 影響其他人 */ }
+                    }
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 AppLogger.Log_To_File_log(_category, $"[OnCmdDataChanged] Error: {ex}", AppLogLevel.Error);
             }
@@ -344,49 +365,48 @@ namespace demoVer.Services
         
 
         // C#訂閱 : 回傳 IDisposable，方便在呼叫端 using 或 Dispose 解除訂閱
-        // public IDisposable SubscribeGroupCs(uint addr, string commandName, Group_CommandRawData groups, Action<GroupDataChangedArgs> handler)
-        // {
-        //     var key = (addr, commandName);
-        //     var list = _groupsSubscribersCs.GetOrAdd(key, _ => new List<Action<GroupDataChangedArgs>>());
+        public IDisposable SubscribeCmdCs(uint addr, string commandName, SingleCommandData cmdData, Action<CmdDataChangeArgs> handler)
+        {
+            var key = (addr, commandName);
+            var list = _cmdDataCsSubscriptions.GetOrAdd(key, _ => new List<Action<CmdDataChangeArgs>>());
 
-        //     lock (list)
-        //     {
-        //         list.Add(handler);
-        //     }
+            lock (list)
+            {
+                list.Add(handler);
+            }
 
-        //     EnsureHook(groups, addr, commandName);
+            EnsureHook(addr, commandName, cmdData);
 
-        //     // 首次推播一次
-        //     OnGroupDataChanged(addr, commandName, groups);
+            // 首次推播一次
+            OnCmdDataChanged(addr, commandName, cmdData);
 
 
-        //     AppLogger.Log_To_File_log(_category, $"[DataChangeEventManager][SubscribeGroupCs] {commandName}@{addr}", AppLogLevel.Trace);
+            AppLogger.Log_To_File_log(_category, $"[DataChangeEventManager][SubscribeGroupCs] {commandName}@{addr}", AppLogLevel.Trace);
 
-        //     return new Unsubscriber(() =>
-        //     {
-        //         if (_groupsSubscribersCs.TryGetValue(key, out var handlers))
-        //         {
-        //             lock (handlers)
-        //             {
-        //                 handlers.Remove(handler);
-        //                 if (handlers.Count == 0)
-        //                     _groupsSubscribersCs.TryRemove(key, out _);
-        //             }
-        //         }
-        //     });
-        //     return new Unsubscriber();
-        // }
+            return new Unsubscriber(() =>
+            {
+                if (_cmdDataCsSubscriptions.TryGetValue(key, out var handlers))
+                {
+                    lock (handlers)
+                    {
+                        handlers.Remove(handler);
+                        if (handlers.Count == 0)
+                            _cmdDataCsSubscriptions.TryRemove(key, out _);
+                    }
+                }
+            });
+        }
 
-        // private sealed class Unsubscriber : IDisposable
-        // {
-        //     private readonly Action _dispose;
-        //     private int _disposed;
-        //     public Unsubscriber(Action dispose) => _dispose = dispose;
-        //     public void Dispose()
-        //     {
-        //         if (Interlocked.Exchange(ref _disposed, 1) == 0)
-        //             _dispose();
-        //     }
-        // }
+        private sealed class Unsubscriber : IDisposable
+        {
+            private readonly Action _dispose;
+            private int _disposed;
+            public Unsubscriber(Action dispose) => _dispose = dispose;
+            public void Dispose()
+            {
+                if (Interlocked.Exchange(ref _disposed, 1) == 0)
+                    _dispose();
+            }
+        }
     }
 }

@@ -9,6 +9,7 @@ namespace demoVer.Models
 {
     public class Real_SingleDeviceData_JsonFormat
     {
+        
         [JsonPropertyName("port")]
         public string port { get; set; }
 
@@ -23,6 +24,12 @@ namespace demoVer.Models
 
         [JsonPropertyName("values")]
         public Dictionary<string, SingleCommandData> values { get; set; } = new();
+
+        private string _category = "";
+        public Real_SingleDeviceData_JsonFormat()
+        {
+            _category = GetType().FullName!;
+        }
 
         public void UpdateSelf_From(Real_SingleDeviceData_JsonFormat source)
         {
@@ -78,7 +85,7 @@ namespace demoVer.Models
             clone.UpdateSelf_From(this);
             return clone;
         }
-        
+
         public object? parseCmdData(string cmd)
         {
             if (!this.values.TryGetValue(cmd, out var cmdData))
@@ -98,6 +105,26 @@ namespace demoVer.Models
                     default:
                         return null;
                 }
+            }
+        }
+    
+        public Dictionary<string, string>? Get_Cmd_Unit_Dict()
+        {
+            try
+            {
+                var cmdUnitDict = new Dictionary<string, string>();
+
+                foreach (var (cmdName, cmdData) in this.values)
+                {
+                    cmdUnitDict[cmdName] = cmdData.unit ?? string.Empty;
+                    AppLogger.Log_To_File_log(_category, $"[Real_SingleDeviceData_JsonFormat][Get_Cmd_Unit_Dict] cmd : {cmdName}, unit_str = {cmdData.unit} ");
+                }
+                return cmdUnitDict;
+            }
+            catch(Exception e)
+            {
+                AppLogger.Log_To_File_log(_category, $"[Real_SingleDeviceData_JsonFormat][Get_Cmd_Unit_Dict] Error : {e.Message}", AppLogLevel.Error);
+                return null;
             }
         }
     }

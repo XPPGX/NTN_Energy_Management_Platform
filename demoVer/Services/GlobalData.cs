@@ -256,13 +256,16 @@ namespace demoVer.Services
         {
             try
             {
-                var groups_copy = Device_ReadData.GetCommandGroups(addr, "MFR_MODEL");
-                if(groups_copy == null) return null;
-                
-                
-                object tmp_modelName = _decoder.Decode(groups_copy, "MFR_MODEL", addr);
-                if(tmp_modelName == null) return null;
-                
+
+                var oneDeviceData_Copy = Real_Devices_ReadData.Get_oneDevice_DataSnapshot(addr);
+                if(oneDeviceData_Copy == null) return null;
+
+                var tmp_modelName = oneDeviceData_Copy.parseCmdData("MFR_MODEL");
+                if (tmp_modelName is null) return null;
+
+                // object tmp_modelName = _decoder.Decode(groups_copy, "MFR_MODEL", addr);
+                // if(tmp_modelName == null) return null;
+
                 AppLogger.Log_To_File_log(_category, $"[GlobalData][Get_ModelName_ByAddr] tmp_modelName : {(string)tmp_modelName}", AppLogLevel.Trace);
                 return (string)tmp_modelName;
             }
@@ -306,15 +309,21 @@ namespace demoVer.Services
         {
             try
             {
-                var tmp_cmd_unit_dict = new Dictionary<string ,string>();
-                
-                var oneDeivceData_ref = Device_ReadData.Get_oneDeviceData(addr);
-                if(oneDeivceData_ref == null) return null;
+                var oneDeviceData_Copy = Real_Devices_ReadData.Get_oneDevice_DataSnapshot(addr);
+                if (oneDeviceData_Copy == null) return null;
 
-                var oneDeviceData_cmd_unit_Dict = oneDeivceData_ref.Get_Cmd_unit_Dict();
-                if(oneDeviceData_cmd_unit_Dict == null || oneDeviceData_cmd_unit_Dict.Count == 0) return null;
-                
+                var oneDeviceData_cmd_unit_Dict = oneDeviceData_Copy.Get_Cmd_Unit_Dict();
+                if (oneDeviceData_cmd_unit_Dict is null || oneDeviceData_cmd_unit_Dict.Count == 0) return null;
+
                 return oneDeviceData_cmd_unit_Dict;
+                
+                // var oneDeivceData_ref = Device_ReadData.Get_oneDeviceData(addr);
+                // if(oneDeivceData_ref == null) return null;
+
+                // var oneDeviceData_cmd_unit_Dict = oneDeivceData_ref.Get_Cmd_unit_Dict();
+                // if(oneDeviceData_cmd_unit_Dict == null || oneDeviceData_cmd_unit_Dict.Count == 0) return null;
+                
+                // return oneDeviceData_cmd_unit_Dict;
             }
             catch(Exception e)
             {
