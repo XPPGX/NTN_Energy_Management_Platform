@@ -59,7 +59,10 @@
                                     <option value="9999">請選擇一個機器</option>
                                     @foreach (var (addr, mdlName) in deviceAddr_List)
                                     {
-                                        <option value="@addr">[@addr]: @mdlName</option>
+                                        @*addr 是存取記憶體時用的，顯示於UI時，是用port + realAddr*@
+                                        var (port, realAddr) = globalVar.Get_Port_RealAddr_ByAddr(addr);
+                                        string displayName = $"{port, -5} ({realAddr, 3}) → {mdlName}";
+                                        <option value="@addr">@displayName</option>
                                     }
                                 </select>
                             </div>
@@ -109,11 +112,13 @@
                 var index = i;
                 var temp = edit_ChartSetting_Clone.chart_single_data_lines[i];
 
-                var addr_mdlName_str = $"[{temp.addr}]{temp.mdlName}";
+                var (port, realAddr) = globalVar.Get_Port_RealAddr_ByAddr(temp.addr);
+                string displayName = $"{port, -5} ({realAddr, 3}) → {temp.mdlName}";
+                var addr_mdlName_str = displayName;
                 var hint_cmd = temp.status switch
                 {
-                    SettingStatus.YET => isMobile ? "長按此處編輯" : "右鍵編輯",
-                    SettingStatus.PROGRESS => isMobile ? "未完成:長按此處編輯" : "未完成:右鍵編輯",
+                    SettingStatus.YET => "請點擊卡片",
+                    SettingStatus.PROGRESS => "未完成:請點擊卡片",
                     SettingStatus.DONE => $"{temp.Cmd}({temp.Unit})",
                     _ => string.Empty
                 };

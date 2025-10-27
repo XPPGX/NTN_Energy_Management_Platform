@@ -10,6 +10,7 @@ using System.IO;
 using System.Text.Json;
 using demoVer.Interfaces;
 using System.Runtime.InteropServices;
+using MudBlazor.Charts;
 
 namespace demoVer.Services
 {
@@ -523,39 +524,56 @@ namespace demoVer.Services
                 int nowDataLength = 0;
                 nowDataLength = chartSetting.chart_single_data_lines[0].Data?.Length ?? 0;
                 // Console.WriteLine($"[DataCenter][ApplyRealDataToChart] nowDataLength = {nowDataLength}");
-                
 
                 //更新每條線的資料
                 foreach (var line in chartSetting.chart_single_data_lines)
                 {
-                    if (string.IsNullOrEmpty(line.Cmd)) continue;
+                    if (string.IsNullOrEmpty(line.Cmd))
+                    {
+                        Console.WriteLine($"[ApplyRealDataToChart] line.Cmd is null or empty");
+                        continue;
+                    }
 
                     // 從 Device_ReadData 抓這個 addr + Cmd 的資料
-                    var groups = _globalVar.Device_ReadData.GetCommandGroups(line.addr, line.Cmd);
-                    // Console.WriteLine($"[DataCenter][ApplyRealDataToChart] line.addr = {line.addr}, line.Cmd = {line.Cmd}");
-                    if (groups != null)
+                    var oneDeviceData = _globalVar.Real_Devices_ReadData.Get_oneDevice_DataSnapshot(line.addr);
+                    if (oneDeviceData == null)
                     {
-                        var decoded = _decoder.Decode(groups, line.Cmd, line.addr);
-                        if (decoded != null && double.TryParse(decoded.ToString(), out var value))
+                        Console.WriteLine($"[ApplyRealDataToChart] oneDeviceData is null for addr = {line.addr}");
+                        continue;
+                    }
+
+                    var cmdType = oneDeviceData.GetCmdType(line.Cmd);
+                    if (!string.Equals(cmdType, "Numeric", StringComparison.OrdinalIgnoreCase))
+                    {
+                        Console.WriteLine($"[ApplyRealDataToChart] cmdType is not Numeric for Cmd = {line.Cmd}, cmdType = {cmdType}");
+                        continue;
+                    }
+
+                    var realValue = oneDeviceData.parseCmdData(line.Cmd);
+
+                    if (realValue is not null)
+                    {
+                        double? RealValue_double = (double?)realValue;
+                        Console.WriteLine($"realValue = {realValue}, RealValue_double = {RealValue_double}");
+                        var newChartLineData = line.Data?.ToList() ?? new List<double?>();
+
+                        if (newChartLineData?.Count < nowDataLength)
                         {
-                            // 把最新值 append 進 Data
-                            var newData = line.Data?.ToList() ?? new List<double?>();
-
-                            if(newData?.Count < nowDataLength)
+                            for (int i = 0; i < nowDataLength; i++)
                             {
-                                for(int i = 0 ; i < nowDataLength ; i ++)
-                                {
-                                    newData.Add(null);
-                                }
+                                newChartLineData.Add(null);
                             }
+                        }
 
-                            if (newData?.Count >= chartMaxDataCount) // 保持最多 50 筆 (可自行調整)
-                                newData.RemoveAt(0);
+                        if (newChartLineData?.Count >= chartMaxDataCount)
+                        {
+                            newChartLineData.RemoveAt(0);
+                        }
 
-                            
-
-                            newData.Add(value);
-                            line.Data = newData.ToArray();
+                        newChartLineData?.Add(RealValue_double);
+                        if (newChartLineData is not null)
+                        {
+                            line.Data = newChartLineData.ToArray();
                         }
                     }
                 }

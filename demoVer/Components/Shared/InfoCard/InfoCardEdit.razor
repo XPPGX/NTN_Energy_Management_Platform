@@ -168,7 +168,7 @@
 				<MudList T="string" Dense="true" Hover="true">
 					@foreach (var (addr, modelName) in deviceAddr_List)
 					{
-						(string port, uint realAddr) = GetPortByAddr(addr);
+						(string port, uint realAddr) = globalVar.Get_Port_RealAddr_ByAddr(addr);
 						string displayName = $"{port, -5} ({realAddr, 3}) → {modelName}";
 						<MudListItem T="string"
 									 @onclick="() => clickMachineName(addr, modelName, displayName)"
@@ -370,15 +370,6 @@
 			AppLogger.Log_To_File_log(_category, $"[InfoCardEdit][getCMDs] Error : {e}", AppLogLevel.Error);
 			return false;
 		}
-	}
-
-	private (string, uint) GetPortByAddr(uint addr)
-	{
-		if(addr >= GlobalVar.MOD2_addr) {return ("MOD2", addr - GlobalVar.MOD2_addr);}
-		if(addr >= GlobalVar.MOD1_addr) {return ("MOD1", addr - GlobalVar.MOD1_addr);}
-		if(addr >= GlobalVar.CAN2_addr) {return ("CAN2", addr - GlobalVar.CAN2_addr);}
-		if(addr >= GlobalVar.CAN1_addr)	{return ("CAN1", addr - GlobalVar.CAN1_addr);}
-		return (string.Empty, addr);
 	}
 
 	[JSInvokable]

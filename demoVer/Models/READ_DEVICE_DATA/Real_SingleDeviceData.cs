@@ -86,25 +86,52 @@ namespace demoVer.Models
             return clone;
         }
 
-        public object? parseCmdData(string cmd)
+        public string GetCmdType(string cmd)
         {
             if (!this.values.TryGetValue(cmd, out var cmdData))
             {
-                return null;
+                return string.Empty;
             }
             else
             {
-                switch (cmdData.type)
-                {
-                    case "Numeric":
-                        return (double)cmdData.value;
-                    case "ASCII":
-                        return cmdData.value.ToString();
-                    case "BitField":
-                        return (List<decodeContent>?)cmdData.DeepClone_decode();
-                    default:
-                        return null;
-                }
+                return cmdData.type;
+            }
+        }
+
+        public object? parseCmdData(string cmd)
+        {
+            if (!this.values.TryGetValue(cmd, out var cmdData)) return null;
+
+            var rawValue = cmdData.value;
+
+            switch (cmdData.type)
+            {
+                case "Numeric":
+                    //處理JsonElement (System.Text.Json反序列化後的型態)
+                    if (rawValue is JsonElement je)
+                    {
+                        if (je.ValueKind == JsonValueKind.Number && je.TryGetDouble(out var num)) return num;
+                        else { return null; }
+                    }
+                    if (rawValue is double d) return d;
+                    if (rawValue is float f) return (double)f;
+                    if (rawValue is int i) return (double)i;
+                    if (rawValue is long l) return (double)l;
+                    return null;
+                case "ASCII":
+                    if (rawValue is JsonElement asciiJe)
+                    {
+                        return asciiJe.GetString();
+                    }
+                    else
+                    {
+                        return rawValue?.ToString();
+                    }
+
+                case "BitField":
+                    return (List<decodeContent>?)cmdData.DeepClone_decode();
+                default:
+                    return null;
             }
         }
     

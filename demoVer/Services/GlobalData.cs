@@ -236,6 +236,15 @@ namespace demoVer.Services
             }
         }
 
+        public (string, uint) Get_Port_RealAddr_ByAddr(uint addr)
+	    {
+            if(addr >= MOD2_addr) {return ("MOD2", addr - MOD2_addr);}
+            if(addr >= MOD1_addr) {return ("MOD1", addr - MOD1_addr);}
+            if(addr >= CAN2_addr) {return ("CAN2", addr - CAN2_addr);}
+            if(addr >= CAN1_addr) {return ("CAN1", addr - CAN1_addr);}
+            return (string.Empty, addr);
+	    }
+
         public void Get_INV_ConnectNum()
         {
             INV_ConnectNum = LinkedDevices.Snapshot().Length;
