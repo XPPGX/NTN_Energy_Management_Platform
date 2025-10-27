@@ -2,69 +2,83 @@ using demoVer.Services;
 using demoVer.Utils;
 using System.Text.Json;
 using System.Collections.Concurrent;
-using System.Linq; // for ToArray/Except/ToList
+using System.Linq;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage; // for ToArray/Except/ToList
 
 namespace demoVer.Models
 {
-    public class LinkedDeviceStore
+    public class Real_allDeviceData
     {
-        // 記錄連線Device，以ConcurrentDictionary當集合
-        private readonly ConcurrentDictionary<uint, byte> _links = new();
-        public event Action? linkChanged;
+        private string _category;
 
-        public bool Link(uint addr)
+        private ConcurrentDictionary<uint, Real_SingleDeviceData_JsonFormat> _AllDevice_Data = new(); // uint addr 對應每一個oneDevice_Data
+
+        public Real_allDeviceData()
         {
-            if (_links.TryAdd(addr, 0))
-            {
-                linkChanged?.Invoke();
-                return true;
-            }
-            return false;
+            _category = GetType().FullName!;
         }
 
-        public bool Unlink(uint addr)
+        public void SaveReal_oneDevice_Data(uint addr, Real_SingleDeviceData_JsonFormat oneDevice_JsonData)
         {
-            if (_links.TryRemove(addr, out _))
-            {
-                linkChanged?.Invoke();
-                return true;
-            }
-            return false;
-        }
+            AppLogger.Log_To_File_log(_category, $"目前已有裝置 : {string.Join(", ", _AllDevice_Data.Keys.ToArray())}, 新裝置 : {addr}", AppLogLevel.Trace);
 
-        public uint[] Snapshot() => _links.Keys.ToArray();
+            if (_AllDevice_Data.TryGetValue(addr, out Real_SingleDeviceData_JsonFormat TargetDevice_Data))
+            {// 已有device的資料在該addr → 更新來源資料到既有物件
 
-        public uint[] SnapshotSorted()
-        {
-            var arr = _links.Keys.ToArray();
-            Array.Sort(arr);
-            return arr;
-        }
-
-        public uint? GetFirstLinkedAddr(uint? min, uint? max)
-        {
-            if(min is null){min = 0;}
-            if(max is null){max = 255;}
-            
-            uint? firstLinkedAddr = null;
-
-            foreach(var linkedAddr in _links.Keys)
-            {
-                if(linkedAddr <= max && linkedAddr >= min)
+                // 為避免多執緒同時寫，對該物件加鎖
+                lock (TargetDevice_Data)
                 {
-                    firstLinkedAddr = linkedAddr;
-                    break;
+                    TargetDevice_Data.UpdateSelf_From(oneDevice_JsonData);
+                    AppLogger.Log_To_File_log(_category, $"Update Real DeviceData, addr = {addr}", AppLogLevel.Trace);
                 }
             }
+            else
+            {// 沒有device的資料在該addr，建立新的device資料
 
-            if(firstLinkedAddr is null)
+                // 直接賦值（原子替換該 key 的值；若不存在即新增）
+                _AllDevice_Data[addr] = oneDevice_JsonData;
+                AppLogger.Log_To_File_log(_category, $"New Real DeviceData, addr = {addr}", AppLogLevel.Trace);
+            }
+        }
+
+        public void Remove_oneDevice_Data(uint addr)
+        {
+            // 對應addr的資料不存在於記憶體，直接return
+            if (_AllDevice_Data.ContainsKey(addr) == false) return;
+
+            if (_AllDevice_Data.TryGetValue(addr, out var deviceData))
             {
-                Console.WriteLine($"[LinkedDeviceStore][GetFirstLinkedAddr] firstLinkedAddr is null");
+                lock (deviceData)
+                {
+                    deviceData.ReleaseMemory();
+                }
+                _AllDevice_Data.TryRemove(addr, out var remove_oneDevice_Data);
+            }
+        }
+
+        public Real_SingleDeviceData_JsonFormat? Get_oneDevice_DataSnapshot(uint addr)
+        {
+            if (!_AllDevice_Data.TryGetValue(addr, out var deviceData))
+            {
                 return null;
             }
 
-            Console.WriteLine($"[LinkedDeviceStore][GetFirstLinkedAddr] firstLinkedAddr = {firstLinkedAddr}");
-            return firstLinkedAddr;
+            var copy = deviceData.DeepClone();
+            return copy;
+        }
+        
+        public SingleCommandData? Get_oneDevice_CmdData_Ref(uint addr, string cmdName)
+        {
+            if (!_AllDevice_Data.TryGetValue(addr, out var deviceData))
+            {
+                return null;
+            }
+
+            if (!deviceData.values.TryGetValue(cmdName, out var cmdData))
+            {
+                return null;
+            }
+            return cmdData;
         }
     }
 
@@ -199,7 +213,7 @@ namespace demoVer.Models
             return null;
         }
 
-        
+
 
 
         public oneDevice_Data Get_oneDeviceData(uint addr)
@@ -209,7 +223,7 @@ namespace demoVer.Models
             {
                 return oneDeviceData;
             }
-            
+
             return null;
         }
 

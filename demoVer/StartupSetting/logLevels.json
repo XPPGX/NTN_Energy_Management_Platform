@@ -1,6 +1,6 @@
 {
     "demoVer.Components.Pages.NTN_Home"         : 2,
-    "demoVer.Components.Pages.Link_status"      : 2,
+    "demoVer.Components.Pages.Link_status"      : 0,
     "demoVer.Components.Pages.Inverter_setting" : 2,
     "demoVer.Components.Pages.Battery_setting"  : 2,
     "demoVer.Components.Pages.Log"              : 2,
@@ -11,7 +11,7 @@
     "demoVer.Models.oneDevice_Data"             : 2,
     "demoVer.Models.WriteAPI_Datas"             : 2,
     "demoVer.Models.SubAppSystem_WriteMemory"   : 2,
-    "demoVer.Services.DataChangeEventManager"   : 2,
+    "demoVer.Services.DataChangeEventManager"   : 0,
     "demoVer.Services.ApiManager"               : 2,
     "demoVer.Services.GroupsDataDecoder"        : 2,
     "demoVer.Services.PollingRead"              : 2,

@@ -18,29 +18,28 @@ namespace demoVer.Services
         public int RequestTimeoutMs {get; set;} = 1000;
     }
 
+    //紀錄polling的Port跟Addr範圍
     public class PollingWave
-    {   //記錄這段連續的addr，其polling的port(CAN1, ...)，起始Addr(startAddr), 有多少連續的device(length)
+    {
         //e.g.
         /*
             e.g. port = "CAN1"
             startAddr = 0
             length = 2
 
-            這代表，在CAN1 port上從Addr 0 開始兩格，有device連接，也就是Addr 0, Addr 1有device連接
+            這代表，Polling單台的service會polling CAN1的Addr 0, 1 兩台設備
         */
-        
         public string port; //CAN1, CAN2, MOD1, MOD2
         public int startAddr;
         public int length;
     }
     
-    // 目前是先全部addr polling
-    // 之後要改成針對不同wave polling
     public class PollingRead : BackgroundService, PausableWorker
     {
         //injections
         private readonly GlobalVar _globalVar;
         private readonly ApiManager _apiManager;
+        private readonly LinkAddrManager _linkAddrManager;
 
         //控制PollingRead的啟動時機    
         private volatile bool _enabled;
@@ -48,7 +47,7 @@ namespace demoVer.Services
 
         //Variables
         private string _category;
-        private List<SubAppSystem> _pollingWave;
+        private List<PollingWave> _pollingWave = new List<PollingWave>();
         private PollingOptions _opt = new PollingOptions();
         private const uint portMaxDeviceNum = 64;
 
@@ -69,16 +68,16 @@ namespace demoVer.Services
         private int counter = 0;
 
         public PollingRead( GlobalVar globalVar,
-                            ApiManager apiManager)
+                            ApiManager apiManager,
+                            LinkAddrManager linkAddrManager)
         {
             _globalVar  = globalVar;
             _apiManager = apiManager;
+            _linkAddrManager = linkAddrManager;
             _category = GetType().FullName!;
             
-            _pollingWave = _globalVar.SubSystems;
-            
+            // _pollingWave = _globalVar.SubSystems;
             initPollingWave();
-            
         }
         
         public Task EnableAsync()
@@ -129,164 +128,131 @@ namespace demoVer.Services
 
         private async Task PollOneStepAsync(CancellationToken ct)
         {
-            try
-            {
-                //debug
-                // if(!_globalVar.Debug_Flag)
-                // {
-                //     await Task.Delay(50, ct);
-                //     return;
-                // }
+            //用於控制是否要等100ms再發下一次polling
+            bool IsAPI_sent = true;
 
+            try
+            {   
                 //release
                 using var reqCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
                 reqCts.CancelAfter(_opt.RequestTimeoutMs);        
                 
                 nowPollingPort  = _pollingWave[waveIndex].port;
-                // nowPollingAddr  = (uint)(_globalVar.getPortStartAddr(nowPollingPort) + _pollingWave[waveIndex].startAddr + nowPollingCount);
                 nowPollingAddr = (uint)(_pollingWave[waveIndex].startAddr + nowPollingCount);
                 nowStoringAddr = (uint)waveIndex * portMaxDeviceNum + nowPollingAddr;
 
                 //判斷當前連線中是否有 nowPollingAddr
                 var tmp_linkingAddr = new HashSet<uint>(linkingAddr);
+                
                 if(!tmp_linkingAddr.Contains(nowStoringAddr))
-                {
+                {// 此次polling的addr不在link-status中，視為斷線，跳過此次polling
+
                     AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] polling {nowStoringAddr} is not linked, pass it.", AppLogLevel.Trace);
-
-                   
                 
+                    //======預計廢除========
                     //移除 link
                     _globalVar.LinkedDevices.Unlink(nowStoringAddr);
                     //移除 Phase字典中的addr
-                    _globalVar.INVs_Phase.TryRemove(nowPollingAddr, out var removed);
-
+                    // _globalVar.INVs_Phase.TryRemove(nowPollingAddr, out var removed);
                     //刪除Device_ReadData裡面，nowStoringAddr的資料
                     _globalVar.Device_ReadData.Remove_oneDevice_Data(nowStoringAddr);
+                    //======================
+
+                    //預計保留
+                    _linkAddrManager.Unlink(nowStoringAddr);
+                    _globalVar.Real_Devices_ReadData.Remove_oneDevice_Data(nowPollingAddr);
 
                     AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] : {nowPollingPort}@{nowPollingAddr} removing done...", AppLogLevel.Trace);
-
-                    //遞增Index
-                    if(nowPollingCount >= (_pollingWave[waveIndex].length - 1))
-                    {
-                        waveIndex = (waveIndex + 1) % _pollingWave.Count;
-                        nowPollingCount = 0;
-                    }
-                    else
-                    {
-                        nowPollingCount ++;
-                    }
-                    return;
-                }
-                // AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] nowPollingPort = {nowPollingPort}, nowPollingAddr = {nowPollingAddr}", AppLogLevel.Trace);
-
-                //用READ_API取得 單台INV的資料 （建議 ApiManager 方法支援 CancellationToken）
-                AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] nowPollingPort = {nowPollingPort}, nowPollingAddr = {nowPollingAddr} begin...", AppLogLevel.Trace);
-                var res = await _apiManager.apiRead_OneDeviceData(nowPollingPort, nowPollingAddr);
-                bool res_is_valid = false;
-                AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] nowPollingPort = {nowPollingPort}, nowPollingAddr = {nowPollingAddr} done...", AppLogLevel.Trace);
-                //檢查 ReadAPI資料有效性
-                if(res == null)
-                {
-                    //資料為空
-                    res_is_valid = false;
-                    AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] response is NULL", AppLogLevel.Trace);
+                    
+                    IsAPI_sent = false;
                 }
                 else
-                {
-                    //檢查MFR_MODEL是否為空，是的話就放棄這筆資料。
-                    var mfrModels = res.Where(c => c.commandName == "MFR_MODEL").ToList();
-                    bool allZero = true;
-                    foreach(var cmdRawData in mfrModels)
-                    {
-                        var data = cmdRawData.data;
-                        for(int i = 0 ; i < data.Count ; i ++)
+                {// 此次polling的addr在link-status中，視為連線，發送API取得資料
+
+                    //用READ_API取得 單台INV的資料 （建議 ApiManager 方法支援 CancellationToken）
+                    AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] nowPollingPort = {nowPollingPort}, nowPollingAddr = {nowPollingAddr} Begin...", AppLogLevel.Trace);
+                    var res = await _apiManager.apiReadReal_OneDeviceData(nowPollingPort, nowPollingAddr);
+                    AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] nowPollingPort = {nowPollingPort}, nowPollingAddr = {nowPollingAddr} Done...", AppLogLevel.Trace);
+
+                    //檢查 ReadRealAPI資料有效性
+                    bool res_is_valid = checkApiResponseValidity(res);
+
+                    if(res_is_valid is false)
+                    {//此次資料無效，模組視該addr為斷線，移除該addr資料(若存在)
+
+                        AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] : response is {res_is_valid}, {nowPollingPort}@{nowPollingAddr} removing begin...", AppLogLevel.Trace);
+                        //======預計廢除========
+                        //移除 link
+                        _globalVar.LinkedDevices.Unlink(nowStoringAddr);
+                        //移除 Phase字典中的addr
+                        _globalVar.INVs_Phase.TryRemove(nowPollingAddr, out var removed);
+                        //刪除Device_ReadData裡面，nowStoringAddr的資料
+                        _globalVar.Device_ReadData.Remove_oneDevice_Data(nowStoringAddr);
+                        //======================
+
+
+                        //預計保留
+                        _linkAddrManager.Unlink(nowStoringAddr);
+                        _globalVar.Real_Devices_ReadData.Remove_oneDevice_Data(nowPollingAddr);
+                        AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] : {nowPollingPort}@{nowPollingAddr} removing done...", AppLogLevel.Trace);
+                        
+                    }
+                    else
+                    {//此次資料有效，儲存該addr資料
+                        if(waveIndex >= 0)
                         {
-                            // AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] data[{i}] = {data[i]}", AppLogLevel.Trace);
-                            if(data[i] != 0)
-                            {
-                                
-                                allZero = false;
-                                break;
-                            }
+                            AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] : response is {res_is_valid}, {nowPollingPort}@{nowPollingAddr} saving start...", AppLogLevel.Trace);
+                            
+                            //======預計廢除========
+                            _globalVar.LinkedDevices.Link(nowStoringAddr);
+                            //======================
+
+                            //預計保留
+                            _linkAddrManager.Link(nowStoringAddr);
+                            _globalVar.Real_Devices_ReadData.SaveReal_oneDevice_Data(nowStoringAddr, res);
+                            AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] : {nowPollingPort}@{nowPollingAddr} saving done...", AppLogLevel.Trace);
                         }
-                    }
-
-                    if(allZero is true)
-                    {
-                        res_is_valid = false;
-                    }
-                    else
-                    {
-                        res_is_valid = true;
-                    }
-                    
-                    AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] response is {res_is_valid}", AppLogLevel.Trace);
-                }
-                
-                if(res_is_valid is false)
-                {
-                    
-                    AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] : response is {res_is_valid}, {nowPollingPort}@{nowPollingAddr} removing begin...", AppLogLevel.Trace);
-                
-                    //移除 link
-                    _globalVar.LinkedDevices.Unlink(nowStoringAddr);
-                    //移除 Phase字典中的addr
-                    _globalVar.INVs_Phase.TryRemove(nowPollingAddr, out var removed);
-
-                    //刪除Device_ReadData裡面，nowStoringAddr的資料
-                    _globalVar.Device_ReadData.Remove_oneDevice_Data(nowStoringAddr);
-
-                    AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] : {nowPollingPort}@{nowPollingAddr} removing done...", AppLogLevel.Trace);
-                }
-                else
-                {
-                    //儲存 單台INV的資料到記憶體中 
-                    if(waveIndex >= 0)
-                    {   
-                        AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] : response is {res_is_valid}, {nowPollingPort}@{nowPollingAddr} saving start...", AppLogLevel.Trace);
-
-                        _globalVar.LinkedDevices.Link(nowStoringAddr);
-
-                        _globalVar.Device_ReadData.Read_oneDevice_Data(nowStoringAddr, res);
-
-                        AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] : {nowPollingPort}@{nowPollingAddr} saving done...", AppLogLevel.Trace);
                     }
                 }
             }
             catch (OperationCanceledException e)
             {
-                // AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : Timeout, {e}", AppLogLevel.Warning);
+                AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : Timeout, {e}", AppLogLevel.Warning);
             }
             catch (HttpRequestException ex)
             {
-                // AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : Read {nowPollingAddr} HTTP failed, {ex}", AppLogLevel.Debug);
+                AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : Read {nowPollingAddr} HTTP failed, {ex}", AppLogLevel.Debug);
             }
             catch (System.Exception ex)
             {
-                // AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : Read {nowPollingAddr} SYS failed, {ex}", AppLogLevel.Error);
+                AppLogger.Log_To_File_log(_category, $"[PollingRead][ExecuteAsync] : Read {nowPollingAddr} SYS failed, {ex}", AppLogLevel.Error);
             }
-
-            //遞增Index
-            if(nowPollingCount >= (_pollingWave[waveIndex].length - 1))
+            finally
             {
-                waveIndex = (waveIndex + 1) % _pollingWave.Count;
-                nowPollingCount = 0;
+                //遞增Index
+                if (nowPollingCount >= (_pollingWave[waveIndex].length - 1))
+                {
+                    waveIndex = (waveIndex + 1) % _pollingWave.Count;
+                    nowPollingCount = 0;
+                }
+                else
+                {
+                    nowPollingCount++;
+                }
+                
+                AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] IsAPI_sent = {IsAPI_sent}", AppLogLevel.Trace);
+                if (_opt.PerRequestDelayMs > 0 && IsAPI_sent is true)
+                {
+                    await Task.Delay(_opt.PerRequestDelayMs, ct);
+                }
+                // //delay 20ms
+                // await Task.Delay(1000);
             }
-            else
-            {
-                nowPollingCount ++;
-            }
-
-            if(_opt.PerRequestDelayMs > 0)
-            {
-                await Task.Delay(_opt.PerRequestDelayMs, ct);
-            }
-            // //delay 20ms
-            // await Task.Delay(1000);
         }
         
         private async Task PollNowLinkAddr(CancellationToken ct)
         {
+            bool PollingNowLink_isSucc = true;
             try
             {
                 //release
@@ -296,86 +262,143 @@ namespace demoVer.Services
                 rcv_linkStatus = await _apiManager.apiRead_LinkStatus();
                 if(rcv_linkStatus is null)
                 {
+                    PollingNowLink_isSucc = false;
+                    
                     linkingAddr.Clear();
                     AppLogger.Log_To_File_log(_category, $"[PollingRead][PollNowLinkAddr] rcv_linkStatus is Null", AppLogLevel.Trace);
-
-                    await Task.Delay(5000, ct); //如果linkStatus收到NULL，等待五秒
-                    return;
                 }
-
-                var INV_products = rcv_linkStatus.Products["All"];
-
-                for(uint i = 0 ; i < 64 ; i ++)
+                else
                 {
-                    uint CAN1_index = (uint)((INV_products.CAN1_LINK >> (int)i) & 1);
-                    uint CAN2_index = (uint)((INV_products.CAN2_LINK >> (int)i) & 1);
-                    uint MOD1_index = (uint)((INV_products.MOD1_LINK >> (int)i) & 1);
-                    uint MOD2_index = (uint)((INV_products.MOD2_LINK >> (int)i) & 1);
+                    PollingNowLink_isSucc = true;
 
-                    // Console.WriteLine($"CAN1_index = {CAN1_index}, CAN2_index = {CAN2_index}, MOD1_index = {MOD1_index}, MOD2_index = {MOD2_index}");
-                    
-                    if(CAN1_index == 1)
-                    {
-                        linkingAddr.Add(i);
-                    }
-                    else
-                    {
-                        linkingAddr.Remove(i);
-                    }
+                    var INV_products = rcv_linkStatus.Products["All"];
 
-                    if(CAN2_index == 1)
+                    for(uint i = 0 ; i < 64 ; i ++)
                     {
-                        linkingAddr.Add(i + 64);
-                    }
-                    else
-                    {
-                        linkingAddr.Remove(i + 64);
-                    }
+                        uint CAN1_index = (uint)((INV_products.CAN1_LINK >> (int)i) & 1);
+                        uint CAN2_index = (uint)((INV_products.CAN2_LINK >> (int)i) & 1);
+                        uint MOD1_index = (uint)((INV_products.MOD1_LINK >> (int)i) & 1);
+                        uint MOD2_index = (uint)((INV_products.MOD2_LINK >> (int)i) & 1);
 
-                    if(MOD1_index == 1)
-                    {
-                        linkingAddr.Add(i + 128);
-                    }
-                    else
-                    {
-                        linkingAddr.Remove(i + 128);
-                    }
+                        // Console.WriteLine($"CAN1_index = {CAN1_index}, CAN2_index = {CAN2_index}, MOD1_index = {MOD1_index}, MOD2_index = {MOD2_index}");
+                        
+                        if(CAN1_index == 1)
+                        {
+                            linkingAddr.Add(i);
+                        }
+                        else
+                        {
+                            linkingAddr.Remove(i);
+                        }
 
-                    if(MOD2_index == 1)
-                    {
-                        linkingAddr.Add(i + 192);
+                        if(CAN2_index == 1)
+                        {
+                            linkingAddr.Add(i + 64);
+                        }
+                        else
+                        {
+                            linkingAddr.Remove(i + 64);
+                        }
+
+                        if(MOD1_index == 1)
+                        {
+                            linkingAddr.Add(i + 128);
+                        }
+                        else
+                        {
+                            linkingAddr.Remove(i + 128);
+                        }
+
+                        if(MOD2_index == 1)
+                        {
+                            linkingAddr.Add(i + 192);
+                        }
+                        else
+                        {
+                            linkingAddr.Remove(i + 192);
+                        }
                     }
-                    else
-                    {
-                        linkingAddr.Remove(i + 192);
-                    }
+                    AppLogger.Log_To_File_log(_category, $"[PollingRead][PollNowLinkAddr] {string.Join(", ", linkingAddr)}", AppLogLevel.Trace);
                 }
-                AppLogger.Log_To_File_log(_category, $"[PollingRead][PollNowLinkAddr] {string.Join(", ", linkingAddr)}", AppLogLevel.Trace);
             }
             catch(Exception e)
             {
                 AppLogger.Log_To_File_log(_category, $"[PollingRead][PollNowLinkAddr] Error : {e}", AppLogLevel.Error);
                 return;
             }
-            
-            if(_opt.PerRequestDelayMs > 0)
+            finally
             {
-                await Task.Delay(_opt.PerRequestDelayMs, ct);
+                AppLogger.Log_To_File_log(_category, $"[PollingRead][PollNowLinkAddr] PollingNowLink_isSucc = {PollingNowLink_isSucc}", AppLogLevel.Trace);
+
+                if(PollingNowLink_isSucc is false)
+                {//LinkStatus API 回傳NULL，則等待5秒，再發下一次
+                    await Task.Delay(5000, ct);
+                }
+                else
+                {//正常取得LinkStatus 則等待一次成功polling的時間，再發下一次
+                    if(_opt.PerRequestDelayMs > 0)
+                    {
+                        await Task.Delay(_opt.PerRequestDelayMs, ct);
+                    }
+                }
             }
         }
-
         public void initPollingWave()
         {
             //暫定PollingWave為以下，之後會更新「初始化方式」
-            waveIndex       = 0;
-            nowPollingPort  = "";
-            nowPollingAddr  = 0;
+            waveIndex = 0;
+            nowPollingPort = "";
+            nowPollingAddr = 0;
             nowPollingCount = 0;
 
-            // _pollingWave.Add(new PollingWave{port="CAN1", startAddr=0, length=1});
-            // _pollingWave.Add(new PollingWave{port="CAN2", startAddr=0, length=64});
-            // _pollingWave.Add(new PollingWave{port="MOD1", startAddr=0, length=64});
-            // _pollingWave.Add(new PollingWave{port="MOD2", startAddr=0, length=64});
+            //當前開放CAN1, CAN2, MOD1, MOD2的addr全部polling
+            _pollingWave.Add(new PollingWave { port = "CAN1", startAddr = 0, length = 64 });
+
+            _pollingWave.Add(new PollingWave { port = "CAN2", startAddr = 0, length = 64 });
+
+            _pollingWave.Add(new PollingWave { port = "MOD1", startAddr = 0, length = 64 });
+
+            _pollingWave.Add(new PollingWave { port = "MOD2", startAddr = 0, length = 64 });
+
+            //發送API的addr會根據linkingAddr來決定
+        }
+
+        //檢查 ReadRealAPI資料有效性
+        private bool checkApiResponseValidity(Real_SingleDeviceData_JsonFormat res)
+        {
+            //檢查 res 是否為 null
+            if (res is null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[PollingRead][checkApiResponseValidity] res is invalid !! (res is null)", AppLogLevel.Trace);
+                return false;
+            }
+
+            /*
+                目前針對 明緯設備 與 其他廠牌設備 做不同的有效性檢查
+                1. 明緯的設備皆有 MFR_MODEL 命令，所以檢查 MFR_MODEL 是否存在即可判斷資料有效性
+                2. 對其他廠牌設備，不一定有MFR_MODEL命令，所以暫時不做其他檢查
+            */
+
+            //檢查MFR_MODEL是否為空
+            if (res.values.TryGetValue("MFR_MODEL", out var tmpData))
+            {
+                if (string.Equals(tmpData.type, "ASCII", StringComparison.OrdinalIgnoreCase))
+                {
+                    string tmp_modelName = tmpData.value.ToString() ?? "";
+                    if (string.IsNullOrEmpty(tmp_modelName))
+                    {
+                        AppLogger.Log_To_File_log(_category, $"[PollingRead][checkApiResponseValidity] res is invalid !! (MFR_MODEL is empty)", AppLogLevel.Trace);
+                        return false;
+                    }
+                }
+                else
+                {
+                    AppLogger.Log_To_File_log(_category, $"[PollingRead][checkApiResponseValidity] res is invalid !! (MFR_MODEL type is not ASCII)", AppLogLevel.Trace);
+                    return false;
+                }
+            }
+            
+            return true;
         }
     }
 }

@@ -109,8 +109,8 @@ namespace demoVer.Services
         public string? Sys_ModelName    = "";
         public event Func<Task>? Sys_ModelName_OnChanged;
         public bool Sys_modelError      = false;
-        
-        public ConcurrentDictionary<uint, byte?> INVs_Phase {get; set;} //紀錄連線中的所有INV的Phase(以數值紀錄，非字串)
+
+        public ConcurrentDictionary<uint, byte?> INVs_Phase { get; set; } = new ConcurrentDictionary<uint, byte?>(); //紀錄連線中的所有INV的Phase(以數值紀錄，非字串)
         public double INV_IP_V_PHASE1               = 0; //Input     V      : max value in all INVs
         public double INV_IP_F_PHASE1               = 0; //Input     F      : sum value in all INVs
         public double INV_OP_V_PHASE1               = 0; //Output    V      : max value in all INVs
@@ -125,13 +125,14 @@ namespace demoVer.Services
         private bool INV_isCHG_Enable               = false;
         private bool INV_isAC_Standby               = false;
         private string? INV_ModelName_tmp           = "";
-        public IP_OP_F_count F_phase_Counters {get; set;}
+        public IP_OP_F_count F_phase_Counters { get; set; } = new IP_OP_F_count();
 
-        public allDevice_Data Device_ReadData {get; set;}                   //Polling讀取各Device資料
-        public LinkedDeviceStore LinkedDevices {get;}                       //以concurrent字典記錄目前有連線的devices
-        public WriteAPI_Datas Device_WriteData {get; set;}
-        public List<SubAppSystem> SubSystems {get; set;}
-        public int? ActiveSubAppSystemID {get; set;}
+        public Real_allDeviceData Real_Devices_ReadData { get; set; } = new Real_allDeviceData();
+        public allDevice_Data Device_ReadData { get; set; } = new allDevice_Data();                  //Polling讀取各Device資料
+        public LinkedDeviceStore LinkedDevices { get; } = new LinkedDeviceStore();                      //以concurrent字典記錄目前有連線的devices
+        public WriteAPI_Datas Device_WriteData { get; set; } = new WriteAPI_Datas();
+        public List<SubAppSystem> SubSystems { get; set; } = new List<SubAppSystem>();
+        public int? ActiveSubAppSystemID { get; set; }
 
         public GlobalVar(   IGroupsDataDecoder decoder,
                             HeartbeatService heartbeats)
@@ -142,17 +143,6 @@ namespace demoVer.Services
             //[inject]
             _decoder                    = decoder;
             _heartbeat                  = heartbeats;
-
-            //[System Variable]
-            INVs_Phase                  = new ConcurrentDictionary<uint, byte?>();
-            //[data structure instances]
-            Device_ReadData             = new allDevice_Data();
-            LinkedDevices               = new LinkedDeviceStore();
-            Device_WriteData            = new WriteAPI_Datas();
-            SubSystems                  = new List<SubAppSystem>();
-
-            //[just for computing]
-            F_phase_Counters            = new IP_OP_F_count();
 
             //Init
             initSubAppSystem();

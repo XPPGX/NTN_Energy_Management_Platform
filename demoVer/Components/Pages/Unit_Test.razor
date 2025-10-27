@@ -85,18 +85,19 @@
 
     public async Task TEST_readReal_ReadMemory()
     {
-        var result = await apiManager.apiReadReal_OneDeviceData("CAN1", 0);
+        var result = await apiManager.apiReadReal_OneDeviceData("MOD2", 0);
 
         var rawJsonData_String = JsonSerializer.Serialize(result, new JsonSerializerOptions{
             WriteIndented = true
         });
 
+        
         Console.WriteLine(rawJsonData_String);
     }
 
     public async Task TEST_readReal_WriteMemory()
     {
-        var result = await apiManager.apiReadReal_SettingData("CAN1", "NTN-5K_CAN.json");
+        var result = await apiManager.apiReadReal_SettingData("MOD2", "NTN-5K_MOD.json");
         var rawJsonData_String = JsonSerializer.Serialize(result, new JsonSerializerOptions{
             WriteIndented = true
         });

@@ -176,23 +176,64 @@ namespace demoVer.Utils
     {
         public static string getPortByAddr(uint addr)
         {
-            if(addr >= 192)
+            if (addr >= 192)
             {
                 return "MOD2";
             }
-            if(addr >= 128)
+            if (addr >= 128)
             {
                 return "MOD1";
             }
-            if(addr >= 64)
+            if (addr >= 64)
             {
                 return "CAN2";
             }
-            if(addr >= 0)
+            if (addr >= 0)
             {
                 return "CAN1";
             }
             return "MOD2";
+        }
+        
+        public static double ConvertToDouble(object obj)
+        {
+            if (obj is double d) return d;
+            if (obj is float f) return f;
+            if (obj is int i) return i;
+            if (obj is JsonElement je)
+            {
+                if (je.ValueKind == JsonValueKind.Number && je.TryGetDouble(out double jd))
+                {
+                    return jd;
+                }
+            }
+            return double.TryParse(obj.ToString(), out double result) ? result : 0.0;
+        }
+
+        public static uint ConvertToUint32(object obj)
+        {
+            if (obj == null) return 0;
+
+            if (obj is uint u) return u;
+            if (obj is int i) return (uint)Math.Max(0, i);
+            if (obj is long l) return (uint)Math.Max(0, l);
+            if (obj is double d) return (uint)Math.Max(0, d);
+            if (obj is float f) return (uint)Math.Max(0, f);
+
+            if (obj is JsonElement je)
+            {
+                if (je.ValueKind == JsonValueKind.Number && je.TryGetUInt32(out uint ju))
+                {
+                    return ju;
+                }
+
+                if (je.ValueKind == JsonValueKind.String && UInt32.TryParse(je.GetString(), out uint js))
+                {
+                    return js;
+                }
+            }
+
+            return 0; //任何類型都轉不出來
         }
     }    
 

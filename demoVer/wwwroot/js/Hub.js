@@ -359,13 +359,12 @@ window.DataSocket = async function()
         .withUrl("/datahub")
         .build();
         
-    connection_READ_DATA_Hub.on("UpdateDecodedVal", (addr, cmd, rcv_data, rcv_byteList) =>{
+    connection_READ_DATA_Hub.on("UpdateDecodedVal", (addr, cmd, rcv_data) =>{
         try
         {
             console.log("=================================================");
             // console.log(`[SignalR] ${cmd}@${addr} :`);
             console.log(`[SignalR] ${cmd}@${addr} : ` + JSON.stringify(rcv_data, null, 2));
-            console.log(`rcv_data = ${rcv_data}, rcv_byteList = ${rcv_byteList}`);
             document.getElementById("Address").textContent = "Address:" + addr;
             let Translator = window.INV_Info_Translator.Single;
             let temp_str = "";
@@ -378,11 +377,10 @@ window.DataSocket = async function()
                     break;
                     
                 case "INV_STATUS":
-                    let status = rcv_byteList[1] << 8 | rcv_byteList[0];
-                    temp_str = Translator.Get_INV_Status(status);
+                    
 
-                    console.log("[INV_STATUS] : " + temp_str);
-                    document.getElementById("InvSetting-display").textContent = temp_str;
+                    console.log("[INV_STATUS] : " + rcv_data);
+                    document.getElementById("InvSetting-display").textContent = rcv_data;
                     break;
 
                 case "INV_FAULT":
@@ -398,9 +396,13 @@ window.DataSocket = async function()
                     document.getElementById("ErrorMessage").textContent = Translator.INV_FAULT_str;
                     break;
 
-                case "MFR_REVISION_B0B5":
-                    console.log("[MFR_REVISION_B0B5] : " + rcv_data);
-                    document.getElementById("Revision-display").textContent = rcv_data;
+                case "MFR_REVISION":
+                    console.log("[MFR_REVISION] : " + rcv_data);
+                    let parts = rcv_data.split(",");
+                    let modified = parts.map(p => p === "25.5" ? "X" : p);
+                    let newStr = modified.join(",");
+                    console.log("[MFR_REVISION] modified : " + newStr);
+                    document.getElementById("Revision-display").textContent = newStr;
                     break;
 
                 case "READ_FAN_SPEED_1":
@@ -484,16 +486,17 @@ window.subscribeGroup_fixedCommands_dynamicAddr = async function(commandArray, a
     }
 
     for(const cmdName of commandArray)
-    {
-        await connection_READ_DATA_Hub.invoke("SubscribeGroup", addr, cmdName);
+    {   
+        console.log(`[SignalR] Subscribing to ${cmdName}@${addr}`);
+        await connection_READ_DATA_Hub.invoke("SubscribeCmd", addr, cmdName);
     }
 }
 
-window.unsubscribeAllGroups = async function()
+window.unsubscribeAllCmds = async function()
 {
     if(connection_READ_DATA_Hub)
     {
-        await connection_READ_DATA_Hub.invoke("unsubscribeAllGroups");
+        await connection_READ_DATA_Hub.invoke("unsubscribeAllCmds");
         console.log("📭 All command subscriptions removed.");
     }
 }

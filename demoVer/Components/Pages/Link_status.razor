@@ -5,6 +5,7 @@
 @inject IJSRuntime JS
 @inject DataCenter DataCenter
 @inject GlobalVar globalVar
+@inject LinkAddrManager linkAddrManager
 @using demoVer.Components.Layout
 @using System.Text.Json
 @using demoVer.Models
@@ -66,7 +67,7 @@
                                 <th>Address</th>
                                 <th>ModelName</th>
                                 <th>LinkStatus</th>
-                                <th>RunningState</th>
+                                <th>Mode</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -132,7 +133,7 @@
                 <div class="link-status-pagination">
                     <button type="button" class="link-status-page-btn" @onclick="PreviousPage" disabled="@(!CanGoPrevious)">⟨</button>
                     <div class="link-status-page-info">
-                        第
+                        <div class="page_info_div">第</div>
                         <input type="number"
                                min="1"
                                max="@TotalPages"
@@ -141,7 +142,7 @@
                                @bind:event="oninput"
                                @onkeydown="OnPageInputKeyDown"
                                @onblur="ResetPageInput" />
-                        頁 / @TotalPages
+                        <div class="page_info_div">頁 / @TotalPages</div>
                     </div>
                     <button type="button" class="link-status-page-btn" @onclick="NextPage" disabled="@(!CanGoNext)">⟩</button>
                 </div>
@@ -255,9 +256,11 @@
     {
         _category = GetType().FullName!;
 
-        _linkedSnapshot = globalVar.LinkedDevices.SnapshotSorted();
+        @* _linkedSnapshot = globalVar.LinkedDevices.SnapshotSorted(); *@
+        _linkedSnapshot = linkAddrManager.SnapshotSorted();
 
-        globalVar.LinkedDevices.linkChanged += OnLinksChanged;
+        @* globalVar.LinkedDevices.linkChanged += OnLinksChanged; *@
+        linkAddrManager.linkChanged += OnLinksChanged;
 
         getINVsLink();
         UpdateDonutChart();
@@ -400,7 +403,7 @@
 
     private void OnLinksChanged()
     {
-        _linkedSnapshot = globalVar.LinkedDevices.SnapshotSorted();
+        _linkedSnapshot = linkAddrManager.SnapshotSorted();
     }
 
 
@@ -444,37 +447,34 @@
         
         foreach(var addr in addrs)
         {
-            //string modelName = decode_ModelName(addr);
-            //string runningStatus = decode_INV_Status(addr);
-            var tmp_Group = globalVar.Device_ReadData.GetCommandGroups(addr, "MFR_MODEL"); 
-            if(tmp_Group == null)
-            {
-                continue;
-            }
-            var modelName = Decoder.Decode(tmp_Group, "MFR_MODEL", addr)?.ToString() ?? "N/A";
-            string runningStatus = decode_INV_Status(addr);
+            var oneDeviceData_snapShot = globalVar.Real_Devices_ReadData.Get_oneDevice_DataSnapshot(addr);
+            if(oneDeviceData_snapShot == null) continue;
+            
+            var modelName = oneDeviceData_snapShot.parseCmdData("MFR_MODEL") ?? "N/A";
+            string runningStatus = string.Empty;
 
-            AppLogger.Log_To_File_log(_category, $"[Link_status][getINVsLink] : Addr = {addr}, ModelName = {modelName}, LinkStatus = Linked, runningStatus = {runningStatus}", AppLogLevel.Trace);
-            
-            if(!(mapLabelsToData.ContainsKey(runningStatus)))
-            {
-                runningStatus = "Error";
-            }
-            
             //如果modelName收到空值，直接忽略這個連線
             if(string.IsNullOrEmpty(modelName.ToString()))
             {
                 continue;
             }
+            runningStatus = decode_INV_Status(addr);
+            
+            AppLogger.Log_To_File_log(_category, $"[Link_status][getINVsLink] : Addr = {addr}, ModelName = {modelName}, LinkStatus = Linked, runningStatus = {runningStatus}", AppLogLevel.Trace);
+
+            if(!mapLabelsToData.ContainsKey(runningStatus))
+            {
+                runningStatus = "Error";
+            }
 
             Elements.Add(new Element
             {
                 Address = addr,
-                ModelName = modelName.ToString(),
+                ModelName = modelName.ToString() ?? "Unknown",
                 LinkStatus = "Linked",
-                RunningState = runningStatus,
+                RunningState = runningStatus
             });
-
+            
             if(!allDevicesRunningStatus.ContainsKey(addr))
             {
                 allDevicesRunningStatus[addr] = runningStatus;
@@ -558,12 +558,10 @@
 
     private readonly string[] SubscribeCommands = new[]
     {
-        //Table Info
         "MFR_MODEL",
         "INV_STATUS",
         "INV_FAULT",
-        "MFR_REVISION_B0B5",
-        //Modal Info
+        "MFR_REVISION",
         "READ_FAN_SPEED_1",
         "READ_FAN_SPEED_2",
         "READ_AC_VOUT",
@@ -626,19 +624,51 @@
     public async Task CancelAllSubscriptions()
     {
         //主動關閉dataHub()
-        await JS.InvokeVoidAsync("unsubscribeAllGroups");
+        await JS.InvokeVoidAsync("unsubscribeAllCmds");
         @* await JS.InvokeVoidAsync("hubDisconnect"); *@
     }
 
     private string decode_INV_Status(uint addr)
     {
+        //取得addr的DeviceData快照
+        var oneDeviceData_SnapShot = globalVar.Real_Devices_ReadData.Get_oneDevice_DataSnapshot(addr);
+        if(oneDeviceData_SnapShot == null) {
+            AppLogger.Log_To_File_log(_category, $"[Link_status][decode_INV_Status] : oneDeviceData_SnapShot is null, addr = {addr}", AppLogLevel.Warning);
+            return "N/A";
+        }
+        
+        //取得addr的INV_FAULT解碼內容
+        var INV_FAULT_DecodeList = (List<decodeContent>?) oneDeviceData_SnapShot.parseCmdData("INV_FAULT");
+        if(INV_FAULT_DecodeList == null) {
+            AppLogger.Log_To_File_log(_category, $"[Link_status][decode_INV_Status] : INV_FAULT_DecodeList is null, addr = {addr}", AppLogLevel.Warning);
+            return "N/A";
+        }
+        string? INV_FAULT_str = BitFieldParser.Parse_INV_FAULT(INV_FAULT_DecodeList);
+        if(!string.IsNullOrEmpty(INV_FAULT_str))
+        {
+            return INV_FAULT_str;
+        }
 
+        //取得addr的INV_STATUS解碼內容
+        var INV_STATUS_DecodeList = (List<decodeContent>?) oneDeviceData_SnapShot.parseCmdData("INV_STATUS");
+        if(INV_STATUS_DecodeList == null) {
+            AppLogger.Log_To_File_log(_category, $"[Link_status][decode_INV_Status] : INV_STATUS_DecodeList is null, addr = {addr}", AppLogLevel.Warning);
+            return "N/A";
+        }
+        string? INV_STATUS_str = BitFieldParser.Parse_INV_STATUS(INV_STATUS_DecodeList);
+        if(!string.IsNullOrEmpty(INV_STATUS_str))
+        {
+            return INV_STATUS_str;
+        }
+
+        return "Error";
+        
         //var Group1 = globalVar.Device_ReadData.GetCommandGroups(addr, "INV_FAULT");
-        var Group2 = globalVar.Device_ReadData.GetCommandGroups(addr, "INV_STATUS");
+        @* var Group2 = globalVar.Device_ReadData.GetCommandGroups(addr, "INV_STATUS");
         if(Group2 == null){return "N/A";}
         //if(Group1 == null || Group2 == null){return "N/A";}
 
-    string? INV_FAULT_tmp = globalVar.Get_INV_Fault(addr);
+        string? INV_FAULT_tmp = globalVar.Get_INV_Fault(addr);
         string INV_STATUS_str = "";
         if(!string.IsNullOrEmpty(INV_FAULT_tmp))
         {
@@ -649,14 +679,14 @@
             uint INV_STATUS_data = (((uint)Group2.Groups[0].Data[1]) << 8) | ((uint)Group2.Groups[0].Data[0]);
             bool returnStr_bool = true;
             INV_STATUS_str = (string)(globalVar.Get_INV_Status(INV_FAULT_tmp ?? string.Empty, INV_STATUS_data, returnStr_bool));
-        }
+        } *@
 
 
         @* uint INV_FAULT = (((uint)Group1.Groups[0].Data[1]) << 8) | ((uint)Group1.Groups[0].Data[0]); *@
         @* if(VarTranslator.Get_INV_Fault(INV_FAULT) != 0){return "Error";} *@
 
 
-        return INV_STATUS_str;
+        @* return "Error"; *@
         
         // var Group1 = globalVar.Device_ReadData.GetCommandGroups(addr, "INV_FAULT");
         // var Group2 = globalVar.Device_ReadData.GetCommandGroups(addr, "INV_STATUS");

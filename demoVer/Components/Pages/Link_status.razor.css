@@ -146,18 +146,26 @@
 
 .link-status-page-info{
     display: flex;
+    flex-direction: row;
+    justify-content: center;
     align-items: center;
     gap: 0.45rem;
     font-size: 0.9rem;
+}
+
+.page_info_div
+{
+    color: var(--text-primary);
+    background-color: var(--bg-secondary);
 }
 
 .link-status-page-input{
     width: 64px;
     padding: 0.3rem 0.5rem;
     border-radius: 6px;
-    border: 1px solid rgba(110, 130, 150, 0.6);
-    background: rgba(18, 20, 22, 0.9);
-    color: #f2f7ff;
+    border: 1px solid rgba(var(--border-color-rgb), 0.6);
+    background: rgba(var(--bg-primary-rgb), 0.9);
+    color: var(--text-primary);
     text-align: center;
     transition: border 0.2s ease, box-shadow 0.2s ease;
 }

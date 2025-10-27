@@ -1,6 +1,7 @@
 //1. 負責發送 READ_API, Write API
 using demoVer.Models;
 using demoVer.Utils;
+using System.Text.Json;
 
 namespace demoVer.Services
 {
@@ -190,10 +191,10 @@ namespace demoVer.Services
             {
                 string url = $"api/memory/read-real?type={type}&addr={addr}";
                 var result = await _http.GetFromJsonAsync<Real_SingleDeviceData_JsonFormat>(url);
-                
+
                 if(result == null)
                 {
-                     throw new Exception($"[apiRead_OneDeviceData] ReadReal_API_Json == null");
+                    throw new Exception($"[apiRead_OneDeviceData] ReadReal_API_Json == null");
                 }
                 return result;
 

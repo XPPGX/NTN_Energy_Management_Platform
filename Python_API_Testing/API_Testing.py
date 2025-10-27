@@ -23,6 +23,33 @@ with open("link_status.json", "r", encoding="utf-8") as f:
 with open("REAL_ReadMemory_JsonFormat.json", "r", encoding="utf-8") as f:
     REAL_INV_TEMPLATE = json.load(f)
 
+with open("INV_DATA_V1-1.json", "r", encoding="utf-8") as f:
+    INV_DATA_V1_1_TEMPLATE = json.load(f)
+
+# 配置 V1-1 API 的固定值和隨機值
+# True: 固定值 (使用模板中的值或 V1_1_FIXED_VALUES 中的值), False: 隨機值
+# 修改這裡來控制哪些數值固定，哪些隨機
+V1_1_FIXED_CONFIG = {
+    "READ_OP_LD_PCNT": False,  # 隨機
+    "READ_OP_WATT": False,     # 隨機
+    "MFR_MODEL": True,         # 固定為 "NTN-5K-124  "
+    "INV_FAULT": True,         # 固定為 0
+    "READ_VIN": False,         # 隨機
+    "READ_IIN": False,         # 隨機
+    "READ_FREQ": False,        # 隨機
+    "INV_STATUS": True,        # 固定 (添加固定值)
+    # 添加更多配置...
+}
+
+# 固定值的覆蓋 (如果需要不同於模板的值)
+# 修改這裡來設定固定值
+V1_1_FIXED_VALUES = {
+    "MFR_MODEL": "NTN-5K-124  ",
+    "INV_FAULT": 0, # 調這邊沒用，要去調INV_DATA_V1-1.json裡面的值
+    "INV_STATUS": 1,  # 例如固定為 1
+    # 添加更多固定值...
+}
+
 
 _TEMPLATES = [{k: v for k, v in item.items() if k != "data"} for item in _base_data]
 _LENGTHS   = [len(item["data"]) for item in _base_data]
@@ -82,13 +109,14 @@ def real_write_memory_init(filename: str):
 def get_real_write_store():
     return _REAL_WRITE_STORE
 
+
 @app.route("/api/memory/read-real", methods=["GET"])
 def read_real():
     port = request.args.get("type", "Unknown")
     addr = int(request.args.get("addr", "0"))
 
     # 複製一份 template，避免修改到原始資料
-    resp = json.loads(json.dumps(REAL_INV_TEMPLATE))
+    resp = json.loads(json.dumps(INV_DATA_V1_1_TEMPLATE))
 
     # 更新固定欄位
     resp["port"] = port
@@ -99,17 +127,23 @@ def read_real():
     for key, item in resp["values"].items():
         vtype = item.get("type")
 
-        if vtype == "Numeric":
-            # 給一個隨機 double (範圍 0~1000，可自行調整)
-            item["value"] = round(random.uniform(0, 1000), 2)
-
-        elif vtype == "BitField":
-            item["value"] = ""
-
-        elif vtype == "ASCII":
-            # 保留 JSON 裡原本寫的字串，不動
-            pass
-
+        # 檢查是否為固定值
+        if key in V1_1_FIXED_CONFIG and V1_1_FIXED_CONFIG[key]:
+            # 使用固定值
+            if key in V1_1_FIXED_VALUES:
+                item["value"] = V1_1_FIXED_VALUES[key]
+            # 否則使用模板中的值 (已複製)
+        else:
+            # 隨機值
+            if vtype == "Numeric":
+                # 給一個隨機 double (範圍 0~1000，可自行調整)
+                item["value"] = round(random.uniform(0, 1000), 2)
+            elif vtype == "BitField":
+                item["value"] = 0  # 隨機 bit field，設為 0
+            elif vtype == "ASCII":
+                # 保留 JSON 裡原本寫的字串，不動
+                pass
+    # print("Response From /api/memory/read-real" + json.dumps(resp, indent=4))
     return jsonify(resp), 200
 
 @app.route("/api/memory/link-status", methods=["GET"])
