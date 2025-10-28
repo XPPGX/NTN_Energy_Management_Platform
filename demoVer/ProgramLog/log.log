@@ -1,1 +1,68 @@
-﻿
+﻿[2025-10-28 10:28:27.265] [Sys_INV_Mode_Change_Task] local_INV_MODE_str updated to: 
+[2025-10-28 10:28:27.777] [Sys_INV_Mode_Change_Task] local_INV_MODE_str updated to: 
+[2025-10-28 10:28:27.840] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:28:27.842] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_VIN, cmdType = 
+[2025-10-28 10:28:27.846] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:28:27.848] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_IIN, cmdType = 
+[2025-10-28 10:28:28.878] [Sys_INV_Mode_Change_Task] local_INV_MODE_str updated to: Inverter
+[2025-10-28 10:28:28.879] [Sys_INV_Mode_Change_Task] local_INV_MODE_str updated to: Inverter
+[2025-10-28 10:28:45.011] [Sys_INV_Mode_Change_Task] local_INV_MODE_str updated to: 
+[2025-10-28 10:28:45.012] [Sys_INV_Mode_Change_Task] local_INV_MODE_str updated to: 
+[2025-10-28 10:28:45.014] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:28:45.015] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_VIN, cmdType = 
+[2025-10-28 10:28:45.016] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:28:45.018] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_IIN, cmdType = 
+[2025-10-28 10:28:46.032] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:28:46.033] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_VIN, cmdType = 
+[2025-10-28 10:28:46.034] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:28:46.035] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_IIN, cmdType = 
+[2025-10-28 10:28:47.049] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:28:47.050] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_VIN, cmdType = 
+[2025-10-28 10:28:47.052] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:28:47.054] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_IIN, cmdType = 
+[2025-10-28 10:28:48.059] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:28:48.060] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_VIN, cmdType = 
+[2025-10-28 10:28:48.063] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:28:48.064] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_IIN, cmdType = 
+[2025-10-28 10:28:49.073] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:28:49.075] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_VIN, cmdType = 
+[2025-10-28 10:28:49.077] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:28:49.079] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_IIN, cmdType = 
+[2025-10-28 10:28:50.094] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:28:50.095] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_VIN, cmdType = 
+[2025-10-28 10:28:50.097] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:28:50.098] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_IIN, cmdType = 
+[2025-10-28 10:28:51.108] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:28:51.109] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_VIN, cmdType = 
+[2025-10-28 10:28:51.110] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:28:51.112] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_IIN, cmdType = 
+[2025-10-28 10:28:52.121] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:28:52.122] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_VIN, cmdType = 
+[2025-10-28 10:28:52.125] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:28:52.127] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_IIN, cmdType = 
+[2025-10-28 10:28:53.141] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:28:53.143] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_VIN, cmdType = 
+[2025-10-28 10:28:53.145] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:28:53.148] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_IIN, cmdType = 
+[2025-10-28 10:28:54.151] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:28:54.152] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_VIN, cmdType = 
+[2025-10-28 10:28:54.154] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:28:54.155] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_IIN, cmdType = 
+[2025-10-28 10:28:55.165] [Sys_INV_Mode_Change_Task] local_INV_MODE_str updated to: Inverter
+[2025-10-28 10:28:55.165] [Sys_INV_Mode_Change_Task] local_INV_MODE_str updated to: Inverter
+[2025-10-28 10:30:30.356] [Sys_INV_Mode_Change_Task] local_INV_MODE_str updated to: 
+[2025-10-28 10:30:30.381] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:30:30.381] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_VIN, cmdType = 
+[2025-10-28 10:30:30.384] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:30:30.384] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_IIN, cmdType = 
+[2025-10-28 10:30:30.826] [Sys_INV_Mode_Change_Task] local_INV_MODE_str updated to: 
+[2025-10-28 10:30:31.391] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:30:31.391] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_VIN, cmdType = 
+[2025-10-28 10:30:31.393] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-28 10:30:31.395] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_IIN, cmdType = 
+[2025-10-28 10:30:32.418] [Sys_INV_Mode_Change_Task] local_INV_MODE_str updated to: Inverter
+[2025-10-28 10:30:32.419] [Sys_INV_Mode_Change_Task] local_INV_MODE_str updated to: Inverter
+[2025-10-28 10:31:22.885] [Sys_INV_Mode_Change_Task] local_INV_MODE_str updated to: 
+[2025-10-28 10:31:23.437] [Sys_INV_Mode_Change_Task] local_INV_MODE_str updated to: 
+[2025-10-28 10:31:24.444] [Sys_INV_Mode_Change_Task] local_INV_MODE_str updated to: Inverter
+[2025-10-28 10:31:24.445] [Sys_INV_Mode_Change_Task] local_INV_MODE_str updated to: Inverter

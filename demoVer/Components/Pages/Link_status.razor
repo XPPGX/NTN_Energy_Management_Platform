@@ -612,7 +612,8 @@
     public void Dispose()
     {
         Heartbeat.OnTick -= pageTimer;
-        globalVar.LinkedDevices.linkChanged -= OnLinksChanged;
+        linkAddrManager.linkChanged -= OnLinksChanged;
+        @* globalVar.LinkedDevices.linkChanged -= OnLinksChanged; *@
         Console.WriteLine($"Heartbeat 註冊 : {this.GetHashCode()}");
         if (topRowCallbacksRegistered)
         {
@@ -662,50 +663,6 @@
         }
 
         return "Error";
-        
-        //var Group1 = globalVar.Device_ReadData.GetCommandGroups(addr, "INV_FAULT");
-        @* var Group2 = globalVar.Device_ReadData.GetCommandGroups(addr, "INV_STATUS");
-        if(Group2 == null){return "N/A";}
-        //if(Group1 == null || Group2 == null){return "N/A";}
-
-        string? INV_FAULT_tmp = globalVar.Get_INV_Fault(addr);
-        string INV_STATUS_str = "";
-        if(!string.IsNullOrEmpty(INV_FAULT_tmp))
-        {
-            INV_STATUS_str = INV_FAULT_tmp;
-        }
-        else
-        {
-            uint INV_STATUS_data = (((uint)Group2.Groups[0].Data[1]) << 8) | ((uint)Group2.Groups[0].Data[0]);
-            bool returnStr_bool = true;
-            INV_STATUS_str = (string)(globalVar.Get_INV_Status(INV_FAULT_tmp ?? string.Empty, INV_STATUS_data, returnStr_bool));
-        } *@
-
-
-        @* uint INV_FAULT = (((uint)Group1.Groups[0].Data[1]) << 8) | ((uint)Group1.Groups[0].Data[0]); *@
-        @* if(VarTranslator.Get_INV_Fault(INV_FAULT) != 0){return "Error";} *@
-
-
-        @* return "Error"; *@
-        
-        // var Group1 = globalVar.Device_ReadData.GetCommandGroups(addr, "INV_FAULT");
-        // var Group2 = globalVar.Device_ReadData.GetCommandGroups(addr, "INV_STATUS");
-        // if(Group1 == null || Group2 == null){return "N/A";}
-
-        // uint INV_FAULT = (((uint)Group1.Groups[0].Data[1]) << 8) | ((uint)Group1.Groups[0].Data[0]);
-        // @* if(VarTranslator.Get_INV_Fault(INV_FAULT) != 0){return "Error";} *@
-
-        // uint INV_STATUS = (((uint)Group2.Groups[0].Data[1]) << 8) | ((uint)Group2.Groups[0].Data[0]);
-        // bool returnStr_bool = true;
-        // string INV_STATUS_str = (string)(globalVar.Get_INV_Status(INV_FAULT, INV_STATUS, returnStr_bool));
-
-        // return INV_STATUS_str;
-        
-        // @* if(((INV_STATUS & STATUS_INV) != 0) && ((INV_STATUS & STATUS_SAVING) != 0)){return "Saving";}
-        // else if((INV_STATUS & STATUS_INV) != 0){return "Inverter";}
-        // else if((INV_STATUS & STATUS_BYP) != 0){return "Bypass";}
-        // else if((INV_STATUS & STATUS_CHG) != 0){return "Charger";}
-        // else{return "Standby";} *@
     }
 
     private void AddStatus(uint addr, string status)

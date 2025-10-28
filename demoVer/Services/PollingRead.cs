@@ -151,16 +151,16 @@ namespace demoVer.Services
                 
                     //======預計廢除========
                     //移除 link
-                    _globalVar.LinkedDevices.Unlink(nowStoringAddr);
+                    // _globalVar.LinkedDevices.Unlink(nowStoringAddr);
                     //移除 Phase字典中的addr
                     // _globalVar.INVs_Phase.TryRemove(nowPollingAddr, out var removed);
                     //刪除Device_ReadData裡面，nowStoringAddr的資料
-                    _globalVar.Device_ReadData.Remove_oneDevice_Data(nowStoringAddr);
+                    // _globalVar.Device_ReadData.Remove_oneDevice_Data(nowStoringAddr);
                     //======================
 
                     //預計保留
                     _linkAddrManager.Unlink(nowStoringAddr);
-                    _globalVar.Real_Devices_ReadData.Remove_oneDevice_Data(nowPollingAddr);
+                    _globalVar.Real_Devices_ReadData.Remove_oneDevice_Data(nowStoringAddr);
 
                     AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] : {nowPollingPort}@{nowPollingAddr} removing done...", AppLogLevel.Trace);
                     
@@ -183,17 +183,17 @@ namespace demoVer.Services
                         AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] : response is {res_is_valid}, {nowPollingPort}@{nowPollingAddr} removing begin...", AppLogLevel.Trace);
                         //======預計廢除========
                         //移除 link
-                        _globalVar.LinkedDevices.Unlink(nowStoringAddr);
+                        // _globalVar.LinkedDevices.Unlink(nowStoringAddr);
                         //移除 Phase字典中的addr
-                        _globalVar.INVs_Phase.TryRemove(nowPollingAddr, out var removed);
+                        // _globalVar.INVs_Phase.TryRemove(nowPollingAddr, out var removed);
                         //刪除Device_ReadData裡面，nowStoringAddr的資料
-                        _globalVar.Device_ReadData.Remove_oneDevice_Data(nowStoringAddr);
+                        // _globalVar.Device_ReadData.Remove_oneDevice_Data(nowStoringAddr);
                         //======================
 
 
                         //預計保留
                         _linkAddrManager.Unlink(nowStoringAddr);
-                        _globalVar.Real_Devices_ReadData.Remove_oneDevice_Data(nowPollingAddr);
+                        _globalVar.Real_Devices_ReadData.Remove_oneDevice_Data(nowStoringAddr);
                         AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] : {nowPollingPort}@{nowPollingAddr} removing done...", AppLogLevel.Trace);
                         
                     }
@@ -273,7 +273,7 @@ namespace demoVer.Services
 
                     var INV_products = rcv_linkStatus.Products["All"];
 
-                    for(uint i = 0 ; i < 64 ; i ++)
+                    for(uint i = 0 ; i < ConstDefinition.Max_PortDeviceNum ; i ++)
                     {
                         uint CAN1_index = (uint)((INV_products.CAN1_LINK >> (int)i) & 1);
                         uint CAN2_index = (uint)((INV_products.CAN2_LINK >> (int)i) & 1);
@@ -284,38 +284,38 @@ namespace demoVer.Services
                         
                         if(CAN1_index == 1)
                         {
-                            linkingAddr.Add(i);
+                            linkingAddr.Add(i + ConstDefinition.CAN1_addr);
                         }
                         else
                         {
-                            linkingAddr.Remove(i);
+                            linkingAddr.Remove(i + ConstDefinition.CAN1_addr);
                         }
 
                         if(CAN2_index == 1)
                         {
-                            linkingAddr.Add(i + 64);
+                            linkingAddr.Add(i + ConstDefinition.CAN2_addr);
                         }
                         else
                         {
-                            linkingAddr.Remove(i + 64);
+                            linkingAddr.Remove(i + ConstDefinition.CAN2_addr);
                         }
 
                         if(MOD1_index == 1)
                         {
-                            linkingAddr.Add(i + 128);
+                            linkingAddr.Add(i + ConstDefinition.MOD1_addr);
                         }
                         else
                         {
-                            linkingAddr.Remove(i + 128);
+                            linkingAddr.Remove(i + ConstDefinition.MOD1_addr);
                         }
 
                         if(MOD2_index == 1)
                         {
-                            linkingAddr.Add(i + 192);
+                            linkingAddr.Add(i + ConstDefinition.MOD2_addr);
                         }
                         else
                         {
-                            linkingAddr.Remove(i + 192);
+                            linkingAddr.Remove(i + ConstDefinition.MOD2_addr);
                         }
                     }
                     AppLogger.Log_To_File_log(_category, $"[PollingRead][PollNowLinkAddr] {string.Join(", ", linkingAddr)}", AppLogLevel.Trace);
@@ -352,13 +352,13 @@ namespace demoVer.Services
             nowPollingCount = 0;
 
             //當前開放CAN1, CAN2, MOD1, MOD2的addr全部polling
-            _pollingWave.Add(new PollingWave { port = "CAN1", startAddr = 0, length = 64 });
+            _pollingWave.Add(new PollingWave { port = "CAN1", startAddr = 0, length = ConstDefinition.Max_PortDeviceNum });
 
-            _pollingWave.Add(new PollingWave { port = "CAN2", startAddr = 0, length = 64 });
+            _pollingWave.Add(new PollingWave { port = "CAN2", startAddr = 0, length = ConstDefinition.Max_PortDeviceNum });
 
-            _pollingWave.Add(new PollingWave { port = "MOD1", startAddr = 0, length = 64 });
+            _pollingWave.Add(new PollingWave { port = "MOD1", startAddr = 0, length = ConstDefinition.Max_PortDeviceNum });
 
-            _pollingWave.Add(new PollingWave { port = "MOD2", startAddr = 0, length = 64 });
+            _pollingWave.Add(new PollingWave { port = "MOD2", startAddr = 0, length = ConstDefinition.Max_PortDeviceNum });
 
             //發送API的addr會根據linkingAddr來決定
         }

@@ -27,70 +27,55 @@ namespace demoVer.Services
 
     public class GlobalVar
     {
-        public class IP_OP_F_count
-        {
-            public double[] count_R_IP {get; set;} = new double[3];
-            public double[] count_S_IP {get; set;} = new double[3];
-            public double[] count_T_IP {get; set;} = new double[3];
-
-            public double[] count_R_OP {get; set;} = new double[3];
-            public double[] count_S_OP {get; set;} = new double[3];
-            public double[] count_T_OP {get; set;} = new double[3];
-        }
-        
         //[Debug]
-        public bool Debug_Flag {get; set;} = true;
+        public bool Debug_Flag { get; set; } = true;
         //[inject]
         private readonly IGroupsDataDecoder _decoder;
         private readonly HeartbeatService _heartbeat;
+        private readonly LinkAddrManager _linkAddrManager;
         //For log
         private string _category;
         private bool _disposed;
 
         //Const
-        public const int CAN1_addr              = 0;
-        public const int CAN2_addr              = 64;
-        public const int MOD1_addr              = 128;
-        public const int MOD2_addr              = 192;
+        public const uint STATUS_INV = 0x00000001 << 0;  //STATUS : 比對bit
+        public const uint STATUS_BYP = 0x00000001 << 1;  //STATUS : 比對bit
+        public const uint STATUS_UTI_OK = 0x00000001 << 2;  //STATUS : 比對bit
+        public const uint STATUS_CHG = 0x00000001 << 3;  //STATUS : 比對bit
+        public const uint STATUS_SOLAR_EN = 0x00000001 << 4;  //STATUS : 比對bit
+        public const uint STATUS_SAVING = 0x00000001 << 5;  //STATUS : 比對bit
+        public const uint STATUS_BAT_LOW_ALM = 0x00000001 << 6;  //STATUS : 比對bit
 
-        public const uint STATUS_INV            = 0x00000001 << 0;  //STATUS : 比對bit
-        public const uint STATUS_BYP            = 0x00000001 << 1;  //STATUS : 比對bit
-        public const uint STATUS_UTI_OK         = 0x00000001 << 2;  //STATUS : 比對bit
-        public const uint STATUS_CHG            = 0x00000001 << 3;  //STATUS : 比對bit
-        public const uint STATUS_SOLAR_EN       = 0x00000001 << 4;  //STATUS : 比對bit
-        public const uint STATUS_SAVING         = 0x00000001 << 5;  //STATUS : 比對bit
-        public const uint STATUS_BAT_LOW_ALM    = 0x00000001 << 6;  //STATUS : 比對bit
+        public const byte STATUS_INV_DISCON = 0;
+        public const byte STATUS_INV_ERROR = 3;
+        public const byte STATUS_INV_INVERTER = 4;
+        public const byte STATUS_INV_SAVING = 5;
+        public const byte STATUS_INV_BY_PASS = 6;
+        public const byte STATUS_INV_CHARGING = 7;
+        public const byte STATUS_INV_STANDBY = 8;
+        public const byte STATUS_INV_BATTERY_FIRST = 9;
 
-        public const byte STATUS_INV_DISCON         = 0;
-        public const byte STATUS_INV_ERROR          = 3;
-        public const byte STATUS_INV_INVERTER       = 4;
-        public const byte STATUS_INV_SAVING         = 5;
-        public const byte STATUS_INV_BY_PASS        = 6;
-        public const byte STATUS_INV_CHARGING       = 7;
-        public const byte STATUS_INV_STANDBY        = 8;
-        public const byte STATUS_INV_BATTERY_FIRST  = 9;
-        
-        public const byte INV_MODE_INVERTER         = 0;
-        public const byte INV_MODE_SAVING           = 1;
-        public const byte INV_MODE_BY_PASS          = 2;
-        public const byte INV_MODE_CHARGING         = 3;
-        public const byte INV_MODE_STANDBY          = 4;
-        public const byte INV_MODE_SHUTDOWN         = 5;
-        public const byte INV_MODE_BATTERY_FIRST    = 6;
-        public const byte INV_MODE_NONE             = 0xFF;
+        public const byte INV_MODE_INVERTER = 0;
+        public const byte INV_MODE_SAVING = 1;
+        public const byte INV_MODE_BY_PASS = 2;
+        public const byte INV_MODE_CHARGING = 3;
+        public const byte INV_MODE_STANDBY = 4;
+        public const byte INV_MODE_SHUTDOWN = 5;
+        public const byte INV_MODE_BATTERY_FIRST = 6;
+        public const byte INV_MODE_NONE = 0xFF;
 
-        public const byte INV_PHASE_0           = 0;
-        public const byte INV_PHASE_180         = 1;
-        public const byte INV_PHASE_120         = 2;
-        public const byte INV_PHASE_M120        = 3;
-        public const byte INV_SINGLE_PHASE      = 0x01;
-        public const byte INV_TWO_PHASE         = 0x03;
-        public const byte INV_THREE_PHASE       = 0x07;
+        public const byte INV_PHASE_0 = 0;
+        public const byte INV_PHASE_180 = 1;
+        public const byte INV_PHASE_120 = 2;
+        public const byte INV_PHASE_M120 = 3;
+        public const byte INV_SINGLE_PHASE = 0x01;
+        public const byte INV_TWO_PHASE = 0x03;
+        public const byte INV_THREE_PHASE = 0x07;
 
-        
+
         //Variable
-        public bool InitSysOK {get; set;} = false;
-        public InitStage nowInitStage = InitStage.FromJson; 
+        public bool InitSysOK { get; set; } = false;
+        public InitStage nowInitStage = InitStage.FromJson;
 
         private int _invConnectNum;
         public int INV_ConnectNum
@@ -101,32 +86,30 @@ namespace demoVer.Services
 
         //System variables(Heartbeat.OnTick)
         //如果計算速度很慢，可以把所有算式都放在某個foreach INVs_Phase裡面
-        public byte Sys_PhaseStatus     = 0;
-        public byte Sys_INV_Mode        = 0;        
+        public byte Sys_PhaseStatus = 0;
+        public byte Sys_INV_Mode = 0;
         public event Func<Task>? Sys_INV_Mode_OnChanged;
-        public bool Sys_Charger_Enable  = false;
-        public bool Sys_isAC_Standby    = false;
-        public string? Sys_ModelName    = "";
+        public bool Sys_Charger_Enable = false;
+        public bool Sys_isAC_Standby = false;
+        public string? Sys_ModelName = "";
         public event Func<Task>? Sys_ModelName_OnChanged;
-        public bool Sys_modelError      = false;
+        public bool Sys_modelError = false;
 
         public ConcurrentDictionary<uint, byte?> INVs_Phase { get; set; } = new ConcurrentDictionary<uint, byte?>(); //紀錄連線中的所有INV的Phase(以數值紀錄，非字串)
-        public double INV_IP_V_PHASE1               = 0; //Input     V      : max value in all INVs
-        public double INV_IP_F_PHASE1               = 0; //Input     F      : sum value in all INVs
-        public double INV_OP_V_PHASE1               = 0; //Output    V      : max value in all INVs
-        public double INV_OP_F_PHASE1               = 0; //Output    F      : sum value in all INVs
-        public double INV_OP_A_PHASE1               = 0; //Output    A      : sum value in all INVs
-        public double INV_OP_Load_PHASE1            = 0; //Output    Load   : sum value in all INVs
+        public double INV_IP_V_PHASE1 = 0; //Input     V      : max value in all INVs
+        public double INV_IP_F_PHASE1 = 0; //Input     F      : sum value in all INVs
+        public double INV_OP_V_PHASE1 = 0; //Output    V      : max value in all INVs
+        public double INV_OP_F_PHASE1 = 0; //Output    F      : sum value in all INVs
+        public double INV_OP_A_PHASE1 = 0; //Output    A      : sum value in all INVs
+        public double INV_OP_Load_PHASE1 = 0; //Output    Load   : sum value in all INVs
 
-        public double[] Sys_IP_V_Phases             = new double[3];        //records the max IP_V in each phase(phase1, phase2, phase3)
-        public double[] SyS_IP_F_Phases             = new double[3];        //records the max IP_F in each phase(phase1, phase2, phase3)
-        public double[] Sys_OP_V_Phases             = new double[3];        //records the max OP_V in each phase(phase1, phase2, phase3)
-        public double BAT_V                         = 0; //BAT_V            : max value in all INVs
-        private bool INV_isCHG_Enable               = false;
-        private bool INV_isAC_Standby               = false;
-        private string? INV_ModelName_tmp           = "";
-        public IP_OP_F_count F_phase_Counters { get; set; } = new IP_OP_F_count();
-
+        public double[] Sys_IP_V_Phases = new double[3];        //records the max IP_V in each phase(phase1, phase2, phase3)
+        public double[] SyS_IP_F_Phases = new double[3];        //records the max IP_F in each phase(phase1, phase2, phase3)
+        public double[] Sys_OP_V_Phases = new double[3];        //records the max OP_V in each phase(phase1, phase2, phase3)
+        public double BAT_V = 0; //BAT_V            : max value in all INVs
+        private bool INV_isCHG_Enable = false;
+        private bool INV_isAC_Standby = false;
+        private string? INV_ModelName_tmp = "";
         public Real_allDeviceData Real_Devices_ReadData { get; set; } = new Real_allDeviceData();
         public allDevice_Data Device_ReadData { get; set; } = new allDevice_Data();                  //Polling讀取各Device資料
         public LinkedDeviceStore LinkedDevices { get; } = new LinkedDeviceStore();                      //以concurrent字典記錄目前有連線的devices
@@ -134,38 +117,39 @@ namespace demoVer.Services
         public List<SubAppSystem> SubSystems { get; set; } = new List<SubAppSystem>();
         public int? ActiveSubAppSystemID { get; set; }
 
-        public GlobalVar(   IGroupsDataDecoder decoder,
-                            HeartbeatService heartbeats)
+        public GlobalVar(IGroupsDataDecoder decoder,
+                            HeartbeatService heartbeats,
+                            LinkAddrManager linkAddrManager)
         {
             //For log
-            _category                   = GetType().FullName!;
-            
-            //[inject]
-            _decoder                    = decoder;
-            _heartbeat                  = heartbeats;
+            _category = GetType().FullName!;
 
+            //[inject]
+            _decoder = decoder;
+            _heartbeat = heartbeats;
+            _linkAddrManager = linkAddrManager;
             //Init
             initSubAppSystem();
 
             //Events(Actions)
-            LinkedDevices.linkChanged   += Get_INV_ConnectNum;
-            _heartbeat.OnTick           += TickTask;
+            LinkedDevices.linkChanged += Get_INV_ConnectNum;
+            _heartbeat.OnTick += TickTask;
         }
 
-        
+
 
         public void initSubAppSystem()
         {
-            SubSystems.Add(new SubAppSystem{subSystemID=0, port="CAN1", protocolFileName="NTN-5K_CAN.json", startAddr=0, length=64});
+            SubSystems.Add(new SubAppSystem { subSystemID = 0, port = "CAN1", protocolFileName = "NTN-5K_CAN.json", startAddr = 0, length = ConstDefinition.Max_PortDeviceNum });
             Device_WriteData.SubAppSystem_WriteMemorys.Add(new SubAppSystem_WriteMemory(0));
-            
-            SubSystems.Add(new SubAppSystem{subSystemID=1, port="CAN2", protocolFileName="NTN-5K_CAN.json", startAddr=0, length=64});
+
+            SubSystems.Add(new SubAppSystem { subSystemID = 1, port = "CAN2", protocolFileName = "NTN-5K_CAN.json", startAddr = 0, length = ConstDefinition.Max_PortDeviceNum });
             Device_WriteData.SubAppSystem_WriteMemorys.Add(new SubAppSystem_WriteMemory(1));
-            
-            SubSystems.Add(new SubAppSystem{subSystemID=2, port="MOD1", protocolFileName="NTN-5K_MOD.json", startAddr=0, length=64});
+
+            SubSystems.Add(new SubAppSystem { subSystemID = 2, port = "MOD1", protocolFileName = "NTN-5K_MOD.json", startAddr = 0, length = ConstDefinition.Max_PortDeviceNum });
             Device_WriteData.SubAppSystem_WriteMemorys.Add(new SubAppSystem_WriteMemory(2));
-            
-            SubSystems.Add(new SubAppSystem{subSystemID=3, port="MOD2", protocolFileName="NTN-5K_MOD.json", startAddr=0, length=64});
+
+            SubSystems.Add(new SubAppSystem { subSystemID = 3, port = "MOD2", protocolFileName = "NTN-5K_MOD.json", startAddr = 0, length = ConstDefinition.Max_PortDeviceNum });
             Device_WriteData.SubAppSystem_WriteMemorys.Add(new SubAppSystem_WriteMemory(3));
         }
 
@@ -175,7 +159,7 @@ namespace demoVer.Services
             {
                 return SubSystems[(int)ActiveSubAppSystemID].port;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 AppLogger.Log_To_File_log(_category, $"[GlobalData][getActiveSubSysPort] Error : {e}", AppLogLevel.Error);
                 return "";
@@ -185,7 +169,7 @@ namespace demoVer.Services
         public async Task TickTask()
         {
             // updateSystemVar();
-            switch(nowInitStage)
+            switch (nowInitStage)
             {
                 case InitStage.FromJson:
                     break;
@@ -200,18 +184,18 @@ namespace demoVer.Services
             }
         }
 
-        
+
 
         public void updateSystemVar()
         {
             // Compute_SYS_Phase();
             // if((Sys_PhaseStatus & 0x1) != 0)
             // {
-               
+
             // }
             // if((Sys_PhaseStatus & 0x2) != 0)
             // {
-                
+
             // }
             // if((Sys_PhaseStatus & 0x4) != 0)
             // {
@@ -226,24 +210,24 @@ namespace demoVer.Services
 
         public int getPortStartAddr(string port)
         {
-            switch(port)
+            switch (port)
             {
-                case "CAN1" : return CAN1_addr;
-                case "CAN2" : return CAN2_addr;
-                case "MOD1" : return MOD1_addr;
-                case "MOD2" : return MOD2_addr;
-                default : return 0;
+                case "CAN1": return ConstDefinition.CAN1_addr;
+                case "CAN2": return ConstDefinition.CAN2_addr;
+                case "MOD1": return ConstDefinition.MOD1_addr;
+                case "MOD2": return ConstDefinition.MOD2_addr;
+                default: return 0;
             }
         }
 
         public (string, uint) Get_Port_RealAddr_ByAddr(uint addr)
-	    {
-            if(addr >= MOD2_addr) {return ("MOD2", addr - MOD2_addr);}
-            if(addr >= MOD1_addr) {return ("MOD1", addr - MOD1_addr);}
-            if(addr >= CAN2_addr) {return ("CAN2", addr - CAN2_addr);}
-            if(addr >= CAN1_addr) {return ("CAN1", addr - CAN1_addr);}
+        {
+            if (addr >= ConstDefinition.MOD2_addr) { return ("MOD2", addr - ConstDefinition.MOD2_addr); }
+            if (addr >= ConstDefinition.MOD1_addr) { return ("MOD1", addr - ConstDefinition.MOD1_addr); }
+            if (addr >= ConstDefinition.CAN2_addr) { return ("CAN2", addr - ConstDefinition.CAN2_addr); }
+            if (addr >= ConstDefinition.CAN1_addr) { return ("CAN1", addr - ConstDefinition.CAN1_addr); }
             return (string.Empty, addr);
-	    }
+        }
 
         public void Get_INV_ConnectNum()
         {
@@ -253,7 +237,7 @@ namespace demoVer.Services
 
         public void Dispose()
         {
-            if(_disposed) return;
+            if (_disposed) return;
 
             LinkedDevices.linkChanged -= Get_INV_ConnectNum;
 
@@ -267,7 +251,7 @@ namespace demoVer.Services
             {
 
                 var oneDeviceData_Copy = Real_Devices_ReadData.Get_oneDevice_DataSnapshot(addr);
-                if(oneDeviceData_Copy == null) return null;
+                if (oneDeviceData_Copy == null) return null;
 
                 var tmp_modelName = oneDeviceData_Copy.parseCmdData("MFR_MODEL");
                 if (tmp_modelName is null) return null;
@@ -278,7 +262,7 @@ namespace demoVer.Services
                 AppLogger.Log_To_File_log(_category, $"[GlobalData][Get_ModelName_ByAddr] tmp_modelName : {(string)tmp_modelName}", AppLogLevel.Trace);
                 return (string)tmp_modelName;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 AppLogger.Log_To_File_log(_category, $"[GlobalData][Get_ModelName_ByAddr] Error : {e}", AppLogLevel.Error);
                 return null;
@@ -290,24 +274,24 @@ namespace demoVer.Services
             try
             {
                 var addr_ModelName_pairlist = new List<(uint, string)>();
-                for(uint addr = 0 ; addr < 256 ; addr ++)
+                for (uint addr = 0; addr < 256; addr++)
                 {
                     string tmp_modelName = Get_ModelName_ByAddr(addr);
 
-                    if(tmp_modelName == null) continue;
+                    if (tmp_modelName == null) continue;
 
                     var pair = (addr, tmp_modelName);
                     addr_ModelName_pairlist.Add(pair);
                 }
 
-                if(addr_ModelName_pairlist.Count > 0)
+                if (addr_ModelName_pairlist.Count > 0)
                 {
                     AppLogger.Log_To_File_log(_category, $"[GlobalData][Get_addr_and_ModelNames_List] addr_ModelName_pairlist.Count : {addr_ModelName_pairlist.Count}", AppLogLevel.Trace);
                     return addr_ModelName_pairlist;
                 }
                 return null;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 AppLogger.Log_To_File_log(_category, $"[GlobalData][Get_addr_and_ModelNames_List] Error : {e}", AppLogLevel.Error);
                 return null;
@@ -325,16 +309,16 @@ namespace demoVer.Services
                 if (oneDeviceData_cmd_unit_Dict is null || oneDeviceData_cmd_unit_Dict.Count == 0) return null;
 
                 return oneDeviceData_cmd_unit_Dict;
-                
+
                 // var oneDeivceData_ref = Device_ReadData.Get_oneDeviceData(addr);
                 // if(oneDeivceData_ref == null) return null;
 
                 // var oneDeviceData_cmd_unit_Dict = oneDeivceData_ref.Get_Cmd_unit_Dict();
                 // if(oneDeviceData_cmd_unit_Dict == null || oneDeviceData_cmd_unit_Dict.Count == 0) return null;
-                
+
                 // return oneDeviceData_cmd_unit_Dict;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 AppLogger.Log_To_File_log(_category, $"[GlobalData][Get_oneDevice_Cmd_unit_Dict] Error : {e}", AppLogLevel.Error);
             }
@@ -344,81 +328,81 @@ namespace demoVer.Services
 
         public string? Get_INV_Fault(uint addr)
         {
-            var cmd = "INV_FAULT";
-            var targetGroups = Device_ReadData.GetCommandGroups(addr, cmd);
-            if(targetGroups is null) return null;
+            // var cmd = "INV_FAULT";
+            // var targetGroups = Device_ReadData.GetCommandGroups(addr, cmd);
+            // if(targetGroups is null) return null;
 
-            var decoded = _decoder.Decode(targetGroups, cmd, addr);
-            AppLogger.Log_To_File_log(_category, $"[GlobalData][Get_INV_Fault] decoded = {(string)decoded}", AppLogLevel.Trace);
-            
-            if(string.IsNullOrEmpty((string)decoded)) return null;
-            
-            return (string)decoded;
+            // var decoded = _decoder.Decode(targetGroups, cmd, addr);
+            // AppLogger.Log_To_File_log(_category, $"[GlobalData][Get_INV_Fault] decoded = {(string)decoded}", AppLogLevel.Trace);
+
+            // if(string.IsNullOrEmpty((string)decoded)) return null;
+
+            return null;
         }
 
-        
+
         public object Get_INV_Status(string INV_FAULT_Val, uint INV_STATUS_Val, bool returnStr_Flag)
         {
-            if(!string.IsNullOrEmpty(INV_FAULT_Val)){return returnStr_Flag ? INV_FAULT_Val : STATUS_INV_ERROR;}
-            
+            if (!string.IsNullOrEmpty(INV_FAULT_Val)) { return returnStr_Flag ? INV_FAULT_Val : STATUS_INV_ERROR; }
+
             // if(Get_INV_Fault(INV_FAULT_Val) != 0){return returnStr_Flag ? "Error" : STATUS_INV_ERROR;}
-            
+
             //chargerEnable判斷
-            if(((INV_STATUS_Val) & STATUS_CHG) != 0)
+            if (((INV_STATUS_Val) & STATUS_CHG) != 0)
             {
                 INV_isCHG_Enable = true;
             }
 
-            if((INV_STATUS_Val & STATUS_UTI_OK) != 0)
+            if ((INV_STATUS_Val & STATUS_UTI_OK) != 0)
             {
                 INV_isAC_Standby = true;
             }
 
-            if(((INV_STATUS_Val & STATUS_INV) != 0) && ((INV_STATUS_Val & STATUS_SAVING) != 0)){return returnStr_Flag ? "Saving" : STATUS_INV_SAVING;}
+            if (((INV_STATUS_Val & STATUS_INV) != 0) && ((INV_STATUS_Val & STATUS_SAVING) != 0)) { return returnStr_Flag ? "Saving" : STATUS_INV_SAVING; }
 
-            if((INV_STATUS_Val & STATUS_INV) != 0){return returnStr_Flag ? "Inverter" : STATUS_INV_INVERTER;}
-            
-            if((INV_STATUS_Val & STATUS_BYP) != 0){return returnStr_Flag ? "Bypass" : STATUS_INV_BY_PASS;}
+            if ((INV_STATUS_Val & STATUS_INV) != 0) { return returnStr_Flag ? "Inverter" : STATUS_INV_INVERTER; }
 
-            if((INV_STATUS_Val & STATUS_CHG) != 0){return returnStr_Flag ? "Charger" : STATUS_INV_CHARGING;}
+            if ((INV_STATUS_Val & STATUS_BYP) != 0) { return returnStr_Flag ? "Bypass" : STATUS_INV_BY_PASS; }
+
+            if ((INV_STATUS_Val & STATUS_CHG) != 0) { return returnStr_Flag ? "Charger" : STATUS_INV_CHARGING; }
 
             return returnStr_Flag ? "Standby" : STATUS_INV_STANDBY;
         }
 
-       
+
         public byte? Get_INV_Phase(uint addr)
         {
             string cmd = "INV_STATUS";
             var targetGroups = Device_ReadData.GetCommandGroups(addr, cmd);
-            if(targetGroups is null) return null;
+            if (targetGroups is null) return null;
 
             var data = (targetGroups.Groups[0].Data[1]) & 0x03;  //判斷相位的bit在LSB 2位
             byte? return_val = 0;
-            switch(data)
+            switch (data)
             {
-                case INV_PHASE_0 : 
+                case INV_PHASE_0:
                     return_val = INV_PHASE_0;
                     break;
-                case INV_PHASE_180 : 
+                case INV_PHASE_180:
                     return_val = INV_PHASE_180;
                     break;
-                case INV_PHASE_120 : 
+                case INV_PHASE_120:
                     return_val = INV_PHASE_120;
                     break;
-                case INV_PHASE_M120 : 
+                case INV_PHASE_M120:
                     return_val = INV_PHASE_M120;
                     break;
-                default : 
+                default:
                     return_val = null;
                     break;
             }
 
-            
+
             //如果decode很慢的話，要換成data直接位元運算，寫switch-case取string
             // var decoded = _decoder.Decode(targetGroups, cmd);
             // if(decoded is null) return null;
 
-            
+
             AppLogger.Log_To_File_log(_category, $"[GlobalData][Get_INV_Phase] addr = {addr}, return_val = {return_val}", AppLogLevel.Trace);
             // return (string)decoded;
             return return_val;
@@ -427,16 +411,16 @@ namespace demoVer.Services
         private int? findActiveSubAppSys(uint firstAddr)
         {
             int? activeSubSysID = null;
-            
-            foreach(var subSys in SubSystems)
+
+            foreach (var subSys in SubSystems)
             {
-                uint portStartAddr   = (uint)getPortStartAddr(subSys.port);
-                uint trueStartAddr   = (uint)portStartAddr + (uint)subSys.startAddr;
-                uint trueEndAddr     = (uint)trueStartAddr + (uint)subSys.length - 1;
-                
-                if(firstAddr < trueStartAddr) continue;
-                
-                if(firstAddr > trueEndAddr) continue;
+                uint portStartAddr = (uint)getPortStartAddr(subSys.port);
+                uint trueStartAddr = (uint)portStartAddr + (uint)subSys.startAddr;
+                uint trueEndAddr = (uint)trueStartAddr + (uint)subSys.length - 1;
+
+                if (firstAddr < trueStartAddr) continue;
+
+                if (firstAddr > trueEndAddr) continue;
 
                 activeSubSysID = subSys.subSystemID;
 
@@ -458,17 +442,21 @@ namespace demoVer.Services
             //For computing IP/OP F
             double[] tmp_accumulate_IP_F = new double[3];
             double[] tmp_accumulate_OP_F = new double[3];
-            F_phase_Counters = new IP_OP_F_count();
-            
+
             try
             {
+                //Debug
+                // Debug_Print_mdlName(0);
+                // Debug_Print_mdlName(64);
+                // Debug_Print_mdlName(128);
+                // Debug_Print_mdlName(192);
                 //initialize temp variables
                 INV_isCHG_Enable = false;
                 INV_isAC_Standby = false;
                 INV_ModelName_tmp = "";
 
                 //clear SysModelName
-                if(linkedAddr_array.Length == 0)
+                if (linkedAddr_array.Length == 0)
                 {
                     Sys_ModelName = "";
                 }
@@ -481,11 +469,11 @@ namespace demoVer.Services
                     // INV_ModelName_tmp = "NTN-5K-248  "; //測試時，ModelName都是[0,0,0,0,0,0]時使用
                     //Assign 當前 Active的subAppSystem (後續應可動態調整，當前先以第一個linkedAddr 所在的範圍作為 Active subAppSystem
                     ActiveSubAppSystemID = findActiveSubAppSys(firstAddr);
-                    
+
                     AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] firstAddr = {firstAddr}, INV_ModelName_tmp = {INV_ModelName_tmp}, ActiveSubAppSystemID = {ActiveSubAppSystemID}", AppLogLevel.Trace);
                 }
-                
-                for(int index = 0 ; index < linkedAddr_array.Length ; index ++)
+
+                for (int index = 0; index < linkedAddr_array.Length; index++)
                 {
                     //for loop init local var
                     string? fault_str = "";
@@ -494,7 +482,7 @@ namespace demoVer.Services
 
                     //get the addr we are processing now                    
                     uint addr = linkedAddr_array[index];
-                    
+
                     //process ModelError
                     // if(Sys_modelError is false)
                     // {
@@ -508,23 +496,25 @@ namespace demoVer.Services
                     //         }
                     //     }
                     // }
-                    
+
                     //Process INV_FAULT
-                    Parse_INV_FAULT(addr, out fault_str);
+                    // Parse_INV_FAULT(addr, out fault_str);
                     //Process INV_Phase and Status
-                    Parse_INV_Phase_Status(addr, fault_str, out phase_byte, out status_byte);
-                    switch(status_byte)
+                    byte singleDevice_mode = Parse_INV_Mode(addr);
+                    // Console.WriteLine($"[ComputeOverallValues] addr={addr}, status_byte={singleDevice_mode}");
+                    //!!!這裡的case要用ConstDefinition的Enum來寫
+                    switch (singleDevice_mode)
                     {
-                        case STATUS_INV_DISCON: break;
-                        case STATUS_INV_ERROR: break;
-                        case STATUS_INV_INVERTER: INV++; break;
-                        case STATUS_INV_SAVING: Saving++; break;
-                        case STATUS_INV_BY_PASS: ByPass++; break;
-                        case STATUS_INV_CHARGING: Charging++; break;
-                        case STATUS_INV_STANDBY: Standby++; break;
-                        default : break;
+                        case (byte)ConstDefinition.SYS_Mode_Options.DISCON: break;
+                        case (byte)ConstDefinition.SYS_Mode_Options.ERROR: break;
+                        case (byte)ConstDefinition.SYS_Mode_Options.INVERTER: INV++; break;
+                        case (byte)ConstDefinition.SYS_Mode_Options.SAVING: Saving++; break;
+                        case (byte)ConstDefinition.SYS_Mode_Options.BY_PASS: ByPass++; break;
+                        case (byte)ConstDefinition.SYS_Mode_Options.CHARGER: Charging++; break;
+                        case (byte)ConstDefinition.SYS_Mode_Options.STANDBY: Standby++; break;
+                        default: break;
                     }
-                    
+
                     //Process tmpMaxValue of each phase corresponding the addr
                     Compute_INV_IP_V(tmpMaxs_INV_IP_V, addr);
                     Compute_INV_OP_V(tmpMaxs_INV_OP_V, addr);
@@ -532,8 +522,8 @@ namespace demoVer.Services
 
                 }
 
-                Sys_Charger_Enable  = INV_isCHG_Enable;
-                Sys_isAC_Standby    = INV_isAC_Standby;
+                Sys_Charger_Enable = INV_isCHG_Enable;
+                Sys_isAC_Standby = INV_isAC_Standby;
                 Sys_ModelName_Assign();
                 AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] Sys_ModelName = {Sys_ModelName}", AppLogLevel.Trace);
                 Sys_INV_Mode_Assign(INV, Saving, ByPass, Charging, Standby);
@@ -543,7 +533,7 @@ namespace demoVer.Services
                 // AssignMaxs_INV_OP_V(tmpMaxs_INV_OP_V);
                 AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] Sys_OP_V_Phases : {string.Join(", ", Sys_OP_V_Phases)}", AppLogLevel.Debug);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] Error : {e}", AppLogLevel.Error);
             }
@@ -552,18 +542,18 @@ namespace demoVer.Services
 
         private async Task Sys_ModelName_Assign()
         {
-            if(!string.Equals("Model_ERROR", INV_ModelName_tmp, StringComparison.Ordinal))
+            if (!string.Equals("Model_ERROR", INV_ModelName_tmp, StringComparison.Ordinal))
             {
                 Sys_modelError = false;
             }
-            if(!string.Equals(Sys_ModelName, INV_ModelName_tmp, StringComparison.Ordinal))
+            if (!string.Equals(Sys_ModelName, INV_ModelName_tmp, StringComparison.Ordinal))
             {//modelname changed
 
                 Sys_ModelName = INV_ModelName_tmp;
                 Console.WriteLine($"[Sys_ModelName_Assign] mdlName Change");
                 //inform hooked Events
-                
-                if(Sys_ModelName_OnChanged is not null)
+
+                if (Sys_ModelName_OnChanged is not null)
                 {
                     foreach (Func<Task> handler in Sys_ModelName_OnChanged.GetInvocationList())
                     {
@@ -589,36 +579,36 @@ namespace demoVer.Services
         private async Task Sys_INV_Mode_Assign(uint INV, uint Saving, uint ByPass, uint Charging, uint Standby)
         {
             byte tmp_Mode;
-            if(INV > 0)
+            if (INV > 0)
             {
                 tmp_Mode = INV_MODE_INVERTER;
             }
-            else if(Saving > 0)
+            else if (Saving > 0)
             {
                 tmp_Mode = INV_MODE_SAVING;
             }
-            else if(ByPass > 0)
+            else if (ByPass > 0)
             {
                 tmp_Mode = INV_MODE_BY_PASS;
             }
-            else if(Charging > 0)
+            else if (Charging > 0)
             {
                 tmp_Mode = INV_MODE_CHARGING;
             }
-            else if(Standby > 0)
+            else if (Standby > 0)
             {
                 tmp_Mode = INV_MODE_STANDBY;
             }
-            else 
+            else
             {
                 tmp_Mode = INV_MODE_NONE;
             }
-            
 
-            if(tmp_Mode != Sys_INV_Mode)
+
+            if (tmp_Mode != Sys_INV_Mode)
             {
                 Sys_INV_Mode = tmp_Mode;
-                if(Sys_INV_Mode_OnChanged is not null)
+                if (Sys_INV_Mode_OnChanged is not null)
                 {
                     await Sys_INV_Mode_OnChanged?.Invoke();
                     AppLogger.Log_To_File_log(_category, $"[GlobalData][Sys_INV_Mode_Assign]", AppLogLevel.Trace);
@@ -628,7 +618,7 @@ namespace demoVer.Services
 
         public string INV_Status_translator()
         {
-            switch(Sys_INV_Mode)
+            switch (Sys_INV_Mode)
             {
                 case INV_MODE_INVERTER: return "Inverter";
                 case INV_MODE_SAVING: return "Saving";
@@ -642,67 +632,87 @@ namespace demoVer.Services
 
         private void Parse_INV_FAULT(uint addr, out string? fault)
         {
-            string fault_cmd = "INV_FAULT";
+            // string fault_cmd = "INV_FAULT";
+            // try
+            // {
+            //     var targetGroups = Device_ReadData.GetCommandGroups(addr, fault_cmd);
+            //     if(targetGroups == null)
+            //     {
+            //         fault = null;
+            //         return;
+            //     }
+
+            //     string? tmp = (string?)_decoder.Decode(targetGroups, fault_cmd, addr);
+            //     fault = tmp;
+            // }
+            // catch(Exception e)
+            // {
+            //     AppLogger.Log_To_File_log(_category, $"[GlobalData][Parse_INV_FAULT] Error : {e}", AppLogLevel.Error);
+            //     fault = null;
+            // }
+            fault = null;
+        }
+
+        private byte Parse_INV_Mode(uint addr)
+        {
             try
             {
-                var targetGroups = Device_ReadData.GetCommandGroups(addr, fault_cmd);
-                if(targetGroups == null)
+                byte status = 0;
+                string status_Cmd = "INV_STATUS";
+                var INV_STATUS_DecodeList = (List<decodeContent>?)(Real_Devices_ReadData.Get_oneDevice_DataSnapshot(addr)?.parseCmdData(status_Cmd));
+                if (INV_STATUS_DecodeList is null)
                 {
-                    fault = null;
-                    return;
+                    AppLogger.Log_To_File_log(_category, $"[GlobalData][Parse_INV_Mode] addr:{addr}, INV_STATUS_DecodeList is null", AppLogLevel.Trace);
+                    status = (byte)ConstDefinition.SYS_Mode_Options.DISCON;
+                    return status;
                 }
 
-                string? tmp = (string?)_decoder.Decode(targetGroups, fault_cmd, addr);
-                fault = tmp;
+                string? INV_STATUS_str = BitFieldParser.FitParserFunction(status_Cmd, INV_STATUS_DecodeList);
+                switch (INV_STATUS_str)
+                {
+                    case ConstDefinition.INVERTER_MODE_str:
+                        status = (byte)ConstDefinition.SYS_Mode_Options.INVERTER;
+                        break;
+                    case ConstDefinition.SAVING_MODE_str:
+                        status = (byte)ConstDefinition.SYS_Mode_Options.SAVING;
+                        break;
+                    case ConstDefinition.BYPASS_MODE_str:
+                        status = (byte)ConstDefinition.SYS_Mode_Options.BY_PASS;
+                        break;
+                    case ConstDefinition.CHARGING_MODE_str:
+                        status = (byte)ConstDefinition.SYS_Mode_Options.CHARGER;
+                        break;
+                    case ConstDefinition.STANDBY_MODE_str:
+                        status = (byte)ConstDefinition.SYS_Mode_Options.STANDBY;
+                        break;
+                    default:
+                        status = (byte)ConstDefinition.SYS_Mode_Options.DISCON;
+                        break;
+                }
+                // Console.WriteLine($"[Parse_INV_Mode] addr:{addr}, status : {status}");
+                return status;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                AppLogger.Log_To_File_log(_category, $"[GlobalData][Parse_INV_FAULT] Error : {e}", AppLogLevel.Error);
-                fault = null;
+                AppLogger.Log_To_File_log(_category, $"[GlobalData][Parse_INV_Mode] Error : {e}", AppLogLevel.Error);
+                return (byte)ConstDefinition.SYS_Mode_Options.DISCON;
             }
         }
 
-        private void Parse_INV_Phase_Status(uint addr, string? fault_str, out byte? phase, out byte? status)
+        private void GetMaxs_INV_V(byte SysPhase_Index, byte? addrPhase, double[] tmpMaxs, double decodedValue)
         {
-            string status_Cmd = "INV_STATUS";
-            try
-            {
-                var targetGroups = Device_ReadData.GetCommandGroups(addr, status_Cmd);
-                if(targetGroups is null){phase=null; status=null; return;}
-                
-                byte INV_STATUS_Phase_data = (byte)((targetGroups.Groups[0].Data[1]) & 0x3);
-                uint INV_STATUS_Whole_data = (((uint)targetGroups.Groups[0].Data[1]) << 8) | ((uint)targetGroups.Groups[0].Data[0]);
-                
-                //parse phase
-                phase = INV_STATUS_Phase_data;
-                AppLogger.Log_To_File_log(_category, $"[GlobalData][Parse_INV_Phase_Status] addr:{addr}, phase : {phase}", AppLogLevel.Trace);
-
-                //parse status
-                status = (byte?)Get_INV_Status(fault_str, INV_STATUS_Whole_data, false);
-                AppLogger.Log_To_File_log(_category, $"[GlobalData][Parse_INV_Phase_Status] addr:{addr}, status : {status}", AppLogLevel.Trace);
-            }
-            catch(Exception e)
-            {
-                phase = null;
-                status = null;
-                AppLogger.Log_To_File_log(_category, $"[GlobalData][Parse_INV_Status] Error : {e}", AppLogLevel.Error);
-            }
-        }
-
-        private void GetMaxs_INV_V(byte SysPhase_Index,  byte? addrPhase, double[] tmpMaxs, double decodedValue)
-        {
-            if(addrPhase is null) return;
+            if (addrPhase is null) return;
 
             byte judgedPhase = judgeNowPhase(SysPhase_Index);
-            if(addrPhase == judgedPhase)
+            if (addrPhase == judgedPhase)
             {
-                switch(judgedPhase)
+                switch (judgedPhase)
                 {
                     case INV_PHASE_0:
                     case INV_PHASE_180:
                     case INV_PHASE_120:
                     case INV_PHASE_M120:
-                        if(decodedValue > tmpMaxs[SysPhase_Index])
+                        if (decodedValue > tmpMaxs[SysPhase_Index])
                         {
                             tmpMaxs[SysPhase_Index] = decodedValue;
                         }
@@ -715,43 +725,43 @@ namespace demoVer.Services
 
         private void Compute_INV_IP_V(double[] tmpMaxs, uint addr)
         {
-            string Cmd = "READ_VIN";
-            try
-            {
-                //解碼
-                var targetGroups = Device_ReadData.GetCommandGroups(addr, Cmd);
-                if(targetGroups == null) return;
-                var value = _decoder.Decode(targetGroups, Cmd, addr);
-                
-                
-                //取出addr對應的phase
-                if(INVs_Phase.TryGetValue(addr, out byte? addrPhase))
-                {//累加各phase的tmpMax
+            // string Cmd = "READ_VIN";
+            // try
+            // {
+            //     //解碼
+            //     var targetGroups = Device_ReadData.GetCommandGroups(addr, Cmd);
+            //     if(targetGroups == null) return;
+            //     var value = _decoder.Decode(targetGroups, Cmd, addr);
 
-                    //For phase 1
-                    if((Sys_PhaseStatus & 0x1) != 0)
-                    {   
-                        GetMaxs_INV_V(0, addrPhase, tmpMaxs, (double)value);
-                        AppLogger.Log_To_File_log(_category, $"[GlobalData][Compute_INV_IP_V] Sys_PhaseStatus = {Sys_PhaseStatus}, addr = {addr}, decode_VIN = {value} Sys_IP_V_Phases : {string.Join(", ", Sys_IP_V_Phases)}", AppLogLevel.Debug);
-                    } 
-                    //For phase 2
-                    if((Sys_PhaseStatus & 0x2) != 0)
-                    {
-                        GetMaxs_INV_V(1, addrPhase, tmpMaxs, (double)value);
-                        AppLogger.Log_To_File_log(_category, $"[GlobalData][Compute_INV_IP_V] Sys_PhaseStatus = {Sys_PhaseStatus}, addr = {addr}, decode_VIN = {value} Sys_IP_V_Phases : {string.Join(", ", Sys_IP_V_Phases)}", AppLogLevel.Debug);
-                    }
-                    //For phase 3
-                    if((Sys_PhaseStatus & 0x4) != 0)
-                    {
-                        GetMaxs_INV_V(2, addrPhase, tmpMaxs, (double)value);
-                        AppLogger.Log_To_File_log(_category, $"[GlobalData][Compute_INV_IP_V] Sys_PhaseStatus = {Sys_PhaseStatus}, addr = {addr}, decode_VIN = {value} Sys_IP_V_Phases : {string.Join(", ", Sys_IP_V_Phases)}", AppLogLevel.Debug);
-                    }    
-                }
-            }
-            catch(Exception e)
-            {
-                AppLogger.Log_To_File_log(_category, $"[GlobalData][Compute_INV_IP_V] Error : {e}", AppLogLevel.Error);
-            }
+
+            //     //取出addr對應的phase
+            //     if(INVs_Phase.TryGetValue(addr, out byte? addrPhase))
+            //     {//累加各phase的tmpMax
+
+            //         //For phase 1
+            //         if((Sys_PhaseStatus & 0x1) != 0)
+            //         {   
+            //             GetMaxs_INV_V(0, addrPhase, tmpMaxs, (double)value);
+            //             AppLogger.Log_To_File_log(_category, $"[GlobalData][Compute_INV_IP_V] Sys_PhaseStatus = {Sys_PhaseStatus}, addr = {addr}, decode_VIN = {value} Sys_IP_V_Phases : {string.Join(", ", Sys_IP_V_Phases)}", AppLogLevel.Debug);
+            //         } 
+            //         //For phase 2
+            //         if((Sys_PhaseStatus & 0x2) != 0)
+            //         {
+            //             GetMaxs_INV_V(1, addrPhase, tmpMaxs, (double)value);
+            //             AppLogger.Log_To_File_log(_category, $"[GlobalData][Compute_INV_IP_V] Sys_PhaseStatus = {Sys_PhaseStatus}, addr = {addr}, decode_VIN = {value} Sys_IP_V_Phases : {string.Join(", ", Sys_IP_V_Phases)}", AppLogLevel.Debug);
+            //         }
+            //         //For phase 3
+            //         if((Sys_PhaseStatus & 0x4) != 0)
+            //         {
+            //             GetMaxs_INV_V(2, addrPhase, tmpMaxs, (double)value);
+            //             AppLogger.Log_To_File_log(_category, $"[GlobalData][Compute_INV_IP_V] Sys_PhaseStatus = {Sys_PhaseStatus}, addr = {addr}, decode_VIN = {value} Sys_IP_V_Phases : {string.Join(", ", Sys_IP_V_Phases)}", AppLogLevel.Debug);
+            //         }    
+            //     }
+            // }
+            // catch(Exception e)
+            // {
+            //     AppLogger.Log_To_File_log(_category, $"[GlobalData][Compute_INV_IP_V] Error : {e}", AppLogLevel.Error);
+            // }
         }
 
         private void AssignMaxs_INV_IP_V(double[] tmpMaxs)
@@ -761,43 +771,43 @@ namespace demoVer.Services
 
         private void Compute_INV_OP_V(double[] tmpMaxs, uint addr)
         {
-            string Cmd = "READ_AC_VOUT";
-            try
-            {
-                //解碼
-                var targetGroups = Device_ReadData.GetCommandGroups(addr, Cmd);
-                if(targetGroups == null) return;
-                var value = _decoder.Decode(targetGroups, Cmd, addr);
-                
-                
-                //取出addr對應的phase
-                if(INVs_Phase.TryGetValue(addr, out byte? addrPhase))
-                {//累加各phase的tmpMax
+            // string Cmd = "READ_AC_VOUT";
+            // try
+            // {
+            //     //解碼
+            //     var targetGroups = Device_ReadData.GetCommandGroups(addr, Cmd);
+            //     if(targetGroups == null) return;
+            //     var value = _decoder.Decode(targetGroups, Cmd, addr);
 
-                    //For phase 1
-                    if((Sys_PhaseStatus & 0x1) != 0)
-                    {   
-                        GetMaxs_INV_V(0, addrPhase, tmpMaxs, (double)value);
-                        AppLogger.Log_To_File_log(_category, $"[GlobalData][Compute_INV_OP_V] Sys_PhaseStatus = {Sys_PhaseStatus}, addr = {addr}, decode_VOUT = {value} Sys_OP_V_Phases : {string.Join(", ", Sys_OP_V_Phases)}", AppLogLevel.Debug);
-                    } 
-                    //For phase 2
-                    if((Sys_PhaseStatus & 0x2) != 0)
-                    {
-                        GetMaxs_INV_V(1, addrPhase, tmpMaxs, (double)value);
-                        AppLogger.Log_To_File_log(_category, $"[GlobalData][Compute_INV_OP_V] Sys_PhaseStatus = {Sys_PhaseStatus}, addr = {addr}, decode_VOUT = {value} Sys_OP_V_Phases : {string.Join(", ", Sys_OP_V_Phases)}", AppLogLevel.Debug);
-                    }
-                    //For phase 3
-                    if((Sys_PhaseStatus & 0x4) != 0)
-                    {
-                        GetMaxs_INV_V(2, addrPhase, tmpMaxs, (double)value);
-                        AppLogger.Log_To_File_log(_category, $"[GlobalData][Compute_INV_OP_V] Sys_PhaseStatus = {Sys_PhaseStatus}, addr = {addr}, decode_VOUT = {value} Sys_OP_V_Phases : {string.Join(", ", Sys_OP_V_Phases)}", AppLogLevel.Debug);
-                    }    
-                }
-            }
-            catch(Exception e)
-            {
-                AppLogger.Log_To_File_log(_category, $"[GlobalData][Compute_INV_OP_V] Error : {e}", AppLogLevel.Error);
-            }
+
+            //     //取出addr對應的phase
+            //     if(INVs_Phase.TryGetValue(addr, out byte? addrPhase))
+            //     {//累加各phase的tmpMax
+
+            //         //For phase 1
+            //         if((Sys_PhaseStatus & 0x1) != 0)
+            //         {   
+            //             GetMaxs_INV_V(0, addrPhase, tmpMaxs, (double)value);
+            //             AppLogger.Log_To_File_log(_category, $"[GlobalData][Compute_INV_OP_V] Sys_PhaseStatus = {Sys_PhaseStatus}, addr = {addr}, decode_VOUT = {value} Sys_OP_V_Phases : {string.Join(", ", Sys_OP_V_Phases)}", AppLogLevel.Debug);
+            //         } 
+            //         //For phase 2
+            //         if((Sys_PhaseStatus & 0x2) != 0)
+            //         {
+            //             GetMaxs_INV_V(1, addrPhase, tmpMaxs, (double)value);
+            //             AppLogger.Log_To_File_log(_category, $"[GlobalData][Compute_INV_OP_V] Sys_PhaseStatus = {Sys_PhaseStatus}, addr = {addr}, decode_VOUT = {value} Sys_OP_V_Phases : {string.Join(", ", Sys_OP_V_Phases)}", AppLogLevel.Debug);
+            //         }
+            //         //For phase 3
+            //         if((Sys_PhaseStatus & 0x4) != 0)
+            //         {
+            //             GetMaxs_INV_V(2, addrPhase, tmpMaxs, (double)value);
+            //             AppLogger.Log_To_File_log(_category, $"[GlobalData][Compute_INV_OP_V] Sys_PhaseStatus = {Sys_PhaseStatus}, addr = {addr}, decode_VOUT = {value} Sys_OP_V_Phases : {string.Join(", ", Sys_OP_V_Phases)}", AppLogLevel.Debug);
+            //         }    
+            //     }
+            // }
+            // catch(Exception e)
+            // {
+            //     AppLogger.Log_To_File_log(_category, $"[GlobalData][Compute_INV_OP_V] Error : {e}", AppLogLevel.Error);
+            // }
         }
 
         private void AssignMaxs_INV_OP_V(double[] tmpMaxs)
@@ -806,15 +816,15 @@ namespace demoVer.Services
         }
 
         public void GetArrowDirections(out ArrowDirection G2M, out ArrowDirection M2L, out ArrowDirection M2B)
-        {   
+        {
             //G : 市電
             //M : Machine(NTN)
             //L : Load
             //B : Battery
 
             //以下都是箭頭方向
-            
-            switch(Sys_INV_Mode)
+
+            switch (Sys_INV_Mode)
             {
                 case INV_MODE_INVERTER:
                     G2M = ArrowDirection.Hidden;
@@ -827,7 +837,7 @@ namespace demoVer.Services
                     M2B = ArrowDirection.Up;
                     break;
                 case INV_MODE_BY_PASS:
-                    if(Sys_Charger_Enable)
+                    if (Sys_Charger_Enable)
                     {
                         G2M = ArrowDirection.Right;
                         M2L = ArrowDirection.Right;
@@ -846,7 +856,7 @@ namespace demoVer.Services
                     M2B = ArrowDirection.Down;
                     break;
                 case INV_MODE_STANDBY:
-                    if(Sys_isAC_Standby)
+                    if (Sys_isAC_Standby)
                     {
                         G2M = ArrowDirection.Right;
                         M2L = ArrowDirection.Hidden;
@@ -881,12 +891,12 @@ namespace demoVer.Services
         {
             //只取當前有連線的設備
             uint[] linkedAddr_array = LinkedDevices.Snapshot();
-            
+
             AppLogger.Log_To_File_log(_category, $"[GlobalData][Compute_SYS_Phase] linkedAddr_array.Length = {linkedAddr_array.Length}", AppLogLevel.Trace);
-            
+
             byte Phase_status_temp = 0x01; //暫存系統Status
-            
-            for(int index = 0 ; index < linkedAddr_array.Length ; index ++)
+
+            for (int index = 0; index < linkedAddr_array.Length; index++)
             {
                 uint addr = linkedAddr_array[index];
                 byte? addr_phase = Get_INV_Phase(addr);
@@ -895,35 +905,35 @@ namespace demoVer.Services
                 INVs_Phase[addr] = addr_phase;
 
                 //INV status is out of cases
-                if(addr_phase == null) continue; //which may be the device from other Company
-                
+                if (addr_phase == null) continue; //which may be the device from other Company
 
-                switch(addr_phase)
+
+                switch (addr_phase)
                 {
                     case INV_PHASE_0:
-                        if(Phase_status_temp <= INV_SINGLE_PHASE)
+                        if (Phase_status_temp <= INV_SINGLE_PHASE)
                         {
                             Phase_status_temp = INV_SINGLE_PHASE;
                         }
                         AppLogger.Log_To_File_log(_category, $"[GlobalData][Compute_SYS_Phase] addr = {addr}, addr_phase = {Phase_status_temp}", AppLogLevel.Trace);
                         break;
-                    case INV_PHASE_120: 
-                    case INV_PHASE_M120:   
-                        if(Phase_status_temp <= INV_THREE_PHASE)
+                    case INV_PHASE_120:
+                    case INV_PHASE_M120:
+                        if (Phase_status_temp <= INV_THREE_PHASE)
                         {
                             Phase_status_temp = INV_THREE_PHASE;
                         }
                         AppLogger.Log_To_File_log(_category, $"[GlobalData][Compute_SYS_Phase] addr = {addr}, addr_phase = {Phase_status_temp}", AppLogLevel.Trace);
                         break;
                     case INV_PHASE_180:
-                        if(Phase_status_temp <= INV_TWO_PHASE)
+                        if (Phase_status_temp <= INV_TWO_PHASE)
                         {
                             Phase_status_temp = INV_TWO_PHASE;
                         }
                         AppLogger.Log_To_File_log(_category, $"[GlobalData][Compute_SYS_Phase] addr = {addr}, addr_phase = {Phase_status_temp}", AppLogLevel.Trace);
                         break;
-                    
-                    default :
+
+                    default:
                         AppLogger.Log_To_File_log(_category, $"[GlobalData][Compute_SYS_Phase] addr = {addr}, default : addr_phase = {addr_phase}", AppLogLevel.Trace);
                         break;
                 }
@@ -936,38 +946,55 @@ namespace demoVer.Services
         {
             byte Phase_temp = 0;
             //判斷當前相位
-            if(Sys_PhaseStatus == INV_SINGLE_PHASE)
+            if (Sys_PhaseStatus == INV_SINGLE_PHASE)
             {
                 Phase_temp = INV_PHASE_0;
             }
-            else if(Sys_PhaseStatus == INV_TWO_PHASE)
+            else if (Sys_PhaseStatus == INV_TWO_PHASE)
             {
-                if(phase == 0)
+                if (phase == 0)
                 {
                     Phase_temp = INV_PHASE_0;
                 }
-                else if(phase == 1)
+                else if (phase == 1)
                 {
                     Phase_temp = INV_PHASE_180;
                 }
             }
-            else if(Sys_PhaseStatus == INV_THREE_PHASE)
+            else if (Sys_PhaseStatus == INV_THREE_PHASE)
             {
-                if(phase == 0)
+                if (phase == 0)
                 {
                     Phase_temp = INV_PHASE_0;
                 }
-                else if(phase == 1)
+                else if (phase == 1)
                 {
                     Phase_temp = INV_PHASE_120;
-    
+
                 }
-                else if(phase == 2)
+                else if (phase == 2)
                 {
                     Phase_temp = INV_PHASE_M120;
                 }
             }
             return Phase_temp;
         }
+    
+        private void Debug_Print_mdlName(uint addr)
+        {
+            var oneDeviceData = Real_Devices_ReadData.Get_oneDevice_DataSnapshot(addr);
+            if (oneDeviceData is null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[GlobalData][Debug_Print_mdlName] addr = {addr}, oneDeviceData is null", AppLogLevel.Trace);
+                Console.WriteLine($"[Debug_Print_mdlName] addr = {addr}, oneDeviceData is null");
+                return;
+            }
+            string? mdlName = (string?)oneDeviceData.parseCmdData("MFR_MODEL");
+
+            AppLogger.Log_To_File_log(_category, $"[GlobalData][Debug_Print_mdlName] addr = {addr}, mdlName = {mdlName}", AppLogLevel.Trace);
+            Console.WriteLine($"[Debug_Print_mdlName] addr = {addr}, mdlName = {mdlName}");
+        }
     }
+    
+    
 }

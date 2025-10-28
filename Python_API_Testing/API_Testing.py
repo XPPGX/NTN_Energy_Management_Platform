@@ -17,8 +17,26 @@ USE_RANDOM_DATA = True
 with open("INV_DATA.json", "r", encoding="utf-8") as f:
     _base_data = json.load(f)
 
-with open("link_status.json", "r", encoding="utf-8") as f:
-    _link_status = json.load(f)
+
+_LINK_STATUS_REFRESH_INTERVAL = 2.0  # seconds
+_link_status = None
+_link_status_last_loaded = 0.0
+
+def _load_link_status():
+    global _link_status, _link_status_last_loaded
+    with open("link_status.json", "r", encoding="utf-8") as f:
+        _link_status = json.load(f)
+    _link_status_last_loaded = time.time()
+
+def _get_link_status():
+    global _link_status, _link_status_last_loaded
+    now = time.time()
+    if _link_status is None or (now - _link_status_last_loaded) >= _LINK_STATUS_REFRESH_INTERVAL:
+        try:
+            _load_link_status()
+        except Exception as exc:
+            print(f"[link_status] reload failed: {exc}")
+    return _link_status
 
 with open("REAL_ReadMemory_JsonFormat.json", "r", encoding="utf-8") as f:
     REAL_INV_TEMPLATE = json.load(f)
@@ -148,7 +166,10 @@ def read_real():
 
 @app.route("/api/memory/link-status", methods=["GET"])
 def get_link_status():
-    return jsonify(_link_status), 200
+    data = _get_link_status()
+    if data is None:
+        return jsonify({"error": "link_status not available"}), 500
+    return jsonify(data), 200
 
 @app.route("/api/memory/read-memory", methods=["GET"])
 def read_memory():

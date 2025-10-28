@@ -176,19 +176,19 @@ namespace demoVer.Utils
     {
         public static string getPortByAddr(uint addr)
         {
-            if (addr >= 192)
+            if (addr >= ConstDefinition.MOD2_addr)
             {
                 return "MOD2";
             }
-            if (addr >= 128)
+            if (addr >= ConstDefinition.MOD1_addr)
             {
                 return "MOD1";
             }
-            if (addr >= 64)
+            if (addr >= ConstDefinition.CAN2_addr)
             {
                 return "CAN2";
             }
-            if (addr >= 0)
+            if (addr >= ConstDefinition.CAN1_addr)
             {
                 return "CAN1";
             }

@@ -7,6 +7,7 @@
     "demoVer.Shared.BlankInfoCard"              : 2,
     "demoVer.Shared.EditCard"                   : 2,
     "demoVer.Shared.BlankChartCard"             : 2,
+    "demoVer.Shared.RunningDiagramCard"         : 0,
     "demoVer.Models.allDevice_Data"             : 2,
     "demoVer.Models.oneDevice_Data"             : 2,
     "demoVer.Models.WriteAPI_Datas"             : 2,

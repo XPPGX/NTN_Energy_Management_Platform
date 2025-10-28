@@ -530,31 +530,28 @@ namespace demoVer.Services
                 {
                     if (string.IsNullOrEmpty(line.Cmd))
                     {
-                        Console.WriteLine($"[ApplyRealDataToChart] line.Cmd is null or empty");
+                        AppLogger.Log_To_File_log(_category, $"[ApplyRealDataToChart] line.Cmd is null or empty", AppLogLevel.Warning);
                         continue;
                     }
 
+                    bool AddEmptyData = false;
                     // 從 Device_ReadData 抓這個 addr + Cmd 的資料
                     var oneDeviceData = _globalVar.Real_Devices_ReadData.Get_oneDevice_DataSnapshot(line.addr);
                     if (oneDeviceData == null)
                     {
-                        Console.WriteLine($"[ApplyRealDataToChart] oneDeviceData is null for addr = {line.addr}");
-                        continue;
+                        AppLogger.Log_To_File_log(_category, $"[ApplyRealDataToChart] oneDeviceData is null for addr = {line.addr}", AppLogLevel.Warning);
+                        AddEmptyData = true;
                     }
 
-                    var cmdType = oneDeviceData.GetCmdType(line.Cmd);
+                    var cmdType = oneDeviceData?.GetCmdType(line.Cmd) ?? string.Empty;
                     if (!string.Equals(cmdType, "Numeric", StringComparison.OrdinalIgnoreCase))
                     {
-                        Console.WriteLine($"[ApplyRealDataToChart] cmdType is not Numeric for Cmd = {line.Cmd}, cmdType = {cmdType}");
-                        continue;
+                        AppLogger.Log_To_File_log(_category, $"[ApplyRealDataToChart] cmdType is not Numeric for Cmd = {line.Cmd}, cmdType = {cmdType}", AppLogLevel.Warning);
+                        AddEmptyData = true;
                     }
 
-                    var realValue = oneDeviceData.parseCmdData(line.Cmd);
-
-                    if (realValue is not null)
+                    if(AddEmptyData is true)
                     {
-                        double? RealValue_double = (double?)realValue;
-                        Console.WriteLine($"realValue = {realValue}, RealValue_double = {RealValue_double}");
                         var newChartLineData = line.Data?.ToList() ?? new List<double?>();
 
                         if (newChartLineData?.Count < nowDataLength)
@@ -570,10 +567,38 @@ namespace demoVer.Services
                             newChartLineData.RemoveAt(0);
                         }
 
-                        newChartLineData?.Add(RealValue_double);
+                        newChartLineData?.Add(null);
                         if (newChartLineData is not null)
                         {
                             line.Data = newChartLineData.ToArray();
+                        }
+                    }
+                    else
+                    {
+                        var realValue = oneDeviceData?.parseCmdData(line.Cmd);
+                        if (realValue is not null)
+                        {
+                            double? RealValue_double = (double?)realValue;
+                            var newChartLineData = line.Data?.ToList() ?? new List<double?>();
+
+                            if (newChartLineData?.Count < nowDataLength)
+                            {
+                                for (int i = 0; i < nowDataLength; i++)
+                                {
+                                    newChartLineData.Add(null);
+                                }
+                            }
+
+                            if (newChartLineData?.Count >= chartMaxDataCount)
+                            {
+                                newChartLineData.RemoveAt(0);
+                            }
+
+                            newChartLineData?.Add(RealValue_double);
+                            if (newChartLineData is not null)
+                            {
+                                line.Data = newChartLineData.ToArray();
+                            }
                         }
                     }
                 }
@@ -588,7 +613,7 @@ namespace demoVer.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[ApplyRealDataToChart] Error: {ex.Message}");
+                AppLogger.Log_To_File_log(_category, $"[ApplyRealDataToChart] Error: {ex.Message}", AppLogLevel.Error);
             }
         }
 

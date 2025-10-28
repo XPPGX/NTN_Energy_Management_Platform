@@ -75,13 +75,13 @@ namespace demoVer.Utils
             bool CHG_ON = strToBool(statusDict.GetValueOrDefault("CHG_ON", "False"));
             bool SAVING_MODE = strToBool(statusDict.GetValueOrDefault("SAVING_MODE", "False"));
 
-            if (INV_MODE && SAVING_MODE) { return "Saving"; }
-            if (INV_MODE) { return "Inverter"; }
-            if (BYPASS_MODE) { return "Bypass"; }
-            if (CHG_ON) { return "Charger"; }
-            if (AC_OK) { return "Standby"; }
+            if (INV_MODE && SAVING_MODE) { return ConstDefinition.SAVING_MODE_str; }
+            if (INV_MODE) { return ConstDefinition.INVERTER_MODE_str; }
+            if (BYPASS_MODE) { return ConstDefinition.BYPASS_MODE_str; }
+            if (CHG_ON) { return ConstDefinition.CHARGING_MODE_str; }
+            if (AC_OK) { return ConstDefinition.STANDBY_MODE_str; }
 
-            return "Error";
+            return ConstDefinition.DEFAULT_MODE_str;
         }
 
         public static bool strToBool(string booleanStr)

@@ -2,6 +2,7 @@
 @inherits LayoutComponentBase
 @using demoVer.Models
 @using demoVer.Services
+@using demoVer.Utils
 @inject ArrowAnimationService ArrowService
 @inject GlobalVar globalVar
 <div class="running-diagram-container @CssClass" @attributes="AdditionalAttributes">
@@ -156,6 +157,7 @@
 </div>
 
 @code{
+    private string _category = string.Empty;
     private bool DEBUG_MODE = true;
     private string local_INV_MODE_str = "";
 
@@ -186,18 +188,7 @@
 
     protected override void OnInitialized()
     {
-        
-
-        @* if(currentCard.Link_STATUS_Pairs == null)
-        {
-            currentCard.Link_STATUS_Pairs = new List<LINK_STATUS_Pair>
-            {
-                new LINK_STATUS_Pair { iconPath = "images/user_selections/transmission-tower.png", Label = "" },
-                new LINK_STATUS_Pair { iconPath = "images/user_selections/fridge.png", Label = "" },
-                new LINK_STATUS_Pair { iconPath = "images/user_selections/plug.png", Label = "" },
-                new LINK_STATUS_Pair { iconPath = "images/user_selections/car-battery.png", Label = "" }
-            };
-        } *@
+        _category = GetType().FullName!;
     }
 
     
@@ -211,7 +202,9 @@
 
     private async Task Sys_INV_Mode_Change_Task()
     {
+        
         local_INV_MODE_str = globalVar.INV_Status_translator();
+        AppLogger.Log_To_File_log(_category, $"[Sys_INV_Mode_Change_Task] local_INV_MODE_str updated to: {local_INV_MODE_str}", AppLogLevel.Information);
         await InvokeAsync(StateHasChanged);
     }
 
@@ -240,6 +233,7 @@
             ArrowService.triGroup1.show_arrows();
             ArrowService.triGroup2.show_arrows();
             ArrowService.triGroup3.show_arrows();
+            Console.WriteLine("RunningDiagramCard: Arrows shown.");
             await InvokeAsync(StateHasChanged); // ← 立刻畫出來
         }
     }
