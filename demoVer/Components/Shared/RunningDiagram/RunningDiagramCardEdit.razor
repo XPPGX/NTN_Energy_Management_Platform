@@ -6,15 +6,39 @@
 @using System.IO
 @using System.Linq
 @using demoVer.Models
+@using demoVer.Services
 @using Microsoft.AspNetCore.Components
 @using MudBlazor
 
 @inject IWebHostEnvironment WebHostEnvironment
+@inject GlobalVar globalVar
 
 <div class="status-editor">
 	@if (STATUS_setting_stage == STATUS_SETTING_STAGE.OVERVIEW)
 	{
 		<h3>編輯 : 連接狀態</h3>
+		<div class="subsystem-editor">
+			<label class="subsystem-select-label" for="subsystem-select-editor">子系統：</label>
+			@if (subsystemOptions.Count > 0)
+			{
+				<select id="subsystem-select-editor"
+						class="subsystem-select"
+						value="@selectedSubsystemKey"
+						@onchange="OnSubsystemSelectionChanged">
+					@foreach (var subsystem in subsystemOptions)
+					{
+						var key = BuildSubsystemKey(subsystem);
+						<option value="@key" selected="@(key == selectedSubsystemKey)">@GetSubsystemDisplayName(subsystem)</option>
+					}
+				</select>
+			}
+			else
+			{
+				<select id="subsystem-select-editor" class="subsystem-select" disabled>
+					<option value="">無可用子系統</option>
+				</select>
+			}
+		</div>
 		<table class="custom-table no-text-select" id="table-linkingStatus">
 			<colgroup>
 				<col style="width: 20%;" />
@@ -76,6 +100,9 @@
 	[Parameter] public CardInfo currentCardInfo { get; set; } = default!;
 	[Parameter] public EventCallback<CardInfo> OnCardInfoUpdated { get; set; }
 
+	private readonly List<SubSystem> subsystemOptions = new();
+	private string? selectedSubsystemKey;
+
 	private string imgFolderPath = string.Empty;
 	private List<string> imgRelativePaths = new();
 	private STATUS_SETTING_STAGE STATUS_setting_stage = STATUS_SETTING_STAGE.OVERVIEW;
@@ -95,6 +122,8 @@
         EnsureStatusSlots();
         STATUS_setting_stage = STATUS_SETTING_STAGE.OVERVIEW;
         currentEdit_LINK_STATUS_pair_ref = null;
+		selectedSubsystemKey = currentCardInfo.SelectedSubsystemKey;
+		RefreshSubsystemOptions();
         Console.WriteLine($"[3]RunningDiagramCardEdit OnAfterRender STATUS_setting_stage  = {STATUS_setting_stage}");
 	}
 
@@ -114,6 +143,8 @@
             EnsureStatusSlots();
             STATUS_setting_stage = STATUS_SETTING_STAGE.OVERVIEW;
             currentEdit_LINK_STATUS_pair_ref = null;
+			selectedSubsystemKey = currentCardInfo.SelectedSubsystemKey;
+			RefreshSubsystemOptions();
             Console.WriteLine($"[3]RunningDiagramCardEdit OnAfterRender STATUS_setting_stage  = {STATUS_setting_stage}");
         }
 	}
@@ -125,6 +156,66 @@
             
         }
     }
+
+	private void RefreshSubsystemOptions()
+	{
+		var subsystems = globalVar.GetSubSystemsSnapshot();
+		subsystemOptions.Clear();
+		subsystemOptions.AddRange(subsystems);
+
+		if (subsystemOptions.Count == 0)
+		{
+			selectedSubsystemKey = null;
+			currentCardInfo.SelectedSubsystemKey = null;
+			return;
+		}
+
+		if (!string.IsNullOrEmpty(selectedSubsystemKey) && !subsystemOptions.Any(s => BuildSubsystemKey(s) == selectedSubsystemKey))
+		{
+			selectedSubsystemKey = null;
+		}
+
+		if (string.IsNullOrEmpty(selectedSubsystemKey))
+		{
+			var incoming = currentCardInfo.SelectedSubsystemKey;
+			if (!string.IsNullOrEmpty(incoming) && subsystemOptions.Any(s => BuildSubsystemKey(s) == incoming))
+			{
+				selectedSubsystemKey = incoming;
+			}
+			else
+			{
+				var fallback = SelectSubsystem(subsystemOptions);
+				selectedSubsystemKey = fallback is null ? null : BuildSubsystemKey(fallback);
+			}
+		}
+
+		currentCardInfo.SelectedSubsystemKey = selectedSubsystemKey;
+	}
+
+	private void OnSubsystemSelectionChanged(ChangeEventArgs args)
+	{
+		selectedSubsystemKey = args.Value?.ToString();
+		currentCardInfo.SelectedSubsystemKey = selectedSubsystemKey;
+	}
+
+	private static SubSystem? SelectSubsystem(IReadOnlyList<SubSystem> subsystems)
+	{
+		if (subsystems.Count == 0)
+		{
+			return null;
+		}
+
+		return subsystems.FirstOrDefault(s => s.isAnyDeviceOnline)
+			?? subsystems[0];
+	}
+
+	private static string BuildSubsystemKey(SubSystem subsystem) => $"{subsystem.Port}|{subsystem.Protocol}";
+
+	private static string GetSubsystemDisplayName(SubSystem subsystem)
+	{
+		var identifier = string.IsNullOrWhiteSpace(subsystem.ModelName) ? subsystem.Protocol : subsystem.ModelName;
+		return $"{subsystem.Port} - {identifier}";
+	}
 
 	private void LoadIconPaths()
 	{
@@ -177,6 +268,8 @@
 		currentCardInfo.Link_STATUS_Pairs = edit_Link_STATUS_Pairs
 			.Select(pair => pair.DeepClone())
 			.ToList();
+
+		currentCardInfo.SelectedSubsystemKey = selectedSubsystemKey;
 
 		OnCardInfoUpdated.InvokeAsync(currentCardInfo);
 	}

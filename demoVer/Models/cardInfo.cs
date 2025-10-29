@@ -27,6 +27,7 @@ namespace demoVer.Models
         public string cardName {get; set;}                                  //卡片名稱
         public List<INFO_DataItem> Info_DataItems {get; set;}               //存多個INFO_DataItems
         public List<LINK_STATUS_Pair> Link_STATUS_Pairs{get; set;}          //存4個(iconPath, label) pair
+        public string? SelectedSubsystemKey { get; set; }                   //RunningDiagram 選擇的子系統 key
         public CHART_SETTING Chart_Setting {get; set;}                      //存chart需要的資訊
     }
 

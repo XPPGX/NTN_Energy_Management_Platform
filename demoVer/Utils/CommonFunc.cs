@@ -195,6 +195,18 @@ namespace demoVer.Utils
             return "MOD2";
         }
         
+        public static uint getAddrOffsetByPort(string port)
+        {
+            return port.ToUpper() switch
+            {
+                "CAN1" => ConstDefinition.CAN1_addr,
+                "CAN2" => ConstDefinition.CAN2_addr,
+                "MOD1" => ConstDefinition.MOD1_addr,
+                "MOD2" => ConstDefinition.MOD2_addr,
+                _      => 0,
+            };
+        }
+
         public static double ConvertToDouble(object obj)
         {
             if (obj is double d) return d;

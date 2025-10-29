@@ -62,10 +62,16 @@ V1_1_FIXED_CONFIG = {
 # 固定值的覆蓋 (如果需要不同於模板的值)
 # 修改這裡來設定固定值
 V1_1_FIXED_VALUES = {
-    "MFR_MODEL": "NTN-5K-124  ",
     "INV_FAULT": 0, # 調這邊沒用，要去調INV_DATA_V1-1.json裡面的值
     "INV_STATUS": 1,  # 例如固定為 1
     # 添加更多固定值...
+}
+
+_MFR_MODEL_BY_PORT = {
+    "CAN1": "NTN-5K-124  ",
+    "CAN2": "NTN-5K-224  ",
+    "MOD1": "NTN-5K-124  ",
+    "MOD2": "NTN-5K-224  ",
 }
 
 
@@ -80,6 +86,27 @@ _MFR_MODEL_G1 = [ord(c) for c in "\x00\x00\x00\x00\x00\x00"]   # groupIndex = 1�
 
 _COMMAND_STORE = {}
 _REAL_WRITE_STORE = {}
+
+
+# 每個 port 要強制為 True 的 INV_STATUS bit 設定，未列出的 bit 預設 False。
+INV_STATUS_DECODE_BY_PORT = {
+    "CAN1": {
+        "INV_MODE": True,
+    },
+    "CAN2": {
+        "BYPASS_MODE": True,
+        # "CHG_ON": True,
+    },
+    "MOD1": {
+        "INV_MODE": True,
+        "SAVING_MODE": True,
+    },
+    "MOD2": {
+        "AC_OK": True,
+    },
+}
+
+
 
 def memory_init(filename: str):
     global _COMMAND_STORE
@@ -128,6 +155,136 @@ def get_real_write_store():
     return _REAL_WRITE_STORE
 
 
+def _resolve_value_map_key(target, value_map, default=0):
+    if target is None:
+        return default
+
+    for raw_key, text in (value_map or {}).items():
+        if text == target:
+            try:
+                return int(raw_key)
+            except (TypeError, ValueError):
+                continue
+
+    if isinstance(target, str):
+        lowered = target.lower()
+        if lowered in ("true", "on"):
+            return 1
+        if lowered in ("false", "off"):
+            return 0
+        try:
+            return int(target)
+        except ValueError:
+            return default
+
+    if isinstance(target, (int, float)):
+        return int(target)
+
+    return default
+
+
+def _resolve_inv_status_override(override, value_map, length):
+    if override is None:
+        return None
+
+    if length == 1:
+        if isinstance(override, str):
+            lowered = override.lower()
+            if lowered in ("true", "on"):
+                return 1
+            if lowered in ("false", "off"):
+                return 0
+        return 1 if bool(override) else 0
+
+    if isinstance(override, int):
+        return override
+
+    if isinstance(override, float):
+        return int(override)
+
+    if isinstance(override, str):
+        return _resolve_value_map_key(override, value_map, default=0)
+
+    return None
+
+
+def _apply_inv_status_decode(item, port):
+    rules = item.get("rule") or []
+    existing_decode = {}
+    for entry in item.get("decode") or []:
+        if isinstance(entry, dict) and "name" in entry:
+            existing_decode[entry["name"]] = entry.get("value")
+
+    overrides = INV_STATUS_DECODE_BY_PORT.get((port or "").upper(), {})
+
+    bit_value = 0
+    updated_decode = []
+
+    for rule in rules:
+        name = rule.get("name")
+
+        bit_raw = rule.get("bit", 0)
+        length_raw = rule.get("length", 1)
+
+        try:
+            bit = int(bit_raw)
+        except (TypeError, ValueError):
+            bit = 0
+
+        if length_raw in (None, ""):
+            length_raw = 1
+
+        try:
+            length = int(length_raw)
+        except (TypeError, ValueError):
+            length = 1
+
+        if length <= 0:
+            length = 1
+
+        value_map = rule.get("valueMap") or {}
+
+        override_value = overrides.get(name)
+        target_raw = _resolve_inv_status_override(override_value, value_map, length)
+
+        if target_raw is None:
+            if length == 1:
+                target_raw = 0
+            else:
+                target_raw = _resolve_value_map_key(existing_decode.get(name), value_map, default=0)
+        else:
+            target_raw &= (1 << length) - 1
+
+        mask = (1 << length) - 1
+        bit_value &= ~(mask << bit)
+        bit_value |= (target_raw & mask) << bit
+
+        decode_text = value_map.get(str(target_raw))
+        if decode_text is None:
+            if length == 1:
+                decode_text = "True" if target_raw else "False"
+            else:
+                decode_text = existing_decode.get(name)
+                if decode_text is None:
+                    decode_text = "True" if target_raw else "False"
+
+        updated_decode.append({"name": name, "value": decode_text})
+
+    if updated_decode:
+        item["value"] = bit_value
+        item["decode"] = updated_decode
+
+
+def _get_inv_status_raw_value(port):
+    template_item = INV_DATA_V1_1_TEMPLATE.get("values", {}).get("INV_STATUS")
+    if not template_item:
+        return 0
+
+    working_copy = json.loads(json.dumps(template_item))
+    _apply_inv_status_decode(working_copy, port)
+    return int(working_copy.get("value", 0))
+
+
 @app.route("/api/memory/read-real", methods=["GET"])
 def read_real():
     port = request.args.get("type", "Unknown")
@@ -144,6 +301,15 @@ def read_real():
     # 處理 values
     for key, item in resp["values"].items():
         vtype = item.get("type")
+
+        if key == "MFR_MODEL":
+            model_value = _MFR_MODEL_BY_PORT.get(port.upper(), item.get("value"))
+            item["value"] = model_value
+            continue
+
+        if key == "INV_STATUS":
+            _apply_inv_status_decode(item, port)
+            continue
 
         # 檢查是否為固定值
         if key in V1_1_FIXED_CONFIG and V1_1_FIXED_CONFIG[key]:
@@ -211,8 +377,8 @@ def read_memory():
 
         # 特例：INV_STATUS 固定回 [1, 0]
         if cmd == "INV_STATUS":
-            fixed = [1, 0]
-            data = fixed[:dlen] + [0] * max(0, dlen - len(fixed))
+            raw_value = _get_inv_status_raw_value(port)
+            data = [(raw_value >> (8 * i)) & 0xFF for i in range(dlen)]
 
         # 特例：READ_FAN1_SPEED 固定回 3450
         if cmd == "READ_FAN_SPEED_1":

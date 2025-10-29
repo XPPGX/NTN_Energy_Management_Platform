@@ -22,6 +22,7 @@ namespace demoVer.Utils
         public const string SHUTDOWN_MODE_str = "Shutdown";
         public const string ERROR_MODE_str = "Error";
         public const string BAT_first_MODE_str = "Battery First";
+        public const string AC_OK_str = "AC OK";
         public const string DEFAULT_MODE_str = "";
         public enum SYS_Mode_Options
         {
@@ -34,7 +35,7 @@ namespace demoVer.Utils
             STANDBY = 8,
             BATTERY_FIRST = 9,
             BY_PASS_AC_CHARGER = 10,
-            AC_STANDBY = 11,
+            AC_OK = 11,
             SHUTDOWN = 12,
         }
 

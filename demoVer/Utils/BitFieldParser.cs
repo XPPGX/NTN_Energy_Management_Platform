@@ -1,4 +1,6 @@
 using demoVer.Models;
+using Microsoft.AspNetCore.Razor.TagHelpers;
+using MudBlazor;
 namespace demoVer.Utils
 {
     public static class BitFieldParser
@@ -76,13 +78,46 @@ namespace demoVer.Utils
             bool SAVING_MODE = strToBool(statusDict.GetValueOrDefault("SAVING_MODE", "False"));
 
             if (INV_MODE && SAVING_MODE) { return ConstDefinition.SAVING_MODE_str; }
-            if (INV_MODE) { return ConstDefinition.INVERTER_MODE_str; }
-            if (BYPASS_MODE) { return ConstDefinition.BYPASS_MODE_str; }
-            if (CHG_ON) { return ConstDefinition.CHARGING_MODE_str; }
-            if (AC_OK) { return ConstDefinition.STANDBY_MODE_str; }
-
-            return ConstDefinition.DEFAULT_MODE_str;
+            else if (INV_MODE) { return ConstDefinition.INVERTER_MODE_str; }
+            else if (BYPASS_MODE) { return ConstDefinition.BYPASS_MODE_str; }
+            else if (CHG_ON) { return ConstDefinition.CHARGING_MODE_str; }
+            else { return ConstDefinition.STANDBY_MODE_str; }
         }
+
+        public static (bool AC_StandBy, bool AC_Charger_Enable, ConstDefinition.SYS_Mode_Options modeEnum) Parse_INV_STATUS_GetEnum(List<decodeContent> decodeList)
+        {
+            bool tmp_AC_StandBy = false;
+            bool tmp_AC_Charger_Enable = false;
+            ConstDefinition.SYS_Mode_Options modeEnum = ConstDefinition.SYS_Mode_Options.DISCON;
+
+            Dictionary<string, string> statusDict = new Dictionary<string, string>();
+            foreach (var item in decodeList)
+            {
+                if (!string.IsNullOrEmpty(item.name))
+                {
+                    statusDict[item.name] = item.value;
+                    // Console.WriteLine($"[BitFieldParser][Parse_INV_STATUS_GetEnum] name:{item.name}, value:{item.value}");
+                }
+            }
+            bool INV_MODE = strToBool(statusDict.GetValueOrDefault("INV_MODE", "False"));
+            bool BYPASS_MODE = strToBool(statusDict.GetValueOrDefault("BYPASS_MODE", "False"));
+            bool AC_OK = strToBool(statusDict.GetValueOrDefault("AC_OK", "False")); //UTI
+            bool CHG_ON = strToBool(statusDict.GetValueOrDefault("CHG_ON", "False"));
+            bool SAVING_MODE = strToBool(statusDict.GetValueOrDefault("SAVING_MODE", "False"));
+
+            if (INV_MODE && SAVING_MODE) { modeEnum = ConstDefinition.SYS_Mode_Options.SAVING; }
+            else if (INV_MODE) { modeEnum = ConstDefinition.SYS_Mode_Options.INVERTER; }
+            else if (BYPASS_MODE) { modeEnum = ConstDefinition.SYS_Mode_Options.BY_PASS; }
+            else if (CHG_ON) { modeEnum = ConstDefinition.SYS_Mode_Options.CHARGER; }
+            else { modeEnum = ConstDefinition.SYS_Mode_Options.STANDBY; }
+
+            if (AC_OK is true) { tmp_AC_StandBy = true; }
+            if (CHG_ON is true) { tmp_AC_Charger_Enable = true; }
+
+            return (tmp_AC_StandBy, tmp_AC_Charger_Enable, modeEnum);
+        }
+
+        
 
         public static bool strToBool(string booleanStr)
         {

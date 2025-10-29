@@ -23,10 +23,10 @@
             "PM1": "0x0000000000000000"
         },
         "All": {
-            "CAN1": "0x0000000000000001",
-            "CAN2": "0x0000000000000000",
-            "MOD1": "0x0000000000000000",
-            "MOD2": "0x0000000000000000",
+            "CAN1": "0x0000000000000487",
+            "CAN2": "0x0000000000000001",
+            "MOD1": "0x0000000000000001",
+            "MOD2": "0x0000000000000001",
             "PM1": "0x0000000000000000"
         }
     },
@@ -35,12 +35,23 @@
             "port": "CAN1",
             "protocol": "NTN-5K_CAN.json",
             "addr": [
-                0
+                0, 1, 2
             ],
             "checkOK": false,
             "modelError": false,
             "rangeOK": false,
-            "modelName": null
+            "modelName": "NTN-5K-124"
+        },
+        {
+            "port": "CAN1",
+            "protocol": "NTN-5K_CAN.json",
+            "addr": [
+                10
+            ],
+            "checkOK": false,
+            "modelError": false,
+            "rangeOK": false,
+            "modelName": "NTN-5K-124"
         },
         {
             "port": "CAN2",
@@ -51,7 +62,7 @@
             "checkOK": false,
             "modelError": false,
             "rangeOK": false,
-            "modelName": null
+            "modelName": "NTN-5K-224"
         },
         {
             "port": "MOD1",
@@ -62,7 +73,7 @@
             "checkOK": false,
             "modelError": false,
             "rangeOK": false,
-            "modelName": null
+            "modelName": "NTN-5K-124"
         },
         {
             "port": "MOD2",

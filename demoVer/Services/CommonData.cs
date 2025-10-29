@@ -59,48 +59,48 @@ namespace demoVer.Services
 
         public async Task modelNameChange_Task()
         {
-            //這裡是寫死的
-            var subSysID = (int)(_globalVar.ActiveSubAppSystemID);
+            // //這裡是寫死的
+            // var subSysID = (int)(_globalVar.ActiveSubAppSystemID);
         
-            var subSysInfo = _globalVar.SubSystems[subSysID];
-            var targetSubSystem_WriteMem = _globalVar.Device_WriteData.SubAppSystem_WriteMemorys[subSysID];
+            // var subSysInfo = _globalVar.SubSystems[subSysID];
+            // var targetSubSystem_WriteMem = _globalVar.Device_WriteData.SubAppSystem_WriteMemorys[subSysID];
 
-            try
-            {
-                ScalingFactor_OK = false;
+            // try
+            // {
+            //     ScalingFactor_OK = false;
 
-                AppLogger.Log_To_File_log(_category, $"[CommonData][modelNameChange_Task] ScalingFactor_OK = {ScalingFactor_OK}...", AppLogLevel.Trace);
-                //1. 檢查CHECK是否有資料
-                if(targetSubSystem_WriteMem.Setting_Check.Count == 0)
-                {
+            //     AppLogger.Log_To_File_log(_category, $"[CommonData][modelNameChange_Task] ScalingFactor_OK = {ScalingFactor_OK}...", AppLogLevel.Trace);
+            //     //1. 檢查CHECK是否有資料
+            //     if(targetSubSystem_WriteMem.Setting_Check.Count == 0)
+            //     {
                     
-                    await _writeProcess.assignSettingData_From_Framework_To_SubSysCheck(subSysInfo, targetSubSystem_WriteMem);
-                    AppLogger.Log_To_File_log(_category, $"[CommonData][modelNameChange_Task] Updated SubSys.Check, due to Check.Count is 0", AppLogLevel.Trace);
-                }
+            //         await _writeProcess.assignSettingData_From_Framework_To_SubSysCheck(subSysInfo, targetSubSystem_WriteMem);
+            //         AppLogger.Log_To_File_log(_category, $"[CommonData][modelNameChange_Task] Updated SubSys.Check, due to Check.Count is 0", AppLogLevel.Trace);
+            //     }
                 
-                //2. 檢查Scaling是否有資料
-                if(targetSubSystem_WriteMem.ScalingFactors.Count == 0)
-                {
-                    //更新scaling
-                    _writeProcess.assignScalingFactors_To_SubSysWriteMem(subSysInfo, targetSubSystem_WriteMem);
-                    AppLogger.Log_To_File_log(_category, $"[CommonData][modelNameChange_Task] Updated SubSys.ScalingFactor, due to ScalingFactor.Count is 0", AppLogLevel.Trace);
-                }
+            //     //2. 檢查Scaling是否有資料
+            //     if(targetSubSystem_WriteMem.ScalingFactors.Count == 0)
+            //     {
+            //         //更新scaling
+            //         _writeProcess.assignScalingFactors_To_SubSysWriteMem(subSysInfo, targetSubSystem_WriteMem);
+            //         AppLogger.Log_To_File_log(_category, $"[CommonData][modelNameChange_Task] Updated SubSys.ScalingFactor, due to ScalingFactor.Count is 0", AppLogLevel.Trace);
+            //     }
 
-                //3. 更新CommonData的_ScalingFactors
-                UpdateScalingFactors(targetSubSystem_WriteMem.ScalingFactors);
+            //     //3. 更新CommonData的_ScalingFactors
+            //     UpdateScalingFactors(targetSubSystem_WriteMem.ScalingFactors);
 
-                //4. 告知其他Caller，CommonData內的ScalingFactor已經可以使用
-                ScalingFactor_OK = true;
-                await ScalingFactor_StateChanged?.Invoke();
-                AppLogger.Log_To_File_log(_category, $"[CommonData][UpdateScalingFactors] ScalingFactor_OK = {ScalingFactor_OK}", AppLogLevel.Trace);
+            //     //4. 告知其他Caller，CommonData內的ScalingFactor已經可以使用
+            //     ScalingFactor_OK = true;
+            //     await ScalingFactor_StateChanged?.Invoke();
+            //     AppLogger.Log_To_File_log(_category, $"[CommonData][UpdateScalingFactors] ScalingFactor_OK = {ScalingFactor_OK}", AppLogLevel.Trace);
 
-                //5. return
-                return;
-            }
-            catch(Exception e)
-            {
-                AppLogger.Log_To_File_log(_category, $"[CommonData][modelNameChange_Task] Error : {e}", AppLogLevel.Error);
-            }
+            //     //5. return
+            //     return;
+            // }
+            // catch(Exception e)
+            // {
+            //     AppLogger.Log_To_File_log(_category, $"[CommonData][modelNameChange_Task] Error : {e}", AppLogLevel.Error);
+            // }
         }
 
         

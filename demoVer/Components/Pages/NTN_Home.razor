@@ -115,7 +115,7 @@
 
 
 <div class="column-container" @onclick="HandleGlobalClick">
-    <div class="row1-container">
+    @* <div class="row1-container">
         <div class="row1-leftPart">
             <div class="bulk-actions">
                 <button class="action-btn on @(isAllOn ? "active" : null)"
@@ -131,13 +131,7 @@
                     <span class="dot"></span>
                     All INV Off
                 </button>
-                @* <button class="btn cancel-btn" @onclick="Cancel">取消</button> *@
             </div>
-            @* Inverter OFF/ON：
-            <label class="switch">
-                <input type="checkbox" checked>
-                <span class="slider"></span>
-            </label> *@
         </div>
 
         <div class="row1-rightPart">
@@ -146,7 +140,7 @@
                 @(globalVar.Sys_ModelName)
             </div>
         </div>
-    </div>
+    </div> *@
     
     <div id="sortable-modules" class="module-grid" @ref="ref_module_container">
         @foreach(var card in CardInfos)

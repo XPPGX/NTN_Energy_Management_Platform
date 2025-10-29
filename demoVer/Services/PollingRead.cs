@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using demoVer.Interfaces;
 using System;
 using System.Collections.Generic;
-
+using System.Collections.Concurrent;
+using demoVer.Components;
 //1. 在開始polling前先取得link-status，
 //2. 每次polling單台時比對是否有在link-status，有才發送api
 //2. 等polling完port.length，就再取一次link-status看是否有新的
@@ -40,7 +41,7 @@ namespace demoVer.Services
         private readonly GlobalVar _globalVar;
         private readonly ApiManager _apiManager;
         private readonly LinkAddrManager _linkAddrManager;
-
+        private readonly SubSystemManager _subSystemManager;
         //控制PollingRead的啟動時機    
         private volatile bool _enabled;
         private readonly SemaphoreSlim _startGate = new(0, 1);
@@ -67,16 +68,17 @@ namespace demoVer.Services
         private LinkStatus_JsonFormat rcv_linkStatus = new();
         private int counter = 0;
 
-        public PollingRead( GlobalVar globalVar,
+        public PollingRead(GlobalVar globalVar,
                             ApiManager apiManager,
-                            LinkAddrManager linkAddrManager)
+                            LinkAddrManager linkAddrManager,
+                            SubSystemManager subSystemManager)
         {
             _globalVar  = globalVar;
             _apiManager = apiManager;
             _linkAddrManager = linkAddrManager;
+            _subSystemManager = subSystemManager;
             _category = GetType().FullName!;
             
-            // _pollingWave = _globalVar.SubSystems;
             initPollingWave();
         }
         
@@ -121,7 +123,6 @@ namespace demoVer.Services
                 {
 
                 }
-                
             }
         }
 
@@ -270,55 +271,12 @@ namespace demoVer.Services
                 else
                 {
                     PollingNowLink_isSucc = true;
-
                     var INV_products = rcv_linkStatus.Products["All"];
-
-                    for(uint i = 0 ; i < ConstDefinition.Max_PortDeviceNum ; i ++)
-                    {
-                        uint CAN1_index = (uint)((INV_products.CAN1_LINK >> (int)i) & 1);
-                        uint CAN2_index = (uint)((INV_products.CAN2_LINK >> (int)i) & 1);
-                        uint MOD1_index = (uint)((INV_products.MOD1_LINK >> (int)i) & 1);
-                        uint MOD2_index = (uint)((INV_products.MOD2_LINK >> (int)i) & 1);
-
-                        // Console.WriteLine($"CAN1_index = {CAN1_index}, CAN2_index = {CAN2_index}, MOD1_index = {MOD1_index}, MOD2_index = {MOD2_index}");
-                        
-                        if(CAN1_index == 1)
-                        {
-                            linkingAddr.Add(i + ConstDefinition.CAN1_addr);
-                        }
-                        else
-                        {
-                            linkingAddr.Remove(i + ConstDefinition.CAN1_addr);
-                        }
-
-                        if(CAN2_index == 1)
-                        {
-                            linkingAddr.Add(i + ConstDefinition.CAN2_addr);
-                        }
-                        else
-                        {
-                            linkingAddr.Remove(i + ConstDefinition.CAN2_addr);
-                        }
-
-                        if(MOD1_index == 1)
-                        {
-                            linkingAddr.Add(i + ConstDefinition.MOD1_addr);
-                        }
-                        else
-                        {
-                            linkingAddr.Remove(i + ConstDefinition.MOD1_addr);
-                        }
-
-                        if(MOD2_index == 1)
-                        {
-                            linkingAddr.Add(i + ConstDefinition.MOD2_addr);
-                        }
-                        else
-                        {
-                            linkingAddr.Remove(i + ConstDefinition.MOD2_addr);
-                        }
-                    }
+                    LinkingCheck(INV_products);
                     AppLogger.Log_To_File_log(_category, $"[PollingRead][PollNowLinkAddr] {string.Join(", ", linkingAddr)}", AppLogLevel.Trace);
+
+                    var partitions = rcv_linkStatus.Partitions;
+                    UpdatePartitionAsSubSys(partitions);                    
                 }
             }
             catch(Exception e)
@@ -397,8 +355,138 @@ namespace demoVer.Services
                     return false;
                 }
             }
-            
+
             return true;
+        }
+
+        private void LinkingCheck(portLinkDetail product)
+        {
+            for (uint i = 0; i < ConstDefinition.Max_PortDeviceNum; i++)
+            {
+                uint CAN1_index = (uint)((product.CAN1_LINK >> (int)i) & 1);
+                uint CAN2_index = (uint)((product.CAN2_LINK >> (int)i) & 1);
+                uint MOD1_index = (uint)((product.MOD1_LINK >> (int)i) & 1);
+                uint MOD2_index = (uint)((product.MOD2_LINK >> (int)i) & 1);
+
+                // Console.WriteLine($"CAN1_index = {CAN1_index}, CAN2_index = {CAN2_index}, MOD1_index = {MOD1_index}, MOD2_index = {MOD2_index}");
+
+                if (CAN1_index == 1)
+                {
+                    linkingAddr.Add(i + ConstDefinition.CAN1_addr);
+                }
+                else
+                {
+                    linkingAddr.Remove(i + ConstDefinition.CAN1_addr);
+                }
+
+                if (CAN2_index == 1)
+                {
+                    linkingAddr.Add(i + ConstDefinition.CAN2_addr);
+                }
+                else
+                {
+                    linkingAddr.Remove(i + ConstDefinition.CAN2_addr);
+                }
+
+                if (MOD1_index == 1)
+                {
+                    linkingAddr.Add(i + ConstDefinition.MOD1_addr);
+                }
+                else
+                {
+                    linkingAddr.Remove(i + ConstDefinition.MOD1_addr);
+                }
+
+                if (MOD2_index == 1)
+                {
+                    linkingAddr.Add(i + ConstDefinition.MOD2_addr);
+                }
+                else
+                {
+                    linkingAddr.Remove(i + ConstDefinition.MOD2_addr);
+                }
+            }
+        }
+        
+        private void UpdatePartitionAsSubSys(List<SinglePartition> partitions)
+        {
+            try
+            {
+                //存新資料中現有的SubSystem : Setting, addrs, ...etc
+                foreach (var part in partitions)
+                {
+                    string port = part.Port;
+                    string protocol = part.Protocol;
+
+                    if (!_subSystemManager.RegistedSubSystems.ContainsKey(port))
+                    {
+                        _subSystemManager.RegistedSubSystems[port] = new ConcurrentDictionary<string, SubSystem>();
+                        AppLogger.Log_To_File_log(_category, $"[PollingRead][savePartAsSubSys] New Port created : {port}", AppLogLevel.Warning);
+                    }
+
+                    if (!_subSystemManager.RegistedSubSystems[port].ContainsKey(protocol))
+                    {
+                        _subSystemManager.RegistedSubSystems[port][protocol] = new SubSystem();
+                        AppLogger.Log_To_File_log(_category, $"[PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = ({port}, {protocol})", AppLogLevel.Warning);
+                    }
+
+                    //已存在的話，更新基本資訊, addr, Exist
+                    _subSystemManager.RegistedSubSystems[port][protocol].UpdateFrom(part);
+                    foreach(var addr in part.Addr)
+                    {
+                        _subSystemManager.RegistedSubSystems[port][protocol].AddrSet.Add(addr);
+                        _subSystemManager.RegistedSubSystems[port][protocol].newSettingAddrBitMap = _subSystemManager.RegistedSubSystems[port][protocol].newSettingAddrBitMap | (1u << (int)addr);
+                    }
+                    _subSystemManager.RegistedSubSystems[port][protocol].SubSystemSettingExist = true;
+                    // AppLogger.Log_To_File_log(_category, $"[PollingRead][savePartAsSubSys] SubSystem updated for (port, protocol, SubSystemSettingExist) = ({port}, {protocol}, {_subSystemManager.RegistedSubSystems[port][protocol].SubSystemSettingExist})", AppLogLevel.Trace);
+                }
+
+                //刪除新資料中沒有的SubSystem, Addrs ...etc
+                foreach(var (port, protocolDict) in _subSystemManager.RegistedSubSystems)
+                {
+                    foreach(var (protocol, subsys) in protocolDict)
+                    {
+                        if (_subSystemManager.RegistedSubSystems[port][protocol].SubSystemSettingExist is false)
+                        {
+                            _subSystemManager.RegistedSubSystems[port].TryRemove(protocol, out var removedSubsys);
+                            AppLogger.Log_To_File_log(_category, $"[PollingRead][savePartAsSubSys] SubSystem removed for (port, protocol) = ({port}, {protocol})", AppLogLevel.Warning);
+                        }
+                        else
+                        {
+                            for (int i = 0; i < ConstDefinition.Max_PortDeviceNum; i++)
+                            {
+                                if ((((_subSystemManager.RegistedSubSystems[port][protocol].newSettingAddrBitMap >> i) & 1u) == 0u) 
+                                    && _subSystemManager.RegistedSubSystems[port][protocol].AddrSet.Contains((uint)i))
+                                {
+                                    _subSystemManager.RegistedSubSystems[port][protocol].AddrSet.Remove((uint)i);
+                                    AppLogger.Log_To_File_log(_category, $"[PollingRead][savePartAsSubSys] SubSystem addr removed for (port, protocol, addr) = ({port}, {protocol}, {i})", AppLogLevel.Warning);
+                                }
+                            }
+                            //Reset 計算值，準備下一次比對
+                            _subSystemManager.RegistedSubSystems[port][protocol].newSettingAddrBitMap = 0x0000000000000000UL;
+                            _subSystemManager.RegistedSubSystems[port][protocol].SubSystemSettingExist = false;
+                        }
+                    }
+                }
+
+
+                //[Debug]印出每個subsys的addr
+                foreach (var (port, protocolDict) in _subSystemManager.RegistedSubSystems)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[PollingRead][savePartAsSubSys] port = {port} has {protocolDict.Count} SubSystems", AppLogLevel.Debug);
+                    foreach (var (protocol, subsys) in protocolDict)
+                    {
+                        AppLogger.Log_To_File_log(_category, $"[PollingRead][savePartAsSubSys] SubSystem Protocol: {protocol}, Port: {port}, Addrs: {string.Join(", ", subsys.AddrSet)}", AppLogLevel.Debug);
+                    }
+                    AppLogger.Log_To_File_log(_category, $"=============================================", AppLogLevel.Debug);
+                }
+            }
+            catch(Exception e)
+            {
+                AppLogger.Log_To_File_log(_category, $"[PollingRead][savePartAsSubSys] Error : {e}", AppLogLevel.Error);
+            }
+
+            
         }
     }
 }

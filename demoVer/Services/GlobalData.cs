@@ -33,6 +33,7 @@ namespace demoVer.Services
         private readonly IGroupsDataDecoder _decoder;
         private readonly HeartbeatService _heartbeat;
         private readonly LinkAddrManager _linkAddrManager;
+        private readonly SubSystemManager _subSystemManager;
         //For log
         private string _category;
         private bool _disposed;
@@ -87,10 +88,6 @@ namespace demoVer.Services
         //System variables(Heartbeat.OnTick)
         //如果計算速度很慢，可以把所有算式都放在某個foreach INVs_Phase裡面
         public byte Sys_PhaseStatus = 0;
-        public byte Sys_INV_Mode = 0;
-        public event Func<Task>? Sys_INV_Mode_OnChanged;
-        public bool Sys_Charger_Enable = false;
-        public bool Sys_isAC_Standby = false;
         public string? Sys_ModelName = "";
         public event Func<Task>? Sys_ModelName_OnChanged;
         public bool Sys_modelError = false;
@@ -107,19 +104,24 @@ namespace demoVer.Services
         public double[] SyS_IP_F_Phases = new double[3];        //records the max IP_F in each phase(phase1, phase2, phase3)
         public double[] Sys_OP_V_Phases = new double[3];        //records the max OP_V in each phase(phase1, phase2, phase3)
         public double BAT_V = 0; //BAT_V            : max value in all INVs
-        private bool INV_isCHG_Enable = false;
-        private bool INV_isAC_Standby = false;
         private string? INV_ModelName_tmp = "";
         public Real_allDeviceData Real_Devices_ReadData { get; set; } = new Real_allDeviceData();
         public allDevice_Data Device_ReadData { get; set; } = new allDevice_Data();                  //Polling讀取各Device資料
         public LinkedDeviceStore LinkedDevices { get; } = new LinkedDeviceStore();                      //以concurrent字典記錄目前有連線的devices
         public WriteAPI_Datas Device_WriteData { get; set; } = new WriteAPI_Datas();
+        /// <summary>
+        /// 外層string => port,
+        /// 內層string => protocol
+        /// </summary>
+        
+
         public List<SubAppSystem> SubSystems { get; set; } = new List<SubAppSystem>();
         public int? ActiveSubAppSystemID { get; set; }
 
         public GlobalVar(IGroupsDataDecoder decoder,
                             HeartbeatService heartbeats,
-                            LinkAddrManager linkAddrManager)
+                            LinkAddrManager linkAddrManager,
+                            SubSystemManager subSystemManager)
         {
             //For log
             _category = GetType().FullName!;
@@ -128,8 +130,9 @@ namespace demoVer.Services
             _decoder = decoder;
             _heartbeat = heartbeats;
             _linkAddrManager = linkAddrManager;
+            _subSystemManager = subSystemManager;
             //Init
-            initSubAppSystem();
+            // initSubAppSystem();
 
             //Events(Actions)
             LinkedDevices.linkChanged += Get_INV_ConnectNum;
@@ -140,30 +143,34 @@ namespace demoVer.Services
 
         public void initSubAppSystem()
         {
-            SubSystems.Add(new SubAppSystem { subSystemID = 0, port = "CAN1", protocolFileName = "NTN-5K_CAN.json", startAddr = 0, length = ConstDefinition.Max_PortDeviceNum });
-            Device_WriteData.SubAppSystem_WriteMemorys.Add(new SubAppSystem_WriteMemory(0));
+            // SubSystems.Add(new SubAppSystem { subSystemID = 0, port = "CAN1", protocolFileName = "NTN-5K_CAN.json", startAddr = 0, length = ConstDefinition.Max_PortDeviceNum });
+            // Device_WriteData.SubAppSystem_WriteMemorys.Add(new SubAppSystem_WriteMemory(0));
 
-            SubSystems.Add(new SubAppSystem { subSystemID = 1, port = "CAN2", protocolFileName = "NTN-5K_CAN.json", startAddr = 0, length = ConstDefinition.Max_PortDeviceNum });
-            Device_WriteData.SubAppSystem_WriteMemorys.Add(new SubAppSystem_WriteMemory(1));
+            // SubSystems.Add(new SubAppSystem { subSystemID = 1, port = "CAN2", protocolFileName = "NTN-5K_CAN.json", startAddr = 0, length = ConstDefinition.Max_PortDeviceNum });
+            // Device_WriteData.SubAppSystem_WriteMemorys.Add(new SubAppSystem_WriteMemory(1));
 
-            SubSystems.Add(new SubAppSystem { subSystemID = 2, port = "MOD1", protocolFileName = "NTN-5K_MOD.json", startAddr = 0, length = ConstDefinition.Max_PortDeviceNum });
-            Device_WriteData.SubAppSystem_WriteMemorys.Add(new SubAppSystem_WriteMemory(2));
+            // SubSystems.Add(new SubAppSystem { subSystemID = 2, port = "MOD1", protocolFileName = "NTN-5K_MOD.json", startAddr = 0, length = ConstDefinition.Max_PortDeviceNum });
+            // Device_WriteData.SubAppSystem_WriteMemorys.Add(new SubAppSystem_WriteMemory(2));
 
-            SubSystems.Add(new SubAppSystem { subSystemID = 3, port = "MOD2", protocolFileName = "NTN-5K_MOD.json", startAddr = 0, length = ConstDefinition.Max_PortDeviceNum });
-            Device_WriteData.SubAppSystem_WriteMemorys.Add(new SubAppSystem_WriteMemory(3));
+            // SubSystems.Add(new SubAppSystem { subSystemID = 3, port = "MOD2", protocolFileName = "NTN-5K_MOD.json", startAddr = 0, length = ConstDefinition.Max_PortDeviceNum });
+            // Device_WriteData.SubAppSystem_WriteMemorys.Add(new SubAppSystem_WriteMemory(3));
         }
 
         public string getActiveSubSysPort()
         {
             try
             {
-                return SubSystems[(int)ActiveSubAppSystemID].port;
+                if (ActiveSubAppSystemID is int index && index >= 0 && index < SubSystems.Count)
+                {
+                    return SubSystems[index].port;
+                }
             }
             catch (Exception e)
             {
                 AppLogger.Log_To_File_log(_category, $"[GlobalData][getActiveSubSysPort] Error : {e}", AppLogLevel.Error);
-                return "";
             }
+
+            return string.Empty;
         }
 
         public async Task TickTask()
@@ -176,7 +183,7 @@ namespace demoVer.Services
                 case InitStage.FromDevice:
                 case InitStage.Done:
                     //FromDevice 跟 Done，都一樣要從 Polling READ_API 那邊讀值
-                    Compute_SYS_Phase(); //for loop length = 256
+                    // Compute_SYS_Phase(); //for loop length = 256
                     ComputeOverallValues(); // for loop length = 256
                     break;
                 default:
@@ -235,6 +242,12 @@ namespace demoVer.Services
             AppLogger.Log_To_File_log(_category, $"[GlobalData][Get_INV_Connection] INV_ConnectNum = {INV_ConnectNum}", AppLogLevel.Trace);
         }
 
+        public IReadOnlyList<SubSystem> GetSubSystemsSnapshot()
+        {
+            // Return a snapshot list so consumers can iterate without touching the manager internals.
+            return _subSystemManager.GetAllSubSystems_Ref_In_List();
+        }
+
         public void Dispose()
         {
             if (_disposed) return;
@@ -276,7 +289,7 @@ namespace demoVer.Services
                 var addr_ModelName_pairlist = new List<(uint, string)>();
                 for (uint addr = 0; addr < 256; addr++)
                 {
-                    string tmp_modelName = Get_ModelName_ByAddr(addr);
+                    var tmp_modelName = Get_ModelName_ByAddr(addr);
 
                     if (tmp_modelName == null) continue;
 
@@ -341,34 +354,6 @@ namespace demoVer.Services
         }
 
 
-        public object Get_INV_Status(string INV_FAULT_Val, uint INV_STATUS_Val, bool returnStr_Flag)
-        {
-            if (!string.IsNullOrEmpty(INV_FAULT_Val)) { return returnStr_Flag ? INV_FAULT_Val : STATUS_INV_ERROR; }
-
-            // if(Get_INV_Fault(INV_FAULT_Val) != 0){return returnStr_Flag ? "Error" : STATUS_INV_ERROR;}
-
-            //chargerEnable判斷
-            if (((INV_STATUS_Val) & STATUS_CHG) != 0)
-            {
-                INV_isCHG_Enable = true;
-            }
-
-            if ((INV_STATUS_Val & STATUS_UTI_OK) != 0)
-            {
-                INV_isAC_Standby = true;
-            }
-
-            if (((INV_STATUS_Val & STATUS_INV) != 0) && ((INV_STATUS_Val & STATUS_SAVING) != 0)) { return returnStr_Flag ? "Saving" : STATUS_INV_SAVING; }
-
-            if ((INV_STATUS_Val & STATUS_INV) != 0) { return returnStr_Flag ? "Inverter" : STATUS_INV_INVERTER; }
-
-            if ((INV_STATUS_Val & STATUS_BYP) != 0) { return returnStr_Flag ? "Bypass" : STATUS_INV_BY_PASS; }
-
-            if ((INV_STATUS_Val & STATUS_CHG) != 0) { return returnStr_Flag ? "Charger" : STATUS_INV_CHARGING; }
-
-            return returnStr_Flag ? "Standby" : STATUS_INV_STANDBY;
-        }
-
 
         public byte? Get_INV_Phase(uint addr)
         {
@@ -430,116 +415,158 @@ namespace demoVer.Services
             return activeSubSysID;
         }
 
+        /// <summary>
+        /// 計算各子系統的系統變數
+        /// </summary>
         private void ComputeOverallValues()
         {
-            uint[] linkedAddr_array = LinkedDevices.Snapshot();
-            //For computing MODE
-            uint INV = 0, Saving = 0, ByPass = 0;
-            uint Charging = 0, Standby = 0;
-            //For computing IP/OP V
-            double[] tmpMaxs_INV_IP_V = new double[3]; //[0]:phase1 ; [1]:phase2; [2]:phase3
-            double[] tmpMaxs_INV_OP_V = new double[3];
-            //For computing IP/OP F
-            double[] tmp_accumulate_IP_F = new double[3];
-            double[] tmp_accumulate_OP_F = new double[3];
 
-            try
+            // //1. 取得快照
+            var allSubSystems = _subSystemManager.GetAllSubSystems_Ref_In_List(); //各子系統快照
+            var LinkingAddrs = _linkAddrManager.SnapshotAsHashSet(); //連線中的addr快照
+
+            // //2. 在每個子系統裡面計算系統變數
+            foreach (var subSys in allSubSystems)
             {
-                //Debug
-                // Debug_Print_mdlName(0);
-                // Debug_Print_mdlName(64);
-                // Debug_Print_mdlName(128);
-                // Debug_Print_mdlName(192);
-                //initialize temp variables
-                INV_isCHG_Enable = false;
-                INV_isAC_Standby = false;
-                INV_ModelName_tmp = "";
-
-                //clear SysModelName
-                if (linkedAddr_array.Length == 0)
+                
+                AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] SubSystem Port = {subSys.Port}, Protocol = {subSys.Protocol}, AddrSet Count = {subSys.AddrSet.Count}", AppLogLevel.Trace);
+                //3. 使用各子系統的AddrSet中的addr搭配Link，取得目前在線上的device data進行計算
+                List<Real_SingleDeviceData_JsonFormat> onlineDevices_DeviceDatas = new();
+                List<uint> debug_Addrs = new();
+                foreach (var read_addr in subSys.AddrSet)
                 {
-                    Sys_ModelName = "";
-                }
-                else
-                {
-                    uint firstAddr = linkedAddr_array[0];
+                    uint nowStoringAddr = Custom.getAddrOffsetByPort(subSys.Port) + read_addr;
 
-                    //取得 temp ModelName 準備與舊ModelName進行比對
-                    INV_ModelName_tmp = Get_ModelName_ByAddr(firstAddr);
-                    // INV_ModelName_tmp = "NTN-5K-248  "; //測試時，ModelName都是[0,0,0,0,0,0]時使用
-                    //Assign 當前 Active的subAppSystem (後續應可動態調整，當前先以第一個linkedAddr 所在的範圍作為 Active subAppSystem
-                    ActiveSubAppSystemID = findActiveSubAppSys(firstAddr);
+                    //如果 在子系統中的Addr，目前沒有連線，則直接跳過計算
+                    if (!LinkingAddrs.Contains(nowStoringAddr)) continue;
+                    
+                    debug_Addrs.Add(nowStoringAddr);
 
-                    AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] firstAddr = {firstAddr}, INV_ModelName_tmp = {INV_ModelName_tmp}, ActiveSubAppSystemID = {ActiveSubAppSystemID}", AppLogLevel.Trace);
-                }
 
-                for (int index = 0; index < linkedAddr_array.Length; index++)
-                {
-                    //for loop init local var
-                    string? fault_str = "";
-                    byte? phase_byte = 0;
-                    byte? status_byte = 0;
-
-                    //get the addr we are processing now                    
-                    uint addr = linkedAddr_array[index];
-
-                    //process ModelError
-                    // if(Sys_modelError is false)
-                    // {
-                    //     string? Iter_ModelName = Get_ModelName_ByAddr(addr);
-                    //     if(!string.IsNullOrEmpty(Iter_ModelName))
-                    //     {
-                    //         if(!string.Equals(Iter_ModelName, INV_ModelName_tmp, StringComparison.Ordinal))
-                    //         {
-                    //             INV_ModelName_tmp = "Model_ERROR";
-                    //             Sys_modelError = true;
-                    //         }
-                    //     }
-                    // }
-
-                    //Process INV_FAULT
-                    // Parse_INV_FAULT(addr, out fault_str);
-                    //Process INV_Phase and Status
-                    byte singleDevice_mode = Parse_INV_Mode(addr);
-                    // Console.WriteLine($"[ComputeOverallValues] addr={addr}, status_byte={singleDevice_mode}");
-                    //!!!這裡的case要用ConstDefinition的Enum來寫
-                    switch (singleDevice_mode)
+                    var deviceData = Real_Devices_ReadData.Get_oneDevice_DataSnapshot(nowStoringAddr);
+                    if (deviceData != null)
                     {
-                        case (byte)ConstDefinition.SYS_Mode_Options.DISCON: break;
-                        case (byte)ConstDefinition.SYS_Mode_Options.ERROR: break;
-                        case (byte)ConstDefinition.SYS_Mode_Options.INVERTER: INV++; break;
-                        case (byte)ConstDefinition.SYS_Mode_Options.SAVING: Saving++; break;
-                        case (byte)ConstDefinition.SYS_Mode_Options.BY_PASS: ByPass++; break;
-                        case (byte)ConstDefinition.SYS_Mode_Options.CHARGER: Charging++; break;
-                        case (byte)ConstDefinition.SYS_Mode_Options.STANDBY: Standby++; break;
-                        default: break;
+                        onlineDevices_DeviceDatas.Add(deviceData);
                     }
-
-                    //Process tmpMaxValue of each phase corresponding the addr
-                    Compute_INV_IP_V(tmpMaxs_INV_IP_V, addr);
-                    Compute_INV_OP_V(tmpMaxs_INV_OP_V, addr);
-                    //process IP/OP F of each phase corresponding the addr
-
                 }
 
-                Sys_Charger_Enable = INV_isCHG_Enable;
-                Sys_isAC_Standby = INV_isAC_Standby;
-                Sys_ModelName_Assign();
-                AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] Sys_ModelName = {Sys_ModelName}", AppLogLevel.Trace);
-                Sys_INV_Mode_Assign(INV, Saving, ByPass, Charging, Standby);
-                AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] Sys_INV_Mode : {Sys_INV_Mode}", AppLogLevel.Trace);
-                // AssignMaxs_INV_IP_V(tmpMaxs_INV_IP_V);
-                AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] Sys_IP_V_Phases : {string.Join(", ", Sys_IP_V_Phases)}", AppLogLevel.Debug);
-                // AssignMaxs_INV_OP_V(tmpMaxs_INV_OP_V);
-                AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] Sys_OP_V_Phases : {string.Join(", ", Sys_OP_V_Phases)}", AppLogLevel.Debug);
+                // Console.WriteLine($"[GlobalData][ComputeOverallValues] Port = {subSys.Port}, protocol = {subSys.Protocol}, onlineDevices count = {onlineDevices_DeviceDatas.Count}, addrs: {string.Join(",", debug_Addrs)}");
+                //4. 使用onlineDevices_DeviceDatas進行系統變數計算
+                subSys.ComputeOverallValues_in_SubSystem(onlineDevices_DeviceDatas);
+                // Console.WriteLine($"[GlobalData][ComputeOverallValues] Port = {subSys.Port}, protocol = {subSys.Protocol}, nowMode = {subSys.nowMode}");
             }
-            catch (Exception e)
-            {
-                AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] Error : {e}", AppLogLevel.Error);
-            }
+
+            #region Old Code
+
+            // uint[] linkedAddr_array = LinkedDevices.Snapshot();
+            // //For computing MODE
+            // uint INV = 0, Saving = 0, ByPass = 0;
+            // uint Charging = 0, Standby = 0;
+            // //For computing IP/OP V
+            // double[] tmpMaxs_INV_IP_V = new double[3]; //[0]:phase1 ; [1]:phase2; [2]:phase3
+            // double[] tmpMaxs_INV_OP_V = new double[3];
+            // //For computing IP/OP F
+            // double[] tmp_accumulate_IP_F = new double[3];
+            // double[] tmp_accumulate_OP_F = new double[3];
+
+            // try
+            // {
+            //     //Debug
+            //     // Debug_Print_mdlName(0);
+            //     // Debug_Print_mdlName(64);
+            //     // Debug_Print_mdlName(128);
+            //     // Debug_Print_mdlName(192);
+            //     //initialize temp variables
+            //     INV_isCHG_Enable = false;
+            //     INV_isAC_Standby = false;
+            //     INV_ModelName_tmp = "";
+
+            //     //clear SysModelName
+            //     if (linkedAddr_array.Length == 0)
+            //     {
+            //         Sys_ModelName = "";
+            //     }
+            //     else
+            //     {
+            //         uint firstAddr = linkedAddr_array[0];
+
+            //         //取得 temp ModelName 準備與舊ModelName進行比對
+            //         INV_ModelName_tmp = Get_ModelName_ByAddr(firstAddr);
+            //         // INV_ModelName_tmp = "NTN-5K-248  "; //測試時，ModelName都是[0,0,0,0,0,0]時使用
+            //         //Assign 當前 Active的subAppSystem (後續應可動態調整，當前先以第一個linkedAddr 所在的範圍作為 Active subAppSystem
+            //         ActiveSubAppSystemID = findActiveSubAppSys(firstAddr);
+
+            //         AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] firstAddr = {firstAddr}, INV_ModelName_tmp = {INV_ModelName_tmp}, ActiveSubAppSystemID = {ActiveSubAppSystemID}", AppLogLevel.Trace);
+            //     }
+
+            //     for (int index = 0; index < linkedAddr_array.Length; index++)
+            //     {
+            //         //for loop init local var
+            //         string? fault_str = "";
+            //         byte? phase_byte = 0;
+            //         byte? status_byte = 0;
+
+            //         //get the addr we are processing now                    
+            //         uint addr = linkedAddr_array[index];
+
+            //         //process ModelError
+            //         // if(Sys_modelError is false)
+            //         // {
+            //         //     string? Iter_ModelName = Get_ModelName_ByAddr(addr);
+            //         //     if(!string.IsNullOrEmpty(Iter_ModelName))
+            //         //     {
+            //         //         if(!string.Equals(Iter_ModelName, INV_ModelName_tmp, StringComparison.Ordinal))
+            //         //         {
+            //         //             INV_ModelName_tmp = "Model_ERROR";
+            //         //             Sys_modelError = true;
+            //         //         }
+            //         //     }
+            //         // }
+
+            //         //Process INV_FAULT
+            //         // Parse_INV_FAULT(addr, out fault_str);
+            //         //Process INV_Phase and Status
+            //         byte singleDevice_mode = Parse_INV_Mode(addr);
+            //         // Console.WriteLine($"[ComputeOverallValues] addr={addr}, status_byte={singleDevice_mode}");
+            //         //!!!這裡的case要用ConstDefinition的Enum來寫
+            //         switch (singleDevice_mode)
+            //         {
+            //             case (byte)ConstDefinition.SYS_Mode_Options.DISCON: break;
+            //             case (byte)ConstDefinition.SYS_Mode_Options.ERROR: break;
+            //             case (byte)ConstDefinition.SYS_Mode_Options.INVERTER: INV++; break;
+            //             case (byte)ConstDefinition.SYS_Mode_Options.SAVING: Saving++; break;
+            //             case (byte)ConstDefinition.SYS_Mode_Options.BY_PASS: ByPass++; break;
+            //             case (byte)ConstDefinition.SYS_Mode_Options.CHARGER: Charging++; break;
+            //             case (byte)ConstDefinition.SYS_Mode_Options.STANDBY: Standby++; break;
+            //             default: break;
+            //         }
+
+            //         //Process tmpMaxValue of each phase corresponding the addr
+            //         Compute_INV_IP_V(tmpMaxs_INV_IP_V, addr);
+            //         Compute_INV_OP_V(tmpMaxs_INV_OP_V, addr);
+            //         //process IP/OP F of each phase corresponding the addr
+
+            //     }
+
+            //     Sys_Charger_Enable = INV_isCHG_Enable;
+            //     Sys_isAC_Standby = INV_isAC_Standby;
+            //     Sys_ModelName_Assign();
+            //     AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] Sys_ModelName = {Sys_ModelName}", AppLogLevel.Trace);
+            //     Sys_INV_Mode_Assign(INV, Saving, ByPass, Charging, Standby);
+            //     AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] Sys_INV_Mode : {Sys_INV_Mode}", AppLogLevel.Trace);
+            //     // AssignMaxs_INV_IP_V(tmpMaxs_INV_IP_V);
+            //     AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] Sys_IP_V_Phases : {string.Join(", ", Sys_IP_V_Phases)}", AppLogLevel.Debug);
+            //     // AssignMaxs_INV_OP_V(tmpMaxs_INV_OP_V);
+            //     AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] Sys_OP_V_Phases : {string.Join(", ", Sys_OP_V_Phases)}", AppLogLevel.Debug);
+            // }
+            // catch (Exception e)
+            // {
+            //     AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] Error : {e}", AppLogLevel.Error);
+            // }
+            #endregion Old Code
         }
 
-
+        
         private async Task Sys_ModelName_Assign()
         {
             if (!string.Equals("Model_ERROR", INV_ModelName_tmp, StringComparison.Ordinal))
@@ -573,60 +600,6 @@ namespace demoVer.Services
                 {
                     AppLogger.Log_To_File_log(_category, $"[GlobalData][Sys_ModelName_Assign] No Hook", AppLogLevel.Trace);
                 }
-            }
-        }
-
-        private async Task Sys_INV_Mode_Assign(uint INV, uint Saving, uint ByPass, uint Charging, uint Standby)
-        {
-            byte tmp_Mode;
-            if (INV > 0)
-            {
-                tmp_Mode = INV_MODE_INVERTER;
-            }
-            else if (Saving > 0)
-            {
-                tmp_Mode = INV_MODE_SAVING;
-            }
-            else if (ByPass > 0)
-            {
-                tmp_Mode = INV_MODE_BY_PASS;
-            }
-            else if (Charging > 0)
-            {
-                tmp_Mode = INV_MODE_CHARGING;
-            }
-            else if (Standby > 0)
-            {
-                tmp_Mode = INV_MODE_STANDBY;
-            }
-            else
-            {
-                tmp_Mode = INV_MODE_NONE;
-            }
-
-
-            if (tmp_Mode != Sys_INV_Mode)
-            {
-                Sys_INV_Mode = tmp_Mode;
-                if (Sys_INV_Mode_OnChanged is not null)
-                {
-                    await Sys_INV_Mode_OnChanged?.Invoke();
-                    AppLogger.Log_To_File_log(_category, $"[GlobalData][Sys_INV_Mode_Assign]", AppLogLevel.Trace);
-                }
-            }
-        }
-
-        public string INV_Status_translator()
-        {
-            switch (Sys_INV_Mode)
-            {
-                case INV_MODE_INVERTER: return "Inverter";
-                case INV_MODE_SAVING: return "Saving";
-                case INV_MODE_BY_PASS: return "Bypass";
-                case INV_MODE_CHARGING: return "Charger";
-                case INV_MODE_STANDBY: return "Standby";
-                case INV_MODE_SHUTDOWN: return "Shutdown";
-                default: return "";
             }
         }
 
@@ -813,78 +786,6 @@ namespace demoVer.Services
         private void AssignMaxs_INV_OP_V(double[] tmpMaxs)
         {
             Array.Copy(tmpMaxs, Sys_OP_V_Phases, tmpMaxs.Length);
-        }
-
-        public void GetArrowDirections(out ArrowDirection G2M, out ArrowDirection M2L, out ArrowDirection M2B)
-        {
-            //G : 市電
-            //M : Machine(NTN)
-            //L : Load
-            //B : Battery
-
-            //以下都是箭頭方向
-
-            switch (Sys_INV_Mode)
-            {
-                case INV_MODE_INVERTER:
-                    G2M = ArrowDirection.Hidden;
-                    M2L = ArrowDirection.Right;
-                    M2B = ArrowDirection.Up;
-                    break;
-                case INV_MODE_SAVING:
-                    G2M = ArrowDirection.Hidden;
-                    M2L = ArrowDirection.Right;
-                    M2B = ArrowDirection.Up;
-                    break;
-                case INV_MODE_BY_PASS:
-                    if (Sys_Charger_Enable)
-                    {
-                        G2M = ArrowDirection.Right;
-                        M2L = ArrowDirection.Right;
-                        M2B = ArrowDirection.Down;
-                    }
-                    else
-                    {
-                        G2M = ArrowDirection.Right;
-                        M2L = ArrowDirection.Right;
-                        M2B = ArrowDirection.Hidden;
-                    }
-                    break;
-                case INV_MODE_CHARGING:
-                    G2M = ArrowDirection.Right;
-                    M2L = ArrowDirection.Hidden;
-                    M2B = ArrowDirection.Down;
-                    break;
-                case INV_MODE_STANDBY:
-                    if (Sys_isAC_Standby)
-                    {
-                        G2M = ArrowDirection.Right;
-                        M2L = ArrowDirection.Hidden;
-                        M2B = ArrowDirection.Hidden;
-                    }
-                    else
-                    {
-                        G2M = ArrowDirection.Hidden;
-                        M2L = ArrowDirection.Hidden;
-                        M2B = ArrowDirection.Up;
-                    }
-                    break;
-                case INV_MODE_SHUTDOWN:
-                    G2M = ArrowDirection.Hidden;
-                    M2L = ArrowDirection.Hidden;
-                    M2B = ArrowDirection.Up;
-                    break;
-                case INV_MODE_BATTERY_FIRST:
-                    G2M = ArrowDirection.Left;
-                    M2L = ArrowDirection.Right;
-                    M2B = ArrowDirection.Up;
-                    break;
-                default:
-                    G2M = ArrowDirection.Hidden;
-                    M2L = ArrowDirection.Hidden;
-                    M2B = ArrowDirection.Hidden;
-                    break;
-            }
         }
 
         private void Compute_SYS_Phase()

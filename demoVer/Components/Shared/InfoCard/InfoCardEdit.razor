@@ -22,7 +22,7 @@
 @inject GlobalVar globalVar
 @inject HeartbeatService Heartbeat
 
-<div id="edit-container" @onclick="CloseMenu">
+<div id="edit-container" class="edit-container-style" @onclick="CloseMenu">
 	@if (showMenu)
 	{
 		<div class="custom-menu" style="top:@($"{menuY}px"); left:@($"{menuX}px");" @onclick:stopPropagation="true">
@@ -164,37 +164,33 @@
 			break;
 
 		case INFO_SETTING_STAGE.MACHINE_SELECTION_STAGE:
-			<MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 250px; max-height: 240px; overflow-y: auto;">
-				<MudList T="string" Dense="true" Hover="true">
-					@foreach (var (addr, modelName) in deviceAddr_List)
-					{
-						(string port, uint realAddr) = globalVar.Get_Port_RealAddr_ByAddr(addr);
-						string displayName = $"{port, -5} ({realAddr, 3}) → {modelName}";
-						<MudListItem T="string"
-									 @onclick="() => clickMachineName(addr, modelName, displayName)"
-									 Style="cursor: pointer;">
-							@* <MudIcon Icon="@Icons.Material.Filled.KeyboardCommandKey" Class="mr-2" /> *@
-							<MudText>@(displayName)</MudText>
-						</MudListItem>
-					}
-				</MudList>
-			</MudPaper>
+			<div class="card-table machine-selection-panel" style="width: 90%; max-height: 240px; overflow-y: auto;">
+				@foreach (var (addr, modelName) in deviceAddr_List)
+				{
+					(string port, uint realAddr) = globalVar.Get_Port_RealAddr_ByAddr(addr);
+					string displayName = $"[Addr {realAddr,2}]  →  {modelName}";
+					<div class="card-table-row machine-selection-item" @onclick="() => clickMachineName(addr, modelName, displayName)" style="cursor: pointer;">
+						<div class="card-table-item">
+							<span class="card-table-label">@port</span>
+							<span class="card-table-value">@displayName</span>
+						</div>
+					</div>
+				}
+			</div>
 			break;
 
 		case INFO_SETTING_STAGE.CMD_SELECTION_STAGE:
-			<MudPaper Elevation="2" Class="pa-2 rounded" Style="width: 300px; max-height: 240px; overflow-y: auto;">
-				<MudList T="string" Dense="true" Hover="true">
-					@foreach (var (cmd, unit) in show_cmd_unit_Dict_ref ?? Enumerable.Empty<KeyValuePair<string, string>>())
-					{
-						<MudListItem T="string"
-									 @onclick="() => clickCmd(cmd, unit)"
-									 Style="cursor: pointer;">
-							<MudIcon Icon="@Icons.Material.Filled.Code" Class="mr-2" />
-							<MudText>@cmd</MudText>
-						</MudListItem>
-					}
-				</MudList>
-			</MudPaper>
+			<div class="card-table cmd-selection-panel" style="width: 90%; max-height: 240px; overflow-y: auto;">
+				@foreach (var (cmd, unit) in show_cmd_unit_Dict_ref ?? Enumerable.Empty<KeyValuePair<string, string>>())
+				{
+					<div class="card-table-row cmd-selection-item" @onclick="() => clickCmd(cmd, unit)" style="cursor: pointer;">
+						<div class="card-table-item">
+							<span class="card-table-label">@cmd</span>
+							<span class="card-table-value">@unit</span>
+						</div>
+					</div>
+				}
+			</div>
 			break;
 
 		case INFO_SETTING_STAGE.UNIT_SELECTION_STAGE:

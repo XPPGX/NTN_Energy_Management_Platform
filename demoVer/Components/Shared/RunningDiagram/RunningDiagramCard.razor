@@ -1,9 +1,13 @@
 @namespace demoVer.Shared
 @inherits LayoutComponentBase
+@implements IAsyncDisposable
 @using demoVer.Models
 @using demoVer.Services
 @using demoVer.Utils
-@inject ArrowAnimationService ArrowService
+@using System
+@using System.Collections.Generic
+@using System.Linq
+@using System.Threading.Tasks
 @inject GlobalVar globalVar
 <div class="running-diagram-container @CssClass" @attributes="AdditionalAttributes">
     <div class="running-diagram-container top">
@@ -12,7 +16,9 @@
             <div id="running_mode">@local_INV_MODE_str</div>
         </div>
         <div class="rightPart">
-            
+            <span class="subsystem-badge @GetSubsystemModeClass()" title="@GetSubsystemBadgeTooltip()">
+                @GetActiveSubsystemLabel()
+            </span>
         </div>
         @if(showEditButton)
         {
@@ -49,37 +55,37 @@
                 </div>
                 <div class="grid-label">@currentCard.Link_STATUS_Pairs[3].Label</div>
             </div>
-            @if (ArrowService.triGroup1.get_showArrowFlag())
+            @if (arrowService.triGroup1.get_showArrowFlag())
             {
-                <div class="@ArrowService.triGroup1.GetGroupClass()" style="@ArrowService.triGroup1.GetGridAreaStyle()">
-                    @for (int i = 0; i < ArrowService.triGroup1.Count; i++)
+                <div class="@arrowService.triGroup1.GetGroupClass()" style="@arrowService.triGroup1.GetGridAreaStyle()">
+                    @for (int i = 0; i < arrowService.triGroup1.Count; i++)
                     {
-                        var baseClass = ArrowService.triGroup1.GetTriangleBaseClass();
-                        var active = i == ArrowService.triGroup1.activeIndex ? "active" : "";
+                        var baseClass = arrowService.triGroup1.GetTriangleBaseClass();
+                        var active = i == arrowService.triGroup1.activeIndex ? "active" : "";
                         <div class="@($"{baseClass} {active}")"></div>
                     }
                 </div>
             }
 
-            @if (ArrowService.triGroup2.get_showArrowFlag())
+            @if (arrowService.triGroup2.get_showArrowFlag())
             {
-                <div class="@ArrowService.triGroup2.GetGroupClass()" style="@ArrowService.triGroup2.GetGridAreaStyle()">
-                    @for (int i = 0; i < ArrowService.triGroup2.Count; i++)
+                <div class="@arrowService.triGroup2.GetGroupClass()" style="@arrowService.triGroup2.GetGridAreaStyle()">
+                    @for (int i = 0; i < arrowService.triGroup2.Count; i++)
                     {
-                        var baseClass = ArrowService.triGroup2.GetTriangleBaseClass();
-                        var active = i == ArrowService.triGroup2.activeIndex ? "active" : "";
+                        var baseClass = arrowService.triGroup2.GetTriangleBaseClass();
+                        var active = i == arrowService.triGroup2.activeIndex ? "active" : "";
                         <div class="@($"{baseClass} {active}")"></div>
                     }
                 </div>
             }
 
-            @if (ArrowService.triGroup3.get_showArrowFlag())
+            @if (arrowService.triGroup3.get_showArrowFlag())
             {
-                <div class="@ArrowService.triGroup3.GetGroupClass()" style="@ArrowService.triGroup3.GetGridAreaStyle()">
-                    @for (int i = 0; i < ArrowService.triGroup3.Count; i++)
+                <div class="@arrowService.triGroup3.GetGroupClass()" style="@arrowService.triGroup3.GetGridAreaStyle()">
+                    @for (int i = 0; i < arrowService.triGroup3.Count; i++)
                     {
-                        var baseClass = ArrowService.triGroup3.GetTriangleBaseClass();
-                        var active = i == ArrowService.triGroup3.activeIndex ? "active" : "";
+                        var baseClass = arrowService.triGroup3.GetTriangleBaseClass();
+                        var active = i == arrowService.triGroup3.activeIndex ? "active" : "";
                         <div class="@($"{baseClass} {active}")"></div>
                     }
                 </div>
@@ -89,13 +95,13 @@
             
             <div class="grid-col">
                 <div class="placeholder">
-                    @* @if (ArrowService.triGroup1.get_showArrowFlag())
+                    @* @if (arrowService.triGroup1.get_showArrowFlag())
                     {
-                        <div class="arrows-in-cell" style="@ArrowService.triGroup1.GetGridAreaStyle()">
-                            @for (int i = 0; i < ArrowService.triGroup1.Count; i++)
+                        <div class="arrows-in-cell" style="@arrowService.triGroup1.GetGridAreaStyle()">
+                            @for (int i = 0; i < arrowService.triGroup1.Count; i++)
                             {
-                                var baseClass = ArrowService.triGroup1.GetTriangleBaseClass();
-                                var active = i == ArrowService.triGroup1.activeIndex ? "active" : "";
+                                var baseClass = arrowService.triGroup1.GetTriangleBaseClass();
+                                var active = i == arrowService.triGroup1.activeIndex ? "active" : "";
                                 <div class="@($"{baseClass} {active}")"></div>
                             }
                         </div>
@@ -106,13 +112,13 @@
             
             <div class="grid-col">
                 <div class="placeholder">
-                    @* @if (ArrowService.triGroup2.get_showArrowFlag())
+                    @* @if (arrowService.triGroup2.get_showArrowFlag())
                     {
-                        <div class="arrows-in-cell" style="@ArrowService.triGroup2.GetGridAreaStyle()">
-                            @for (int i = 0; i < ArrowService.triGroup2.Count; i++)
+                        <div class="arrows-in-cell" style="@arrowService.triGroup2.GetGridAreaStyle()">
+                            @for (int i = 0; i < arrowService.triGroup2.Count; i++)
                             {
-                                var baseClass = ArrowService.triGroup2.GetTriangleBaseClass();
-                                var active = i == ArrowService.triGroup2.activeIndex ? "active" : "";
+                                var baseClass = arrowService.triGroup2.GetTriangleBaseClass();
+                                var active = i == arrowService.triGroup2.activeIndex ? "active" : "";
                                 <div class="@($"{baseClass} {active}")"></div>
                             }
                         </div>
@@ -127,13 +133,13 @@
             <div class="placeholder"></div>
             <div class="grid-col">
                 <div class="placeholder">
-                    @* @if (ArrowService.triGroup3.get_showArrowFlag())
+                    @* @if (arrowService.triGroup3.get_showArrowFlag())
                     {
-                        <div class="arrows-in-cell" style="@ArrowService.triGroup3.GetGridAreaStyle()">
-                            @for (int i = 0; i < ArrowService.triGroup3.Count; i++)
+                        <div class="arrows-in-cell" style="@arrowService.triGroup3.GetGridAreaStyle()">
+                            @for (int i = 0; i < arrowService.triGroup3.Count; i++)
                             {
-                                var baseClass = ArrowService.triGroup3.GetTriangleBaseClass();
-                                var active = i == ArrowService.triGroup3.activeIndex ? "active" : "";
+                                var baseClass = arrowService.triGroup3.GetTriangleBaseClass();
+                                var active = i == arrowService.triGroup3.activeIndex ? "active" : "";
                                 <div class="@($"{baseClass} {active}")"></div>
                             }
                         </div>
@@ -157,21 +163,25 @@
 </div>
 
 @code{
+    private readonly ArrowAnimationService arrowService = new();
+    private readonly List<SubSystem> subsystemOptions = new();
+    private string? selectedSubsystemKey;
     private string _category = string.Empty;
     private bool DEBUG_MODE = true;
-    private string local_INV_MODE_str = "";
+    private string local_INV_MODE_str = ConstDefinition.DEFAULT_MODE_str;
+    private SubSystem? activeSubSystem;
 
-    [Parameter] public string CssClass {get; set; }
-    [Parameter(CaptureUnmatchedValues  = true)] public Dictionary<string, object> AdditionalAttributes {get; set; }
-    [Parameter] public bool showEditButton {get; set; }
-    [Parameter] public EventCallback<string> Inform_Home_openEditMenu {get; set;}
-    [Parameter] public CardInfo currentCard {get; set;}
+    [Parameter] public string CssClass { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object> AdditionalAttributes { get; set; }
+    [Parameter] public bool showEditButton { get; set; }
+    [Parameter] public EventCallback<string> Inform_Home_openEditMenu { get; set; }
+    [Parameter] public CardInfo currentCard { get; set; }
 
     private bool stopTimer_Flag = false;
 
     private void Log(string message)
     {
-        if(DEBUG_MODE)
+        if (DEBUG_MODE)
         {
             Console.WriteLine($"[Debug] {message}");
         }
@@ -179,9 +189,8 @@
 
     private async Task openEditMenu()
     {
-        if(Inform_Home_openEditMenu.HasDelegate)
+        if (Inform_Home_openEditMenu.HasDelegate)
         {
-            //Pass the razor component name to HOME, the name can be found definition in the HOME CardInfos List.
             await Inform_Home_openEditMenu.InvokeAsync(currentCard.ID);
         }
     }
@@ -191,57 +200,116 @@
         _category = GetType().FullName!;
     }
 
-    
-
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
-        ArrowService.OnTick += OnArrowTick;
-        globalVar.Sys_INV_Mode_OnChanged += Sys_INV_Mode_Change_Task;
-        await Sys_INV_Mode_Change_Task();
+        SetSelectedSubsystemKey(currentCard?.SelectedSubsystemKey);
+        arrowService.OnTick += OnArrowTick;
+        RefreshSubsystems();
+        return Task.CompletedTask;
     }
 
-    private async Task Sys_INV_Mode_Change_Task()
+    protected override void OnParametersSet()
     {
-        
-        local_INV_MODE_str = globalVar.INV_Status_translator();
-        AppLogger.Log_To_File_log(_category, $"[Sys_INV_Mode_Change_Task] local_INV_MODE_str updated to: {local_INV_MODE_str}", AppLogLevel.Information);
-        await InvokeAsync(StateHasChanged);
+        if (currentCard is null)
+        {
+            return;
+        }
+
+        if (!string.Equals(currentCard.SelectedSubsystemKey, selectedSubsystemKey, StringComparison.Ordinal))
+        {
+            SetSelectedSubsystemKey(currentCard.SelectedSubsystemKey);
+            RefreshSubsystems();
+        }
+    }
+
+    private static SubSystem? SelectSubsystem(IReadOnlyList<SubSystem> subsystems)
+    {
+        if (subsystems.Count == 0)
+        {
+            return null;
+        }
+
+        return subsystems.FirstOrDefault(s => s.isAnyDeviceOnline)
+               ?? subsystems[0];
+    }
+
+    private void RefreshSubsystems()
+    {
+        var subsystems = globalVar.GetSubSystemsSnapshot();
+        subsystemOptions.Clear();
+        subsystemOptions.AddRange(subsystems);
+
+        if (subsystemOptions.Count == 0)
+        {
+            activeSubSystem = null;
+            SetSelectedSubsystemKey(null);
+            ApplyActiveSubsystem();
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(selectedSubsystemKey))
+        {
+            activeSubSystem = subsystemOptions.FirstOrDefault(s => BuildSubsystemKey(s) == selectedSubsystemKey);
+        }
+
+        if (activeSubSystem is null)
+        {
+            activeSubSystem = SelectSubsystem(subsystemOptions);
+        }
+
+        if (activeSubSystem is not null)
+        {
+            SetSelectedSubsystemKey(BuildSubsystemKey(activeSubSystem));
+        }
+        else
+        {
+            SetSelectedSubsystemKey(null);
+        }
+
+        ApplyActiveSubsystem();
+    }
+
+    private void ApplyActiveSubsystem()
+    {
+        local_INV_MODE_str = activeSubSystem?.DisplayModeName ?? ConstDefinition.DEFAULT_MODE_str;
+        arrowService.UpdateDirections(activeSubSystem?.ArrowDirections ?? ArrowDirections.Hidden);
     }
 
     private void OnArrowTick()
     {
-        _ = InvokeAsync(StateHasChanged);
+        _ = InvokeAsync(() =>
+        {
+            RefreshSubsystems();
+            StateHasChanged();
+            return Task.CompletedTask;
+        });
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if(firstRender)
+        if (firstRender)
         {
-            //[Debug] show arrow animation
-            @* await UpdateArrowPosition(); *@
-            ArrowService.triGroup1.PlaceAt(1, 2);   // 第一列、第二欄
-            ArrowService.triGroup1.SetDirection(ArrowDirection.Hidden);
+            arrowService.triGroup1.PlaceAt(1, 2);
+            arrowService.triGroup1.SetDirection(ArrowDirection.Hidden);
 
-            ArrowService.triGroup2.PlaceAt(1, 4);
-            ArrowService.triGroup2.SetDirection(ArrowDirection.Hidden);
+            arrowService.triGroup2.PlaceAt(1, 4);
+            arrowService.triGroup2.SetDirection(ArrowDirection.Hidden);
 
-            ArrowService.triGroup3.PlaceAt(2, 3);
-            ArrowService.triGroup3.SetDirection(ArrowDirection.Hidden);
-            
+            arrowService.triGroup3.PlaceAt(2, 3);
+            arrowService.triGroup3.SetDirection(ArrowDirection.Hidden);
 
-            // 顯示
-            ArrowService.triGroup1.show_arrows();
-            ArrowService.triGroup2.show_arrows();
-            ArrowService.triGroup3.show_arrows();
+            arrowService.triGroup1.show_arrows();
+            arrowService.triGroup2.show_arrows();
+            arrowService.triGroup3.show_arrows();
             Console.WriteLine("RunningDiagramCard: Arrows shown.");
-            await InvokeAsync(StateHasChanged); // ← 立刻畫出來
+            await InvokeAsync(StateHasChanged);
         }
     }
 
     #region arrowAnimation
     protected ElementReference leftRef;
     protected ElementReference rightRef;
-    
+
     protected ElementReference tower;
     protected ElementReference NTN;
     protected ElementReference load;
@@ -255,9 +323,8 @@
 
     protected System.Threading.Timer? timer;
 
-    [Inject] protected IJSRuntime JS {get; set; } = default!;
+    [Inject] protected IJSRuntime JS { get; set; } = default!;
 
-    // DomRect 物件用來接 JS 回傳的資料
     protected class DomRect
     {
         public double Bottom { get; set; }
@@ -272,34 +339,96 @@
     {
         var leftRect = await JS.InvokeAsync<DomRect>("getBoundingClientRect", tower, grid_container);
         var rightRect = await JS.InvokeAsync<DomRect>("getBoundingClientRect", NTN, grid_container);
-        arrowLeft = (int)((leftRect.Right + rightRect.Left) / 2) - 8; //if no "-8", the first triangle will appear at middle
+        arrowLeft = (int)((leftRect.Right + rightRect.Left) / 2) - 8;
         arrowTop = (int)((leftRect.Top + rightRect.Top) / 2);
-        ArrowService.triGroup1.set_triGroup_postion(arrowLeft, arrowTop);
-        ArrowService.triGroup1.show_arrows();
-
+        arrowService.triGroup1.set_triGroup_postion(arrowLeft, arrowTop);
+        arrowService.triGroup1.show_arrows();
 
         leftRect = await JS.InvokeAsync<DomRect>("getBoundingClientRect", NTN, grid_container);
         rightRect = await JS.InvokeAsync<DomRect>("getBoundingClientRect", load, grid_container);
         arrowLeft = (int)((leftRect.Right + rightRect.Left) / 2);
         arrowTop = (int)((leftRect.Top + rightRect.Top) / 2);
-        ArrowService.triGroup2.set_triGroup_postion(arrowLeft, arrowTop);
-        ArrowService.triGroup2.show_arrows();
-
+        arrowService.triGroup2.set_triGroup_postion(arrowLeft, arrowTop);
+        arrowService.triGroup2.show_arrows();
 
         leftRect = await JS.InvokeAsync<DomRect>("getBoundingClientRect", NTN, grid_container);
         rightRect = await JS.InvokeAsync<DomRect>("getBoundingClientRect", battery, grid_container);
         arrowLeft = (int)((leftRect.Right + rightRect.Left) / 2);
         arrowTop = (int)((leftRect.Top + rightRect.Top) / 2);
-        ArrowService.triGroup3.set_triGroup_postion(arrowLeft, arrowTop);
-        ArrowService.triGroup3.show_arrows();
+        arrowService.triGroup3.set_triGroup_postion(arrowLeft, arrowTop);
+        arrowService.triGroup3.show_arrows();
     }
 
     private static string Grid(int row, int col) => $"grid-row:{row}; grid-column:{col};";
 
-    public void Dispose()
+    private static string BuildSubsystemKey(SubSystem subsystem) => $"{subsystem.Port}|{subsystem.Protocol}";
+
+    private static string GetSubsystemDisplayName(SubSystem subsystem)
     {
-        ArrowService.OnTick -= OnArrowTick;
-        globalVar.Sys_INV_Mode_OnChanged -= Sys_INV_Mode_Change_Task;
+        var identifier = string.IsNullOrWhiteSpace(subsystem.ModelName) ? subsystem.Protocol : subsystem.ModelName;
+        return $"{subsystem.Port} - {identifier}";
+    }
+
+    private void SetSelectedSubsystemKey(string? key)
+    {
+        if (string.Equals(selectedSubsystemKey, key, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        selectedSubsystemKey = key;
+        if (currentCard is not null)
+        {
+            currentCard.SelectedSubsystemKey = key;
+        }
+    }
+
+    private string GetActiveSubsystemLabel()
+    {
+        return activeSubSystem is not null
+            ? GetSubsystemDisplayName(activeSubSystem)
+            : "無可用子系統";
+    }
+
+    private string GetSubsystemModeClass()
+    {
+        if (activeSubSystem is null)
+        {
+            return "mode-disconnected";
+        }
+
+        return activeSubSystem.nowMode switch
+        {
+            ConstDefinition.SYS_Mode_Options.INVERTER => "mode-inverter",
+            ConstDefinition.SYS_Mode_Options.SAVING => "mode-saving",
+            ConstDefinition.SYS_Mode_Options.BY_PASS => "mode-bypass",
+            ConstDefinition.SYS_Mode_Options.BY_PASS_AC_CHARGER => "mode-bypass",
+            ConstDefinition.SYS_Mode_Options.CHARGER => "mode-charger",
+            ConstDefinition.SYS_Mode_Options.STANDBY => "mode-standby",
+            ConstDefinition.SYS_Mode_Options.BATTERY_FIRST => "mode-battery-first",
+            ConstDefinition.SYS_Mode_Options.AC_OK => "mode-ac-ok",
+            ConstDefinition.SYS_Mode_Options.SHUTDOWN => "mode-shutdown",
+            ConstDefinition.SYS_Mode_Options.ERROR => "mode-error",
+            _ => "mode-disconnected"
+        };
+    }
+
+    private string GetSubsystemBadgeTooltip()
+    {
+        if (activeSubSystem is null)
+        {
+            return "尚未取得子系統狀態";
+        }
+
+        return string.IsNullOrWhiteSpace(local_INV_MODE_str)
+            ? "運行狀態更新中"
+            : $"目前模式：{local_INV_MODE_str}";
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        arrowService.OnTick -= OnArrowTick;
+        await arrowService.DisposeAsync();
     }
     #endregion //arrowAnimation
 }

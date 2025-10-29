@@ -7,10 +7,11 @@
     "demoVer.Shared.BlankInfoCard"              : 2,
     "demoVer.Shared.EditCard"                   : 2,
     "demoVer.Shared.BlankChartCard"             : 2,
-    "demoVer.Shared.RunningDiagramCard"         : 0,
+    "demoVer.Shared.RunningDiagramCard"         : 2,
     "demoVer.Models.allDevice_Data"             : 2,
     "demoVer.Models.oneDevice_Data"             : 2,
     "demoVer.Models.WriteAPI_Datas"             : 2,
+    "demoVer.Models.SubSystem"                  : 1,
     "demoVer.Models.SubAppSystem_WriteMemory"   : 2,
     "demoVer.Services.DataChangeEventManager"   : 2,
     "demoVer.Services.ApiManager"               : 2,
@@ -18,9 +19,10 @@
     "demoVer.Services.PollingRead"              : 2,
     "demoVer.Services.WriteProcess"             : 2,
     "demoVer.Services.HeartbeatService"         : 2,
-    "demoVer.Services.GlobalVar"                : 2,
+    "demoVer.Services.GlobalVar"                : 0,
     "demoVer.Services.ArrowAnimationService"    : 2,
     "demoVer.Services.CommonData"               : 2,
     "demoVer.Services.DataCenter"               : 2,
-    "demoVer.Services.SqlProcessor"             : 2
+    "demoVer.Services.SqlProcessor"             : 2,
+    "demoVer.Services.SubSystemManager"         : 2
 }

@@ -305,7 +305,7 @@ namespace demoVer.Services
                 //1. SysInfo
                 saveSysInfo_To_JsonFile();
                 //2. ScalingFactor
-                await _commonData.modelNameChange_Task(); //讀新的 Scaling 到記憶體
+                // await _commonData.modelNameChange_Task(); //讀新的 Scaling 到記憶體
                 saveScaling_To_JsonFile(); //把記憶體內新的 Scaling 存到Json file
                 //3. INV setting
                 //待辦(等上下限API開通)

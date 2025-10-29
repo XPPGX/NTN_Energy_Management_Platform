@@ -10,7 +10,8 @@ namespace demoVer.Services
         private bool local_debug_enable = false;
         private readonly PeriodicTimer _timer;
         private readonly CancellationTokenSource _cts = new();
-        private readonly GlobalVar _globalVar;
+        private ArrowDirections _currentDirections = ArrowDirections.Hidden;
+        private readonly object _directionLock = new();
         public triangle_group triGroup1 { get; } = new();
         public triangle_group triGroup2 { get; } = new();
         public triangle_group triGroup3 { get; } = new();
@@ -20,30 +21,27 @@ namespace demoVer.Services
         
         
 
-        public ArrowAnimationService(GlobalVar globalVar)
+        public ArrowAnimationService()
         {
             _category = GetType().FullName!;
-            _globalVar = globalVar;
             _timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
             _loopTask = RunLoop(_cts.Token);
         }
 
         private async Task RunLoop(CancellationToken token)
         {
-            ArrowDirection G2M = ArrowDirection.Hidden; //triGroup1
-            ArrowDirection M2L = ArrowDirection.Hidden; //triGroup2
-            ArrowDirection M2B = ArrowDirection.Hidden; //triGroup3
             try
             {
                 while (await _timer.WaitForNextTickAsync(token))
                 {
-                    //取得各箭頭方向
-                    _globalVar.GetArrowDirections(out G2M, out M2L, out M2B);
-                    AppLogger.Log_To_File_log(_category, $"[ArrowAnimationService][RunLoop] G2M = {G2M}, M2L = {M2L}, M2B = {M2B}", AppLogLevel.Trace);
-                    
-                    triGroup1.SetDirection(G2M);
-                    triGroup2.SetDirection(M2L);
-                    triGroup3.SetDirection(M2B);
+                    ArrowDirections directions;
+                    lock (_directionLock)
+                    {
+                        directions = _currentDirections;
+                    }
+                    triGroup1.SetDirection(directions.GridToMachine);
+                    triGroup2.SetDirection(directions.MachineToLoad);
+                    triGroup3.SetDirection(directions.MachineToBattery);
 
                     //移動發亮的箭頭
                     Step(triGroup1);
@@ -69,15 +67,23 @@ namespace demoVer.Services
                     {
                         OnTick?.Invoke();
                     }
-                    catch(Exception e)
+                    catch
                     {
                         // AppLogger.Log_To_File_log(_category, $"[ArrowAnimationService][RunLoop] Error : {e}", AppLogLevel.Error);
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // AppLogger.Log_To_File_log(_category, $"[ArrowAnimationService][RunLoop] Error : {e} ", AppLogLevel.Error);
+            }
+        }
+
+        public void UpdateDirections(ArrowDirections directions)
+        {
+            lock (_directionLock)
+            {
+                _currentDirections = directions;
             }
         }
 

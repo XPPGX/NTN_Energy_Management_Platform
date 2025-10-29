@@ -21,7 +21,6 @@ builder.Logging.AddFilter("System.Net.Http.HttpClient", LogLevel.None);
 // builder.Logging.AddFilter("Microsoft.AspNetCore", LogLevel.Warning);
 
 builder.Services.AddSingleton<CardUpdateNotifier>();
-builder.Services.AddSingleton<ArrowAnimationService>();
 builder.Services.AddMudServices();
 builder.Services.AddSingleton<ICardDefinition, InfoCardDefinition>();
 builder.Services.AddSingleton<ICardDefinition, ChartCardDefinition>();
@@ -31,6 +30,7 @@ builder.Services.AddSingleton<ICardDefinitionRegistry, CardDefinitionRegistry>()
 builder.Services.AddSingleton<HeartbeatService>();
 builder.Services.AddHostedService(provider => provider.GetRequiredService<HeartbeatService>());
 builder.Services.AddSingleton<CommonData>(); //預計是整個專案共享一個CommonData
+builder.Services.AddSingleton<SubSystemManager>();
 builder.Services.AddSingleton<LinkAddrManager>();
 builder.Services.AddSingleton<DataCenter>();
 builder.Services.AddSingleton<GlobalVar>();

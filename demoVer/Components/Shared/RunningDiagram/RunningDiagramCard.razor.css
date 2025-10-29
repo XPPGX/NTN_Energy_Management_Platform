@@ -24,7 +24,7 @@
 }
 .running-diagram-container.top{
     width: 100%;
-    padding: 0 12px;
+    padding: 0 60px 0 12px;
     min-height: 44px;
     display: flex;
     flex-direction: row;
@@ -49,6 +49,7 @@
     align-items: center;
     gap: clamp(0.5rem, 1.1vw, 1rem);
     color: var(--text-primary);
+    min-width: 0;
 }
 .rightPart{
     display: flex;
@@ -58,6 +59,171 @@
     align-items: center;
     gap: clamp(0.5rem, 1.1vw, 1rem);
     color: var(--text-primary);
+    min-width: 0;
+}
+
+.subsystem-badge {
+    --badge-bg-start: var(--badge-neutral-start);
+    --badge-bg-end: var(--badge-neutral-end);
+    --badge-border-color: var(--badge-neutral-border);
+    --badge-border-hover: var(--badge-neutral-border-hover);
+    --badge-text-color: var(--badge-neutral-text);
+    --badge-emblem-highlight: var(--badge-neutral-emblem-highlight);
+    --badge-emblem-shadow: var(--badge-neutral-emblem-shadow);
+    --badge-emblem-glow: var(--badge-neutral-emblem-glow);
+
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 6px 16px 6px 38px;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, var(--badge-bg-start), var(--badge-bg-end));
+    color: var(--badge-text-color);
+    border: 1px solid var(--badge-border-color);
+    box-shadow:
+        inset 0 1px 0 var(--badge-shadow-inset-top),
+        inset 0 -1px 0 var(--badge-shadow-inset-bottom),
+        0 4px 12px var(--badge-shadow-ambient);
+    text-shadow: 0 1px 1px var(--badge-text-shadow);
+    white-space: nowrap;
+    max-width: min(100%, 280px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.subsystem-badge::before {
+    content: "";
+    position: absolute;
+    left: 14px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, var(--badge-emblem-highlight), var(--badge-emblem-shadow));
+    box-shadow: 0 0 10px var(--badge-emblem-glow);
+}
+
+.subsystem-badge:hover {
+    border-color: var(--badge-border-hover);
+    box-shadow:
+        inset 0 1px 0 var(--badge-shadow-inset-top-hover),
+        inset 0 -1px 0 var(--badge-shadow-inset-bottom-hover),
+        0 6px 16px var(--badge-shadow-ambient-hover);
+}
+
+.mode-inverter {
+    --badge-bg-start: var(--mode-inverter-bg-start);
+    --badge-bg-end: var(--mode-inverter-bg-end);
+    --badge-border-color: var(--mode-inverter-border);
+    --badge-border-hover: var(--mode-inverter-border-hover);
+    --badge-text-color: var(--mode-inverter-text);
+    --badge-emblem-highlight: var(--mode-inverter-emblem-highlight);
+    --badge-emblem-shadow: var(--mode-inverter-emblem-shadow);
+    --badge-emblem-glow: var(--mode-inverter-emblem-glow);
+}
+
+.mode-saving {
+    --badge-bg-start: var(--mode-saving-bg-start);
+    --badge-bg-end: var(--mode-saving-bg-end);
+    --badge-border-color: var(--mode-saving-border);
+    --badge-border-hover: var(--mode-saving-border-hover);
+    --badge-text-color: var(--mode-saving-text);
+    --badge-emblem-highlight: var(--mode-saving-emblem-highlight);
+    --badge-emblem-shadow: var(--mode-saving-emblem-shadow);
+    --badge-emblem-glow: var(--mode-saving-emblem-glow);
+}
+
+.mode-bypass {
+    --badge-bg-start: var(--mode-bypass-bg-start);
+    --badge-bg-end: var(--mode-bypass-bg-end);
+    --badge-border-color: var(--mode-bypass-border);
+    --badge-border-hover: var(--mode-bypass-border-hover);
+    --badge-text-color: var(--mode-bypass-text);
+    --badge-emblem-highlight: var(--mode-bypass-emblem-highlight);
+    --badge-emblem-shadow: var(--mode-bypass-emblem-shadow);
+    --badge-emblem-glow: var(--mode-bypass-emblem-glow);
+}
+
+.mode-charger {
+    --badge-bg-start: var(--mode-charger-bg-start);
+    --badge-bg-end: var(--mode-charger-bg-end);
+    --badge-border-color: var(--mode-charger-border);
+    --badge-border-hover: var(--mode-charger-border-hover);
+    --badge-text-color: var(--mode-charger-text);
+    --badge-emblem-highlight: var(--mode-charger-emblem-highlight);
+    --badge-emblem-shadow: var(--mode-charger-emblem-shadow);
+    --badge-emblem-glow: var(--mode-charger-emblem-glow);
+}
+
+.mode-standby {
+    --badge-bg-start: var(--mode-standby-bg-start);
+    --badge-bg-end: var(--mode-standby-bg-end);
+    --badge-border-color: var(--mode-standby-border);
+    --badge-border-hover: var(--mode-standby-border-hover);
+    --badge-text-color: var(--mode-standby-text);
+    --badge-emblem-highlight: var(--mode-standby-emblem-highlight);
+    --badge-emblem-shadow: var(--mode-standby-emblem-shadow);
+    --badge-emblem-glow: var(--mode-standby-emblem-glow);
+}
+
+.mode-battery-first {
+    --badge-bg-start: var(--mode-battery-first-bg-start);
+    --badge-bg-end: var(--mode-battery-first-bg-end);
+    --badge-border-color: var(--mode-battery-first-border);
+    --badge-border-hover: var(--mode-battery-first-border-hover);
+    --badge-text-color: var(--mode-battery-first-text);
+    --badge-emblem-highlight: var(--mode-battery-first-emblem-highlight);
+    --badge-emblem-shadow: var(--mode-battery-first-emblem-shadow);
+    --badge-emblem-glow: var(--mode-battery-first-emblem-glow);
+}
+
+.mode-ac-ok {
+    --badge-bg-start: var(--mode-ac-ok-bg-start);
+    --badge-bg-end: var(--mode-ac-ok-bg-end);
+    --badge-border-color: var(--mode-ac-ok-border);
+    --badge-border-hover: var(--mode-ac-ok-border-hover);
+    --badge-text-color: var(--mode-ac-ok-text);
+    --badge-emblem-highlight: var(--mode-ac-ok-emblem-highlight);
+    --badge-emblem-shadow: var(--mode-ac-ok-emblem-shadow);
+    --badge-emblem-glow: var(--mode-ac-ok-emblem-glow);
+}
+
+.mode-shutdown {
+    --badge-bg-start: var(--mode-shutdown-bg-start);
+    --badge-bg-end: var(--mode-shutdown-bg-end);
+    --badge-border-color: var(--mode-shutdown-border);
+    --badge-border-hover: var(--mode-shutdown-border-hover);
+    --badge-text-color: var(--mode-shutdown-text);
+    --badge-emblem-highlight: var(--mode-shutdown-emblem-highlight);
+    --badge-emblem-shadow: var(--mode-shutdown-emblem-shadow);
+    --badge-emblem-glow: var(--mode-shutdown-emblem-glow);
+}
+
+.mode-error {
+    --badge-bg-start: var(--mode-error-bg-start);
+    --badge-bg-end: var(--mode-error-bg-end);
+    --badge-border-color: var(--mode-error-border);
+    --badge-border-hover: var(--mode-error-border-hover);
+    --badge-text-color: var(--mode-error-text);
+    --badge-emblem-highlight: var(--mode-error-emblem-highlight);
+    --badge-emblem-shadow: var(--mode-error-emblem-shadow);
+    --badge-emblem-glow: var(--mode-error-emblem-glow);
+}
+
+.mode-disconnected {
+    --badge-bg-start: var(--mode-disconnected-bg-start);
+    --badge-bg-end: var(--mode-disconnected-bg-end);
+    --badge-border-color: var(--mode-disconnected-border);
+    --badge-border-hover: var(--mode-disconnected-border-hover);
+    --badge-text-color: var(--mode-disconnected-text);
+    --badge-emblem-highlight: var(--mode-disconnected-emblem-highlight);
+    --badge-emblem-shadow: var(--mode-disconnected-emblem-shadow);
+    --badge-emblem-glow: var(--mode-disconnected-emblem-glow);
 }
 .running-diagram-container.bottom{
     width: 100%;
@@ -276,6 +442,7 @@ transform: rotate(180deg);
         justify-content: flex-start;
         gap: 1rem;
         position: relative;
+        padding-right: 56px;
     }
     
     .grid-container {

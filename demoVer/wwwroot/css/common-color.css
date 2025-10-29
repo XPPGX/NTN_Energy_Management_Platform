@@ -33,6 +33,114 @@
     --slider-fill-primary: #6fc7ff;
     --slider-fill-secondary: rgba(111, 200, 255, 0.7);
     --slider-thumb: #8fd1ff;
+
+    /* Subsystem badge neutral baseline */
+    --badge-neutral-start: #474b51;
+    --badge-neutral-end: #23272b;
+    --badge-neutral-border: rgba(255, 255, 255, 0.12);
+    --badge-neutral-border-hover: rgba(255, 255, 255, 0.25);
+    --badge-neutral-text: #f5f7fa;
+    --badge-neutral-emblem-highlight: rgba(255, 255, 255, 0.7);
+    --badge-neutral-emblem-shadow: rgba(180, 180, 180, 0.05);
+    --badge-neutral-emblem-glow: rgba(255, 255, 255, 0.2);
+    --badge-shadow-inset-top: rgba(255, 255, 255, 0.1);
+    --badge-shadow-inset-bottom: rgba(0, 0, 0, 0.35);
+    --badge-shadow-ambient: rgba(0, 0, 0, 0.35);
+    --badge-shadow-inset-top-hover: rgba(255, 255, 255, 0.18);
+    --badge-shadow-inset-bottom-hover: rgba(0, 0, 0, 0.4);
+    --badge-shadow-ambient-hover: rgba(0, 0, 0, 0.45);
+    --badge-text-shadow: rgba(0, 0, 0, 0.4);
+
+    /* Subsystem badge per-mode palette (dark theme) */
+    --mode-inverter-bg-start: #5c8dff;
+    --mode-inverter-bg-end: #141b29;
+    --mode-inverter-border: rgba(102, 161, 255, 0.45);
+    --mode-inverter-border-hover: rgba(166, 198, 255, 0.65);
+    --mode-inverter-text: #edf4ff;
+    --mode-inverter-emblem-highlight: rgba(166, 198, 255, 0.9);
+    --mode-inverter-emblem-shadow: rgba(64, 120, 255, 0.35);
+    --mode-inverter-emblem-glow: rgba(102, 161, 255, 0.6);
+
+    --mode-saving-bg-start: #6fcc88;
+    --mode-saving-bg-end: #15261b;
+    --mode-saving-border: rgba(130, 214, 154, 0.45);
+    --mode-saving-border-hover: rgba(182, 255, 205, 0.6);
+    --mode-saving-text: #f0fff4;
+    --mode-saving-emblem-highlight: rgba(182, 255, 205, 0.9);
+    --mode-saving-emblem-shadow: rgba(80, 161, 104, 0.45);
+    --mode-saving-emblem-glow: rgba(126, 214, 157, 0.6);
+
+    --mode-bypass-bg-start: #e2a45f;
+    --mode-bypass-bg-end: #23150c;
+    --mode-bypass-border: rgba(241, 176, 105, 0.45);
+    --mode-bypass-border-hover: rgba(255, 196, 132, 0.55);
+    --mode-bypass-text: #fff6eb;
+    --mode-bypass-emblem-highlight: rgba(255, 219, 179, 0.85);
+    --mode-bypass-emblem-shadow: rgba(227, 151, 76, 0.45);
+    --mode-bypass-emblem-glow: rgba(255, 196, 132, 0.55);
+
+    --mode-charger-bg-start: #58d0e7;
+    --mode-charger-bg-end: #0e1c23;
+    --mode-charger-border: rgba(115, 212, 232, 0.45);
+    --mode-charger-border-hover: rgba(137, 217, 236, 0.6);
+    --mode-charger-text: #e9fcff;
+    --mode-charger-emblem-highlight: rgba(178, 241, 255, 0.9);
+    --mode-charger-emblem-shadow: rgba(82, 183, 209, 0.5);
+    --mode-charger-emblem-glow: rgba(137, 217, 236, 0.6);
+
+    --mode-standby-bg-start: #c1c7d0;
+    --mode-standby-bg-end: #1c1e22;
+    --mode-standby-border: rgba(193, 199, 208, 0.45);
+    --mode-standby-border-hover: rgba(213, 218, 225, 0.55);
+    --mode-standby-text: #f9fbff;
+    --mode-standby-emblem-highlight: rgba(255, 255, 255, 0.8);
+    --mode-standby-emblem-shadow: rgba(174, 179, 189, 0.45);
+    --mode-standby-emblem-glow: rgba(213, 218, 225, 0.55);
+
+    --mode-battery-first-bg-start: #ffd166;
+    --mode-battery-first-bg-end: #251807;
+    --mode-battery-first-border: rgba(255, 209, 102, 0.45);
+    --mode-battery-first-border-hover: rgba(255, 220, 145, 0.6);
+    --mode-battery-first-text: #fff8e2;
+    --mode-battery-first-emblem-highlight: rgba(255, 238, 193, 0.85);
+    --mode-battery-first-emblem-shadow: rgba(206, 147, 36, 0.55);
+    --mode-battery-first-emblem-glow: rgba(255, 220, 145, 0.6);
+
+    --mode-ac-ok-bg-start: #9f95ff;
+    --mode-ac-ok-bg-end: #17132c;
+    --mode-ac-ok-border: rgba(170, 162, 255, 0.5);
+    --mode-ac-ok-border-hover: rgba(186, 176, 255, 0.65);
+    --mode-ac-ok-text: #f5f3ff;
+    --mode-ac-ok-emblem-highlight: rgba(212, 206, 255, 0.9);
+    --mode-ac-ok-emblem-shadow: rgba(128, 118, 230, 0.45);
+    --mode-ac-ok-emblem-glow: rgba(186, 176, 255, 0.6);
+
+    --mode-shutdown-bg-start: #ff8f8f;
+    --mode-shutdown-bg-end: #220707;
+    --mode-shutdown-border: rgba(255, 143, 143, 0.45);
+    --mode-shutdown-border-hover: rgba(232, 122, 122, 0.6);
+    --mode-shutdown-text: #fff5f5;
+    --mode-shutdown-emblem-highlight: rgba(255, 193, 193, 0.9);
+    --mode-shutdown-emblem-shadow: rgba(168, 63, 63, 0.55);
+    --mode-shutdown-emblem-glow: rgba(232, 122, 122, 0.6);
+
+    --mode-error-bg-start: #ff6161;
+    --mode-error-bg-end: #2a0808;
+    --mode-error-border: rgba(255, 118, 118, 0.45);
+    --mode-error-border-hover: rgba(255, 124, 124, 0.6);
+    --mode-error-text: #ffecec;
+    --mode-error-emblem-highlight: rgba(255, 196, 196, 0.9);
+    --mode-error-emblem-shadow: rgba(199, 63, 63, 0.55);
+    --mode-error-emblem-glow: rgba(255, 124, 124, 0.6);
+
+    --mode-disconnected-bg-start: #4f545b;
+    --mode-disconnected-bg-end: #111315;
+    --mode-disconnected-border: rgba(176, 184, 193, 0.18);
+    --mode-disconnected-border-hover: rgba(216, 222, 232, 0.28);
+    --mode-disconnected-text: rgba(237, 240, 245, 0.75);
+    --mode-disconnected-emblem-highlight: rgba(214, 220, 229, 0.6);
+    --mode-disconnected-emblem-shadow: rgba(120, 125, 133, 0.25);
+    --mode-disconnected-emblem-glow: rgba(171, 176, 184, 0.35);
 }
 
 /* 亮色主題 - 工業風金屬質感 */
@@ -80,4 +188,110 @@
     --slider-fill-primary: #495057;
     --slider-fill-secondary: rgba(73, 80, 87, 0.7);
     --slider-thumb: #343a40;
+
+    --badge-neutral-start: #d4d7dc;
+    --badge-neutral-end: #707479;
+    --badge-neutral-border: rgba(116, 122, 130, 0.35);
+    --badge-neutral-border-hover: rgba(52, 58, 64, 0.4);
+    --badge-neutral-text: #202326;
+    --badge-neutral-emblem-highlight: rgba(255, 255, 255, 0.85);
+    --badge-neutral-emblem-shadow: rgba(170, 174, 181, 0.25);
+    --badge-neutral-emblem-glow: rgba(116, 122, 130, 0.25);
+    --badge-shadow-inset-top: rgba(255, 255, 255, 0.6);
+    --badge-shadow-inset-bottom: rgba(52, 58, 64, 0.25);
+    --badge-shadow-ambient: rgba(0, 0, 0, 0.08);
+    --badge-shadow-inset-top-hover: rgba(255, 255, 255, 0.75);
+    --badge-shadow-inset-bottom-hover: rgba(52, 58, 64, 0.3);
+    --badge-shadow-ambient-hover: rgba(0, 0, 0, 0.15);
+    --badge-text-shadow: rgba(255, 255, 255, 0.35);
+
+    --mode-inverter-bg-start: #d6e4ff;
+    --mode-inverter-bg-end: #3f4f8a;
+    --mode-inverter-border: rgba(80, 107, 200, 0.35);
+    --mode-inverter-border-hover: rgba(80, 107, 200, 0.45);
+    --mode-inverter-text: #1e2433;
+    --mode-inverter-emblem-highlight: rgba(220, 232, 255, 0.95);
+    --mode-inverter-emblem-shadow: rgba(97, 122, 191, 0.35);
+    --mode-inverter-emblem-glow: rgba(97, 122, 191, 0.35);
+
+    --mode-saving-bg-start: #c5f2d5;
+    --mode-saving-bg-end: #256540;
+    --mode-saving-border: rgba(63, 131, 91, 0.35);
+    --mode-saving-border-hover: rgba(63, 131, 91, 0.45);
+    --mode-saving-text: #183222;
+    --mode-saving-emblem-highlight: rgba(216, 246, 227, 0.95);
+    --mode-saving-emblem-shadow: rgba(85, 150, 110, 0.4);
+    --mode-saving-emblem-glow: rgba(85, 150, 110, 0.35);
+
+    --mode-bypass-bg-start: #f6d0a1;
+    --mode-bypass-bg-end: #744921;
+    --mode-bypass-border: rgba(163, 111, 49, 0.35);
+    --mode-bypass-border-hover: rgba(163, 111, 49, 0.45);
+    --mode-bypass-text: #342012;
+    --mode-bypass-emblem-highlight: rgba(255, 235, 206, 0.95);
+    --mode-bypass-emblem-shadow: rgba(189, 139, 86, 0.45);
+    --mode-bypass-emblem-glow: rgba(189, 139, 86, 0.35);
+
+    --mode-charger-bg-start: #c5f3ff;
+    --mode-charger-bg-end: #1b5366;
+    --mode-charger-border: rgba(46, 122, 148, 0.35);
+    --mode-charger-border-hover: rgba(46, 122, 148, 0.45);
+    --mode-charger-text: #12313a;
+    --mode-charger-emblem-highlight: rgba(220, 248, 255, 0.95);
+    --mode-charger-emblem-shadow: rgba(95, 171, 193, 0.45);
+    --mode-charger-emblem-glow: rgba(95, 171, 193, 0.35);
+
+    --mode-standby-bg-start: #e4e7ec;
+    --mode-standby-bg-end: #52575e;
+    --mode-standby-border: rgba(96, 102, 110, 0.38);
+    --mode-standby-border-hover: rgba(96, 102, 110, 0.48);
+    --mode-standby-text: #23262a;
+    --mode-standby-emblem-highlight: rgba(255, 255, 255, 0.9);
+    --mode-standby-emblem-shadow: rgba(182, 188, 196, 0.5);
+    --mode-standby-emblem-glow: rgba(182, 188, 196, 0.35);
+
+    --mode-battery-first-bg-start: #ffe8aa;
+    --mode-battery-first-bg-end: #8b6018;
+    --mode-battery-first-border: rgba(163, 123, 45, 0.35);
+    --mode-battery-first-border-hover: rgba(163, 123, 45, 0.45);
+    --mode-battery-first-text: #34250c;
+    --mode-battery-first-emblem-highlight: rgba(255, 242, 199, 0.95);
+    --mode-battery-first-emblem-shadow: rgba(201, 156, 57, 0.5);
+    --mode-battery-first-emblem-glow: rgba(201, 156, 57, 0.38);
+
+    --mode-ac-ok-bg-start: #d9d4ff;
+    --mode-ac-ok-bg-end: #474082;
+    --mode-ac-ok-border: rgba(103, 92, 180, 0.35);
+    --mode-ac-ok-border-hover: rgba(103, 92, 180, 0.45);
+    --mode-ac-ok-text: #251f47;
+    --mode-ac-ok-emblem-highlight: rgba(234, 230, 255, 0.95);
+    --mode-ac-ok-emblem-shadow: rgba(137, 127, 208, 0.45);
+    --mode-ac-ok-emblem-glow: rgba(137, 127, 208, 0.35);
+
+    --mode-shutdown-bg-start: #ffc9c9;
+    --mode-shutdown-bg-end: #8b3030;
+    --mode-shutdown-border: rgba(163, 70, 70, 0.35);
+    --mode-shutdown-border-hover: rgba(163, 70, 70, 0.45);
+    --mode-shutdown-text: #3a1919;
+    --mode-shutdown-emblem-highlight: rgba(255, 225, 225, 0.95);
+    --mode-shutdown-emblem-shadow: rgba(201, 110, 110, 0.45);
+    --mode-shutdown-emblem-glow: rgba(201, 110, 110, 0.35);
+
+    --mode-error-bg-start: #ffb1b1;
+    --mode-error-bg-end: #8b2626;
+    --mode-error-border: rgba(168, 70, 70, 0.35);
+    --mode-error-border-hover: rgba(168, 70, 70, 0.45);
+    --mode-error-text: #381313;
+    --mode-error-emblem-highlight: rgba(255, 220, 220, 0.95);
+    --mode-error-emblem-shadow: rgba(199, 90, 90, 0.45);
+    --mode-error-emblem-glow: rgba(199, 90, 90, 0.35);
+
+    --mode-disconnected-bg-start: #d3d7dc;
+    --mode-disconnected-bg-end: #8a9097;
+    --mode-disconnected-border: rgba(90, 96, 104, 0.35);
+    --mode-disconnected-border-hover: rgba(90, 96, 104, 0.45);
+    --mode-disconnected-text: #2b2e33;
+    --mode-disconnected-emblem-highlight: rgba(255, 255, 255, 0.85);
+    --mode-disconnected-emblem-shadow: rgba(170, 176, 183, 0.35);
+    --mode-disconnected-emblem-glow: rgba(130, 136, 143, 0.35);
 }

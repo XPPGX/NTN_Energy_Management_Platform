@@ -29,6 +29,7 @@ namespace demoVer.Services
         }
 
         public uint[] Snapshot() => _links.Keys.ToArray();
+        public HashSet<uint> SnapshotAsHashSet() => new HashSet<uint>(_links.Keys);
 
         public uint[] SnapshotSorted()
         {

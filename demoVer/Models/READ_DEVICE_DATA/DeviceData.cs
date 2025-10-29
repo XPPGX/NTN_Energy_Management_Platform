@@ -56,6 +56,24 @@ namespace demoVer.Models
             }
         }
 
+        public List<Real_SingleDeviceData_JsonFormat>? Get_oneDevice_DataList_Snapshot(HashSet<uint> addrs)
+        {
+            List<Real_SingleDeviceData_JsonFormat> result = new List<Real_SingleDeviceData_JsonFormat>();
+
+            foreach (var addr in addrs)
+            {
+                if (!_AllDevice_Data.TryGetValue(addr, out var deviceData))
+                {
+                    continue;
+                }
+
+                var copy = deviceData.DeepClone();
+                result.Add(copy);
+            }
+
+            return result;
+        }
+
         public Real_SingleDeviceData_JsonFormat? Get_oneDevice_DataSnapshot(uint addr)
         {
             if (!_AllDevice_Data.TryGetValue(addr, out var deviceData))
