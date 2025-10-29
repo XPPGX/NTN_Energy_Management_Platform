@@ -2,4 +2,5 @@ demoVer/obj/
 demoVer/bin/
 global.json
 demoVer/ProgramLog/log.log
-Python_API_Testing/test
+Python_API_Testing/test/*
+Python_API_Testing/app/__pycache__/*

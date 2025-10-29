@@ -1,0 +1,53 @@
+{
+    "port": "MOD2",
+    "protocol": "NTN-5K_MOD.json",
+    "checkOK": true,
+    "modelError": false,
+    "rangeOK": true,
+    "modelName": null,
+    "addr": [
+        0
+    ],
+    "ranges": {
+        "00B0": {
+            "min": 24,
+            "max": 120,
+            "cmdCode": ""
+        },
+        "00B1": {
+            "min": 20,
+            "max": 30,
+            "cmdCode": ""
+        },
+        "00B2": {
+            "min": 20,
+            "max": 30,
+            "cmdCode": ""
+        },
+        "00B3": {
+            "min": 2.4,
+            "max": 36,
+            "cmdCode": ""
+        },
+        "00B9": {
+            "min": 18.8,
+            "max": 25,
+            "cmdCode": ""
+        },
+        "00BA": {
+            "min": 18.4,
+            "max": 24,
+            "cmdCode": ""
+        },
+        "00BB": {
+            "min": 18.4,
+            "max": 30,
+            "cmdCode": ""
+        },
+        "00BC": {
+            "min": 30,
+            "max": 33,
+            "cmdCode": ""
+        }
+    }
+}

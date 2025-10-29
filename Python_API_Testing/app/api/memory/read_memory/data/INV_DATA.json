@@ -54,7 +54,7 @@
         ],
         "commandName": "READ_TEMPERATURE_1",
         "scaling": 0.1,
-        "baseUnit": "℃",
+        "baseUnit": "\u2103",
         "dataFormat": "Numeric",
         "split": null,
         "signed": false,
@@ -743,10 +743,10 @@
                 "length": 2,
                 "loggable": true,
                 "valueMap": {
-                    "0": "Phase 0°",
-                    "1": "Phase 180°",
-                    "2": "Phase 120°",
-                    "3": "Phase 240°"
+                    "0": "Phase 0\u00b0",
+                    "1": "Phase 180\u00b0",
+                    "2": "Phase 120\u00b0",
+                    "3": "Phase 240\u00b0"
                 }
             }
         ],

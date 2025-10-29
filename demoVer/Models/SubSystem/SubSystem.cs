@@ -64,11 +64,18 @@ namespace demoVer.Models
             isAnyDeviceOnline = onlineDevicesDatas.Count > 0;
             //取得 Mode
             ComputeMode(onlineDevicesDatas);
-            
+
             //其他系統變數計算，未來擴充
             ArrowDirections = ArrowDirectionHelper.Resolve(nowMode, AC_Charger_Enable, AC_StandBy);
         }
-
+        
+        /// <summary>
+        /// 根據子系統內所有在線設備的資料，計算子系統的系統模式(nowMode)
+        /// </summary>
+        /// <param name="onlineDevicesDatas">在線設備的資料列表</param> <summary>
+        /// 
+        /// </summary>
+        /// <param name="onlineDevicesDatas"></param>
         public void ComputeMode(List<Real_SingleDeviceData_JsonFormat> onlineDevicesDatas)
         {
             //0. 初始化

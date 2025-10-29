@@ -35,7 +35,9 @@
             "port": "CAN1",
             "protocol": "NTN-5K_CAN.json",
             "addr": [
-                0, 1, 2
+                0,
+                1,
+                2
             ],
             "checkOK": false,
             "modelError": false,

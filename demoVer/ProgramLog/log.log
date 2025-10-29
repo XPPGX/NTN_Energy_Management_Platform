@@ -1,1 +1,20 @@
-﻿
+﻿[2025-10-29 13:52:26.608] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-10-29 13:52:26.623] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-10-29 13:52:26.627] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-10-29 13:52:26.628] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-10-29 13:52:26.629] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-10-29 13:52:26.630] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-10-29 13:52:26.631] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-10-29 13:52:26.632] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-10-29 13:52:26.933] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-29 13:52:26.933] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_VIN, cmdType = 
+[2025-10-29 13:52:26.937] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-10-29 13:52:26.937] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_IIN, cmdType = 
+[2025-10-29 15:01:51.344] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-10-29 15:01:51.351] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-10-29 15:01:51.356] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-10-29 15:01:51.357] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-10-29 15:01:51.359] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-10-29 15:01:51.360] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-10-29 15:01:51.361] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-10-29 15:01:51.365] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)

@@ -9,9 +9,9 @@ namespace demoVer.Utils
         /// <summary>
         /// 根據cmdName選擇適合的解析函式來解析decodeList
         /// </summary>
-        /// <param name="cmdName"></param>
-        /// <param name="decodeList"></param>
-        /// <returns></returns>
+        /// <param name="cmdName">命令名稱</param>
+        /// <param name="decodeList">解碼內容列表</param>
+        /// <returns>解析後的字串</returns>
         public static string FitParserFunction(string cmdName, List<decodeContent> decodeList)
         {
             switch (cmdName)
