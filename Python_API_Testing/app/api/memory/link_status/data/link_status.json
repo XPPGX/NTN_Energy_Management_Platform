@@ -42,7 +42,8 @@
             "checkOK": false,
             "modelError": false,
             "rangeOK": false,
-            "modelName": "NTN-5K-124"
+            "modelName": "NTN-5K-124",
+            "epoch": "b81d7f4a0c6925e3f14a28c7d3b6e901"
         },
         {
             "port": "CAN1",
@@ -53,7 +54,8 @@
             "checkOK": false,
             "modelError": false,
             "rangeOK": false,
-            "modelName": "NTN-5K-124"
+            "modelName": "NTN-5K-124",
+            "epoch": "b81d7f4a0c6925e3f14a28c7d3b6e901"
         },
         {
             "port": "CAN2",
@@ -64,7 +66,8 @@
             "checkOK": false,
             "modelError": false,
             "rangeOK": false,
-            "modelName": "NTN-5K-224"
+            "modelName": "NTN-5K-224",
+            "epoch": "1e9a4c7f2d8530b6c4a1f7d2890e5c3b"
         },
         {
             "port": "MOD1",
@@ -75,7 +78,8 @@
             "checkOK": false,
             "modelError": false,
             "rangeOK": false,
-            "modelName": "NTN-5K-124"
+            "modelName": "NTN-5K-124",
+            "epoch": "d2f4c8a0b1e3675a8c9d0f2b4e6a7c1d"
         },
         {
             "port": "MOD2",
@@ -86,7 +90,8 @@
             "checkOK": true,
             "modelError": false,
             "rangeOK": false,
-            "modelName": "NTN-5K-124"
+            "modelName": "NTN-5K-124",
+            "epoch": "7a4c2d9f0b1e3f5a6c8d0e2b9f1a4c6d"
         }
     ]
 }

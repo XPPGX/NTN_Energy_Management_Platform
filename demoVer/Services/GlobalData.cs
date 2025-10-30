@@ -354,7 +354,6 @@ namespace demoVer.Services
         }
 
 
-
         public byte? Get_INV_Phase(uint addr)
         {
             string cmd = "INV_STATUS";
@@ -880,7 +879,7 @@ namespace demoVer.Services
             }
             return Phase_temp;
         }
-    
+
         private void Debug_Print_mdlName(uint addr)
         {
             var oneDeviceData = Real_Devices_ReadData.Get_oneDevice_DataSnapshot(addr);
@@ -895,6 +894,8 @@ namespace demoVer.Services
             AppLogger.Log_To_File_log(_category, $"[GlobalData][Debug_Print_mdlName] addr = {addr}, mdlName = {mdlName}", AppLogLevel.Trace);
             Console.WriteLine($"[Debug_Print_mdlName] addr = {addr}, mdlName = {mdlName}");
         }
+
+        
     }
     
     

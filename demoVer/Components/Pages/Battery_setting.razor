@@ -5,13 +5,15 @@
 @inject DataCenter DataCenter
 @using demoVer.Components.Layout
 @using demoVer.Models
+@using demoVer.Services
 @using System.Text.Json
 @using System.IO
 @using demoVer.Utils
 @inject WriteProcess writeProcess
 @inject CommonData commonData
 @inject HeartbeatService Heartbeat
-
+@inject GlobalVar GlobalVar
+@inject SubSystemManager SubSystemManager
 <MudPopoverProvider/>
 @*Web Content*@
 <PageTitle>Battery Setting</PageTitle>
@@ -34,7 +36,33 @@
     </div>
 }
 
-<div class="content-container">
+<div class="whole">
+    <div class="top">
+        <div class="leftPart">
+            <div class="subsystem-select-group">
+                <label for="subsystem-select" class="local-label">子系統選擇</label>
+                <select id="subsystem-select" class="subsystem-select" value="@SelectedSubSystemKey" @onchange="OnSubSystemChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
+                    @if(_subSystemOptions.Count == 0)
+                    {
+                        <option value="">請選擇子系統</option>
+                        @* <option value="" disabled>無可用子系統</option> *@
+                    }
+                    else
+                    {
+                        foreach (var subSystem in _subSystemOptions)
+                        {
+                            <option value="@BuildKey(subSystem.Port, subSystem.Protocol)">@GetSubSystemDisplay(subSystem)</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="rightPart">
+            <button type="button" class="btn btn-blue no-flex" @onclick="OnRefreshButtonClick">重新整理</button>
+            <button type="button" class="btn btn-primary no-flex" @onclick="OnSaveButtonClick">保存設定</button>
+        </div>
+    </div>
+    <div class="content-container">
     <div class="card-grid">
         <div class="cell4 card-container-layout card-container-base">
             @if(Init_Flag)
@@ -69,7 +97,6 @@
         
         <div class="cell8">
             <div class="right-part">
-
                 <div class="card-container-stage card-container-base">
                     <canvas id="stageChart" class="stage-chart"></canvas>
                     <div class="stage-controls">
@@ -159,6 +186,10 @@
         </div>
     </div>
 </div>
+</div> 
+
+
+
 
 @code
 {
@@ -172,7 +203,10 @@
     string CancelBtn_Text_parent = null;
     public EventCallback ConfirmBtn_Func_parent {get; set;}
     public EventCallback CancelBtn_Func_parent {get; set;}
-
+    private IReadOnlyList<SubSystem> _subSystemOptions = Array.Empty<SubSystem>();
+    private string? _selectedSubSystemKey;
+    private string SelectedSubSystemKey => _selectedSubSystemKey ?? string.Empty;
+    
     private bool isMobile;
     private DotNetObjectReference<Battery_setting> dotNetRef;
     private bool Init_Flag = false;
@@ -180,6 +214,9 @@
     private List<ElementReference>  ThumbRefs = new();
 
     private bool[] _sliderInitFlags;
+    private bool _heartbeatSubscribed = false;
+    private int _heartbeatCounter = 0;
+
     public class SliderItem
     {
         public double Value {get; set;}
@@ -246,11 +283,15 @@
         Init_Flag = true;
 
         _sliderInitFlags = new bool[Sliders.Count];
+
+        _ = RefreshSubSystemOptions();
+
         
     }
 
     protected override void OnParametersSet()
     {
+        _ = RefreshSubSystemOptions();
         if (!topRowCallbacksRegistered && MainLayout != null)
         {
             MainLayout.RegisterTopRowCallbacks(
@@ -266,9 +307,96 @@
         InvokeAsync(StateHasChanged);
     }
 
+    private async Task RefreshSubSystemOptions()
+    {
+        var snapshot = SubSystemManager.GetAllSubSystems_Ref_In_List();
+        @* var snapshot = GlobalVar?.GetSubSystemsSnapshot(); *@
+        if (snapshot is null || snapshot.Count == 0)
+        {
+            _subSystemOptions = Array.Empty<SubSystem>();
+            _selectedSubSystemKey = null;
+            return;
+        }
+        //Local變數，取得最新的子系統快照
+        _subSystemOptions = snapshot;
+
+        if (!string.IsNullOrWhiteSpace(_selectedSubSystemKey) && ContainsSubSystemKey(_selectedSubSystemKey))
+        {
+            return;
+        }
+
+
+        _selectedSubSystemKey = _subSystemOptions.Count > 0
+            ? BuildKey(_subSystemOptions[0].Port, _subSystemOptions[0].Protocol)
+            : null;
+    }
+
+    private bool ContainsSubSystemKey(string key)
+    {
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            return false;
+        }
+
+        foreach (var subSystem in _subSystemOptions)
+        {
+            if (string.Equals(BuildKey(subSystem.Port, subSystem.Protocol), key, System.StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static string BuildKey(string? port, string? protocol) => $"{port ?? string.Empty}|{protocol ?? string.Empty}";
+
+    private string GetSubSystemDisplay(SubSystem subSystem)
+    {
+        var port = string.IsNullOrWhiteSpace(subSystem.Port) ? "Unknown" : subSystem.Port;
+        var protocol = string.IsNullOrWhiteSpace(subSystem.Protocol) ? "N/A" : subSystem.Protocol;
+        return $"{port} - {protocol}";
+    }
+
+    private Task OnSubSystemChanged(ChangeEventArgs e)
+    {
+        var rawValue = e.Value?.ToString();
+        if (string.IsNullOrWhiteSpace(rawValue))
+        {
+            _selectedSubSystemKey = null;
+            return Task.CompletedTask;
+        }
+
+        _selectedSubSystemKey = ContainsSubSystemKey(rawValue) ? rawValue : null;
+
+        
+        return Task.CompletedTask;
+    }
+
+    public (string, string) GetSelectedSubSystemPortAndProtocol()
+    {
+        if (string.IsNullOrWhiteSpace(_selectedSubSystemKey))
+        {
+            return (string.Empty, string.Empty);
+        }
+
+        var parts = _selectedSubSystemKey.Split('|');
+        if (parts.Length != 2)
+        {
+            return (string.Empty, string.Empty);
+        }
+
+        return (parts[0], parts[1]);
+    }
+
     public void Dispose()
     {
         DataCenter.Battery.OnUpdated -= OnBatteryChanged;
+        if (_heartbeatSubscribed)
+        {
+            Heartbeat.OnTick -= OnHeartbeatTickAsync;
+            _heartbeatSubscribed = false;
+        }
         if (topRowCallbacksRegistered)
         {
             MainLayout?.ClearTopRowCallbacks(this);
@@ -280,6 +408,13 @@
     {
         if(firstRender)
         {
+            if (!_heartbeatSubscribed)
+            {
+                Heartbeat.OnTick += OnHeartbeatTickAsync;
+                _heartbeatSubscribed = true;
+            }
+            
+
             //把JS中的chartInstances清空
             await JS.InvokeVoidAsync("destroyAllCharts");
 
@@ -333,6 +468,7 @@
             
             await JS.InvokeVoidAsync("sliderUpdateFromInput", dotNetRef);
             await JS.InvokeVoidAsync("setStage", selectedStage);
+
             await JS.InvokeVoidAsync("drawChart_Stage", true);
             isMobile = await JS.InvokeAsync<bool>("checkIsMobile");
             if(isMobile)
@@ -757,5 +893,24 @@
         FV_Timeout_value    = ReceiveData_FromSignalR.fv_TimeOut_Display;
         
         InvokeAsync(StateHasChanged);
+    }
+
+    
+
+    private async Task OnHeartbeatTickAsync()
+    {
+        await RefreshSubSystemOptions();
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task OnRefreshButtonClick()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task OnSaveButtonClick()
+    {
+        await ReceiveFrom_TopRow_SaveBatterySetting();
     }
 }

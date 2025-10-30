@@ -245,7 +245,24 @@ class AppState:
         return self._real_write_store
 
     def update_real_write_store(self, file_name: str, payload: List[Dict[str, Any]]) -> None:
-        self._real_write_store[file_name] = payload
+        key = self._resolve_real_write_key(file_name)
+        self._real_write_store[key] = payload
+
+    def get_real_write_payload(self, type_hint: Optional[str]) -> Dict[str, Any]:
+        if not self._real_write_store:
+            raise ValueError("REAL_WRITE_STORE not initialized")
+
+        payload = self._clone_real_write_store()
+        type_upper = (type_hint or "").strip().upper()
+
+        if type_upper.startswith("CAN"):
+            payload = self._rename_real_write_key(
+                payload,
+                source_key="NTN-5K_MOD.json",
+                target_key="NTN-5K_CAN.json",
+            )
+
+        return payload
 
     def get_partition_status(self, port: Optional[str], protocol: Optional[str]) -> Dict[str, Any]:
         payload = self._load_json(PARTITION_STATUS_FILE)
@@ -269,6 +286,43 @@ class AppState:
             path = self.base_dir / path
         with path.open("r", encoding="utf-8") as f:
             return json.load(f)
+
+    def _clone_real_write_store(self) -> Dict[str, Any]:
+        return json.loads(json.dumps(self._real_write_store))
+
+    def _resolve_real_write_key(self, file_name: str) -> str:
+        if file_name in self._real_write_store:
+            return file_name
+
+        if (
+            file_name == "NTN-5K_CAN.json"
+            and "NTN-5K_MOD.json" in self._real_write_store
+        ):
+            return "NTN-5K_MOD.json"
+
+        raise KeyError(f"File {file_name} not found in REAL_WRITE_STORE")
+
+    @staticmethod
+    def _rename_real_write_key(
+        payload: Dict[str, Any],
+        *,
+        source_key: str,
+        target_key: str,
+    ) -> Dict[str, Any]:
+        if source_key not in payload or source_key == target_key:
+            return payload
+
+        renamed: Dict[str, Any] = {}
+        for key, value in payload.items():
+            if key == source_key:
+                renamed[target_key] = value
+            elif key == target_key:
+                # Skip the original target to avoid duplicates; source replaces it
+                continue
+            else:
+                renamed[key] = value
+
+        return renamed
 
     def _build_mfr_model_data(
         self,

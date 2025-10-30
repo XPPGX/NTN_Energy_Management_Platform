@@ -149,7 +149,6 @@ namespace demoVer.Services
                 AppLogger.Log_To_File_log(_category, $"[ApiManager][apiRead_SettingData] Error : {ex.Message}", AppLogLevel.Error);
                 return null;
             }
-            return null;
         }
 
         //按照讀回的格式、當前數值，寫入Framework的Write Memory
@@ -243,7 +242,7 @@ namespace demoVer.Services
             }
         }
 
-        //GET API WRITE_Memory_V1.1 : 讀某個(Port, protocolFileName)所有命令格式、值
+        //GET API WRITE_Memory_V1.1 : 讀某個(Port, protocolFileName)所有命令格式、當前值
         public async Task<Dictionary<string, List<GET_RealSingleRawSettingCMD_JsonFormat>>> apiReadReal_SettingData(string type, string protocolFileName)
         {
             try
@@ -288,8 +287,8 @@ namespace demoVer.Services
             {
                 string url = $"api/memory/write-api";
                 using var response = await _http.PostAsJsonAsync(url, api_body, ct);
-                
-                if(response.IsSuccessStatusCode)
+
+                if (response.IsSuccessStatusCode)
                 {
                     AppLogger.Log_To_File_log(_category, $"[ApiManager][apiWrite_SetSingleCMD]成功: {(int)response.StatusCode}", AppLogLevel.Trace);
                     return true;
@@ -301,15 +300,41 @@ namespace demoVer.Services
                     return false;
                 }
             }
-            catch(HttpRequestException ex)
+            catch (HttpRequestException ex)
             {
                 AppLogger.Log_To_File_log(_category, $"[ApiManager][apiWrite_SetSingleCMD] Http_Error: {ex}", AppLogLevel.Debug);
                 return false;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 AppLogger.Log_To_File_log(_category, $"[ApiManager][apiWrite_SetSingleCMD] Error : {ex.Message}", AppLogLevel.Error);
                 return false;
+            }
+        }
+        
+        public async Task<Setting_Range> apiRead_SettingRange(string type, string protocolFileName)
+        {
+            try
+            {
+                string url = $"/api/memory/partition-status?type={type}&protocol={protocolFileName}";
+                var result = await _http.GetFromJsonAsync<Setting_Range>(url);
+
+                if(result == null)
+                {
+                    throw new Exception($"[apiRead_SettingRange] Read_API_Json == null");
+                }
+                return result;
+
+            }
+            catch (HttpRequestException ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[ApiManager][apiRead_SettingRange] Http_Error: {ex}", AppLogLevel.Debug);
+                return null;
+            }
+            catch(Exception ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[ApiManager][apiRead_SettingRange] Error : {ex.Message}", AppLogLevel.Error);
+                return null;
             }
         }
     }

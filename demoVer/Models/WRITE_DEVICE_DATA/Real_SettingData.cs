@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text.Json.Serialization;
 
 namespace demoVer.Models
@@ -8,6 +9,9 @@ namespace demoVer.Models
     {
         [JsonPropertyName("commandName")]
         public string CommandName { get; set; }
+
+        [JsonPropertyName("cmdCode")]
+        public string cmdCode { get; set; }
 
         [JsonPropertyName("isPerAddr")]
         public bool IsPerAddr { get; set; }
@@ -31,16 +35,16 @@ namespace demoVer.Models
         public int? Shift { get; set; }
 
         [JsonPropertyName("bitcontrol")]
-        public List<BitControl>? BitControl { get; set; }
+        public List<BitControl>? BitControl { get; set; } = new();
 
         [JsonPropertyName("target")]
-        public WrtieVal? Target { get; set; }
+        public WriteVal? Target { get; set; } = new();
 
         [JsonPropertyName("targetDirty")]
         public bool TargetDirty { get; set; }
 
         [JsonPropertyName("addrValues")]
-        public List<AddrValue>? AddrValues { get; set; }
+        public List<AddrValue>? AddrValues { get; set; } = new();
     }
 
     public class BitControl
@@ -55,10 +59,10 @@ namespace demoVer.Models
         public int Length { get; set; }
 
         [JsonPropertyName("valueMap")]
-        public Dictionary<string, string> ValueMap { get; set; }
+        public Dictionary<string, string> ValueMap { get; set; } = new();
     }
     
-    public class WrtieVal
+    public class WriteVal
     {
         [JsonPropertyName("number")]
         public double? Number { get; set; }
@@ -67,7 +71,7 @@ namespace demoVer.Models
         public string? Text { get; set; }
 
         [JsonPropertyName("bits")]
-        public Dictionary<string, int>? Bits { get; set; }
+        public Dictionary<string, int>? Bits { get; set; } = new();
     }
 
     public class AddrValue
@@ -76,7 +80,7 @@ namespace demoVer.Models
         public int Addr { get; set; }
 
         [JsonPropertyName("value")]
-        public WrtieVal Value { get; set; }
+        public WriteVal Value { get; set; } = new();
 
         [JsonPropertyName("dirty")]
         public bool Dirty { get; set; }
@@ -94,9 +98,9 @@ namespace demoVer.Models
         public string CommandName { get; set; } = "";
         
         [JsonPropertyName("Target")]
-        public WrtieVal? Target { get; set; }
+        public WriteVal? Target { get; set; }
         
         [JsonPropertyName("AddrValues")]
-        public List<WrtieVal>? AddrValues { get; set; }
+        public List<WriteVal>? AddrValues { get; set; }
     }
 }

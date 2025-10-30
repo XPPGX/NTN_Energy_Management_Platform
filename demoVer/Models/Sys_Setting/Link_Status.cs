@@ -78,5 +78,13 @@ namespace demoVer.Models
 
         [JsonPropertyName("modelName")]
         public string ModelName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// 暫定的名稱，之後要改，高機率只需要改JsonPropertyName("epoch")
+        /// 如果API回應中沒有這個欄位，預設值會是0。
+        /// SubSystem的epoch預設是string.Empty，這樣第一次更新時只要API server端有任何Hash回應就會更新。
+        /// </summary>
+        [JsonPropertyName("epoch")]
+        public string epoch { get; set; } = string.Empty;
     }
 }

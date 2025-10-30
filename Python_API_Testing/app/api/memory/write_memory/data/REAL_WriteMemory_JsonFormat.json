@@ -1,14 +1,15 @@
 {
-    "NTN-5K_CAN.json": [
+    "NTN-5K_MOD.json": [
         {
             "commandName": "CURVE_CC",
+            "cmdCode": "0x00B0",
             "isPerAddr": false,
             "dataFormat": "Numeric",
-            "byteLength": 4,
+            "byteLength": 2,
             "scaling": 0.01,
             "baseUnit": "A",
             "signed": null,
-            "shift": 2,
+            "shift": null,
             "bitcontrol": null,
             "target": {
                 "number": 0,
@@ -20,13 +21,14 @@
         },
         {
             "commandName": "CURVE_CV",
+            "cmdCode": "0x00B1",
             "isPerAddr": false,
             "dataFormat": "Numeric",
-            "byteLength": 4,
+            "byteLength": 2,
             "scaling": 0.01,
             "baseUnit": "V",
             "signed": null,
-            "shift": 2,
+            "shift": null,
             "bitcontrol": null,
             "target": {
                 "number": 0,
@@ -38,13 +40,14 @@
         },
         {
             "commandName": "CURVE_FV",
+            "cmdCode": "0x00B2",
             "isPerAddr": false,
             "dataFormat": "Numeric",
-            "byteLength": 4,
+            "byteLength": 2,
             "scaling": 0.01,
             "baseUnit": "V",
             "signed": null,
-            "shift": 2,
+            "shift": null,
             "bitcontrol": null,
             "target": {
                 "number": 0,
@@ -56,13 +59,14 @@
         },
         {
             "commandName": "CURVE_TC",
+            "cmdCode": "0x00B3",
             "isPerAddr": false,
             "dataFormat": "Numeric",
-            "byteLength": 4,
+            "byteLength": 2,
             "scaling": 0.01,
             "baseUnit": "A",
             "signed": null,
-            "shift": 2,
+            "shift": null,
             "bitcontrol": null,
             "target": {
                 "number": 0,
@@ -74,13 +78,14 @@
         },
         {
             "commandName": "CURVE_CONFIG",
+            "cmdCode": "0x00B4",
             "isPerAddr": false,
             "dataFormat": "BitField",
-            "byteLength": 4,
+            "byteLength": 2,
             "scaling": null,
             "baseUnit": null,
             "signed": null,
-            "shift": 2,
+            "shift": null,
             "bitcontrol": [
                 {
                     "name": "BIT_0",
@@ -168,13 +173,14 @@
         },
         {
             "commandName": "CURVE_CC_TIMEOUT",
+            "cmdCode": "0x00B5",
             "isPerAddr": false,
             "dataFormat": "Numeric",
-            "byteLength": 4,
+            "byteLength": 2,
             "scaling": null,
             "baseUnit": "Sec",
             "signed": null,
-            "shift": 2,
+            "shift": null,
             "bitcontrol": null,
             "target": {
                 "number": 0,
@@ -186,13 +192,14 @@
         },
         {
             "commandName": "CURVE_CV_TIMEOUT",
+            "cmdCode": "0x00B6",
             "isPerAddr": false,
             "dataFormat": "Numeric",
-            "byteLength": 4,
+            "byteLength": 2,
             "scaling": null,
             "baseUnit": "Sec",
             "signed": null,
-            "shift": 2,
+            "shift": null,
             "bitcontrol": null,
             "target": {
                 "number": 0,
@@ -204,13 +211,14 @@
         },
         {
             "commandName": "CURVE_FV_TIMEOUT",
+            "cmdCode": "0x00B7",
             "isPerAddr": false,
             "dataFormat": "Numeric",
-            "byteLength": 4,
+            "byteLength": 2,
             "scaling": null,
             "baseUnit": "Sec",
             "signed": null,
-            "shift": 2,
+            "shift": null,
             "bitcontrol": null,
             "target": {
                 "number": 0,
@@ -222,13 +230,14 @@
         },
         {
             "commandName": "BAT_ALM_VOLT",
+            "cmdCode": "0x00B9",
             "isPerAddr": false,
             "dataFormat": "Numeric",
-            "byteLength": 4,
+            "byteLength": 2,
             "scaling": 0.01,
             "baseUnit": "V",
             "signed": null,
-            "shift": 2,
+            "shift": null,
             "bitcontrol": null,
             "target": {
                 "number": 0,
@@ -240,13 +249,14 @@
         },
         {
             "commandName": "BAT_SHDN_VOLT",
+            "cmdCode": "0x00BA",
             "isPerAddr": false,
             "dataFormat": "Numeric",
-            "byteLength": 4,
+            "byteLength": 2,
             "scaling": 0.01,
             "baseUnit": "V",
             "signed": null,
-            "shift": 2,
+            "shift": null,
             "bitcontrol": null,
             "target": {
                 "number": 0,
@@ -258,13 +268,14 @@
         },
         {
             "commandName": "BAT_RCHG_VOLT",
+            "cmdCode": "0x00BB",
             "isPerAddr": false,
             "dataFormat": "Numeric",
-            "byteLength": 4,
+            "byteLength": 2,
             "scaling": 0.01,
             "baseUnit": "V",
             "signed": null,
-            "shift": 2,
+            "shift": null,
             "bitcontrol": null,
             "target": {
                 "number": 0,
@@ -276,13 +287,14 @@
         },
         {
             "commandName": "BAT_OV_ALM_VOLT",
+            "cmdCode": "0x00BC",
             "isPerAddr": false,
             "dataFormat": "Numeric",
-            "byteLength": 4,
+            "byteLength": 2,
             "scaling": 0.01,
             "baseUnit": "V",
             "signed": null,
-            "shift": 2,
+            "shift": null,
             "bitcontrol": null,
             "target": {
                 "number": 0,
@@ -294,13 +306,14 @@
         },
         {
             "commandName": "SYSTEM_CONFIG",
+            "cmdCode": "0x00C2",
             "isPerAddr": false,
             "dataFormat": "BitField",
-            "byteLength": 4,
+            "byteLength": 2,
             "scaling": null,
             "baseUnit": null,
             "signed": null,
-            "shift": 2,
+            "shift": null,
             "bitcontrol": [
                 {
                     "name": "BIT_0",
@@ -377,13 +390,14 @@
         },
         {
             "commandName": "INV_OPERATION",
+            "cmdCode": "0x0100",
             "isPerAddr": true,
             "dataFormat": "BitField",
-            "byteLength": 4,
+            "byteLength": 2,
             "scaling": null,
             "baseUnit": null,
             "signed": null,
-            "shift": 2,
+            "shift": null,
             "bitcontrol": [
                 {
                     "name": "BIT_0",
@@ -443,13 +457,14 @@
         },
         {
             "commandName": "INV_CONFIG",
+            "cmdCode": "0x0101",
             "isPerAddr": false,
             "dataFormat": "BitField",
-            "byteLength": 4,
+            "byteLength": 2,
             "scaling": null,
             "baseUnit": null,
             "signed": null,
-            "shift": 2,
+            "shift": null,
             "bitcontrol": [
                 {
                     "name": "BIT_0",
@@ -506,13 +521,14 @@
         },
         {
             "commandName": "Output_ACV_Set",
+            "cmdCode": "0x0102",
             "isPerAddr": false,
             "dataFormat": "BitField",
-            "byteLength": 4,
+            "byteLength": 2,
             "scaling": null,
             "baseUnit": null,
             "signed": null,
-            "shift": 2,
+            "shift": null,
             "bitcontrol": [
                 {
                     "name": "BIT_4",
@@ -538,13 +554,14 @@
         },
         {
             "commandName": "Output_ACF_Set",
+            "cmdCode": "0x0103",
             "isPerAddr": false,
             "dataFormat": "BitField",
-            "byteLength": 4,
+            "byteLength": 2,
             "scaling": null,
             "baseUnit": null,
             "signed": null,
-            "shift": 2,
+            "shift": null,
             "bitcontrol": [
                 {
                     "name": "BIT_0",

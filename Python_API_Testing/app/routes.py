@@ -70,18 +70,14 @@ def create_routes(state: AppState) -> Blueprint:
 
     @bp.get("/api/memory/write-api")
     def read_real_write():
-        port = request.args.get("type", None)
-        file_name = request.args.get("protocolFileName", "NTN-5K_CAN.json")
+        port = request.args.get("type")
+        try:
+            payload = state.get_real_write_payload(port)
+        except ValueError as exc:
+            return jsonify({"error": str(exc)}), 500
 
-        store = state.get_real_write_store()
-        if not store:
-            return jsonify({"error": "REAL_WRITE_STORE not initialized"}), 500
-
-        if file_name not in store:
-            return jsonify({"error": f"File {file_name} not found"}), 404
-
-        print(f"[R]/api/memory/write-api : {port}, {file_name}")
-        return jsonify(store), 200
+        print(f"[R]/api/memory/write-api : {port}")
+        return jsonify(payload), 200
 
     @bp.post("/api/memory/write-api")
     def write_real_write():
@@ -92,11 +88,11 @@ def create_routes(state: AppState) -> Blueprint:
         if not isinstance(payload, list):
             return jsonify({"error": "Body must be a JSON array"}), 400
 
-        store = state.get_real_write_store()
-        if file_name not in store:
-            return jsonify({"error": f"File {file_name} not found"}), 404
+        try:
+            state.update_real_write_store(file_name, payload)
+        except KeyError as exc:
+            return jsonify({"error": str(exc)}), 404
 
-        state.update_real_write_store(file_name, payload)
         print(f"[W]/api/memory/write-api : {port}, {file_name} updated")
         return jsonify({"status": "ok", "updated": payload}), 200
 

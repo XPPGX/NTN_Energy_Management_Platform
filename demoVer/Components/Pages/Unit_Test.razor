@@ -48,6 +48,13 @@
         </span>
         <span class="btn-glow" aria-hidden="true"></span>
     </button>
+
+    <button class="glow-btn" @onclick="GetSettingRange">
+        <span class="btn-inner">
+            🚀 GetSettingRange
+        </span>
+        <span class="btn-glow" aria-hidden="true"></span>
+    </button>
 </div>
 
 @code{
@@ -107,7 +114,7 @@
 
     public async Task TEST_writeReal_WriteMemory()
     {
-        WrtieVal writeVal = new();
+        WriteVal writeVal = new();
         writeVal.Number = 100;
         writeVal.Text   = null;
         writeVal.Bits   = null;
@@ -125,5 +132,16 @@
     public async Task TEST_SQL_ReadDataLog()
     {
         
+    }
+
+    public async Task GetSettingRange()
+    {
+        var result = await apiManager.apiRead_SettingRange("CAN1", "NTN-5K_CAN.json");
+
+        var rawJsonData_String = JsonSerializer.Serialize(result, new JsonSerializerOptions{
+            WriteIndented = true
+        });
+
+        Console.WriteLine(rawJsonData_String);
     }
 }

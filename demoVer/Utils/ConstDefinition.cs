@@ -40,6 +40,5 @@ namespace demoVer.Utils
         }
 
         #endregion INV_Mode_Status
-
     }
 }

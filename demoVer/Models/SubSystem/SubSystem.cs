@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.SignalR;
 using demoVer.Utils;
+using System.Collections.Concurrent;
+using Microsoft.Extensions.Options;
 namespace demoVer.Models
 {
     /// <summary>
@@ -24,6 +26,7 @@ namespace demoVer.Models
         public string Port { get; set; } = string.Empty;
         public string Protocol { get; set; } = string.Empty;
         public bool RangeOK { get; set; } = false;
+        public string epoch { get; set; } = string.Empty;
 
         /// <summary>
         /// 使用SinglePartition物件更新子系統的基本資訊(不包含AddrSet, 計算屬性)
@@ -40,6 +43,84 @@ namespace demoVer.Models
             // this.AddrSet.UnionWith(source.Addr);
         }
         #endregion From Status API
+
+        #region From SettingRange API
+        /// <summary>
+        /// 只有數值型態的指令會有設定範圍
+        /// </summary>
+        public ConcurrentDictionary<string, SingleCmdRange> SettingRanges { get; set; } = new();
+        // public ConcurrentDictionary<string, string> 
+        private readonly object _lock = new object();
+        public void UpdateSettingRanges_From(ConcurrentDictionary<string, SingleCmdRange> newRanges)
+        {
+            lock (_lock)
+            {
+                try
+                {
+                    foreach (var (HexCmd, newRange_Obj) in newRanges)
+                    {
+                        if (this.SettingRanges.ContainsKey(HexCmd))
+                        {
+                            this.SettingRanges[HexCmd].min = newRange_Obj.min;
+                            this.SettingRanges[HexCmd].max = newRange_Obj.max;
+                            this.SettingRanges[HexCmd].cmdCode = newRange_Obj.cmdCode;
+                        }
+                        else
+                        {
+                            this.SettingRanges.TryAdd(HexCmd, newRange_Obj);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][UpdateSettingRanges_From] Exception: {e.Message}", AppLogLevel.Error);
+                }
+            }
+        }
+        
+        #endregion
+
+        #region From GetMethod_Write_API
+        //要找當前值可從這個Dict找
+        public Dictionary<string, GET_RealSingleRawSettingCMD_JsonFormat> InfosForWriteCmd { get; set; } = new(); 
+        public readonly object _lock_WriteCmdInfo = new();
+        public void UpdateInfosForWriteCmd_From(List<GET_RealSingleRawSettingCMD_JsonFormat> newInfos)
+        {
+            lock (_lock_WriteCmdInfo)
+            {
+                try
+                {
+                    foreach (var new_singleRawSettingCmd in newInfos)
+                    {
+                        //取出 cmdCode 作為 key
+                        string cmdCode = new_singleRawSettingCmd.cmdCode;
+
+                        if (this.InfosForWriteCmd.ContainsKey(cmdCode))
+                        {
+                            AppLogger.Log_To_File_log(_category, $"[SubSystem][UpdateInfosForWriteCmd_From] Update existing Write CMD Info for CmdCode {cmdCode}", AppLogLevel.Debug);
+                            this.InfosForWriteCmd[cmdCode] = new_singleRawSettingCmd;
+                        }
+                        else
+                        {
+                            AppLogger.Log_To_File_log(_category, $"[SubSystem][UpdateInfosForWriteCmd_From] Add new Write CMD Info for CmdCode {cmdCode}", AppLogLevel.Debug);
+                            this.InfosForWriteCmd.Add(cmdCode, new_singleRawSettingCmd);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][UpdateInfosForWriteCmd_From] Exception: {e.Message}", AppLogLevel.Error);
+                }
+            }
+        }
+        /// <summary>
+        /// 根據 cmdCode 找到對應的 cmdName
+        /// </summary>
+        /// <param name="cmdCode"></param>
+        /// <returns>CommandName</returns>
+        public string cmdCode_mappingTo_cmdName(string cmdCode) => (InfosForWriteCmd.ContainsKey(cmdCode)) ? InfosForWriteCmd[cmdCode].CommandName : string.Empty;
+        
+        #endregion From Get_Write_API
 
         #region Computed In SubSys
         public bool SubSystemSettingExist { get; set; } = false;
@@ -68,7 +149,7 @@ namespace demoVer.Models
             //其他系統變數計算，未來擴充
             ArrowDirections = ArrowDirectionHelper.Resolve(nowMode, AC_Charger_Enable, AC_StandBy);
         }
-        
+
         /// <summary>
         /// 根據子系統內所有在線設備的資料，計算子系統的系統模式(nowMode)
         /// </summary>
@@ -149,7 +230,7 @@ namespace demoVer.Models
             else if (STANDBY_MODE_Count > 0) { setMode(ConstDefinition.SYS_Mode_Options.STANDBY); }
             else { setMode(ConstDefinition.SYS_Mode_Options.DISCON); }
 
-            AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeMode] SubSystem Mode Computed : {nowMode.ToDisplayName()} (INV:{INV_MODE_Count}, SAVING:{SAVING_MODE_Count}, BYPASS:{BYPASS_MODE_Count}, CHARGING:{CHARGING_MODE_Count}, STANDBY:{STANDBY_MODE_Count})", AppLogLevel.Debug);
+            AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeMode] ({this.Port}, {this.Protocol}) SubSystem Mode Computed : {nowMode.ToDisplayName()} (INV:{INV_MODE_Count}, SAVING:{SAVING_MODE_Count}, BYPASS:{BYPASS_MODE_Count}, CHARGING:{CHARGING_MODE_Count}, STANDBY:{STANDBY_MODE_Count})", AppLogLevel.Trace);
         }
 
 
