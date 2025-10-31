@@ -116,35 +116,35 @@ namespace demoVer.Services
             AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] Start...", AppLogLevel.Trace);
 
             //2. Read ModelName
-            bool read_mdlName_succ = read_OldMdlName_FromJson();
-            if(read_mdlName_succ is false)
-            {
-                AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] read_mdlName FAIL", AppLogLevel.Trace);
-                return false;
-            }
+            // bool read_mdlName_succ = read_OldMdlName_FromJson();
+            // if(read_mdlName_succ is false)
+            // {
+            //     AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] read_mdlName FAIL", AppLogLevel.Trace);
+            //     return false;
+            // }
 
-            //3. Read Scaling Factor 
-            bool read_Scaling_succ = read_OldScaling_FromJson();
-            if(read_Scaling_succ is false)
-            {
-                AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] read Scaling FAIL", AppLogLevel.Trace);
-                return false;
-            }
+            // //3. Read Scaling Factor 
+            // bool read_Scaling_succ = read_OldScaling_FromJson();
+            // if(read_Scaling_succ is false)
+            // {
+            //     AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] read Scaling FAIL", AppLogLevel.Trace);
+            //     return false;
+            // }
             
-            //4. Read INV setting
-            bool read_INV_Setting_succ = read_OldINVSetting_FromJson();
-            if(read_INV_Setting_succ is false)
-            {
-                AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] read INV_Setting FAIL", AppLogLevel.Trace);
-                return false;
-            }
-            //5. Read BAT setting
-            bool read_BAT_Setting_succ = read_OldBATSetting_FromJson();
-            if(read_BAT_Setting_succ is false)
-            {
-                AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] read BAT_Setting FAIL", AppLogLevel.Trace);
-                return false;
-            }
+            // //4. Read INV setting
+            // bool read_INV_Setting_succ = read_OldINVSetting_FromJson();
+            // if(read_INV_Setting_succ is false)
+            // {
+            //     AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] read INV_Setting FAIL", AppLogLevel.Trace);
+            //     return false;
+            // }
+            // //5. Read BAT setting
+            // bool read_BAT_Setting_succ = read_OldBATSetting_FromJson();
+            // if(read_BAT_Setting_succ is false)
+            // {
+            //     AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] read BAT_Setting FAIL", AppLogLevel.Trace);
+            //     return false;
+            // }
 
             AppLogger.Log_To_File_log(_category, $"[DataCenter][initSys] Done...", AppLogLevel.Trace);
             return true;
@@ -303,10 +303,10 @@ namespace demoVer.Services
                 
                 //重新 Loading
                 //1. SysInfo
-                saveSysInfo_To_JsonFile();
+                // saveSysInfo_To_JsonFile();
                 //2. ScalingFactor
                 // await _commonData.modelNameChange_Task(); //讀新的 Scaling 到記憶體
-                saveScaling_To_JsonFile(); //把記憶體內新的 Scaling 存到Json file
+                // saveScaling_To_JsonFile(); //把記憶體內新的 Scaling 存到Json file
                 //3. INV setting
                 //待辦(等上下限API開通)
                 //4. BAT setting

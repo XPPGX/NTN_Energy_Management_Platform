@@ -10,8 +10,23 @@ using System.Runtime.InteropServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+//自動調整此Server監聽的IP與Port
+if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+{
+    builder.WebHost.UseUrls("http://0.0.0.0:5080");
+}
+else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+{
+    builder.WebHost.UseUrls("http://0.0.0.0:5040");
+}
+else
+{
+    builder.WebHost.UseUrls("http://0.0.0.0:5080");
+}
+
 // builder.WebHost.UseUrls("http://127.0.0.1:5070");
-builder.WebHost.UseUrls("http://0.0.0.0:5080");
+// builder.WebHost.UseUrls("http://0.0.0.0:5080");
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();

@@ -1,169 +1,5 @@
 [
   {
-    "ID": "0ae85b65c98a450b9629fecc7b3a4f75",
-    "card_Type": 1,
-    "widthClass": "w25",
-    "showSequence": 3,
-    "cardName": "NTN MOD1 addr0",
-    "Info_DataItems": [
-      {
-        "iconPath": "images/user_selections/fridge.png",
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "MOD1  (  0) \u2192 NTN-5K-124  ",
-            "Addr": 128,
-            "UserSettingName": "device1",
-            "Cmd": "MFR_MODEL",
-            "ValueName": "mdlName",
-            "Unit": ""
-          }
-        ]
-      },
-      {
-        "iconPath": "images/user_selections/lighting.png",
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "MOD1  (  0) \u2192 NTN-5K-124  ",
-            "Addr": 128,
-            "UserSettingName": "device",
-            "Cmd": "READ_VIN",
-            "ValueName": "VIN",
-            "Unit": "V"
-          }
-        ]
-      },
-      {
-        "iconPath": "images/user_selections/plug.png",
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "MOD1  (  0) \u2192 NTN-5K-124  ",
-            "Addr": 128,
-            "UserSettingName": "device1",
-            "Cmd": "READ_FAN_SPEED_1",
-            "ValueName": "FAN",
-            "Unit": "RPM"
-          }
-        ]
-      },
-      {
-        "iconPath": "images/user_selections/lighting.png",
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "MOD1  (  0) \u2192 NTN-5K-124  ",
-            "Addr": 128,
-            "UserSettingName": "device",
-            "Cmd": "READ_AC_VOUT",
-            "ValueName": "VOUT",
-            "Unit": "V"
-          }
-        ]
-      }
-    ],
-    "Link_STATUS_Pairs": null,
-    "SelectedSubsystemKey": null,
-    "Chart_Setting": null
-  },
-  {
-    "ID": "c48870e415214675843d663080b4fa49",
-    "card_Type": 3,
-    "widthClass": "w50",
-    "showSequence": 1,
-    "cardName": "RunningDiagram",
-    "Info_DataItems": null,
-    "Link_STATUS_Pairs": [
-      {
-        "iconPath": "images/user_selections/transmission-tower.png",
-        "Label": "TEST"
-      },
-      {
-        "iconPath": "images/user_selections/fridge.png",
-        "Label": "ZZZZ"
-      },
-      {
-        "iconPath": "images/user_selections/plug.png",
-        "Label": ""
-      },
-      {
-        "iconPath": "images/user_selections/car-battery.png",
-        "Label": ""
-      }
-    ],
-    "SelectedSubsystemKey": "CAN1|NTN-5K_CAN.json",
-    "Chart_Setting": null
-  },
-  {
-    "ID": "85b9981a166a4f8ab59c9740159f50c4",
-    "card_Type": 1,
-    "widthClass": "w25",
-    "showSequence": 5,
-    "cardName": "NTN MOD2 addr0",
-    "Info_DataItems": [
-      {
-        "iconPath": "images/user_selections/fridge.png",
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "MOD2  (  0) \u2192 NTN-5K-124  ",
-            "Addr": 192,
-            "UserSettingName": "DEV1",
-            "Cmd": "MFR_MODEL",
-            "ValueName": "MODEL",
-            "Unit": ""
-          }
-        ]
-      },
-      {
-        "iconPath": "images/user_selections/transmission-tower.png",
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "MOD2  (  0) \u2192 NTN-5K-124  ",
-            "Addr": 192,
-            "UserSettingName": "DEV1",
-            "Cmd": "READ_VIN",
-            "ValueName": "VIN1",
-            "Unit": "V"
-          }
-        ]
-      },
-      {
-        "iconPath": "images/user_selections/plug.png",
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "MOD2  (  0) \u2192 NTN-5K-124  ",
-            "Addr": 192,
-            "UserSettingName": "DEV1",
-            "Cmd": "READ_AC_VOUT",
-            "ValueName": "VOUT",
-            "Unit": "V"
-          }
-        ]
-      },
-      {
-        "iconPath": "images/user_selections/transmission-tower.png",
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "MOD2  (  0) \u2192 NTN-5K-124  ",
-            "Addr": 192,
-            "UserSettingName": "DEV1",
-            "Cmd": "READ_FAN_SPEED_1",
-            "ValueName": "FAN1",
-            "Unit": "RPM"
-          }
-        ]
-      }
-    ],
-    "Link_STATUS_Pairs": null,
-    "SelectedSubsystemKey": null,
-    "Chart_Setting": null
-  },
-  {
     "ID": "816067f99d5e4dbeb67aa5362ca729ea",
     "card_Type": 1,
     "widthClass": "w25",
@@ -229,6 +65,34 @@
     ],
     "Link_STATUS_Pairs": null,
     "SelectedSubsystemKey": null,
+    "Chart_Setting": null
+  },
+  {
+    "ID": "c48870e415214675843d663080b4fa49",
+    "card_Type": 3,
+    "widthClass": "w50",
+    "showSequence": 1,
+    "cardName": "RunningDiagram",
+    "Info_DataItems": null,
+    "Link_STATUS_Pairs": [
+      {
+        "iconPath": "images/user_selections/transmission-tower.png",
+        "Label": "AC"
+      },
+      {
+        "iconPath": "images/user_selections/fridge.png",
+        "Label": "NTN"
+      },
+      {
+        "iconPath": "images/user_selections/plug.png",
+        "Label": "Load"
+      },
+      {
+        "iconPath": "images/user_selections/car-battery.png",
+        "Label": "Battery"
+      }
+    ],
+    "SelectedSubsystemKey": "CAN1|NTN-5K_CAN.json",
     "Chart_Setting": null
   },
   {
@@ -300,6 +164,74 @@
     "Chart_Setting": null
   },
   {
+    "ID": "0ae85b65c98a450b9629fecc7b3a4f75",
+    "card_Type": 1,
+    "widthClass": "w25",
+    "showSequence": 3,
+    "cardName": "NTN MOD1 addr0",
+    "Info_DataItems": [
+      {
+        "iconPath": "images/user_selections/fridge.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "MOD1  (  0) \u2192 NTN-5K-124  ",
+            "Addr": 128,
+            "UserSettingName": "device1",
+            "Cmd": "MFR_MODEL",
+            "ValueName": "mdlName",
+            "Unit": ""
+          }
+        ]
+      },
+      {
+        "iconPath": "images/user_selections/lighting.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "MOD1  (  0) \u2192 NTN-5K-124  ",
+            "Addr": 128,
+            "UserSettingName": "device",
+            "Cmd": "READ_VIN",
+            "ValueName": "VIN",
+            "Unit": "V"
+          }
+        ]
+      },
+      {
+        "iconPath": "images/user_selections/plug.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "MOD1  (  0) \u2192 NTN-5K-124  ",
+            "Addr": 128,
+            "UserSettingName": "device1",
+            "Cmd": "READ_FAN_SPEED_1",
+            "ValueName": "FAN",
+            "Unit": "RPM"
+          }
+        ]
+      },
+      {
+        "iconPath": "images/user_selections/lighting.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "MOD1  (  0) \u2192 NTN-5K-124  ",
+            "Addr": 128,
+            "UserSettingName": "device",
+            "Cmd": "READ_AC_VOUT",
+            "ValueName": "VOUT",
+            "Unit": "V"
+          }
+        ]
+      }
+    ],
+    "Link_STATUS_Pairs": null,
+    "SelectedSubsystemKey": null,
+    "Chart_Setting": null
+  },
+  {
     "ID": "9701b761af0641c1bfab1d3f60e2c271",
     "card_Type": 2,
     "widthClass": "w50",
@@ -314,36 +246,36 @@
       "XTitle": "\u6642\u9593",
       "timeGap_selection": 0,
       "Labels": [
-        "13:50:38",
-        "13:50:39",
-        "13:50:40",
-        "13:50:41",
-        "13:50:42",
-        "13:50:43",
-        "13:50:44",
-        "13:50:45",
-        "13:50:46",
-        "13:50:47",
-        "13:50:48",
-        "13:50:49",
-        "13:50:50",
-        "13:50:51",
-        "13:50:52",
-        "13:50:53",
-        "13:50:54",
-        "13:50:56",
-        "13:50:57",
-        "13:50:58",
-        "13:50:59",
-        "13:51:00",
-        "13:51:01",
-        "13:51:02",
         "13:51:03",
         "13:51:04",
         "13:51:05",
         "13:51:06",
         "13:51:07",
-        "13:51:08"
+        "13:51:08",
+        "09:50:45",
+        "09:50:46",
+        "09:50:47",
+        "09:50:48",
+        "09:50:49",
+        "09:50:50",
+        "09:50:51",
+        "09:50:52",
+        "09:50:53",
+        "09:50:54",
+        "09:50:55",
+        "09:50:56",
+        "09:50:57",
+        "09:50:59",
+        "09:51:00",
+        "09:51:01",
+        "09:51:02",
+        "09:51:03",
+        "09:51:04",
+        "09:51:05",
+        "09:51:06",
+        "09:51:07",
+        "09:51:08",
+        "09:51:09"
       ],
       "Y_left_Title": "IIN",
       "Y_right_Title": "VIN",
@@ -359,36 +291,36 @@
           "Y_axis_selection": false,
           "color": "#12f368",
           "Data": [
-            378.54,
-            229.62,
-            996.64,
-            996.64,
-            239.47,
-            83.76,
-            2.34,
-            2.34,
-            458.82,
-            718.27,
-            718.27,
-            691.44,
-            354.72,
-            624.97,
-            624.97,
-            833.8,
-            929.87,
-            929.87,
-            847.1,
-            757.61,
-            757.61,
-            776.39,
-            142.32,
-            506.92,
             506.92,
             835.01,
             72.28,
             458.41,
             458.41,
-            841.97
+            841.97,
+            152.79,
+            152.79,
+            854.84,
+            913.74,
+            913.74,
+            510.79,
+            344.49,
+            344.49,
+            651.25,
+            461.73,
+            461.73,
+            742.84,
+            322.72,
+            322.72,
+            431.1,
+            721.36,
+            721.36,
+            688.09,
+            85.03,
+            85.03,
+            555.11,
+            357.91,
+            357.91,
+            885.79
           ]
         },
         {
@@ -400,39 +332,107 @@
           "Y_axis_selection": true,
           "color": "#e40707",
           "Data": [
-            395.18,
-            972.09,
-            704.83,
-            704.83,
-            317.6,
-            408.05,
-            472.62,
-            472.62,
-            462.45,
-            587.58,
-            587.58,
-            395.94,
-            450.19,
-            947.71,
-            947.71,
-            335.33,
-            442.98,
-            442.98,
-            760.16,
-            418.03,
-            418.03,
-            55.35,
-            669.89,
-            898.04,
             898.04,
             337.35,
             830.47,
             748.98,
             748.98,
-            377.65
+            377.65,
+            184.08,
+            184.08,
+            361.02,
+            871.67,
+            871.67,
+            577.93,
+            252.34,
+            252.34,
+            539.69,
+            678.05,
+            678.05,
+            967.12,
+            689.65,
+            689.65,
+            415.44,
+            184.13,
+            184.13,
+            868.6,
+            383,
+            383,
+            920.93,
+            864.46,
+            864.46,
+            200.66
           ]
         }
       ]
     }
+  },
+  {
+    "ID": "85b9981a166a4f8ab59c9740159f50c4",
+    "card_Type": 1,
+    "widthClass": "w25",
+    "showSequence": 5,
+    "cardName": "NTN MOD2 addr0",
+    "Info_DataItems": [
+      {
+        "iconPath": "images/user_selections/fridge.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "MOD2  (  0) \u2192 NTN-5K-124  ",
+            "Addr": 192,
+            "UserSettingName": "DEV1",
+            "Cmd": "MFR_MODEL",
+            "ValueName": "MODEL",
+            "Unit": ""
+          }
+        ]
+      },
+      {
+        "iconPath": "images/user_selections/transmission-tower.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "MOD2  (  0) \u2192 NTN-5K-124  ",
+            "Addr": 192,
+            "UserSettingName": "DEV1",
+            "Cmd": "READ_VIN",
+            "ValueName": "VIN1",
+            "Unit": "V"
+          }
+        ]
+      },
+      {
+        "iconPath": "images/user_selections/plug.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "MOD2  (  0) \u2192 NTN-5K-124  ",
+            "Addr": 192,
+            "UserSettingName": "DEV1",
+            "Cmd": "READ_AC_VOUT",
+            "ValueName": "VOUT",
+            "Unit": "V"
+          }
+        ]
+      },
+      {
+        "iconPath": "images/user_selections/transmission-tower.png",
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "MOD2  (  0) \u2192 NTN-5K-124  ",
+            "Addr": 192,
+            "UserSettingName": "DEV1",
+            "Cmd": "READ_FAN_SPEED_1",
+            "ValueName": "FAN1",
+            "Unit": "RPM"
+          }
+        ]
+      }
+    ],
+    "Link_STATUS_Pairs": null,
+    "SelectedSubsystemKey": null,
+    "Chart_Setting": null
   }
 ]

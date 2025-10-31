@@ -213,7 +213,6 @@
     private List<ElementReference>  FillRefs = new();
     private List<ElementReference>  ThumbRefs = new();
 
-    private bool[] _sliderInitFlags;
     private bool _heartbeatSubscribed = false;
     private int _heartbeatCounter = 0;
 
@@ -235,8 +234,149 @@
     private int CV_Timeout_value;
     private int FV_Timeout_value;
 
-    private bool selectedStage = false; //預設為 3段
+    private bool selectedStage = true; //預設為 3段
     private bool topRowCallbacksRegistered = false;
+
+    #region System Task
+    protected override void OnInitialized()
+    {
+        _category = GetType().FullName!;
+        @* DataCenter.Battery.OnUpdated += OnBatteryChanged; *@
+
+        Sliders = new List<SliderItem>
+        {
+            new SliderItem { Label = "CC", Value = 0.0}, //index = 0
+            new SliderItem { Label = "TC", Value = 0.0}, //index = 1
+            new SliderItem { Label = "CV", Value = 0.0}, //index = 2
+            new SliderItem { Label = "FV", Value = 0.0}  //index = 3
+        };
+        FillRefs = new List<ElementReference>(new ElementReference[Sliders.Count]);
+        ThumbRefs = new List<ElementReference>(new ElementReference[Sliders.Count]);
+        
+        Init_Flag = true; //控制直向slider顯示
+
+        _ = RefreshSubSystemOptions();
+    }
+
+    protected override void OnParametersSet()
+    {
+        // _ = RefreshSubSystemOptions();
+
+        if (!topRowCallbacksRegistered && MainLayout != null)
+        {
+            MainLayout.RegisterTopRowCallbacks(
+                this,
+                informParentToApplySetting: ReceiveFrom_TopRow_SaveBatterySetting,
+                informParentToUseDefaultValue: ReceiveFrom_TopRow_ApplyDefaultValue);
+            topRowCallbacksRegistered = true;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            if (!_heartbeatSubscribed)
+            {
+                Heartbeat.OnTick += OnHeartbeatTickAsync;
+                _heartbeatSubscribed = true;
+            }
+            
+
+            //把JS中的chartInstances清空
+            await JS.InvokeVoidAsync("destroyAllCharts");
+
+            Console.WriteLine($"isMobile = {isMobile}");
+            dotNetRef = DotNetObjectReference.Create(this);
+        
+            // await JS.InvokeVoidAsync("startBatteryHub", dotNetRef);
+
+            await JS.InvokeVoidAsync("setSliderBars_Info", new{
+                // cc_val = DataCenter.Battery.CC_Display,
+                // cc_controlMax = DataCenter.Battery.CC_Max_Display,
+                // cc_minValue = DataCenter.Battery.CC_Min_Display,
+                // cc_UI_MAX = DataCenter.Battery.CC_Max_Display,
+                cc_val = 0.0,
+                cc_controlMax = 0.0,
+                cc_minValue = 0.0,
+                cc_UI_MAX = 0.0,
+                cc_fill = FillRefs[0],
+                cc_thumb = ThumbRefs[0],
+
+                // tc_val = DataCenter.Battery.TC_Display,
+                // tc_controlMax = DataCenter.Battery.TC_Max_Display,
+                // tc_minValue = DataCenter.Battery.TC_Min_Display,
+                // tc_UI_MAX = DataCenter.Battery.CC_Max_Display,
+                tc_val = 0.0,
+                tc_controlMax = 0.0,
+                tc_minValue = 0.0,
+                tc_UI_Max = 0.0,
+                tc_fill = FillRefs[1],
+                tc_thumb = ThumbRefs[1],
+
+                // cv_val = DataCenter.Battery.CV_Display,
+                // cv_controlMax = DataCenter.Battery.CV_Max_Display,
+                // cv_minValue = DataCenter.Battery.CV_Min_Display,
+                // cv_UI_MAX = DataCenter.Battery.CV_Max_Display,
+                cv_val = 0.0,
+                cv_controlMax = 0.0,
+                cv_minValue = 0.0,
+                cv_UI_Max = 0.0,
+                cv_fill = FillRefs[2],
+                cv_thumb = ThumbRefs[2],
+
+                // fv_val = DataCenter.Battery.FV_Display,
+                // fv_controlMax = DataCenter.Battery.CV_Max_Display,
+                // fv_minValue = DataCenter.Battery.FV_Min_Display,
+                // fv_UI_MAX = DataCenter.Battery.CV_Max_Display,
+                fv_val = 0.0,
+                fv_controlMax = 0.0,
+                fv_minValue = 0.0,
+                fv_UI_Max = 0.0,
+                fv_fill = FillRefs[3],
+                fv_thumb = ThumbRefs[3],
+            });
+
+            for(int i = 0 ; i < Sliders.Count ; i ++)
+            {
+                var slider = Sliders[i];
+                var (_, max) = GetDisplaySliderRange(slider.Label);
+
+                await JS.InvokeVoidAsync("updateSliderVisual", new{
+                    fill = FillRefs[i],
+                    thumb = ThumbRefs[i],
+                    value = slider.Value,
+                    displayMaxValue = max,
+                });
+            }
+            
+            await JS.InvokeVoidAsync("sliderUpdateFromInput", dotNetRef);
+            await JS.InvokeVoidAsync("setStage", selectedStage);
+
+            await JS.InvokeVoidAsync("drawChart_Stage", true);
+            isMobile = await JS.InvokeAsync<bool>("checkIsMobile");
+            if(isMobile)
+            {
+                StateHasChanged();
+            }
+        }
+    }
+
+    public void Dispose()
+    {
+        DataCenter.Battery.OnUpdated -= OnBatteryChanged;
+        if (_heartbeatSubscribed)
+        {
+            Heartbeat.OnTick -= OnHeartbeatTickAsync;
+            _heartbeatSubscribed = false;
+        }
+        if (topRowCallbacksRegistered)
+        {
+            MainLayout?.ClearTopRowCallbacks(this);
+            topRowCallbacksRegistered = false;
+        }
+    }
+    #endregion System Task
 
     private string FormatToHourMin(double totalMin)
     {
@@ -261,46 +401,9 @@
 
 
 
-    protected override void OnInitialized()
-    {
-        _category = GetType().FullName!;
-        DataCenter.Battery.OnUpdated += OnBatteryChanged;
+    
 
-        Sliders = new List<SliderItem>
-        {
-            //index = 0
-            new SliderItem { Label = "CC", Value = DataCenter.Battery.CC_Display},
-            //index = 1
-            new SliderItem { Label = "TC", Value = DataCenter.Battery.TC_Display},
-            //index = 2
-            new SliderItem { Label = "CV", Value = DataCenter.Battery.CV_Display},
-            //index = 3
-            new SliderItem { Label = "FV", Value = DataCenter.Battery.FV_Display}
-        };
-        FillRefs = new List<ElementReference>(new ElementReference[Sliders.Count]);
-        ThumbRefs = new List<ElementReference>(new ElementReference[Sliders.Count]);
-        
-        Init_Flag = true;
-
-        _sliderInitFlags = new bool[Sliders.Count];
-
-        _ = RefreshSubSystemOptions();
-
-        
-    }
-
-    protected override void OnParametersSet()
-    {
-        _ = RefreshSubSystemOptions();
-        if (!topRowCallbacksRegistered && MainLayout != null)
-        {
-            MainLayout.RegisterTopRowCallbacks(
-                this,
-                informParentToApplySetting: ReceiveFrom_TopRow_SaveBatterySetting,
-                informParentToUseDefaultValue: ReceiveFrom_TopRow_ApplyDefaultValue);
-            topRowCallbacksRegistered = true;
-        }
-    }
+    
 
     private void OnBatteryChanged()
     {
@@ -310,7 +413,6 @@
     private async Task RefreshSubSystemOptions()
     {
         var snapshot = SubSystemManager.GetAllSubSystems_Ref_In_List();
-        @* var snapshot = GlobalVar?.GetSubSystemsSnapshot(); *@
         if (snapshot is null || snapshot.Count == 0)
         {
             _subSystemOptions = Array.Empty<SubSystem>();
@@ -320,6 +422,7 @@
         //Local變數，取得最新的子系統快照
         _subSystemOptions = snapshot;
 
+        //如果目前選取的子系統仍存在，則不更動選取值
         if (!string.IsNullOrWhiteSpace(_selectedSubSystemKey) && ContainsSubSystemKey(_selectedSubSystemKey))
         {
             return;
@@ -389,94 +492,7 @@
         return (parts[0], parts[1]);
     }
 
-    public void Dispose()
-    {
-        DataCenter.Battery.OnUpdated -= OnBatteryChanged;
-        if (_heartbeatSubscribed)
-        {
-            Heartbeat.OnTick -= OnHeartbeatTickAsync;
-            _heartbeatSubscribed = false;
-        }
-        if (topRowCallbacksRegistered)
-        {
-            MainLayout?.ClearTopRowCallbacks(this);
-            topRowCallbacksRegistered = false;
-        }
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if(firstRender)
-        {
-            if (!_heartbeatSubscribed)
-            {
-                Heartbeat.OnTick += OnHeartbeatTickAsync;
-                _heartbeatSubscribed = true;
-            }
-            
-
-            //把JS中的chartInstances清空
-            await JS.InvokeVoidAsync("destroyAllCharts");
-
-            Console.WriteLine($"isMobile = {isMobile}");
-            dotNetRef = DotNetObjectReference.Create(this);
-        
-            await JS.InvokeVoidAsync("startBatteryHub", dotNetRef);
-
-            await JS.InvokeVoidAsync("setSliderBars_Info", new{
-                cc_val = DataCenter.Battery.CC_Display,
-                cc_controlMax = DataCenter.Battery.CC_Max_Display,
-                cc_minValue = DataCenter.Battery.CC_Min_Display,
-                cc_UI_MAX = DataCenter.Battery.CC_Max_Display,
-                cc_fill = FillRefs[0],
-                cc_thumb = ThumbRefs[0],
-
-                tc_val = DataCenter.Battery.TC_Display,
-                tc_controlMax = DataCenter.Battery.TC_Max_Display,
-                tc_minValue = DataCenter.Battery.TC_Min_Display,
-                tc_UI_MAX = DataCenter.Battery.CC_Max_Display,
-                tc_fill = FillRefs[1],
-                tc_thumb = ThumbRefs[1],
-
-                cv_val = DataCenter.Battery.CV_Display,
-                cv_controlMax = DataCenter.Battery.CV_Max_Display,
-                cv_minValue = DataCenter.Battery.CV_Min_Display,
-                cv_UI_MAX = DataCenter.Battery.CV_Max_Display,
-                cv_fill = FillRefs[2],
-                cv_thumb = ThumbRefs[2],
-
-                fv_val = DataCenter.Battery.FV_Display,
-                fv_controlMax = DataCenter.Battery.CV_Max_Display,
-                fv_minValue = DataCenter.Battery.FV_Min_Display,
-                fv_UI_MAX = DataCenter.Battery.CV_Max_Display,
-                fv_fill = FillRefs[3],
-                fv_thumb = ThumbRefs[3],
-            });
-
-            for(int i = 0 ; i < Sliders.Count ; i ++)
-            {
-                var slider = Sliders[i];
-                var (_, max) = GetDisplaySliderRange(slider.Label);
-
-                await JS.InvokeVoidAsync("updateSliderVisual", new{
-                    fill = FillRefs[i],
-                    thumb = ThumbRefs[i],
-                    value = slider.Value,
-                    displayMaxValue = max,
-                });
-            }
-            
-            await JS.InvokeVoidAsync("sliderUpdateFromInput", dotNetRef);
-            await JS.InvokeVoidAsync("setStage", selectedStage);
-
-            await JS.InvokeVoidAsync("drawChart_Stage", true);
-            isMobile = await JS.InvokeAsync<bool>("checkIsMobile");
-            if(isMobile)
-            {
-                StateHasChanged();
-            }
-        }
-    }
+    
 
     private async Task StartMouseDrag(MouseEventArgs e, int index, double _Min, double _displayMax)
     {

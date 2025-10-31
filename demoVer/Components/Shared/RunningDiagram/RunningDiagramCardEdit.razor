@@ -213,8 +213,11 @@
 
 	private static string GetSubsystemDisplayName(SubSystem subsystem)
 	{
-		var identifier = string.IsNullOrWhiteSpace(subsystem.ModelName) ? subsystem.Protocol : subsystem.ModelName;
-		return $"{subsystem.Port} - {identifier}";
+		@* var identifier = string.IsNullOrWhiteSpace(subsystem.ModelName) ? subsystem.Protocol : subsystem.ModelName; *@
+		var identifier = subsystem.Protocol;
+		var withoutExtension_protocol = Path.GetFileNameWithoutExtension(identifier);
+		return $"{subsystem.Port} - {withoutExtension_protocol}";
+		@* return $"{subsystem.Port} - {identifier}"; *@
 	}
 
 	private void LoadIconPaths()

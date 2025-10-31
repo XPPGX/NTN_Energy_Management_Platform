@@ -44,9 +44,9 @@ namespace demoVer.Models
         }
         #endregion From Status API
 
-        #region From SettingRange API
+        #region For Writable Cmd
         /// <summary>
-        /// 只有數值型態的指令會有設定範圍
+        /// 只有數值型態的指令會有設定範圍(上限、下限)，要用cmdCode當Key來找
         /// </summary>
         public ConcurrentDictionary<string, SingleCmdRange> SettingRanges { get; set; } = new();
         // public ConcurrentDictionary<string, string> 
@@ -78,10 +78,9 @@ namespace demoVer.Models
             }
         }
         
-        #endregion
-
-        #region From GetMethod_Write_API
-        //要找當前值可從這個Dict找
+        /// <summary>
+        /// 要找當前值可從這個Dict找，要用 cmdCode 當Key來找
+        /// </summary>
         public Dictionary<string, GET_RealSingleRawSettingCMD_JsonFormat> InfosForWriteCmd { get; set; } = new(); 
         public readonly object _lock_WriteCmdInfo = new();
         public void UpdateInfosForWriteCmd_From(List<GET_RealSingleRawSettingCMD_JsonFormat> newInfos)
@@ -119,10 +118,51 @@ namespace demoVer.Models
         /// <param name="cmdCode"></param>
         /// <returns>CommandName</returns>
         public string cmdCode_mappingTo_cmdName(string cmdCode) => (InfosForWriteCmd.ContainsKey(cmdCode)) ? InfosForWriteCmd[cmdCode].CommandName : string.Empty;
-        
-        #endregion From Get_Write_API
 
-        #region Computed In SubSys
+        /// <summary>
+        /// 取得當前值(非Numeric類型的)
+        /// </summary>
+        public bool getNowStage()
+        {
+            bool selectedStage = false;
+
+            string cmdCode = "0x00B4";
+            var cmdSettingData = InfosForWriteCmd.ContainsKey(cmdCode) ? InfosForWriteCmd[cmdCode] : null;
+            if (cmdSettingData is null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystem][getNowStage] CmdCode {cmdCode} not found in InfosForWriteCmd", AppLogLevel.Error);
+                return false;
+            }
+
+            var Bits = cmdSettingData.BitControl;
+            if (Bits is null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystem][getNowStage] BitControl is null for CmdCode {cmdCode}", AppLogLevel.Error);
+                return false;
+            }
+            // foreach (var bitControl in Bits)
+            // {
+            //     if (bitControl.Name == "STAGE_SELECT")
+            //     {
+            //         foreach (var kvp in bitControl.ValueMap)
+            //         {
+            //             if (kvp.Value == "1")
+            //             {
+            //                 selectedStage = true;
+            //                 AppLogger.Log_To_File_log(_category, $"[SubSystem][getNowStage] Found STAGE_SELECT = 1", AppLogLevel.Debug);
+            //                 break;
+            //             }
+            //         }
+            //     }
+            // }
+            return selectedStage;
+        }
+
+        #endregion For Writable Cmd
+
+
+
+        #region Computed In SubSystem
         public bool SubSystemSettingExist { get; set; } = false;
         public bool isAnyDeviceOnline { get; set; } = false;
         public ulong newSettingAddrBitMap { get; set; } = 0x0000000000000000UL;
@@ -232,8 +272,7 @@ namespace demoVer.Models
 
             AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeMode] ({this.Port}, {this.Protocol}) SubSystem Mode Computed : {nowMode.ToDisplayName()} (INV:{INV_MODE_Count}, SAVING:{SAVING_MODE_Count}, BYPASS:{BYPASS_MODE_Count}, CHARGING:{CHARGING_MODE_Count}, STANDBY:{STANDBY_MODE_Count})", AppLogLevel.Trace);
         }
-
-
-        #endregion Computed In SubSys
+        #endregion Computed In SubSystem
+    
     }
 }

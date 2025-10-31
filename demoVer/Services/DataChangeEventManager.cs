@@ -4,17 +4,11 @@ using System.Collections.Concurrent;
 using demoVer.Broadcast;
 using demoVer.Utils;
 using demoVer.Interfaces;
+using System.Reflection.PortableExecutable;
 
 namespace demoVer.Services
 {
-    public record ContainerKeys(uint addr, string cmd);
-    public class GroupLevelSubscription
-    {
-        public string ConnectionId = string.Empty;
-        public uint DeviceAddr;
-        public string CommandName = string.Empty;
-    }
-
+    #region ChangeEventManager for ReadOnly cmdData
     public class CmdLevelSubscription
     {
         public string ConnectionId = string.Empty;
@@ -31,18 +25,17 @@ namespace demoVer.Services
     );
 
 
-
+    //針對 Read_API 的 ChangeEventManager
     public class DataChangeEventManager
     {
         private string _category;
 
         private readonly IHubContext<DataHub> _hubContext;
-        private readonly IGroupsDataDecoder _decoder;
         // JS : 每個連線connectionId  → 訂閱了哪些 (addr, cmd)
         private readonly GlobalVar _globalVar;
-        
 
-        private readonly ConcurrentDictionary<string , List<CmdLevelSubscription>> _clientSubscriptions = new();
+
+        private readonly ConcurrentDictionary<string, List<CmdLevelSubscription>> _clientSubscriptions = new();
         // JS : 每個 SingleCommandData 資料變動時要通知哪些連線(一個Cmd可被多人訂閱)
         private readonly ConcurrentDictionary<(uint addr, string cmd), HashSet<string>> _cmdsSubscribers = new();
 
@@ -55,12 +48,9 @@ namespace demoVer.Services
         // 已經綁過事件的 CommandRawData(避免重複綁)
         private readonly HashSet<SingleCommandData> _alreadyHooked = new();
 
-        public DataChangeEventManager(IHubContext<DataHub> hubContext,
-                                        IGroupsDataDecoder decoder,
-                                        GlobalVar globalVar)
+        public DataChangeEventManager(IHubContext<DataHub> hubContext, GlobalVar globalVar)
         {
             _hubContext = hubContext;
-            _decoder = decoder;
             _globalVar = globalVar;
             _category = GetType().FullName!;
         }
@@ -70,7 +60,7 @@ namespace demoVer.Services
 
             //1. 紀錄 : Client 訂閱哪些 (Addr, cmd)，connectionId → (ConnecitonId, DeviceAddr, CommandName)
             var clientList = _clientSubscriptions.GetOrAdd(connectionId, _ => new());
-            if(clientList.Any(s => s.DeviceAddr == addr && s.CommandName == commandName))
+            if (clientList.Any(s => s.DeviceAddr == addr && s.CommandName == commandName))
                 return; //避免重複訂閱
             var sub = new CmdLevelSubscription
             {
@@ -93,104 +83,6 @@ namespace demoVer.Services
             OnCmdDataChanged(addr, commandName, cmdData);
         }
 
-        // public void SubscribeGroup(string connectionId, uint addr, string commandName, Group_CommandRawData groups)
-        // {
-        //     //1) 記錄 Client 訂閱，connectionId → (ConnecitonId, DeviceAddr, CommandName)
-        //     var clientList = _clientSubscriptions.GetOrAdd(connectionId, _ => new());
-        //     if(clientList.Any(s => s.DeviceAddr == addr && s.CommandName == commandName))
-        //         return; //避免重複訂閱
-        //     var sub = new GroupLevelSubscription
-        //     {
-        //         ConnectionId = connectionId,
-        //         DeviceAddr = addr,
-        //         CommandName = commandName
-        //     };
-        //     clientList.Add(sub);
-
-        //     //2)groups記錄有哪些 connectionId訂閱它
-        //     var key = (addr, commandName);
-        //     var connSet  = _groupsSubscribers.GetOrAdd(key, _ => new HashSet<string>());
-        //     connSet.Add(connectionId);
-
-        //     //3)綁定事件：綁在CommandRawData.OnChanged，只綁一次，以Groups判斷
-        //     EnsureHook(groups, addr, commandName);
-
-        //     //4)第一次訂閱，主動推送一次目前值
-        //     AppLogger.Log_To_File_log(_category, $"[SubscribeGroup] First Push Data", AppLogLevel.Debug);
-        //     OnGroupDataChanged(addr, commandName, groups);
-        // }
-
-        // private void OnGroupDataChanged(uint addr, string cmdName, SingleCommandData cmdData)
-        // {
-        //     var key = (addr, cmdName);
-        //     AppLogger.Log_To_File_log(_category, $"[OnGroupDataChanged] {cmdName}@{addr}", AppLogLevel.Trace);
-
-        //     try
-        //     {
-        //         // 1) decode 一次，兩邊共用
-        //         var decoded = _decoder.Decode(groups, cmdName, addr);
-
-        //         var bytes = new List<byte>();
-        //         foreach (var raw in groups.Groups.Values)
-        //             bytes.AddRange(raw.Data);
-
-        //         var args = new CmdDataChangeArgs(addr, cmdName, decoded, bytes, DateTimeOffset.UtcNow);
-
-        //         // 2) JS：SignalR 批次送
-        //         if (_groupsSubscribers.TryGetValue(key, out var jsConnIds) && jsConnIds.Count > 0)
-        //         {
-        //             _hubContext.Clients.Clients(jsConnIds).SendAsync(
-        //                 "UpdateDecodedVal", addr, cmdName, decoded, bytes
-        //             );
-        //         }
-
-        //         // 3) C#：呼叫所有委派
-        //         if (_groupsSubscribersCs.TryGetValue(key, out var handlers) && handlers.Count > 0)
-        //         {
-        //             List<Action<CmdDataChangeArgs>> snapshot;
-        //             lock (handlers)
-        //                 snapshot = handlers.ToList();
-
-        //             foreach (var h in snapshot)
-        //             {
-        //                 try { h(args); } catch { /* 避免單一 handler 影響其他人 */ }
-        //             }
-        //         }
-        //     }
-        //     catch(Exception ex)
-        //     {
-        //         AppLogger.Log_To_File_log(_category, $"[OnGroupDataChanged] Error: {ex}", AppLogLevel.Error);
-        //     }
-        /// <summary>
-        /// 下方好像原本就不會用到
-        /// </summary>
-        /// <param name="connectionId"></param>
-        //     if(_groupsSubscribers.TryGetValue(key, out var subscribers) && subscribers.Count > 0)
-        //     {
-        //         try
-        //         {
-        //             //1.decode
-        //             var tmpDecodedData = _decoder.Decode(groups, cmdName);
-        //             List<byte> data_byteList = new List<byte>();
-        //             foreach(var Raw in groups.Groups.Values)
-        //             {
-        //                 data_byteList.AddRange(Raw.Data);
-        //             }
-        //             AppLogger.Log_To_File_log(_category, $"[OnGroupDataChanged] cmdName = {cmdName}, DecodeData = {tmpDecodedData}", AppLogLevel.Trace);
-        //             //2.signalR批量發送 decode後的data
-        //             AppLogger.Log_To_File_log(_category, $"[OnGroupDataChanged] transfer...", AppLogLevel.Trace);
-
-        //             _hubContext.Clients.Clients(subscribers).SendAsync("UpdateDecodedVal", addr, cmdName, tmpDecodedData, data_byteList);
-
-        //             AppLogger.Log_To_File_log(_category, $"[OnGroupDataChanged] done.", AppLogLevel.Trace); 
-        //         }
-        //         catch(Exception ex)
-        //         {
-        //             Console.WriteLine($"Push failed for {cmdName}@{addr}: {ex.Message}");
-        //         }
-        //     }
-        // }
-
         public void UnsubscribeAll(string connectionId)
         {
             AppLogger.Log_To_File_log(_category, $"[DataChangeEventManager][UnsubscribeAll] connectionId = {connectionId} ...", AppLogLevel.Trace);
@@ -201,7 +93,7 @@ namespace demoVer.Services
                 foreach (var sub in subs)
                 {
                     var key = (sub.DeviceAddr, sub.CommandName);
-                    
+
                     //同時也去cmdsSubscribers移除connectionId
                     if (_cmdsSubscribers.TryGetValue(key, out var connSet))
                     {
@@ -215,7 +107,7 @@ namespace demoVer.Services
                             if (_hookedHandlers.TryRemove(key, out var handler))
                             {
                                 var cmdData = _globalVar.Real_Devices_ReadData.Get_oneDevice_CmdData_Ref(sub.DeviceAddr, sub.CommandName);
-                                if(cmdData is not null)
+                                if (cmdData is not null)
                                 {
                                     cmdData.OnChanged -= handler;
                                 }
@@ -245,7 +137,7 @@ namespace demoVer.Services
             }
 
             var key = (addr, cmdName);
-            
+
             if (_hookedHandlers.ContainsKey(key))
             {
                 AppLogger.Log_To_File_log(_category, $"[DataChangeEventManager][EnsureHook] already hooked: {cmdName}@{addr}", AppLogLevel.Trace);
@@ -295,7 +187,7 @@ namespace demoVer.Services
             //     }
             // }
         }
-        
+
 
         private void OnCmdDataChanged(uint addr, string cmdName, SingleCommandData cmdData)
         {
@@ -335,7 +227,7 @@ namespace demoVer.Services
                         "UpdateDecodedVal", addr, cmdName, sendValue
                     );
                 }
-                
+
                 // 3. C#: 呼叫所有委派
                 if (_cmdDataCsSubscriptions.TryGetValue(key, out var handlers) && handlers.Count > 0)
                 {
@@ -362,7 +254,7 @@ namespace demoVer.Services
             }
 
         }
-        
+
 
         // C#訂閱 : 回傳 IDisposable，方便在呼叫端 using 或 Dispose 解除訂閱
         public IDisposable SubscribeCmdCs(uint addr, string commandName, SingleCommandData cmdData, Action<CmdDataChangeArgs> handler)
@@ -409,4 +301,89 @@ namespace demoVer.Services
             }
         }
     }
+    #endregion ChangeEventManager for ReadOnly cmdData
+
+    #region ChangeEventManager for Writable cmdData
+    public class SubSysLevelSubscription
+    {
+        public string ConnectionId = string.Empty;
+        public string port = string.Empty;
+        public string protocol = string.Empty;
+    }
+
+    //針對 Writable Cmd 的 ChangeEventManager
+    public class WriteDataChangeEventManager
+    {
+        private string _category = string.Empty;
+
+        private readonly IHubContext<DataHub> _hubContext;
+
+        private readonly SubSystemManager _subsystemManager;
+        // JS : 每個連線connectionId  → 訂閱了哪些 (port, protocol)
+        private readonly ConcurrentDictionary<string, List<SubSysLevelSubscription>> _clientSubscriptions = new();
+        // JS : 每個 SubSystem 資料變動時要通知哪些連線(一個SubSystem可被多人訂閱)
+        private readonly ConcurrentDictionary<(string port, string protocol), HashSet<string>> _subSysSubscribers = new();
+        private readonly ConcurrentDictionary<(string port, string protocol), Action> _hookedHandlers = new();
+        public WriteDataChangeEventManager(IHubContext<DataHub> hubContext, SubSystemManager subsystemManager)
+        {
+            _hubContext = hubContext;
+            _subsystemManager = subsystemManager;
+            _category = GetType().FullName!;
+        }
+
+        public void SubscribeSubSystem(string connectionId, string port, string protocol, SubSystem subsys)
+        {
+            //1. 紀錄 : Client 訂閱哪些 (port, protocol)，connectionId → (ConnectionId, port, protocol)
+            var clientList = _clientSubscriptions.GetOrAdd(connectionId, _ => new());
+            if (clientList.Any(s => s.port == port && s.protocol == protocol))
+                return; //避免重複訂閱
+            var sub = new SubSysLevelSubscription
+            {
+                ConnectionId = connectionId,
+                port = port,
+                protocol = protocol
+            };
+            clientList.Add(sub);
+
+            //2. 紀錄 : (port, protocol) 有哪些ConnectionId訂閱它
+            var key = (port, protocol);
+            var connSet = _subSysSubscribers.GetOrAdd(key, _ => new HashSet<string>());
+            connSet.Add(connectionId);
+
+            //3. 綁定事件：綁在SubSystem的SettingChanged事件，只綁一次，以(port, protocol)判斷
+            EnsureHook(port, protocol, subsys);
+        }
+
+        /// <summary>
+        /// 確保只綁一次底層 OnChanged
+        /// </summary>
+        /// <param name="port"></param>
+        /// <param name="protocol"></param>
+        public void EnsureHook(string port, string protocol, SubSystem subsys)
+        {
+            if (subsys == null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[WriteDataChangeEventManager][EnsureHook] subsys is null", AppLogLevel.Trace);
+                return;
+            }
+
+            var key = (port, protocol);
+            if (_hookedHandlers.ContainsKey(key))
+            {
+                AppLogger.Log_To_File_log(_category, $"[WriteDataChangeEventManager][EnsureHook] already hooked: {protocol}@{port}", AppLogLevel.Trace);
+                return;
+            }
+            
+            Action handler = () =>
+            {
+                AppLogger.Log_To_File_log(_category, $"[WriteDataChangeEventManager][EnsureHook][SubSystem.SettingChanged] {protocol}@{port} changed", AppLogLevel.Trace);
+                if (_subSysSubscribers.TryGetValue(key, out var connIds) && connIds.Count > 0)
+                {
+                    
+                }
+            };
+            _hookedHandlers[key] = handler;
+        }
+    }
+    #endregion ChangeEventManager for Writable cmdData
 }

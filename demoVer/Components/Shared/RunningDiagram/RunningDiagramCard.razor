@@ -12,14 +12,16 @@
 <div class="running-diagram-container @CssClass" @attributes="AdditionalAttributes">
     <div class="running-diagram-container top">
         <div class="leftPart">
-            運行模式：
-            <div id="running_mode">@local_INV_MODE_str</div>
-        </div>
-        <div class="rightPart">
             <span class="subsystem-badge @GetSubsystemModeClass()" title="@GetSubsystemBadgeTooltip()">
                 @GetActiveSubsystemLabel()
             </span>
+            <div class="adaptive">運行模式：</div>
+            <div id="running_mode">@local_INV_MODE_str</div>
         </div>
+        @* <div class="rightPart">
+            
+        </div> *@
+        
         @if(showEditButton)
         {
             <button type="button"
@@ -365,8 +367,10 @@
 
     private static string GetSubsystemDisplayName(SubSystem subsystem)
     {
-        var identifier = string.IsNullOrWhiteSpace(subsystem.ModelName) ? subsystem.Protocol : subsystem.ModelName;
-        return $"{subsystem.Port} - {identifier}";
+        @* var identifier = string.IsNullOrWhiteSpace(subsystem.ModelName) ? subsystem.Protocol : subsystem.ModelName; *@
+        var identifier = subsystem.Protocol;
+        var withoutExtension_protocol = Path.GetFileNameWithoutExtension(identifier);
+        return $"{subsystem.Port} - {withoutExtension_protocol}";
     }
 
     private void SetSelectedSubsystemKey(string? key)
