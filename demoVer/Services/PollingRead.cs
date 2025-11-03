@@ -445,7 +445,6 @@ namespace demoVer.Services
                     //3. SubSystemSettingExist(用於決定是否刪除沒有在新資料中的SubSystem)
                     _subSystemManager.RegistedSubSystems[port][protocol].SubSystemSettingExist = true;
                     //4. epoch(如果與新資料不一樣，代表SettingRange需要更新)
-                    // if (_subSystemManager.RegistedSubSystems[port][protocol].epoch != part.epoch)
                     if (!string.Equals(_subSystemManager.RegistedSubSystems[port][protocol].epoch, part.epoch, StringComparison.Ordinal))
                     {
                         FireAndForgetTask(port, protocol, part.epoch);
@@ -506,6 +505,7 @@ namespace demoVer.Services
         /// 用於更新SubSystem的(在背景執行緒中執行的任務，不等待其完成。)
         /// 1. Setting Range。
         /// 2. Write_CMD Info。
+        /// 3. 
         /// </summary>
         private void FireAndForgetTask(string port, string protocol, string new_epoch)
         {
@@ -513,15 +513,14 @@ namespace demoVer.Services
             {
                 try
                 {
-                    //取得 Setting Range
-                    await _subSystemManager.GetSubSystem_SettingRange(port, protocol);
+                    //1. 取得 Setting Range
+                    await _subSystemManager.UpdateSubSystem_SettingRange(port, protocol);
 
-                    //取得 Write CMD Info
-                    await _subSystemManager.GetSubSystem_WriteCmdInfo(port, protocol);
+                    //2. 取得 Write CMD Info
+                    await _subSystemManager.UpdateSubSystem_WriteCmdInfo(port, protocol);
                     
-                    AppLogger.Log_To_File_log(_category, $"[PollingRead][FireAndForgetTask] GetSubSystem_SettingRange done for (port, protocol) = ({port}, {protocol})", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, $"[PollingRead][FireAndForgetTask] UpdateSubSystem_SettingRange done for (port, protocol) = ({port}, {protocol})", AppLogLevel.Debug);
                     //更新 epoch，以免重複呼叫 API 取得 SettingRange
-
                     _subSystemManager.RegistedSubSystems[port][protocol].epoch = new_epoch;
                 }
                 catch (Exception ex)

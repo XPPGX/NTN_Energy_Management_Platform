@@ -41,7 +41,7 @@
         <div class="leftPart">
             <div class="subsystem-select-group">
                 <label for="subsystem-select" class="local-label">子系統選擇</label>
-                <select id="subsystem-select" class="subsystem-select" value="@SelectedSubSystemKey" @onchange="OnSubSystemChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
+                <select id="subsystem-select" class="subsystem-select" value="@SelectedSubSystemKey" @onchange="Local_OnSubSystemChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
                     @if(_subSystemOptions.Count == 0)
                     {
                         <option value="">請選擇子系統</option>
@@ -197,6 +197,8 @@
 
     private string _category = "";
 
+    bool DotNetHelper_Is_OK = false;
+    bool FirstAutoGet_SubSys_done = false;
     bool modal_IsOpen = false;
     string AlertMessage_parent = null;
     string ConfirmBtn_Text_parent = null;
@@ -204,7 +206,7 @@
     public EventCallback ConfirmBtn_Func_parent {get; set;}
     public EventCallback CancelBtn_Func_parent {get; set;}
     private IReadOnlyList<SubSystem> _subSystemOptions = Array.Empty<SubSystem>();
-    private string? _selectedSubSystemKey;
+    private string? _selectedSubSystemKey = string.Empty;
     private string SelectedSubSystemKey => _selectedSubSystemKey ?? string.Empty;
     
     private bool isMobile;
@@ -215,6 +217,7 @@
 
     private bool _heartbeatSubscribed = false;
     private int _heartbeatCounter = 0;
+    private readonly Dictionary<string, (double Min, double Max)> _sliderRangeOverrides = new(StringComparer.OrdinalIgnoreCase);
 
     public class SliderItem
     {
@@ -252,10 +255,10 @@
         };
         FillRefs = new List<ElementReference>(new ElementReference[Sliders.Count]);
         ThumbRefs = new List<ElementReference>(new ElementReference[Sliders.Count]);
-        
+
         Init_Flag = true; //控制直向slider顯示
 
-        _ = RefreshSubSystemOptions();
+        // _ = RefreshSubSystemOptions();
     }
 
     protected override void OnParametersSet()
@@ -281,75 +284,66 @@
                 Heartbeat.OnTick += OnHeartbeatTickAsync;
                 _heartbeatSubscribed = true;
             }
-            
+
 
             //把JS中的chartInstances清空
             await JS.InvokeVoidAsync("destroyAllCharts");
 
             Console.WriteLine($"isMobile = {isMobile}");
             dotNetRef = DotNetObjectReference.Create(this);
-        
-            // await JS.InvokeVoidAsync("startBatteryHub", dotNetRef);
 
-            await JS.InvokeVoidAsync("setSliderBars_Info", new{
-                // cc_val = DataCenter.Battery.CC_Display,
-                // cc_controlMax = DataCenter.Battery.CC_Max_Display,
-                // cc_minValue = DataCenter.Battery.CC_Min_Display,
-                // cc_UI_MAX = DataCenter.Battery.CC_Max_Display,
-                cc_val = 0.0,
-                cc_controlMax = 0.0,
-                cc_minValue = 0.0,
-                cc_UI_MAX = 0.0,
-                cc_fill = FillRefs[0],
-                cc_thumb = ThumbRefs[0],
+            await JS.InvokeVoidAsync("startBatteryHub", dotNetRef);
+            DotNetHelper_Is_OK = true;
 
-                // tc_val = DataCenter.Battery.TC_Display,
-                // tc_controlMax = DataCenter.Battery.TC_Max_Display,
-                // tc_minValue = DataCenter.Battery.TC_Min_Display,
-                // tc_UI_MAX = DataCenter.Battery.CC_Max_Display,
-                tc_val = 0.0,
-                tc_controlMax = 0.0,
-                tc_minValue = 0.0,
-                tc_UI_Max = 0.0,
-                tc_fill = FillRefs[1],
-                tc_thumb = ThumbRefs[1],
+            // await JS.InvokeVoidAsync("setSliderBars_Info", new{
+            //     // cc_val = DataCenter.Battery.CC_Display,
+            //     // cc_controlMax = DataCenter.Battery.CC_Max_Display,
+            //     // cc_minValue = DataCenter.Battery.CC_Min_Display,
+            //     // cc_UI_MAX = DataCenter.Battery.CC_Max_Display,
+            //     cc_val = 0.0,
+            //     cc_controlMax = 0.0,
+            //     cc_minValue = 0.0,
+            //     cc_UI_MAX = 0.0,
+            //     cc_fill = FillRefs[0],
+            //     cc_thumb = ThumbRefs[0],
 
-                // cv_val = DataCenter.Battery.CV_Display,
-                // cv_controlMax = DataCenter.Battery.CV_Max_Display,
-                // cv_minValue = DataCenter.Battery.CV_Min_Display,
-                // cv_UI_MAX = DataCenter.Battery.CV_Max_Display,
-                cv_val = 0.0,
-                cv_controlMax = 0.0,
-                cv_minValue = 0.0,
-                cv_UI_Max = 0.0,
-                cv_fill = FillRefs[2],
-                cv_thumb = ThumbRefs[2],
+            //     // tc_val = DataCenter.Battery.TC_Display,
+            //     // tc_controlMax = DataCenter.Battery.TC_Max_Display,
+            //     // tc_minValue = DataCenter.Battery.TC_Min_Display,
+            //     // tc_UI_MAX = DataCenter.Battery.CC_Max_Display,
+            //     tc_val = 0.0,
+            //     tc_controlMax = 0.0,
+            //     tc_minValue = 0.0,
+            //     tc_UI_Max = 0.0,
+            //     tc_fill = FillRefs[1],
+            //     tc_thumb = ThumbRefs[1],
 
-                // fv_val = DataCenter.Battery.FV_Display,
-                // fv_controlMax = DataCenter.Battery.CV_Max_Display,
-                // fv_minValue = DataCenter.Battery.FV_Min_Display,
-                // fv_UI_MAX = DataCenter.Battery.CV_Max_Display,
-                fv_val = 0.0,
-                fv_controlMax = 0.0,
-                fv_minValue = 0.0,
-                fv_UI_Max = 0.0,
-                fv_fill = FillRefs[3],
-                fv_thumb = ThumbRefs[3],
-            });
+            //     // cv_val = DataCenter.Battery.CV_Display,
+            //     // cv_controlMax = DataCenter.Battery.CV_Max_Display,
+            //     // cv_minValue = DataCenter.Battery.CV_Min_Display,
+            //     // cv_UI_MAX = DataCenter.Battery.CV_Max_Display,
+            //     cv_val = 0.0,
+            //     cv_controlMax = 0.0,
+            //     cv_minValue = 0.0,
+            //     cv_UI_Max = 0.0,
+            //     cv_fill = FillRefs[2],
+            //     cv_thumb = ThumbRefs[2],
 
-            for(int i = 0 ; i < Sliders.Count ; i ++)
-            {
-                var slider = Sliders[i];
-                var (_, max) = GetDisplaySliderRange(slider.Label);
+            //     // fv_val = DataCenter.Battery.FV_Display,
+            //     // fv_controlMax = DataCenter.Battery.CV_Max_Display,
+            //     // fv_minValue = DataCenter.Battery.FV_Min_Display,
+            //     // fv_UI_MAX = DataCenter.Battery.CV_Max_Display,
+            //     fv_val = 0.0,
+            //     fv_controlMax = 0.0,
+            //     fv_minValue = 0.0,
+            //     fv_UI_Max = 0.0,
+            //     fv_fill = FillRefs[3],
+            //     fv_thumb = ThumbRefs[3],
+            // });
 
-                await JS.InvokeVoidAsync("updateSliderVisual", new{
-                    fill = FillRefs[i],
-                    thumb = ThumbRefs[i],
-                    value = slider.Value,
-                    displayMaxValue = max,
-                });
-            }
+
             
+
             await JS.InvokeVoidAsync("sliderUpdateFromInput", dotNetRef);
             await JS.InvokeVoidAsync("setStage", selectedStage);
 
@@ -395,15 +389,15 @@
 
             await JS.InvokeVoidAsync("setStage", selectedStage);
             await JS.InvokeVoidAsync("drawChart_Stage");
-            InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged);
         }
     }
 
 
 
-    
 
-    
+
+
 
     private void OnBatteryChanged()
     {
@@ -419,15 +413,14 @@
             _selectedSubSystemKey = null;
             return;
         }
-        //Local變數，取得最新的子系統快照
+        //Local變數，取得最新的子系統List快照
         _subSystemOptions = snapshot;
-
+        // await InvokeAsync(StateHasChanged);
         //如果目前選取的子系統仍存在，則不更動選取值
         if (!string.IsNullOrWhiteSpace(_selectedSubSystemKey) && ContainsSubSystemKey(_selectedSubSystemKey))
         {
             return;
         }
-
 
         _selectedSubSystemKey = _subSystemOptions.Count > 0
             ? BuildKey(_subSystemOptions[0].Port, _subSystemOptions[0].Protocol)
@@ -461,19 +454,19 @@
         return $"{port} - {protocol}";
     }
 
-    private Task OnSubSystemChanged(ChangeEventArgs e)
+    private async Task Local_OnSubSystemChanged(ChangeEventArgs e)
     {
         var rawValue = e.Value?.ToString();
         if (string.IsNullOrWhiteSpace(rawValue))
         {
             _selectedSubSystemKey = null;
-            return Task.CompletedTask;
+
         }
 
+        Console.WriteLine($"[Local_OnSubSystemChanged] rawValue = {rawValue}");
         _selectedSubSystemKey = ContainsSubSystemKey(rawValue) ? rawValue : null;
-
         
-        return Task.CompletedTask;
+        await subSystemSelectionChangedHandler();
     }
 
     public (string, string) GetSelectedSubSystemPortAndProtocol()
@@ -567,14 +560,11 @@
 
     private(double min, double max) GetDisplaySliderRange(string label)
     {
-        return label switch
+        if (_sliderRangeOverrides.TryGetValue(label, out var range))
         {
-            "CC" => (DataCenter.Battery.CC_Min_Display, DataCenter.Battery.CC_Max_Display),
-            "TC" => (DataCenter.Battery.TC_Min_Display, DataCenter.Battery.CC_Max_Display),
-            "CV" => (DataCenter.Battery.CV_Min_Display, DataCenter.Battery.CV_Max_Display),
-            "FV" => (DataCenter.Battery.FV_Min_Display, DataCenter.Battery.CV_Max_Display),
-            _ => (0, 100)
-        };
+            return range;
+        }
+        return (0.0, 0.0);
     }
 
     private async Task OnSliderMouseDown(MouseEventArgs e, int index, string label)
@@ -874,8 +864,8 @@
         CloseModal();
     }
 
-    [JSInvokable("OnBatteryUpdated")]
-    public void OnBatteryUpdated(JsonElement batteryData)
+    [JSInvokable("OnSubSysUpdated")]
+    public async Task OnSubSysUpdated(JsonElement SubSysConfigurableData)
     {
         // 解析 batteryData → 更新 Sliders / Timeout / Enable 等 UI
         // 然後刷新畫面
@@ -884,39 +874,98 @@
             PropertyNameCaseInsensitive = true
         };
 
-        var ReceiveData_FromSignalR = batteryData.Deserialize<BatterySetting_To_JS>(options);
+        var ReceiveData_FromSignalR = SubSysConfigurableData.Deserialize<PageUsableVars>(options);
         if (ReceiveData_FromSignalR == null)
         {
             Console.WriteLine("❌ 無法反序列化 BatterySetting_To_JS");
             return;
         }
-        Console.WriteLine("🔁 收到 BatterySetting 更新");
+        Console.WriteLine("🔁 收到 SubSysConfigurableData 更新");
 
+        await JS.InvokeVoidAsync("setSliderBars_Info", new{
+            cc_val = ReceiveData_FromSignalR.CURVE_CC_val,
+            cc_controlMax = ReceiveData_FromSignalR.CURVE_CC_Max_val,
+            cc_minValue = ReceiveData_FromSignalR.CURVE_CC_Min_val,
+            cc_UI_MAX = ReceiveData_FromSignalR.CURVE_CC_Max_val,
+            cc_fill = FillRefs[0],
+            cc_thumb = ThumbRefs[0],
 
-        //這邊的資料目前不影響UI畫面(Sliders只影響初始值)
-        Sliders[0].Value    = ReceiveData_FromSignalR.cc_Display;
-        Sliders[1].Value    = ReceiveData_FromSignalR.tc_Display;
-        Sliders[2].Value    = ReceiveData_FromSignalR.cv_Display;
-        Sliders[3].Value    = ReceiveData_FromSignalR.fv_Display;
+            tc_val = ReceiveData_FromSignalR.CURVE_TC_val,
+            tc_controlMax = ReceiveData_FromSignalR.CURVE_TC_Max_val,
+            tc_minValue = ReceiveData_FromSignalR.CURVE_TC_Min_val,
+            tc_UI_Max = ReceiveData_FromSignalR.CURVE_CC_Max_val,
+            tc_fill = FillRefs[1],
+            tc_thumb = ThumbRefs[1],
 
-        selectedStage       = ReceiveData_FromSignalR.curveStage;
-        
-        CCT_Enable          = ReceiveData_FromSignalR.cct_Enable;
-        CC_Timeout_value    = ReceiveData_FromSignalR.cc_TimeOut_Display;
-        CVT_Enable          = ReceiveData_FromSignalR.cvt_Enable;
-        CV_Timeout_value    = ReceiveData_FromSignalR.cv_TimeOut_Display;
-        FVT_Enable          = ReceiveData_FromSignalR.fvt_Enable;
-        FV_Timeout_value    = ReceiveData_FromSignalR.fv_TimeOut_Display;
-        
-        InvokeAsync(StateHasChanged);
+            cv_val = ReceiveData_FromSignalR.CURVE_CV_val,
+            cv_controlMax = ReceiveData_FromSignalR.CURVE_CV_Max_val,
+            cv_minValue = ReceiveData_FromSignalR.CURVE_CV_Min_val,
+            cv_UI_Max = ReceiveData_FromSignalR.CURVE_CV_Max_val,
+            cv_fill = FillRefs[2],
+            cv_thumb = ThumbRefs[2],
+
+            fv_val = ReceiveData_FromSignalR.CURVE_FV_val,
+            fv_controlMax = ReceiveData_FromSignalR.CURVE_CV_Max_val,
+            fv_minValue = ReceiveData_FromSignalR.CURVE_FV_Min_val,
+            fv_UI_Max = ReceiveData_FromSignalR.CURVE_CV_Max_val,
+            fv_fill = FillRefs[3],
+            fv_thumb = ThumbRefs[3],
+        });
+
+        await JS.InvokeVoidAsync("refreshSliderVisuals");
+
+        _sliderRangeOverrides["CC"] = (ReceiveData_FromSignalR.CURVE_CC_Min_val, ReceiveData_FromSignalR.CURVE_CC_Max_val);
+        _sliderRangeOverrides["TC"] = (ReceiveData_FromSignalR.CURVE_TC_Min_val, ReceiveData_FromSignalR.CURVE_TC_Max_val);
+        _sliderRangeOverrides["CV"] = (ReceiveData_FromSignalR.CURVE_CV_Min_val, ReceiveData_FromSignalR.CURVE_CV_Max_val);
+        _sliderRangeOverrides["FV"] = (ReceiveData_FromSignalR.CURVE_FV_Min_val, ReceiveData_FromSignalR.CURVE_FV_Max_val);
+
+        Sliders[0].Value    = ReceiveData_FromSignalR.CURVE_CC_val;
+        Sliders[1].Value    = ReceiveData_FromSignalR.CURVE_TC_val;
+        Sliders[2].Value    = ReceiveData_FromSignalR.CURVE_CV_val;
+        Sliders[3].Value    = ReceiveData_FromSignalR.CURVE_FV_val;
+
+        selectedStage       = ReceiveData_FromSignalR.selectStage;
+
+        CCT_Enable          = ReceiveData_FromSignalR.CCT_Enable;
+        CC_Timeout_value    = (int)ReceiveData_FromSignalR.CC_Timeout_val;
+        CVT_Enable          = ReceiveData_FromSignalR.CVT_Enable;
+        CV_Timeout_value    = (int)ReceiveData_FromSignalR.CV_Timeout_val;
+        FVT_Enable          = ReceiveData_FromSignalR.FVT_Enable;
+        FV_Timeout_value    = (int)ReceiveData_FromSignalR.FV_Timeout_val;
+
+        await InvokeAsync(StateHasChanged);
     }
 
-    
+    private async Task ReSubscribeSubSys()
+    {
+        //1. [JS]嘗試解除當前訂閱的子系統
+        await JS.InvokeVoidAsync("unsubscribeAllSubSys");
+        //2. [JS]訂閱新的子系統
+        var (port, protocol) = GetSelectedSubSystemPortAndProtocol();
+        Console.WriteLine($"[ReSubscribeSubSys] port = {port}, protocol = {protocol}");
+        await JS.InvokeVoidAsync("subscribeBatteryHub", port, protocol);
+    }
+
+    private async Task InitVerticalSliders()
+    {
+        
+    }
+
+    private async Task subSystemSelectionChangedHandler()
+    {
+        //1. 重新訂閱子系統
+        await ReSubscribeSubSys();
+        // await InitVerticalSliders();
+    }
 
     private async Task OnHeartbeatTickAsync()
     {
         await RefreshSubSystemOptions();
-
+        if(FirstAutoGet_SubSys_done is false && DotNetHelper_Is_OK is true)
+        {
+            FirstAutoGet_SubSys_done = true;
+            await subSystemSelectionChangedHandler();
+        }
         await InvokeAsync(StateHasChanged);
     }
 

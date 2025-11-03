@@ -33,7 +33,15 @@ window.sliderBars_Info =
     },
 };
 
-//從C#傳入JS的東西一律小寫，較不容易出錯
+function computeVisualPercent(value, max) {
+    if (!Number.isFinite(value)) {
+        return 0;
+    }
+    const safeMax = Number.isFinite(max) && max > 0 ? max : 1;
+    const ratio = Math.min(Math.max(value / safeMax, 0), 1);
+    return ratio * 100;
+}
+
 window.setSliderBars_Info = function(config)
 {   
     console.log("CONFIG : ", config);
@@ -70,6 +78,7 @@ window.setSliderBars_Info = function(config)
 
     console.log(sliderBars_Info["CC"].currentVal);
     initializeSliderInputs();
+    refreshSliderVisuals();
 }
 
 window.initializeSliderInputs = function() {
@@ -81,6 +90,25 @@ window.initializeSliderInputs = function() {
         const val = sliderBars_Info[label].currentVal;
         window.drawChart_Stage();
         input.value = val.toFixed(1);
+    }
+}
+
+window.refreshSliderVisuals = function() {
+    const labels = ["CC", "TC", "CV", "FV"];
+    for (let i = 0; i < labels.length; i++) {
+        const label = labels[i];
+        const info = sliderBars_Info[label];
+        if (!info || !info.fill || !info.thumb) {
+            continue;
+        }
+
+        const maxForVisual = Number.isFinite(info.UI_max) && info.UI_max > 0
+            ? info.UI_max
+            : info.selfMax;
+
+        const percent = computeVisualPercent(info.currentVal, maxForVisual);
+        info.fill.style.height = `${percent}%`;
+        info.thumb.style.bottom = `${percent}%`;
     }
 }
 

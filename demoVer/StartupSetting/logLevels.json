@@ -14,7 +14,8 @@
     "demoVer.Models.SubSystem"                  : 1,
     "demoVer.Models.SubAppSystem_WriteMemory"   : 2,
     "demoVer.Services.DataChangeEventManager"   : 2,
-    "demoVer.Services.ApiManager"               : 2,
+    "demoVer.Services.WriteDataChangeEventManager" : 0,
+    "demoVer.Services.ApiManager"               : 0,
     "demoVer.Services.GroupsDataDecoder"        : 2,
     "demoVer.Services.PollingRead"              : 1,
     "demoVer.Services.WriteProcess"             : 2,
@@ -24,5 +25,6 @@
     "demoVer.Services.CommonData"               : 2,
     "demoVer.Services.DataCenter"               : 2,
     "demoVer.Services.SqlProcessor"             : 2,
-    "demoVer.Services.SubSystemManager"         : 0
+    "demoVer.Services.SubSystemManager"         : 0,
+    "demoVer.Utils.GetNowValueHelper"           : 0
 }

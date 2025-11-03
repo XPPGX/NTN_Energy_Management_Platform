@@ -489,7 +489,7 @@ window.setStage = function(option)
         window.stageChartStorage.stageOption = option;
         oldStageOption = option;
         // updateStageData();
-        if(window.stageChartStorage.stageOption == 0) // 2 stage 
+        if(window.stageChartStorage.stageOption == 1) // 2 stage 
         {
             //clear the lists
             window.stageChartStorage.stage2.labels.length = 3;
@@ -500,7 +500,7 @@ window.setStage = function(option)
 
             window.CV_Value_to_FV("CV", window.sliderBars_Info["CV"].currentVal);
         }
-        else if(window.stageChartStorage.stageOption == 1) // 3 stage
+        else if(window.stageChartStorage.stageOption == 0) // 3 stage
         {
             //clear the lists
             window.stageChartStorage.stage3.labels.length = 5;

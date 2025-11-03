@@ -45,8 +45,6 @@ namespace demoVer.Services
         // C# : 訂閱(addr, cmd) -> handlers
         // private readonly ConcurrentDictionary<(uint addr, string cmd), List<Action<CmdDataChangeArgs>>> _groupsSubscribersCs = new();
         private readonly ConcurrentDictionary<(uint addr, string cmd), List<Action<CmdDataChangeArgs>>> _cmdDataCsSubscriptions = new();
-        // 已經綁過事件的 CommandRawData(避免重複綁)
-        private readonly HashSet<SingleCommandData> _alreadyHooked = new();
 
         public DataChangeEventManager(IHubContext<DataHub> hubContext, GlobalVar globalVar)
         {
@@ -112,8 +110,6 @@ namespace demoVer.Services
                                     cmdData.OnChanged -= handler;
                                 }
                                 AppLogger.Log_To_File_log(_category, $"[DataChangeEventManager][UnsubscribeAll] Unhook handler for : {key}", AppLogLevel.Trace);
-                                //無法直接移除事件，只能用旗標方式
-                                // cmdData.OnChanged -= handler;
                             }
                         }
                     }
@@ -157,35 +153,6 @@ namespace demoVer.Services
             _hookedHandlers.TryAdd(key, handler);
 
             AppLogger.Log_To_File_log(_category, $"[DataChangeEventManager][EnsureHook] Hooked handler for : {cmdName}@{addr}", AppLogLevel.Trace);
-
-
-            // if (_alreadyHooked.Add(cmdData))
-            // {
-
-            //     AppLogger.Log_To_File_log(_category, $"[DataChangeEventManager][EnsureHook] hook raw events: {cmdName}@{addr}", AppLogLevel.Trace);
-            //     cmdData.OnChanged += () =>
-            //     {
-            //         AppLogger.Log_To_File_log(_category, $"[DataChangeEventManager][EnsureHook][CmdData.OnChanged] {cmdName}@{addr} changed", AppLogLevel.Trace);
-            //         var key = (addr, cmdName);
-            //         if (_cmdsSubscribers.TryGetValue(key, out var connIds) && connIds.Count > 0)
-            //         {
-            //             OnCmdDataChanged(addr, cmdName, cmdData);
-            //         }
-            //     };
-            // }
-
-            // if (_alreadyHooked.Add(groups))
-            // {
-            //     AppLogger.Log_To_File_log(_category, $"[DataChangeEventManager][EnsureHook] hook raw events: {cmdName}@{addr}", AppLogLevel.Trace);
-            //     foreach (var raw in groups.Groups.Values)
-            //     {
-            //         raw.OnChanged += () =>
-            //         {
-            //             AppLogger.Log_To_File_log(_category, $"[DataChangeEventManager][Raw.OnChanged] groupIndex={raw.GroupIndex}", AppLogLevel.Trace);
-            //             OnGroupDataChanged(addr, cmdName, groups);
-            //         };
-            //     }
-            // }
         }
 
 
@@ -352,6 +319,46 @@ namespace demoVer.Services
 
             //3. 綁定事件：綁在SubSystem的SettingChanged事件，只綁一次，以(port, protocol)判斷
             EnsureHook(port, protocol, subsys);
+            //4. 第一次訂閱，主動推送一次目前值
+            OnSubSystemChanged(port, protocol, subsys);
+            AppLogger.Log_To_File_log(_category, $"[WriteDataChangeEventManager][Subscribe Cmd] First Push Data", AppLogLevel.Debug);
+        }
+
+        public void UnsubscribeAll(string connectionId)
+        {
+            AppLogger.Log_To_File_log(_category, $"[WriteDataChangeEventManager][UnsubscribeAll] connectionId = {connectionId} ...", AppLogLevel.Trace);
+            //從clientSubscriptions移除所有訂閱(port, protocol)
+            if (_clientSubscriptions.TryRemove(connectionId, out var subs))
+            {
+
+                foreach (var sub in subs) //這裡的subs是SubSysLevelSubscription
+                {
+                    var key = (sub.port, sub.protocol);
+
+                    //同時也去subSysSubscribers移除connectionId
+                    if (_subSysSubscribers.TryGetValue(key, out var connSet))
+                    {
+                        AppLogger.Log_To_File_log(_category, $"(port, protocol) = {key}, found connectionId = {connectionId}", AppLogLevel.Trace);
+                        connSet.Remove(connectionId);
+                        if (connSet.Count == 0)
+                        {
+                            _subSysSubscribers.TryRemove(key, out _);
+
+                            //移除綁定的事件
+                            if (_hookedHandlers.TryRemove(key, out var handler))
+                            {
+                                var subsys = _subsystemManager.GetOneSubSystem_Ref(sub.port, sub.protocol);
+                                if (subsys is not null)
+                                {
+                                    subsys.OnChanged -= handler;
+                                }
+                                AppLogger.Log_To_File_log(_category, $"[WriteDataChangeEventManager][UnsubscribeAll] Unhook handler for : {key}", AppLogLevel.Trace);
+                            }
+                        }
+                    }
+                }
+            }
+            AppLogger.Log_To_File_log(_category, $"[WriteDataChangeEventManager][UnsubscribeAll] done.", AppLogLevel.Trace);
         }
 
         /// <summary>
@@ -373,16 +380,42 @@ namespace demoVer.Services
                 AppLogger.Log_To_File_log(_category, $"[WriteDataChangeEventManager][EnsureHook] already hooked: {protocol}@{port}", AppLogLevel.Trace);
                 return;
             }
-            
+
             Action handler = () =>
             {
                 AppLogger.Log_To_File_log(_category, $"[WriteDataChangeEventManager][EnsureHook][SubSystem.SettingChanged] {protocol}@{port} changed", AppLogLevel.Trace);
                 if (_subSysSubscribers.TryGetValue(key, out var connIds) && connIds.Count > 0)
                 {
-                    
+                    OnSubSystemChanged(port, protocol, subsys);
                 }
             };
+
+            subsys.OnChanged += handler;
             _hookedHandlers[key] = handler;
+            AppLogger.Log_To_File_log(_category, $"[WriteDataChangeEventManager][EnsureHook] Hooked handler for : {protocol}@{port}", AppLogLevel.Trace);
+        }
+        
+        public void OnSubSystemChanged(string port, string protocol, SubSystem subsys)
+        {
+            var key = (port, protocol);
+            AppLogger.Log_To_File_log(_category, $"[OnSubSystemChanged] {protocol}@{port}", AppLogLevel.Trace);
+            try
+            {
+                // 1. 取資料
+                var sendValue = subsys.nowConfigurableVars; //這裡直接送整個Class出去，由Js傳回C#的時候取出當前設定頁面需要的值
+
+                // 2. JS：SignalR 批次送
+                if (_subSysSubscribers.TryGetValue(key, out var jsConnIds) && jsConnIds.Count > 0)
+                {
+                    _hubContext.Clients.Clients(jsConnIds).SendAsync(
+                        "UpdateNowConfigurableVars", port, protocol, sendValue
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[OnSubSystemChanged] Error: {ex}", AppLogLevel.Error);
+            }
         }
     }
     #endregion ChangeEventManager for Writable cmdData

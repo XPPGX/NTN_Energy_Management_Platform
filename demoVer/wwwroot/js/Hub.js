@@ -26,8 +26,46 @@ window.startBatteryHub = async function(dotNetHelper) {
 
         dotNetHelper.invokeMethodAsync("OnBatteryUpdated", batteryData);
     });
+
+    connection_Battery_Hub.on("UpdateNowConfigurableVars", function(port, protocol, sendValue)
+    {
+        console.log("🔔 Received UpdateNowConfigurableVars");
+        console.log(`Port: ${port}, Protocol: ${protocol}`);
+        console.log(sendValue);
+
+        dotNetHelper.invokeMethodAsync("OnSubSysUpdated", sendValue);
+    })
+
     await connection_Battery_Hub.start();
     console.log("✅ SignalR connected (non-module)");
+}
+
+window.subscribeBatteryHub = async function(port, protocol)
+{
+    if(!connection_Battery_Hub){
+        console.log("Battery Hub connection is not established.");
+        return;
+    }
+    if(port == null || protocol == null){
+        console.log("Port or Protocol is null. Cannot subscribe to subsystem.");
+        return;
+    }
+
+    await connection_Battery_Hub.invoke("SubscribeSubSys", port, protocol);
+}
+
+window.unsubscribeAllSubSys = async function()
+{
+    if(connection_Battery_Hub)
+    {
+        await connection_Battery_Hub.invoke("UnsubscribeAllSubSys");
+        console.log("📭 All subsystem subscriptions removed.");
+    }
+    if(connection_INV_Hub)
+    {
+        await connection_INV_Hub.invoke("UnsubscribeAllSubSys");
+        console.log("📭 All subsystem subscriptions removed.");
+    }
 }
 
 window.Sync_Sliders_And_Inputs = function(batteryData)
@@ -496,7 +534,8 @@ window.unsubscribeAllCmds = async function()
 {
     if(connection_READ_DATA_Hub)
     {
-        await connection_READ_DATA_Hub.invoke("unsubscribeAllCmds");
+        await connection_READ_DATA_Hub.invoke("UnsubscribeAllCmds");
         console.log("📭 All command subscriptions removed.");
     }
 }
+

@@ -35,8 +35,8 @@ namespace demoVer.Models
         }
         public Dictionary<byte, string> ACF_DisplayMap = new()
         {
-            {0, "50Hz"},
-            {1, "60Hz"}
+            {1, "50Hz"},
+            {2, "60Hz"}
         };
         public string ACF_Display_str
         {
@@ -66,17 +66,17 @@ namespace demoVer.Models
 
             if(_AC_Series == 0)
             {
-                ACV_DisplayMap.Add(0, "100VAC");
-                ACV_DisplayMap.Add(1, "110VAC");
-                ACV_DisplayMap.Add(2, "115VAC");
-                ACV_DisplayMap.Add(3, "120VAC");
+                ACV_DisplayMap.Add(1, "100VAC");
+                ACV_DisplayMap.Add(2, "110VAC");
+                ACV_DisplayMap.Add(3, "115VAC");
+                ACV_DisplayMap.Add(4, "120VAC");
             }
             else if(_AC_Series == 1)
             {
-                ACV_DisplayMap.Add(0, "200VAC");
-                ACV_DisplayMap.Add(1, "220VAC");
-                ACV_DisplayMap.Add(2, "230VAC");
-                ACV_DisplayMap.Add(3, "240VAC");
+                ACV_DisplayMap.Add(1, "200VAC");
+                ACV_DisplayMap.Add(2, "220VAC");
+                ACV_DisplayMap.Add(3, "230VAC");
+                ACV_DisplayMap.Add(4, "240VAC");
             }
         }
         public string ACV_Display_str

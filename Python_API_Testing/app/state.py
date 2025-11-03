@@ -119,15 +119,53 @@ class AppState:
         self,
         filename: Path | str = DEFAULT_REAL_WRITE_FILE,
     ) -> None:
-        data = self._load_json(filename)
-        if not isinstance(data, dict):
-            raise ValueError("REAL_WRITE_STORE expects a JSON object")
-
-        self._real_write_store = data
+        self._real_write_store = self._load_real_write_store(filename)
         print(
             "Init finished. REAL_WRITE_STORE loaded:"
             f" {list(self._real_write_store.keys())}"
         )
+
+    def _load_real_write_store(
+        self,
+        filename: Path | str = DEFAULT_REAL_WRITE_FILE,
+    ) -> Dict[str, Any]:
+        try:
+            data = self._load_json(filename)
+        except FileNotFoundError as exc:  # pragma: no cover - surface issue upstream
+            raise ValueError(f"REAL_WRITE_STORE source {filename} missing") from exc
+
+        if not isinstance(data, dict):
+            raise ValueError("REAL_WRITE_STORE expects a JSON object")
+
+        return data
+
+    def _write_real_write_store(
+        self,
+        filename: Path | str = DEFAULT_REAL_WRITE_FILE,
+    ) -> None:
+        path = Path(filename)
+        if not path.is_absolute():
+            path = self.base_dir / path
+
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("w", encoding="utf-8") as handle:
+            json.dump(self._real_write_store, handle, indent=4)
+
+    def _load_partition_status_payload(
+        self,
+        filename: Path | str = PARTITION_STATUS_FILE,
+    ) -> Dict[str, Any]:
+        try:
+            payload = self._load_json(filename)
+        except FileNotFoundError as exc:  # pragma: no cover - surface config issue upstream
+            raise ValueError(f"partition-status source {filename} missing") from exc
+        except json.JSONDecodeError as exc:  # pragma: no cover - invalid JSON is operational error
+            raise ValueError(f"partition-status source {filename} invalid: {exc}") from exc
+
+        if not isinstance(payload, dict):
+            raise ValueError("partition-status payload must be a JSON object")
+
+        return payload
 
     # ------------------------------------------------------------------
     # Route backends
@@ -245,12 +283,13 @@ class AppState:
         return self._real_write_store
 
     def update_real_write_store(self, file_name: str, payload: List[Dict[str, Any]]) -> None:
+        self._real_write_store = self._load_real_write_store()
         key = self._resolve_real_write_key(file_name)
         self._real_write_store[key] = payload
+        self._write_real_write_store()
 
     def get_real_write_payload(self, type_hint: Optional[str]) -> Dict[str, Any]:
-        if not self._real_write_store:
-            raise ValueError("REAL_WRITE_STORE not initialized")
+        self._real_write_store = self._load_real_write_store()
 
         payload = self._clone_real_write_store()
         type_upper = (type_hint or "").strip().upper()
@@ -265,9 +304,7 @@ class AppState:
         return payload
 
     def get_partition_status(self, port: Optional[str], protocol: Optional[str]) -> Dict[str, Any]:
-        payload = self._load_json(PARTITION_STATUS_FILE)
-        if not isinstance(payload, dict):
-            raise ValueError("partition-status payload must be a JSON object")
+        payload = self._load_partition_status_payload()
 
         if port is not None:
             payload["port"] = port

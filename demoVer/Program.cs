@@ -50,6 +50,7 @@ builder.Services.AddSingleton<LinkAddrManager>();
 builder.Services.AddSingleton<DataCenter>();
 builder.Services.AddSingleton<GlobalVar>();
 builder.Services.AddSingleton<DataChangeEventManager>();
+builder.Services.AddSingleton<WriteDataChangeEventManager>();
 builder.Services.AddSingleton<IGroupsDataDecoder, GroupsDataDecoder>();
 builder.Services.AddSingleton<CircuitsWatcher>();
 builder.Services.AddSingleton<SqlProcessor>();
