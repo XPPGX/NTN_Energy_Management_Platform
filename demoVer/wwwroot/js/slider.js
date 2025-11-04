@@ -422,5 +422,6 @@ window.CV_Value_to_FV = function(label, value)
 }
 
 window.transferSliderValue = function(){
-    return [sliderBars_Info["CC"].currentVal, sliderBars_Info["TC"].currentVal, sliderBars_Info["CV"].currentVal, sliderBars_Info["FV"].currentVal];
+    console.log(`transferSliderValue called : CC = ${sliderBars_Info["CC"].currentVal}, CV = ${sliderBars_Info["CV"].currentVal}, FV = ${sliderBars_Info["FV"].currentVal}, TC = ${sliderBars_Info["TC"].currentVal}`);
+    return [sliderBars_Info["CC"].currentVal, sliderBars_Info["CV"].currentVal, sliderBars_Info["FV"].currentVal, sliderBars_Info["TC"].currentVal];
 };

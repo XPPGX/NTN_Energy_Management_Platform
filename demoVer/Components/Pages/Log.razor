@@ -36,93 +36,62 @@
         }
         else
         {
-            <!-- Step 1 -->
-            <div class="@GetStepClass(1)" @onclick="() => GoStep(1)" @onclick:stopPropagation="true">
-                @if (currentStep == LogType)
-                {
-                    <label for="logType">Log Type</label>
-                    <select id="logType" @onchange="OnLogTypeChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
-                        <option value="">-- Select --</option>
-                        <option value="event">Event Log</option>
-                        <option value="data">Data Log</option>
-                    </select>
-
-                    if(string.Equals(selectedLogType, "data", StringComparison.OrdinalIgnoreCase))
-                    {
-                        <div class="radio-group" @onchange:stopPropagation="true" @onclick:stopPropagation="true">
-                            <label class="radio-option">
-                                <input type="radio" name="DataType" value="CAN" @onchange="DataTypeChanged"/>
-                                <span class="radio-label">CAN Data</span>
-                            </label>
-                            
-                            <label class="radio-option">
-                                <input type="radio" name="DataType" value="MOD" @onchange="DataTypeChanged"/>
-                                <span class="radio-label">MOD Data</span>
-                            </label>
-                        </div>
-                    }
-                }
-                else
-                {
-                    <div class="card-inner">
-                        <div class="collapsed-label">
-                            Log Type: @(selectedLogType ?? "未選擇")
-                        </div>
-                    </div>
-                }
-            </div>
-
-            <!-- Step 2 -->
-            <div class="@GetStepClass(2)" @onclick="() => GoStep(2)" @onclick:stopPropagation="true">
-                @if (currentStep == Date)
-                {
-                    <div class="dateCol">
+            <div class="filter-card card-container-base" @onclick:stopPropagation="true">
+                <div class="filter-grid">
+                    <div class="filter-group">
+                        <label class="filter-label" for="logType" style="margin-bottom: 0px;">Log Type</label>
                         
-                        <div class="dateRow">
-                            <label for="startDate">Start Date</label>
-                            <div class="dateInputs">
-                                <input type="date" id="startDate" @bind="selectedStartDate" placeholder="點擊選擇日期" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
-                                <input type="time" id="startTime" @bind="selectedStartTime" placeholder="點擊選擇時間" @onclick:stopPropagation="true" @onchange:stopPropagation="true"/>
+                        <select id="logType" class="filter-select" value="@selectedLogType" @onchange="OnLogTypeChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
+                            <option value="">-- Select --</option>
+                            <option value="event">Event Log</option>
+                            <option value="data">Data Log</option>
+                        </select>
+
+                        @if (string.Equals(selectedLogType, "data", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <div class="radio-group" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
+                                <label class="radio-option">
+                                    <input type="radio" name="DataType" value="CAN" checked="@string.Equals(selectedDataType, "CAN", StringComparison.OrdinalIgnoreCase)" @onchange="DataTypeChanged" />
+                                    <span class="radio-label">CAN Data</span>
+                                </label>
+
+                                <label class="radio-option">
+                                    <input type="radio" name="DataType" value="MOD" checked="@string.Equals(selectedDataType, "MOD", StringComparison.OrdinalIgnoreCase)" @onchange="DataTypeChanged" />
+                                    <span class="radio-label">MOD Data</span>
+                                </label>
                             </div>
-                        </div>
-                        
-                        <div class="dateRow">
-                            <label for="endDate">End Date</label>
-                            <div class="dateInputs">
-                                <input type="date" id="endDate" @bind="selectedEndDate" placeholder="點擊選擇日期" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
-                                <input type="time" id="endTime" @bind="selectedEndTime" placeholder="點擊選擇時間" @onclick:stopPropagation="true" @onchange:stopPropagation="true"/>
+                        }
+                    </div>
+
+                    <div class="filter-group filter-group-dates">
+                        <span class="filter-label">Date Range</span>
+                        <div class="dateCol">
+                            <div class="dateRow">
+                                <label for="startDate">Start Date</label>
+                                <div class="dateInputs">
+                                    <input type="date" id="startDate" @bind="selectedStartDate" placeholder="點擊選擇日期" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
+                                    <input type="time" id="startTime" @bind="selectedStartTime" placeholder="點擊選擇時間" @onclick:stopPropagation="true" @onchange:stopPropagation="true" />
+                                </div>
+                            </div>
+
+                            <div class="dateRow">
+                                <label for="endDate">End Date</label>
+                                <div class="dateInputs">
+                                    <input type="date" id="endDate" @bind="selectedEndDate" placeholder="點擊選擇日期" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
+                                    <input type="time" id="endTime" @bind="selectedEndTime" placeholder="點擊選擇時間" @onclick:stopPropagation="true" @onchange:stopPropagation="true" />
+                                </div>
                             </div>
                         </div>
                     </div>
-                }
-                else
-                {
-                    <div class="card-inner">
-                        <div class="collapsed-label">                            
-                            Date: @(selectedStartDate?.ToShortDateString() ?? "未選擇")
-                            ~ @(selectedEndDate?.ToShortDateString() ?? "未選擇")
-                        </div>
-                    </div>
-                }
-            </div>
 
-            <!-- Step 3 -->
-            <div class="@GetStepClass(3)" @onclick="() => GoStep(3)" @onclick:stopPropagation="true">
-                @if (currentStep == Btn)
-                {
-                    <div class="button-row">
-                        <button class="btn btn-blue" @onclick="searchClick" @onclick:stopPropagation="true">查詢</button>
-                        <button class="btn btn-red" @onclick="exportClick" @onclick:stopPropagation="true">匯出</button>
-                    </div>
-                }
-                else
-                {
-                    <div class="card-inner">
-                        <div class="collapsed-label">
-                            操作選項
+                    <div class="filter-group filter-actions">
+                        <span class="filter-label">Actions</span>
+                        <div class="button-row" @onclick:stopPropagation="true">
+                            <button class="btn btn-blue" @onclick="searchClick" @onclick:stopPropagation="true">查詢</button>
+                            <button class="btn btn-red" @onclick="exportClick" @onclick:stopPropagation="true">匯出</button>
                         </div>
                     </div>
-                }
+                </div>
             </div>
         }
     </div>

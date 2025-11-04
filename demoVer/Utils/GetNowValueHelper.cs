@@ -54,27 +54,27 @@ namespace demoVer.Utils
                 }
 
                 //取Bit6(CurveStage)
-                if (cmdSettingData.Target.Bits.TryGetValue("Bit_6", out int val))
+                if (cmdSettingData.Target.Bits.TryGetValue("BIT_6", out int val))
                 {
                     if (val == 1) { selectStage = true; }
                     else { selectStage = false; }
                 }
 
                 //取Bit8 (CCT_Enable)
-                if (cmdSettingData.Target.Bits.TryGetValue("Bit_8", out int val2))
+                if (cmdSettingData.Target.Bits.TryGetValue("BIT_8", out int val2))
                 {
                     if (val2 == 1) { CCT_Enable = true; }
                     else { CCT_Enable = false; }
                 }
 
                 //取Bit9 (CVT_Enable)
-                if (cmdSettingData.Target.Bits.TryGetValue("Bit_9", out int val3))
+                if (cmdSettingData.Target.Bits.TryGetValue("BIT_9", out int val3))
                 {
                     if (val3 == 1) { CVT_Enable = true; }
                     else { CVT_Enable = false; }
                 }
                 //取Bit10 (FVT_Enable)
-                if (cmdSettingData.Target.Bits.TryGetValue("Bit_10", out int val4))
+                if (cmdSettingData.Target.Bits.TryGetValue("BIT_10", out int val4))
                 {
                     if (val4 == 1) { FVT_Enable = true; }
                     else { FVT_Enable = false; }
@@ -167,7 +167,7 @@ namespace demoVer.Utils
                 }
 
                 //取OutputPriority
-                if (cmdSettingData.Target.Bits.TryGetValue("Bit_0", out int val1))
+                if (cmdSettingData.Target.Bits.TryGetValue("BIT_0", out int val1))
                 {
                     outputPrio = val1 switch
                     {
@@ -178,7 +178,7 @@ namespace demoVer.Utils
                     };
                 }
                 //取ChargingPriority
-                if (cmdSettingData.Target.Bits.TryGetValue("Bit_2", out int val2))
+                if (cmdSettingData.Target.Bits.TryGetValue("BIT_2", out int val2))
                 {
                     chargingPrio = val2 switch
                     {
@@ -231,12 +231,12 @@ namespace demoVer.Utils
                 }
 
                 //取CHG_EN
-                if (cmdSettingData.Target.Bits.TryGetValue("Bit_2", out int val1))
+                if (cmdSettingData.Target.Bits.TryGetValue("BIT_2", out int val1))
                 {
                     CHG_EN = val1 == 1;
                 }
                 //取GRID_EN
-                if (cmdSettingData.Target.Bits.TryGetValue("Bit_3", out int val2))
+                if (cmdSettingData.Target.Bits.TryGetValue("BIT_3", out int val2))
                 {
                     GRID_EN = val2 == 1;
                 }
@@ -282,7 +282,7 @@ namespace demoVer.Utils
                 }
 
                 //取Bit0 (ACF_Enable)
-                if (cmdSettingData.Target.Bits.TryGetValue("Bit_0", out int val))
+                if (cmdSettingData.Target.Bits.TryGetValue("BIT_0", out int val))
                 {
                     switch (val)
                     {
@@ -339,7 +339,7 @@ namespace demoVer.Utils
                 }
 
                 //取Bit1 (ACV_Enable)
-                if (cmdSettingData.Target.Bits.TryGetValue("Bit_4", out int val))
+                if (cmdSettingData.Target.Bits.TryGetValue("BIT_4", out int val))
                 {
                     switch (val)
                     {

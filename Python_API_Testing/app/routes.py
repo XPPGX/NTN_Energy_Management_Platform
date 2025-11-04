@@ -5,6 +5,41 @@ from flask import Blueprint, jsonify, request
 from .state import AppState
 
 
+def _infer_protocol_from_payload(payload: object) -> str | None:
+    if isinstance(payload, dict):
+        protocol = _ci_get(payload, "protocol")
+        if isinstance(protocol, str) and protocol:
+            return protocol
+        return None
+
+    if isinstance(payload, list):
+        for item in payload:
+            if not isinstance(item, dict):
+                continue
+            protocol = _ci_get(item, "protocol")
+            if isinstance(protocol, str) and protocol:
+                return protocol
+    return None
+
+
+def _ci_get(mapping: object, key: str, default=None):
+    if not isinstance(mapping, dict):
+        return default
+    lowered = key.lower()
+    for existing_key, value in mapping.items():
+        if isinstance(existing_key, str) and existing_key.lower() == lowered:
+            return value
+    return default
+
+
+def _get_query_arg(args, key: str):
+    lowered = key.lower()
+    for existing_key in args.keys():
+        if existing_key.lower() == lowered:
+            return args[existing_key]
+    return None
+
+
 def create_routes(state: AppState) -> Blueprint:
     bp = Blueprint("memory", __name__)
 
@@ -81,20 +116,23 @@ def create_routes(state: AppState) -> Blueprint:
 
     @bp.post("/api/memory/write-api")
     def write_real_write():
-        port = request.args.get("type", None)
-        file_name = request.args.get("protocolFileName", "NTN-5K_CAN.json")
-
+        port = _get_query_arg(request.args, "type")
         payload = request.get_json(force=True)
-        if not isinstance(payload, list):
-            return jsonify({"error": "Body must be a JSON array"}), 400
+
+        file_name = _get_query_arg(request.args, "protocolFileName")
+        if not file_name:
+            inferred = _infer_protocol_from_payload(payload)
+            file_name = inferred or "NTN-5K_CAN.json"
 
         try:
-            state.update_real_write_store(file_name, payload)
+            updated = state.update_real_write_store(file_name, payload)
         except KeyError as exc:
             return jsonify({"error": str(exc)}), 404
+        except ValueError as exc:
+            return jsonify({"error": str(exc)}), 400
 
         print(f"[W]/api/memory/write-api : {port}, {file_name} updated")
-        return jsonify({"status": "ok", "updated": payload}), 200
+        return jsonify({"status": "ok", "updated": updated}), 200
 
     return bp
 

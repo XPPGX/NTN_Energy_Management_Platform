@@ -82,7 +82,13 @@ class AppState:
     # Initialization helpers
     # ------------------------------------------------------------------
     def memory_init(self, filename: Path | str = DEFAULT_MEMORY_FILE) -> None:
-        data = self._load_json(filename)
+        try:
+            data = self._load_json(filename)
+        except (FileNotFoundError, json.JSONDecodeError) as exc:
+            print(f"[memory_init] skipped loading {filename}: {exc}")
+            self._command_store = {}
+            return
+
         store: Dict[str, Dict[str, Any]] = {}
 
         for item in data:
@@ -282,11 +288,40 @@ class AppState:
     def get_real_write_store(self) -> Dict[str, Any]:
         return self._real_write_store
 
-    def update_real_write_store(self, file_name: str, payload: List[Dict[str, Any]]) -> None:
+    def update_real_write_store(self, file_name: str, payload: Any) -> List[Dict[str, Any]]:
         self._real_write_store = self._load_real_write_store()
         key = self._resolve_real_write_key(file_name)
-        self._real_write_store[key] = payload
+
+        updates = self._normalize_real_write_updates(payload)
+        if not updates:
+            raise ValueError("Payload must contain at least one command update")
+
+        command_list: List[Dict[str, Any]] = self._real_write_store.get(key, [])
+        command_lookup = {}
+        for cmd in command_list:
+            name_key = self._ci_string((cmd or {}).get("commandName"))
+            if name_key:
+                command_lookup[name_key] = cmd
+
+        for update in updates:
+            command_name = self._ci_string(self._ci_get(update, "commandName"))
+            if not command_name:
+                raise ValueError("Each update item requires a commandName")
+
+            command = command_lookup.get(command_name)
+            if command is None:
+                raise KeyError(f"Command {command_name} not found in {key}")
+
+            if self._ci_bool(command, "isPerAddr"):
+                self._update_real_write_per_addr(command, update)
+            else:
+                self._update_real_write_target(command, update)
+
+            if self._ci_has_key(update, "targetDirty"):
+                command["targetDirty"] = self._ci_get(update, "targetDirty")
+
         self._write_real_write_store()
+        return updates
 
     def get_real_write_payload(self, type_hint: Optional[str]) -> Dict[str, Any]:
         self._real_write_store = self._load_real_write_store()
@@ -338,6 +373,225 @@ class AppState:
             return "NTN-5K_MOD.json"
 
         raise KeyError(f"File {file_name} not found in REAL_WRITE_STORE")
+
+    def _normalize_real_write_updates(self, payload: Any) -> List[Dict[str, Any]]:
+        if isinstance(payload, dict):
+            return [self._normalize_object_case(payload)]
+
+        if isinstance(payload, list):
+            normalized: List[Dict[str, Any]] = []
+            for item in payload:
+                if not isinstance(item, dict):
+                    raise ValueError("Updates list must contain JSON objects")
+                normalized.append(self._normalize_object_case(item))
+            return normalized
+
+        raise ValueError("Payload must be a JSON object or an array of objects")
+
+    def _update_real_write_target(self, command: Dict[str, Any], update: Dict[str, Any]) -> None:
+        target_payload = update.get("target")
+        data_format = (command.get("dataFormat") or "").strip()
+
+        if target_payload is None:
+            raise ValueError(f"Update for {command.get('commandName')} requires target data")
+
+        target = self._ci_get(command, "target")
+        if target is None:
+            target = {"number": None, "text": None, "bits": {}}
+            command["target"] = target
+
+        if data_format == "Numeric":
+            number = self._ci_get(target_payload, "number")
+            if number is None:
+                raise ValueError(f"Numeric command {command.get('commandName')} requires a number value")
+            target["number"] = number
+            if self._ci_has_key(target_payload, "text"):
+                target["text"] = self._ci_get(target_payload, "text")
+            if self._ci_has_key(target_payload, "bits"):
+                target["bits"] = self._ci_get(target_payload, "bits")
+        elif data_format in {"BitField", "BitControl"}:
+            bits_payload = self._ci_get(target_payload, "bits")
+            if not isinstance(bits_payload, dict):
+                raise ValueError(f"BitField command {command.get('commandName')} requires a bits map")
+
+            existing_bits = self._ci_get(target, "bits")
+            if not isinstance(existing_bits, dict):
+                existing_bits = {}
+            target["bits"] = existing_bits
+
+            for bit_key, bit_value in bits_payload.items():
+                effective_key = self._resolve_bit_key(existing_bits, bit_key)
+                existing_bits[effective_key] = bit_value
+
+            if self._ci_has_key(target_payload, "number"):
+                target["number"] = self._ci_get(target_payload, "number")
+            if self._ci_has_key(target_payload, "text"):
+                target["text"] = self._ci_get(target_payload, "text")
+        else:
+            # Fallback: copy supplied target fields verbatim
+            target.update(self._case_insensitive_copy(target_payload))
+
+    def _update_real_write_per_addr(self, command: Dict[str, Any], update: Dict[str, Any]) -> None:
+        addr_values_payload = self._ci_get(update, "addrValues")
+        data_format = (command.get("dataFormat") or "").strip()
+
+        if not isinstance(addr_values_payload, list):
+            raise ValueError(f"Per-address command {command.get('commandName')} requires addrValues list")
+
+        existing_addr_values = self._ci_get(command, "addrValues")
+        if not isinstance(existing_addr_values, list):
+            existing_addr_values = []
+            command["addrValues"] = existing_addr_values
+
+        addr_lookup = {entry.get("addr"): entry for entry in existing_addr_values if isinstance(entry, dict)}
+
+        for item in addr_values_payload:
+            if not isinstance(item, dict):
+                raise ValueError("Each addrValues item must be an object")
+
+            addr = self._ci_get(item, "addr")
+            if addr is None:
+                raise ValueError("addrValues entry missing addr")
+
+            value_payload = self._ci_get(item, "value") or self._ci_get(item, "Value")
+            if not isinstance(value_payload, dict):
+                raise ValueError(f"addr {addr} requires a value object")
+
+            existing_entry = addr_lookup.get(addr)
+            if existing_entry is None:
+                existing_entry = {
+                    "addr": addr,
+                    "value": {"number": None, "text": None, "bits": {}},
+                    "dirty": False,
+                }
+                existing_addr_values.append(existing_entry)
+                addr_lookup[addr] = existing_entry
+
+            value_container = self._ci_get(existing_entry, "value")
+            if not isinstance(value_container, dict):
+                value_container = {"number": None, "text": None, "bits": {}}
+                existing_entry["value"] = value_container
+
+            self._apply_value_update(value_container, value_payload, data_format)
+
+            if self._ci_has_key(item, "dirty"):
+                existing_entry["dirty"] = self._ci_get(item, "dirty")
+
+    def _apply_value_update(self, container: Dict[str, Any], payload: Dict[str, Any], data_format: str) -> None:
+        if data_format == "Numeric":
+            number = self._ci_get(payload, "number")
+            if number is None:
+                raise ValueError("Numeric addr values require number field")
+            container["number"] = number
+            if self._ci_has_key(payload, "text"):
+                container["text"] = self._ci_get(payload, "text")
+            if self._ci_has_key(payload, "bits"):
+                container["bits"] = self._ci_get(payload, "bits")
+            return
+
+        if data_format in {"BitField", "BitControl"}:
+            bits_payload = self._ci_get(payload, "bits")
+            if not isinstance(bits_payload, dict):
+                raise ValueError("BitField addr values require bits map")
+
+            existing_bits = self._ci_get(container, "bits")
+            if not isinstance(existing_bits, dict):
+                existing_bits = {}
+            container["bits"] = existing_bits
+
+            for bit_key, bit_value in bits_payload.items():
+                effective_key = self._resolve_bit_key(existing_bits, bit_key)
+                existing_bits[effective_key] = bit_value
+
+            if self._ci_has_key(payload, "number"):
+                container["number"] = self._ci_get(payload, "number")
+            if self._ci_has_key(payload, "text"):
+                container["text"] = self._ci_get(payload, "text")
+            return
+
+        # Default fallback assigns fields as-is
+        container.update(self._case_insensitive_copy(payload))
+
+    @staticmethod
+    def _resolve_bit_key(bits: Optional[Dict[str, Any]], candidate: str) -> str:
+        if not isinstance(candidate, str):
+            return candidate  # type: ignore[return-value]
+
+        if not isinstance(bits, dict):
+            return candidate.upper()
+
+        lowered = candidate.lower()
+        for existing_key in bits.keys():
+            if isinstance(existing_key, str) and existing_key.lower() == lowered:
+                return existing_key
+
+        return candidate.upper()
+
+    @staticmethod
+    def _case_insensitive_copy(source: Dict[str, Any]) -> Dict[str, Any]:
+        result: Dict[str, Any] = {}
+        for key, value in source.items():
+            if isinstance(key, str):
+                if isinstance(value, dict):
+                    result[key.lower()] = AppState._case_insensitive_copy(value)
+                else:
+                    result[key.lower()] = value
+            else:
+                result[key] = value
+        return result
+
+    def _normalize_object_case(self, obj: Any) -> Any:
+        if isinstance(obj, dict):
+            normalized: Dict[str, Any] = {}
+            for key, value in obj.items():
+                new_key = key.lower() if isinstance(key, str) else key
+                normalized[new_key] = self._normalize_object_case(value)
+            return normalized
+        if isinstance(obj, list):
+            return [self._normalize_object_case(item) for item in obj]
+        return obj
+
+    @staticmethod
+    def _ci_get(mapping: Any, key: str, default: Any = None) -> Any:
+        if not isinstance(mapping, dict):
+            return default
+
+        lowered = key.lower()
+        for existing_key, value in mapping.items():
+            if isinstance(existing_key, str) and existing_key.lower() == lowered:
+                return value
+        return default
+
+    @staticmethod
+    def _ci_has_key(mapping: Any, key: str) -> bool:
+        if not isinstance(mapping, dict):
+            return False
+        lowered = key.lower()
+        return any(
+            isinstance(existing_key, str) and existing_key.lower() == lowered
+            for existing_key in mapping.keys()
+        )
+
+    @staticmethod
+    def _ci_string(value: Any) -> Optional[str]:
+        if isinstance(value, str):
+            return value.strip().lower()
+        return None
+
+    @staticmethod
+    def _ci_bool(mapping: Dict[str, Any], key: str) -> bool:
+        value = AppState._ci_get(mapping, key)
+        if isinstance(value, bool):
+            return value
+        if isinstance(value, str):
+            lowered = value.lower()
+            if lowered in {"true", "1", "yes", "on"}:
+                return True
+            if lowered in {"false", "0", "no", "off"}:
+                return False
+        if isinstance(value, (int, float)):
+            return bool(value)
+        return False
 
     @staticmethod
     def _rename_real_write_key(

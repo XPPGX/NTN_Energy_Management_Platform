@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.SignalR;
 using demoVer.Utils;
 using System.Collections.Concurrent;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace demoVer.Models
 {
     /// <summary>
@@ -45,101 +46,155 @@ namespace demoVer.Models
         #endregion From Status API
 
         #region For Writable Cmd
-        /// <summary>
-        /// 只有數值型態的指令會有設定範圍(上限、下限)，要用cmdCode當Key來找
-        /// </summary>
+        /***************************************************************************
+         *                         Range 相關資料結構與方法
+         **************************************************************************/
+        /// <summary>只有數值型態的指令會有設定範圍(上限、下限)，要用cmdCode當Key來找</summary>
         public ConcurrentDictionary<string, SingleCmdRange> SettingRanges { get; set; } = new();
-        // public ConcurrentDictionary<string, string> 
-        private readonly object _lock = new object();
-        public void UpdateSettingRanges_From(ConcurrentDictionary<string, SingleCmdRange> newRanges)
+        private readonly SemaphoreSlim _SettingRange_Lock = new(1, 1);
+        public async Task UpdateSettingRanges_From(ConcurrentDictionary<string, SingleCmdRange> newRanges)
         {
-            lock (_lock)
+            await _SettingRange_Lock.WaitAsync();
+
+            try
             {
-                try
+                foreach (var (HexCmd, newRange_Obj) in newRanges)
                 {
-                    foreach (var (HexCmd, newRange_Obj) in newRanges)
+                    if (this.SettingRanges.ContainsKey(HexCmd))
                     {
-                        if (this.SettingRanges.ContainsKey(HexCmd))
-                        {
-                            this.SettingRanges[HexCmd].min = newRange_Obj.min;
-                            this.SettingRanges[HexCmd].max = newRange_Obj.max;
-                            this.SettingRanges[HexCmd].cmdCode = newRange_Obj.cmdCode;
-                        }
-                        else
-                        {
-                            this.SettingRanges.TryAdd(HexCmd, newRange_Obj);
-                        }
-                        // Console.WriteLine($"[SubSystem][UpdateSettingRanges_From] Updated Setting Range for CmdCode {HexCmd}: Min={newRange_Obj.min}, Max={newRange_Obj.max}");
+                        this.SettingRanges[HexCmd].min = newRange_Obj.min;
+                        this.SettingRanges[HexCmd].max = newRange_Obj.max;
+                        this.SettingRanges[HexCmd].cmdCode = newRange_Obj.cmdCode;
                     }
-                    //同時也更新 nowConfigurableVars 的 Boundaries
-                    nowConfigurableVars.UpdateBoundaries_From_SubSystem(this.SettingRanges);
-                    
+                    else
+                    {
+                        this.SettingRanges.TryAdd(HexCmd, newRange_Obj);
+                    }
+                    // Console.WriteLine($"[SubSystem][UpdateSettingRanges_From] Updated Setting Range for CmdCode {HexCmd}: Min={newRange_Obj.min}, Max={newRange_Obj.max}");
+                }
+                //同時也更新 nowConfigurableVars 的 Boundaries
+                if (nowConfigurableVars.UpdateBoundaries_From_SubSystem(this.SettingRanges) is true)
+                {
                     //觸發 OnChanged 事件
                     OnChanged?.Invoke();
                 }
-                catch (Exception e)
-                {
-                    AppLogger.Log_To_File_log(_category, $"[SubSystem][UpdateSettingRanges_From] Exception: {e.Message}", AppLogLevel.Error);
-                }
+            }
+            catch (Exception e)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystem][UpdateSettingRanges_From] Exception: {e.Message}", AppLogLevel.Error);
+            }
+            finally
+            {
+                _SettingRange_Lock.Release();
             }
         }
 
-        /// <summary>
-        /// 要找當前值(Raw Data)
-        /// </summary>
+
+        /***************************************************************************
+         *                     Writable Cmd 相關資料結構與方法
+         **************************************************************************/
+        /// <summary>存放Write Cmd的資訊，以cmdCode為Key</summary>
         public Dictionary<string, GET_RealSingleRawSettingCMD_JsonFormat> InfosForWriteCmd { get; set; } = new();
-
-        /// <summary>
-        /// 設定頁面實際上會用到的值(從InfosForWriteCmd解析出來)
-        /// </summary>
+        /// <summary>設定頁面實際上會用到的值(從InfosForWriteCmd解析出來)</summary>
         public PageUsableVars nowConfigurableVars { get; set; } = new();
-        public readonly object _lock_WriteCmdInfo = new();
+        public readonly SemaphoreSlim _SettingRange_Lock_WriteCmdInfo = new(1, 1); 
         public event Action? OnChanged; //這個Action在設定Apply的時候也要觸發
-        public void UpdateInfosForWriteCmd_From(List<GET_RealSingleRawSettingCMD_JsonFormat> newInfos)
+        public async Task UpdateInfosForWriteCmd_From(List<GET_RealSingleRawSettingCMD_JsonFormat> newInfos)
         {
-            lock (_lock_WriteCmdInfo)
-            {
-                try
-                {
-                    foreach (var new_singleRawSettingCmd in newInfos)
-                    {
-                        //取出 cmdCode 作為 key
-                        string cmdCode = new_singleRawSettingCmd.cmdCode;
-                        //框架給的 WriteCmdInfo_API 裡面的 cmdCode 跟 Range_API 裡面的 cmdCode 不一樣，多了一個"0x"在開頭
-                        string ClearCmdCode = GetNowValueHelper.getClearCmdCode(cmdCode);
-                        if (this.InfosForWriteCmd.ContainsKey(ClearCmdCode))
-                        {
-                            AppLogger.Log_To_File_log(_category, $"[SubSystem][UpdateInfosForWriteCmd_From] Update existing Write CMD Info for CmdCode {ClearCmdCode}", AppLogLevel.Debug);
-                            this.InfosForWriteCmd[ClearCmdCode] = new_singleRawSettingCmd;
-                        }
-                        else
-                        {
-                            AppLogger.Log_To_File_log(_category, $"[SubSystem][UpdateInfosForWriteCmd_From] Add new Write CMD Info for CmdCode {ClearCmdCode}", AppLogLevel.Debug);
-                            this.InfosForWriteCmd.Add(ClearCmdCode, new_singleRawSettingCmd);
-                        }
+            await _SettingRange_Lock_WriteCmdInfo.WaitAsync();
 
+            try
+            {
+                foreach (var new_singleRawSettingCmd in newInfos)
+                {
+                    //取出 cmdCode 作為 key
+                    string cmdCode = new_singleRawSettingCmd.cmdCode;
+                    //框架給的 WriteCmdInfo_API 裡面的 cmdCode 跟 Range_API 裡面的 cmdCode 不一樣，多了一個"0x"在開頭
+                    string ClearCmdCode = GetNowValueHelper.getClearCmdCode(cmdCode);
+                    if (this.InfosForWriteCmd.ContainsKey(ClearCmdCode))
+                    {
+                        AppLogger.Log_To_File_log(_category, $"[SubSystem][UpdateInfosForWriteCmd_From] Update existing Write CMD Info for CmdCode {ClearCmdCode}", AppLogLevel.Debug);
+                        this.InfosForWriteCmd[ClearCmdCode] = new_singleRawSettingCmd;
+                    }
+                    else
+                    {
+                        AppLogger.Log_To_File_log(_category, $"[SubSystem][UpdateInfosForWriteCmd_From] Add new Write CMD Info for CmdCode {ClearCmdCode}", AppLogLevel.Debug);
+                        this.InfosForWriteCmd.Add(ClearCmdCode, new_singleRawSettingCmd);
                     }
 
-                    //3. 更新 nowConfigurableVars
-                    nowConfigurableVars.UpdateNowValue_From_SubSystem(this.InfosForWriteCmd);
-                    
+                }
+
+                //3. 更新 nowConfigurableVars
+                if (nowConfigurableVars.UpdateNowValue_From_SubSystem(this.InfosForWriteCmd) is true)
+                {
                     //觸發 OnChanged 事件
                     OnChanged?.Invoke();
                 }
-                catch (Exception e)
-                {
-                    AppLogger.Log_To_File_log(_category, $"[SubSystem][UpdateInfosForWriteCmd_From] Exception: {e.Message}", AppLogLevel.Error);
-                }
+            }
+            catch (Exception e)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystem][UpdateInfosForWriteCmd_From] Exception: {e.Message}", AppLogLevel.Error);
+            }
+            finally
+            {
+                _SettingRange_Lock_WriteCmdInfo.Release();
             }
         }
-        /// <summary>
-        /// 根據 cmdCode 找到對應的 cmdName
-        /// </summary>
-        /// <param name="cmdCode"></param>
+
+        /***************************************************************************
+         *                  Write Process Flow 相關資料結構與方法
+         **************************************************************************/
+        /// <summary>給SubSystemManager使用的寫入流程鎖，確保同一時間，一個子系統只有一個寫入流程在進行</summary>
+        
+        public readonly SemaphoreSlim BAT_WriteProcessFlowLock = new(1, 1);
+        public readonly SemaphoreSlim INV_WriteProcessFlowLock = new(1, 1);
+        
+        //這個或許可以用Dictionary去做
+        public SemaphoreSlim? Get_WriteProcessFlowLock_By_PageSelection(int PageSelection)
+        {
+            switch(PageSelection)
+            {
+                case 0: //Battery
+                    return BAT_WriteProcessFlowLock;
+                case 1: //Inverter
+                    return INV_WriteProcessFlowLock;
+                default:
+                    return null;
+            }
+        }
+        public List<Post_RealSingleRawSettingCMD_JsonFormat> BatterySetting_WriteFailedCmds_List { get; set; } = new(); //每次送出命令後，暫存失敗的CMD，準備顯示在UI上。
+        public List<Post_RealSingleRawSettingCMD_JsonFormat> InverterSetting_WriteFailedCmds_List { get; set; } = new(); //每次送出命令後，暫存失敗的CMD，準備顯示在UI上。
+
+        //這個或許可以用Dictionary去做
+        public void Update_WriteFailedCmdsList_By_PageSelection(int PageSelection, List<Post_RealSingleRawSettingCMD_JsonFormat> writeFailedCmds_List)
+        {
+            switch(PageSelection)
+            {
+                case 0: //Battery
+                    BatterySetting_WriteFailedCmds_List = writeFailedCmds_List;
+                    break;
+                case 1: //Inverter
+                    InverterSetting_WriteFailedCmds_List = writeFailedCmds_List;
+                    break;
+                default:
+                    break;
+            }
+        }
+        /***************************************************************************
+         *                  Helper Methods for Writable Cmd
+         **************************************************************************/
+        /// <summary>根據 cmdCode 找到對應的 cmdName</summary>
         /// <returns>CommandName</returns>
         public string cmdCode_mappingTo_cmdName(string cmdCode) => (InfosForWriteCmd.ContainsKey(cmdCode)) ? InfosForWriteCmd[cmdCode].CommandName : string.Empty;
-
-        
+        public (string Format, bool isPerAddr) GetSettingCmdFormat_and_IsPerAddr_By_ClearCmdCode(string clearCmdCode)
+        {
+            if (InfosForWriteCmd.ContainsKey(clearCmdCode))
+            {
+                var cmdInfo = InfosForWriteCmd[clearCmdCode];
+                return (cmdInfo.DataFormat, cmdInfo.IsPerAddr);
+            }
+            return (string.Empty, false);
+        }
         #endregion For Writable Cmd
 
         #region Computed In SubSystem

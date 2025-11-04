@@ -101,6 +101,6 @@ namespace demoVer.Models
         public WriteVal? Target { get; set; }
         
         [JsonPropertyName("AddrValues")]
-        public List<WriteVal>? AddrValues { get; set; }
+        public List<AddrValue>? AddrValues { get; set; }
     }
 }

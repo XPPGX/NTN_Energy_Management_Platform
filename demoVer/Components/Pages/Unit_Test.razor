@@ -120,11 +120,11 @@
         writeVal.Bits   = null;
         
         Post_RealSingleRawSettingCMD_JsonFormat body = new();
-        body.Type           = "CAN1";
-        body.Protocol       = "NTN-5K_CAN.json";
+        body.Type           = "MOD1";
+        body.Protocol       = "NTN-5K_MOD.json";
         body.CommandName    = "CURVE_CC";
         body.Target         = writeVal;
-
+        body.AddrValues     = null;
         var IsSendSucc = await apiManager.apiWrite_SetSingleCMD(body);
         Console.WriteLine($"[TEST_Write] IsSendSucc = {IsSendSucc}");
     }

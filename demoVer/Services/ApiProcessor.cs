@@ -285,8 +285,14 @@ namespace demoVer.Services
         {
             try
             {
+                //[Debug 僅用在本地python server 測試]
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                };
+
                 string url = $"api/memory/write-api";
-                using var response = await _http.PostAsJsonAsync(url, api_body, ct);
+                using var response = await _http.PostAsJsonAsync(url, api_body, options, ct);
 
                 if (response.IsSuccessStatusCode)
                 {
