@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ReadRealMemory-API-usage.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="read-real-memory-api-%E4%BD%BF%E7%94%A8%E6%B5%81%E7%A8%8B">Read Real Memory API 使用流程</h1>
+<blockquote>
+<p>ReadRealMemory_API 在 &quot;API使用文件中&quot; 稱為 「單機狀態詢問」</p>
+</blockquote>
+<p>以下以 <code>ApiManager.apiReadReal_OneDeviceData</code> 為例，說明從資料模型定義、API 呼叫實作，到服務端如何使用的完整流程。</p>
+<hr>
+<h2 id="1-%E5%AE%9A%E7%BE%A9%E5%9B%9E%E5%82%B3%E8%B3%87%E6%96%99%E6%A8%A1%E5%9E%8B">1. 定義回傳資料模型</h2>
+<p><code>apiReadReal_OneDeviceData</code> 回傳 <code>Real_SingleDeviceData_JsonFormat</code>，其結構定義於 <code>demoVer/Models/realTimeData.cs</code>。</p>
+<pre><code class="language-mermaid"><div class="mermaid">classDiagram
+    class Real_SingleDeviceData_JsonFormat {
+        Dictionary~string, SingleCommandData~ values
+        DateTime? time
+        int? id
+    }
+
+    class SingleCommandData {
+        string type
+        object value
+        string? unit
+        double? scaling
+        bool? signed
+        List~BitFieldDef~? bitFields
+    }
+
+    class BitFieldDef {
+        string name
+        int start
+        int length
+        Dictionary~string,int~? mapping
+    }
+
+    Real_SingleDeviceData_JsonFormat --> "*" SingleCommandData : values[cmdName]
+    SingleCommandData --> "*" BitFieldDef : bitFields
+</div></code></pre>
+<ul>
+<li><code>Real_SingleDeviceData_JsonFormat.values</code> 以命令名稱為 key，對應該命令的即時值 (<code>SingleCommandData</code>)。</li>
+<li><code>SingleCommandData.value</code> 可為數值、字串或陣列，依命令不同而異；若命令帶有位元欄位，<code>bitFields</code> 會提供對應的解析資料。</li>
+<li><code>time</code>、<code>id</code> 由後端依設備紀錄資訊選擇性填入。</li>
+</ul>
+<hr>
+<h2 id="2-%E5%9C%A8-apimanager-%E4%B8%AD%E5%AF%A6%E4%BD%9C%E5%91%BC%E5%8F%AB%E5%87%BD%E5%BC%8F">2. 在 ApiManager 中實作呼叫函式</h2>
+<p><code>demoVer/Services/ApiProcessor.cs</code></p>
+<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">async</span> Task&lt;Real_SingleDeviceData_JsonFormat&gt; <span class="hljs-title">apiReadReal_OneDeviceData</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> type, <span class="hljs-keyword">uint</span> addr</span>)</span>
+{
+    <span class="hljs-keyword">try</span>
+    {
+        <span class="hljs-keyword">string</span> url = <span class="hljs-string">$"api/memory/read-real?type=<span class="hljs-subst">{type}</span>&amp;addr=<span class="hljs-subst">{addr}</span>"</span>;
+        <span class="hljs-keyword">var</span> result = <span class="hljs-keyword">await</span> _http.GetFromJsonAsync&lt;Real_SingleDeviceData_JsonFormat&gt;(url);
+
+        <span class="hljs-keyword">if</span>(result == <span class="hljs-literal">null</span>)
+        {
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Exception(<span class="hljs-string">$"[apiRead_OneDeviceData] ReadReal_API_Json == null"</span>);
+        }
+        <span class="hljs-keyword">return</span> result;
+
+    }
+    <span class="hljs-keyword">catch</span> (HttpRequestException ex)
+    {
+        AppLogger.Log_To_File_log(_category, <span class="hljs-string">$"[ApiManager][apiReadReal_OneDeviceData] Http_Error: <span class="hljs-subst">{ex}</span>"</span>, AppLogLevel.Debug);
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+    }
+    <span class="hljs-keyword">catch</span>(Exception ex)
+    {
+        AppLogger.Log_To_File_log(_category, <span class="hljs-string">$"[ApiManager][apiReadReal_OneDeviceData] Error : <span class="hljs-subst">{ex.Message}</span>"</span>, AppLogLevel.Error);
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+    }
+}
+</div></code></pre>
+<ul>
+<li><code>type</code> 為 port 名稱（例如 <code>CAN1</code>、<code>MOD2</code>），<code>addr</code> 為 0~63 的裝置位址。</li>
+<li>若 HTTP 或 JSON 反序列化失敗，函式會記錄 log 並回傳 <code>null</code>，呼叫端需負責後續處理。</li>
+</ul>
+<hr>
+<h2 id="3-%E5%AF%A6%E9%9A%9B%E4%BD%BF%E7%94%A8%E6%A1%88%E4%BE%8Bpollingreadpollonestepasync">3. 實際使用案例：PollingRead.PollOneStepAsync</h2>
+<p><code>demoVer/Services/PollingRead.cs</code></p>
+<pre class="hljs"><code><div><span class="hljs-keyword">var</span> res = <span class="hljs-keyword">await</span> _apiManager.apiReadReal_OneDeviceData(nowPollingPort, nowPollingAddr);
+
+<span class="hljs-keyword">bool</span> res_is_valid = checkApiResponseValidity(res);
+<span class="hljs-keyword">if</span>(res_is_valid <span class="hljs-keyword">is</span> <span class="hljs-literal">false</span>)
+{
+    _linkAddrManager.Unlink(nowStoringAddr);
+    _globalVar.Real_Devices_ReadData.Remove_oneDevice_Data(nowStoringAddr);
+}
+<span class="hljs-keyword">else</span>
+{
+    _linkAddrManager.Link(nowStoringAddr);
+    _globalVar.Real_Devices_ReadData.SaveReal_oneDevice_Data(nowStoringAddr, res);
+}
+</div></code></pre>
+<ul>
+<li><code>PollingRead</code> 在輪詢到連線中的裝置時會呼叫 <code>apiReadReal_OneDeviceData</code>。</li>
+<li>取得結果後透過 <code>checkApiResponseValidity</code> 檢查資料（例如確認 <code>MFR_MODEL</code> 是否存在）。</li>
+<li>資料無效時，將該位址從 <code>LinkAddrManager</code> 以及 <code>_globalVar.Real_Devices_ReadData</code> 中移除；有效則更新連線狀態並儲存最新快照。</li>
+</ul>
+<hr>
+<h2 id="4-%E5%91%BC%E5%8F%AB%E6%B5%81%E7%A8%8B%E6%91%98%E8%A6%81">4. 呼叫流程摘要</h2>
+<pre><code class="language-mermaid"><div class="mermaid">sequenceDiagram
+    participant ApiMgr as ApiManager<br> (Service)
+    participant Polling as PollingRead<br> (Service)
+    participant LinkMgr as LinkAddrManager<br> (Service)
+    participant Devices as Real_Devices_ReadData<br> (Instance)
+
+    Polling->>ApiMgr: await apiReadReal_OneDeviceData(port, addr)
+    ApiMgr-->>Polling: 回傳 Real_SingleDeviceData_JsonFormat 或 null
+    Polling->>Polling: checkApiResponseValidity(result)
+    alt 資料有效
+        Polling->>LinkMgr: Link(nowStoringAddr)
+        Polling->>Devices: SaveReal_oneDevice_Data
+    else 資料無效或 null
+        Polling->>LinkMgr: Unlink(nowStoringAddr)
+        Polling->>Devices: Remove_oneDevice_Data
+    end
+</div></code></pre>
+<p>此流程展示 <code>apiReadReal_OneDeviceData</code> 在輪詢架構中的角色：</p>
+<ol>
+<li>透過 <code>ApiManager</code> 包裝 HTTP 呼叫與錯誤處理；</li>
+<li>在 <code>PollingRead</code> 中呼叫 API，接續對資料進行驗證、狀態同步與快照儲存。</li>
+</ol>
+
+</body>
+</html>

@@ -265,7 +265,7 @@ namespace demoVer.Services
                 {
                     PollingNowLink_isSucc = false;
                     
-                    linkingAddr.Clear();
+                    linkingAddr.Clear(); //視為全部斷線
                     AppLogger.Log_To_File_log(_category, $"[PollingRead][PollNowLinkAddr] rcv_linkStatus is Null", AppLogLevel.Trace);
                 }
                 else
@@ -442,7 +442,7 @@ namespace demoVer.Services
                         _subSystemManager.RegistedSubSystems[port][protocol].AddrSet.Add(addr);
                         _subSystemManager.RegistedSubSystems[port][protocol].newSettingAddrBitMap = _subSystemManager.RegistedSubSystems[port][protocol].newSettingAddrBitMap | (1u << (int)addr);
                     }
-                    //3. SubSystemSettingExist(用於決定是否刪除沒有在新資料中的SubSystem)
+                    //3. SubSystemSettingExist(用於決定是否刪除沒有在新資料中的SubSystem, true代表有在新資料中所以不刪除)
                     _subSystemManager.RegistedSubSystems[port][protocol].SubSystemSettingExist = true;
                     //4. epoch(如果與新資料不一樣，代表SettingRange需要更新)
                     if (!string.Equals(_subSystemManager.RegistedSubSystems[port][protocol].epoch, part.epoch, StringComparison.Ordinal))

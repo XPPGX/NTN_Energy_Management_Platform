@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SettingRange-API-usage.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="setting-range-api-%E4%BD%BF%E7%94%A8%E6%B5%81%E7%A8%8B">Setting Range API 使用流程</h1>
+<blockquote>
+<p>Setting_Range_API 在 &quot;API使用說明文件&quot; 中稱為「可設定範圍」</p>
+</blockquote>
+<p>以下以 <code>ApiManager.apiRead_SettingRange</code> 為例，說明從資料模型定義、API 呼叫實作，到服務端如何使用的完整流程。</p>
+<hr>
+<h2 id="1-%E5%AE%9A%E7%BE%A9%E5%9B%9E%E5%82%B3%E8%B3%87%E6%96%99%E6%A8%A1%E5%9E%8B">1. 定義回傳資料模型</h2>
+<pre><code class="language-mermaid"><div class="mermaid">classDiagram
+    class Setting_Range {
+        string port
+        string protocol
+        bool checkOK
+        bool modelError
+        bool rangeOK
+        string modelName
+        List~uint~ addr
+        ConcurrentDictionary~string, SingleCmdRange~ ranges
+    }
+
+    class SingleCmdRange {
+        double min
+        double max
+        string cmdCode //這個欄位是空的
+        //以下的cmdCode是指上方ConcurrentDictionary的Key
+    }
+
+    Setting_Range --> "*" SingleCmdRange : ranges[cmdCode]
+</div></code></pre>
+<ul>
+<li><code>Setting_Range</code> 對應 <code>/api/memory/partition-status</code> 回傳的 JSON 根節點。
+<ul>
+<li><code>port</code> / <code>protocol</code> 為查詢目標的識別。</li>
+<li><code>addr</code> 列出分區內包含的位址；<code>checkOK</code>、<code>modelError</code>、<code>rangeOK</code> 為後端檢核結果。</li>
+<li>以 <code>cmdName</code> (<code>CURVE_CC</code>) 為例，對應的 <code>cmdCode</code> 是 <code>0x00B0</code>。</li>
+<li><code>ranges</code> 以命令代碼 (<code>cmdCode</code>) 為 key，對應每個可設定命令的上下限資訊。</li>
+</ul>
+</li>
+<li><code>SingleCmdRange</code> 表示單一命令的設定範圍，包含 <code>min</code>、<code>max</code> 與原始 <code>cmdCode</code>。</li>
+</ul>
+<hr>
+<h2 id="2-%E5%9C%A8-apimanager-%E4%B8%AD%E5%AF%A6%E4%BD%9C%E5%91%BC%E5%8F%AB%E5%87%BD%E5%BC%8F">2. 在 ApiManager 中實作呼叫函式</h2>
+<p><code>demoVer/Services/ApiProcessor.cs</code></p>
+<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">async</span> Task&lt;Setting_Range&gt; <span class="hljs-title">apiRead_SettingRange</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> type, <span class="hljs-keyword">string</span> protocolFileName</span>)</span>
+{
+    <span class="hljs-keyword">try</span>
+    {
+        <span class="hljs-keyword">string</span> url = <span class="hljs-string">$"/api/memory/partition-status?type=<span class="hljs-subst">{type}</span>&amp;protocol=<span class="hljs-subst">{protocolFileName}</span>"</span>;
+        <span class="hljs-keyword">var</span> result = <span class="hljs-keyword">await</span> _http.GetFromJsonAsync&lt;Setting_Range&gt;(url);
+
+        <span class="hljs-keyword">if</span>(result == <span class="hljs-literal">null</span>)
+        {
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Exception(<span class="hljs-string">$"[apiRead_SettingRange] Read_API_Json == null"</span>);
+        }
+        <span class="hljs-keyword">return</span> result;
+
+    }
+    <span class="hljs-keyword">catch</span> (HttpRequestException ex)
+    {
+        AppLogger.Log_To_File_log(_category, <span class="hljs-string">$"[ApiManager][apiRead_SettingRange] Http_Error: <span class="hljs-subst">{ex}</span>"</span>, AppLogLevel.Debug);
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+    }
+    <span class="hljs-keyword">catch</span>(Exception ex)
+    {
+        AppLogger.Log_To_File_log(_category, <span class="hljs-string">$"[ApiManager][apiRead_SettingRange] Error : <span class="hljs-subst">{ex.Message}</span>"</span>, AppLogLevel.Error);
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+    }
+}
+</div></code></pre>
+<ul>
+<li>透過 <code>_http.GetFromJsonAsync&lt;Setting_Range&gt;</code> 將 JSON 反序列化為前述模型。</li>
+<li><code>type</code> 與 <code>protocolFileName</code> 分別對應 port 與協定檔名，例如 <code>(CAN1, NTN-5K_CAN.json)</code>。</li>
+<li>任何錯誤 (HTTP 或反序列化) 都會記錄 Log，並回傳 <code>null</code> 讓上層決定後續處理。</li>
+</ul>
+<hr>
+<h2 id="3-%E5%AF%A6%E9%9A%9B%E4%BD%BF%E7%94%A8%E6%A1%88%E4%BE%8Bsubsystemmanagerupdatesubsystemsettingrange">3. 實際使用案例：SubSystemManager.UpdateSubSystem_SettingRange</h2>
+<p><code>demoVer/Services/SubSystemManager.cs</code></p>
+<pre class="hljs"><code><div><span class="hljs-keyword">var</span> response = <span class="hljs-keyword">await</span> _apiManager.apiRead_SettingRange(port, protocol);
+<span class="hljs-keyword">if</span> (response <span class="hljs-keyword">is</span> <span class="hljs-literal">null</span>)
+{
+    AppLogger.Log_To_File_log(_category,
+        <span class="hljs-string">$"[SubSystemManager][UpdateSubSystem_SettingRange] response is null for Port:<span class="hljs-subst">{port}</span>, Protocol:<span class="hljs-subst">{protocol}</span>"</span>,
+        AppLogLevel.Debug);
+    <span class="hljs-keyword">return</span>;
+}
+
+<span class="hljs-keyword">var</span> rangesDict = response.ranges;
+<span class="hljs-keyword">await</span> subsys.UpdateSettingRanges_From(rangesDict);
+</div></code></pre>
+<ul>
+<li><code>SubSystemManager</code> 先確認欲更新的子系統存在，再呼叫 <code>apiRead_SettingRange</code>。</li>
+<li>成功取得資料後，將 <code>Setting_Range.ranges</code> 傳給 <code>SubSystem.UpdateSettingRanges_From</code>，以 ConcurrentDictionary 的內容覆蓋本地紀錄。</li>
+<li>若 API 回傳 <code>null</code>，僅記錄 log 並結束；實際重試策略由呼叫端掌握。</li>
+</ul>
+<hr>
+<h2 id="4-%E5%91%BC%E5%8F%AB%E6%B5%81%E7%A8%8B%E6%91%98%E8%A6%81">4. 呼叫流程摘要</h2>
+<pre><code class="language-mermaid"><div class="mermaid">sequenceDiagram
+    participant ApiMgr as ApiManager<br>(Service)
+    participant SubSysMgr as SubSystemManager<br>(Service)
+    participant SubSys as SubSystem<br>(Instance)
+
+
+    SubSysMgr->>ApiMgr: await apiRead_SettingRange(type, protocol)
+    ApiMgr-->>SubSysMgr: Setting_Range 或 null
+    alt 取得成功
+        SubSysMgr->>SubSys: UpdateSettingRanges_From(ranges)
+    else 取得失敗
+        SubSysMgr->>SubSysMgr: 記錄 log / 結束
+    end
+</div></code></pre>
+<p>此流程示範 API 使用的三個核心步驟：</p>
+<ol>
+<li>先建立對應資料模型 (<code>Setting_Range</code>, <code>SingleCmdRange</code>)；</li>
+<li>在 <code>ApiManager</code> 中包裝 HTTP 呼叫與錯誤處理；</li>
+<li>由服務 (<code>SubSystemManager</code>) 呼叫並更新內部狀態。</li>
+</ol>
+<p>未來整合其他設定範圍或命令資訊的 API 時，可沿用此模式持續擴充。</p>
+
+</body>
+</html>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>WriteRealSettingData-API-usage.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="write-real-setting-data-api-%E4%BD%BF%E7%94%A8%E6%B5%81%E7%A8%8B">Write Real Setting Data API 使用流程</h1>
+<blockquote>
+<p>WriteRealSettingData_API 在 &quot;API使用說明文件&quot; 中稱為 「POST API」</p>
+</blockquote>
+<p>以下以 <code>ApiManager.apiWrite_SetSingleCMD</code> 為例，說明從資料模型定義、API 呼叫實作，到服務端如何使用的完整流程。</p>
+<hr>
+<h2 id="1-%E5%AE%9A%E7%BE%A9%E8%AB%8B%E6%B1%82%E8%B3%87%E6%96%99%E6%A8%A1%E5%9E%8B">1. 定義請求資料模型</h2>
+<p><code>apiWrite_SetSingleCMD</code> 接受 <code>Post_RealSingleRawSettingCMD_JsonFormat</code> 作為 request body，定義於 <code>demoVer/Models/WRITE_DEVICE_DATA/Real_SettingData.cs</code>。</p>
+<pre><code class="language-mermaid"><div class="mermaid">classDiagram
+    class Post_RealSingleRawSettingCMD_JsonFormat {
+        string Type
+        string Protocol
+        string CommandName
+        WriteVal Target
+        List~AddrValue~ AddrValues
+    }
+
+    class WriteVal {
+        double? Number
+        string? Text
+        Dictionary~string,int~ Bits
+    }
+
+    class AddrValue {
+        int Addr
+        WriteVal Value
+        bool Dirty
+    }
+
+    Post_RealSingleRawSettingCMD_JsonFormat --> WriteVal : Target
+    Post_RealSingleRawSettingCMD_JsonFormat --> "*" AddrValue : AddrValues
+    AddrValue --> WriteVal : Value
+</div></code></pre>
+<ul>
+<li><code>Type</code> 指定要寫入的 port (e.g. <code>CAN1</code>, <code>CAN2</code>, <code>MOD1</code>, <code>MOD2</code> 擇一)</li>
+<li><code>Protocol</code> 指定要寫入的協定檔名 (e.g. <code>NTN-5K_CAN.json</code>, <code>NTN-5K_MOD.json</code> 擇一)</li>
+<li><code>CommandName</code> 為目標命令名稱；若為每個 addr 各自設定，使用 <code>AddrValues</code>；否則以 <code>Target</code> 表示統一寫入的值。</li>
+<li><code>WriteVal</code> 支援數值 (<code>Number</code>)、文字 (<code>Text</code>) 與位元欄位 (<code>Bits</code>) 三種型式。</li>
+</ul>
+<hr>
+<h2 id="2-%E5%9C%A8-apimanager-%E4%B8%AD%E5%AF%A6%E4%BD%9C%E5%91%BC%E5%8F%AB%E5%87%BD%E5%BC%8F">2. 在 ApiManager 中實作呼叫函式</h2>
+<p><code>demoVer/Services/ApiProcessor.cs</code></p>
+<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">async</span> Task&lt;<span class="hljs-keyword">bool</span>&gt; <span class="hljs-title">apiWrite_SetSingleCMD</span>(<span class="hljs-params">Post_RealSingleRawSettingCMD_JsonFormat api_body, CancellationToken ct = <span class="hljs-keyword">default</span></span>)</span>
+{
+    <span class="hljs-keyword">try</span>
+    {
+        <span class="hljs-comment">//[Debug 僅用在本地python server 測試]</span>
+        <span class="hljs-keyword">var</span> options = <span class="hljs-keyword">new</span> JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        };
+
+        <span class="hljs-keyword">string</span> url = <span class="hljs-string">$"api/memory/write-api"</span>;
+        <span class="hljs-keyword">using</span> <span class="hljs-keyword">var</span> response = <span class="hljs-keyword">await</span> _http.PostAsJsonAsync(url, api_body, options, ct);
+
+        <span class="hljs-keyword">if</span> (response.IsSuccessStatusCode)
+        {
+            AppLogger.Log_To_File_log(_category, <span class="hljs-string">$"[ApiManager][apiWrite_SetSingleCMD]成功: <span class="hljs-subst">{(<span class="hljs-keyword">int</span>)response.StatusCode}</span>"</span>, AppLogLevel.Trace);
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+        }
+        <span class="hljs-keyword">else</span>
+        {
+            <span class="hljs-keyword">var</span> text = <span class="hljs-keyword">await</span> response.Content.ReadAsStringAsync(ct);
+            AppLogger.Log_To_File_log(_category, <span class="hljs-string">$"[ApiManager][apiWrite_SetSingleCMD]失敗: <span class="hljs-subst">{(<span class="hljs-keyword">int</span>)response.StatusCode}</span>, Failed Message : <span class="hljs-subst">{text}</span>"</span>, AppLogLevel.Trace);
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+        }
+    }
+    <span class="hljs-keyword">catch</span> (HttpRequestException ex)
+    {
+        AppLogger.Log_To_File_log(_category, <span class="hljs-string">$"[ApiManager][apiWrite_SetSingleCMD] Http_Error: <span class="hljs-subst">{ex}</span>"</span>, AppLogLevel.Debug);
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    }
+    <span class="hljs-keyword">catch</span> (Exception ex)
+    {
+        AppLogger.Log_To_File_log(_category, <span class="hljs-string">$"[ApiManager][apiWrite_SetSingleCMD] Error : <span class="hljs-subst">{ex.Message}</span>"</span>, AppLogLevel.Error);
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    }
+}
+</div></code></pre>
+<ul>
+<li>請求以 <code>POST api/memory/write-api</code> 送出，使用 <code>JsonNamingPolicy.CamelCase</code> 以符合後端需求。</li>
+<li>成功/失敗會記錄 Response Code 及錯誤訊息；發生例外時回傳 <code>false</code>。</li>
+</ul>
+<hr>
+<h2 id="3-%E5%AF%A6%E9%9A%9B%E4%BD%BF%E7%94%A8%E6%A1%88%E4%BE%8Bsubsystemmanagerwritecmdstoframework">3. 實際使用案例：SubSystemManager.WriteCmdsToFramework</h2>
+<p><code>demoVer/Services/SubSystemManager.cs</code></p>
+<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">async</span> Task&lt;<span class="hljs-keyword">bool</span>&gt; <span class="hljs-title">WriteCmdsToFramework</span>(<span class="hljs-params">
+    <span class="hljs-keyword">string</span> port,
+    <span class="hljs-keyword">string</span> protocol,
+    List&lt;Post_RealSingleRawSettingCMD_JsonFormat&gt; writeCmdData_List,
+    <span class="hljs-keyword">int</span> pageSelection</span>)</span>
+{
+    <span class="hljs-keyword">var</span> subsys = GetOneSubSystem_Ref(port, protocol);
+    <span class="hljs-keyword">if</span> (subsys <span class="hljs-keyword">is</span> <span class="hljs-literal">null</span> || writeCmdData_List.Count == <span class="hljs-number">0</span>)
+    {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    }
+
+    <span class="hljs-keyword">var</span> pageWriteLock = subsys.Get_WriteProcessFlowLock_By_PageSelection(pageSelection);
+    <span class="hljs-keyword">if</span> (pageWriteLock <span class="hljs-keyword">is</span> <span class="hljs-literal">null</span>)
+    {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    }
+
+    <span class="hljs-keyword">await</span> pageWriteLock.WaitAsync();
+    <span class="hljs-keyword">try</span>
+    {
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> attempt = <span class="hljs-number">0</span>; attempt &lt; <span class="hljs-number">2</span>; attempt++)
+        {
+            <span class="hljs-keyword">foreach</span> (<span class="hljs-keyword">var</span> payload <span class="hljs-keyword">in</span> writeCmdData_List)
+            {
+                <span class="hljs-keyword">var</span> success = <span class="hljs-keyword">await</span> _apiManager.apiWrite_SetSingleCMD(payload);
+                <span class="hljs-keyword">await</span> Task.Delay(<span class="hljs-number">30</span>);
+                <span class="hljs-keyword">if</span> (!success)
+                {
+                    AppLogger.Log_To_File_log(_category,
+                        <span class="hljs-string">$"[SubSystemManager][WriteCmdToFramework] Failed: <span class="hljs-subst">{payload.CommandName}</span>"</span>,
+                        AppLogLevel.Warning);
+                }
+            }
+
+            writeCmdData_List = <span class="hljs-keyword">await</span> Is_CmdDatas_AlreadySetting(port, protocol, writeCmdData_List);
+        }
+
+        subsys.Update_WriteFailedCmdsList_By_PageSelection(pageSelection, writeCmdData_List);
+        <span class="hljs-keyword">await</span> UpdateSubSystem_WriteCmdInfo(port, protocol);
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">finally</span>
+    {
+        pageWriteLock.Release();
+    }
+}
+</div></code></pre>
+<ul>
+<li>入口會先檢查子系統存在與待寫命令是否為空，並依頁面取得對應鎖，確保同一子系統僅有一個寫入流程。</li>
+<li>實際寫入會逐一呼叫 <code>apiWrite_SetSingleCMD</code>，中間穿插短暫延遲，避免瞬間打爆 Framework。</li>
+<li>每輪寫入後透過 <code>Is_CmdDatas_AlreadySetting</code> 比對是否已成功生效，留下失敗命令並最多重試兩次。</li>
+<li>結束時將失敗命令記錄於 <code>SubSystem</code>，並重新抓取 <code>apiReadReal_SettingData</code> 更新可寫命令資訊(例如<code>CURVE_CC</code>, <code>CURVE_CV</code>...)。</li>
+</ul>
+<hr>
+<h2 id="4-%E5%91%BC%E5%8F%AB%E6%B5%81%E7%A8%8B%E6%91%98%E8%A6%81">4. 呼叫流程摘要</h2>
+<pre><code class="language-mermaid"><div class="mermaid">sequenceDiagram
+    participant ApiMgr as ApiManager<br>(Service)
+    participant SubSysMgr as SubSystemManager<br>(Service)
+    participant SubSys as SubSystem<br>(Instance)
+
+    SubSysMgr->>SubSysMgr: createOneWriteCmdData(...)
+    SubSysMgr->>ApiMgr: await apiWrite_SetSingleCMD(payload)
+    ApiMgr-->>SubSysMgr: bool (success/fail)
+    alt 寫入成功
+        SubSysMgr->>SubSys: 更新寫命令資訊/快照
+    else 寫入失敗
+        SubSysMgr->>SubSysMgr: 記錄 log 或提示使用者
+    end
+</div></code></pre>
+<p>流程與其他 API 文件一致，強調三個步驟：</p>
+<ol>
+<li>先定義請求模型 (<code>Post_RealSingleRawSettingCMD_JsonFormat</code>, <code>WriteVal</code>, <code>AddrValue</code>)；</li>
+<li>在 <code>ApiManager</code> 中包裝 <code>POST</code> 呼叫與錯誤處理；</li>
+<li>由服務 (<code>SubSystemManager</code>) 建立 payload、發送寫入並更新本地狀態。</li>
+</ol>
+
+</body>
+</html>
