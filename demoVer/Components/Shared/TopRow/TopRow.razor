@@ -77,12 +77,12 @@
 
             if( Page_index == PAGE.INV_SETTING)
             {
-                <button class="topRow-btn" @onclick="apply_INV_setting">
+                @* <button class="topRow-btn" @onclick="apply_INV_setting">
                     <img src="images/checked.png" alt="apply" class="iconBtn"/>
                 </button>
                 <button class="topRow-btn" @onclick="UseDefault_INV_setting">
                     <img src="images/settings.png" alt="restore" class="iconBtn"/>
-                </button>
+                </button> *@
             }
 
             <button class="topRow-btn" @onclick="ToggleTheme" title="@(IsDarkTheme ? "切換到亮色模式" : "切換到暗色模式")">

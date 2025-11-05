@@ -277,12 +277,12 @@ mud-slider-vertical =>
         flex-direction: column;
         gap: 0.25rem;
     }
+    
     .rightPart {
         display: flex;
         flex-direction: row;
         align-items: center;
         gap: 0.75rem;
-        
     }
 
     .content-container{

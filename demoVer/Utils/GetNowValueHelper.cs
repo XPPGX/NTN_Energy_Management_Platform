@@ -224,19 +224,27 @@ namespace demoVer.Utils
                     return (false, false);
                 }
 
-                if (cmdSettingData.Target is null || cmdSettingData.Target.Bits is null)
+                if (cmdSettingData.AddrValues is null)
                 {
-                    AppLogger.Log_To_File_log(_category, $"[parse_INV_OPERATION] one of the (Target, or Target.Bits) is null for CmdCode: {ClearCmdCode}", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, $"[parse_INV_OPERATION] AddrValues is null for CmdCode: {ClearCmdCode}", AppLogLevel.Debug);
                     return (false, false);
                 }
 
+                //因整個子系統INV_Operation的BIT_2一樣，故取任一個addr的Value.Bits
+                var firstAddrValue = cmdSettingData.AddrValues[0];
+                if (firstAddrValue.Value.Bits is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[parse_INV_OPERATION] Value.Bits is null for CmdCode: {ClearCmdCode}", AppLogLevel.Debug);
+                    return (false, false);
+                }
+                var firstBitsDict = firstAddrValue.Value.Bits;
                 //取CHG_EN
-                if (cmdSettingData.Target.Bits.TryGetValue("BIT_2", out int val1))
+                if (firstBitsDict.TryGetValue("BIT_2", out int val1))
                 {
                     CHG_EN = val1 == 1;
                 }
                 //取GRID_EN
-                if (cmdSettingData.Target.Bits.TryGetValue("BIT_3", out int val2))
+                if(firstBitsDict.TryGetValue("BIT_3", out int val2))
                 {
                     GRID_EN = val2 == 1;
                 }
@@ -337,9 +345,9 @@ namespace demoVer.Utils
                     AppLogger.Log_To_File_log(_category, $"[parse_ACV_Set] one of the (Target, or Target.Bits) is null for CmdCode: {ClearCmdCode}", AppLogLevel.Debug);
                     return ACV_Set_str;
                 }
-
-                //取Bit1 (ACV_Enable)
-                if (cmdSettingData.Target.Bits.TryGetValue("BIT_4", out int val))
+                
+                //取Bit0 (ACV_Set)
+                if (cmdSettingData.Target.Bits.TryGetValue("BIT_0", out int val))
                 {
                     switch (val)
                     {

@@ -281,10 +281,13 @@ namespace demoVer.Services
         }
 
         //POST API WRITE_Memory_V1.1 : 寫某個(port, protocolFileName)的某個(cmd)的值
-        public async Task<bool> apiWrite_SetSingleCMD(Post_RealSingleRawSettingCMD_JsonFormat api_body, CancellationToken ct = default)
+        public async Task<bool> apiWrite_SetSingleCMD(Post_RealSingleRawSettingCMD_JsonFormat api_body, int timeouts = 5000, CancellationToken ct = default)
         {
             try
             {
+                using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                cts.CancelAfter(timeouts);
+
                 //[Debug 僅用在本地python server 測試]
                 var options = new JsonSerializerOptions
                 {
@@ -292,7 +295,7 @@ namespace demoVer.Services
                 };
 
                 string url = $"api/memory/write-api";
-                using var response = await _http.PostAsJsonAsync(url, api_body, options, ct);
+                using var response = await _http.PostAsJsonAsync(url, api_body, options, cts.Token);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -305,6 +308,11 @@ namespace demoVer.Services
                     AppLogger.Log_To_File_log(_category, $"[ApiManager][apiWrite_SetSingleCMD]失敗: {(int)response.StatusCode}, Failed Message : {text}", AppLogLevel.Trace);
                     return false;
                 }
+            }
+            catch(OperationCanceledException)
+            {
+                AppLogger.Log_To_File_log(_category, $"[ApiManager][apiWrite_SetSingleCMD] Timeout after {timeouts} ms", AppLogLevel.Warning);
+                return false;
             }
             catch (HttpRequestException ex)
             {

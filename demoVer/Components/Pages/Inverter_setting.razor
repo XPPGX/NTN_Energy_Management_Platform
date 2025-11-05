@@ -5,12 +5,16 @@
 @inject DataCenter DataCenter
 @inject WriteProcess writeProcess
 @inject GlobalVar globalVar
+@using System.Reflection.PortableExecutable
 @using demoVer.Components.Layout
 @using System.Text.Json
+@using System.Linq
 @using demoVer.Models
 @using demoVer.Utils
+@using Microsoft.JSInterop
 @inject CommonData commonData
 @inject HeartbeatService Heartbeat
+@inject SubSystemManager SubSystemManager
 
 <MudPopoverProvider/>
 @*Web Content*@
@@ -32,192 +36,207 @@
     </div>
 }
 
+<div class="page-wrapper">
+    <div class="top-bar">
+        <div class="leftPart">
+            <div class="subsystem-select-group">
+                <label for="subsystem-select" class="local-label">子系統</label>
+                <select id="subsystem-select" class="subsystem-select" value="@SelectedSubSystemKey" @onchange="Local_OnSubSystemChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
+                    @if (_subSystemOptions.Count == 0)
+                    {
+                        <option value="">請選擇子系統</option>
+                    }
+                    else
+                    {
+                        foreach (var subSystem in _subSystemOptions)
+                        {
+                            <option value="@BuildKey(subSystem.Port, subSystem.Protocol)">@GetSubSystemDisplay(subSystem)</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="rightPart">
+            <button type="button" class="btn btn-primary no-flex" @onclick="OnSaveButtonClick">保存設定</button>
+        </div>
+    </div>
 
+    <div class="content-container">
+        @* <MudOverlay DisablePortal="true" Visible="_isLoading" DarkBackground="true" Class="Mud-overlay d-flex justify-center align-center">
+            <MudPaper Class="pa-6 d-flex flex-column align-center" Elevation="4" Rounded="true">
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Medium"/>
+                <MudText Typo="Typo.h6" Class="mt-4">Waiting for devices linking...</MudText>
+            </MudPaper>
+        </MudOverlay> *@
 
-
-<div class="content-container">
-    @* <MudOverlay DisablePortal="true" Visible="_isLoading" DarkBackground="true" Class="Mud-overlay d-flex justify-center align-center">
-        <MudPaper Class="pa-6 d-flex flex-column align-center" Elevation="4" Rounded="true">
-            <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Medium"/>
-            <MudText Typo="Typo.h6" Class="mt-4">Waiting for devices linking...</MudText>
-        </MudPaper>
-    </MudOverlay> *@
-
-    <div class="card-grid">
-        <div class="w50">
-            <div class="card-container-layout card-container-base">
-                <canvas id="sinChart" class="canvas-width-height-limit"></canvas>
-                <div class="selection-container">
-                    <div class="single-selection">
-                        <select value="@selectedFreqType" @onchange="OnFreqTypeChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
-                            @foreach(var pair in DataCenter.INV.ACF_DisplayMap)
-                            {
-                                <option value="@pair.Value">@pair.Value</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="single-selection">
-                        <select value="@selectedVoltType" @onchange="OnVoltTypeChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
-                            @foreach(var pair in DataCenter.INV.ACV_DisplayMap)
-                            {
-                                <option value="@pair.Value">@pair.Value</option>
-                            }
-                        </select>
+        <div class="card-grid">
+            <div class="w50">
+                <div class="card-container-layout card-container-base">
+                    <canvas id="sinChart" class="canvas-width-height-limit"></canvas>
+                    <div class="selection-container">
+                        <div class="single-selection">
+                            <select value="@selectedFreqType" @onchange="OnFreqTypeChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
+                                <option value="@ConstDefinition.Str_50Hz">50Hz</option>
+                                <option value="@ConstDefinition.Str_60Hz">60Hz</option>
+                            </select>
+                        </div>
+                        <div class="single-selection">
+                            <select value="@selectedVoltType" @onchange="OnVoltTypeChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
+                                @* @foreach (var pair in DataCenter.INV.ACV_DisplayMap)
+                                {
+                                    <option value="@pair.Value">@pair.Value</option>
+                                } *@
+                                @foreach(var type in ShowSeriesSelelction_List)
+                                {
+                                    <option value="@type">@type</option>
+                                }
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="w50">
-            <div class="right-part-layout card-container-base">
-                <div class="small-row">
-                    <div class="cell">
-                        @* <h3 class="desktop-only">AC模式充電器</h3> *@
-                        <div class="alarm-label" style="font-size: 1.2rem; font-weight: bold;">AC模式充電器</div>
-                    </div>
-                    <div class="cell">
-                        <div class="toggle-with-text">
-                            <label class="custom-toggle-button" title="@(AC_mode_charging_enable ? "On" : "Off")">
-                                <input type="checkbox" @bind="AC_mode_charging_enable" disabled="@(!AC_mode_charging_touchable)" />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span>@(AC_mode_charging_enable ? "ON" : "OFF")</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="small-row">
-                    <div class="cell">
-                        @* <h3 class="desktop-only">並網供電</h3> *@
-                        <div class="alarm-label" style="font-size: 1.2rem; font-weight: bold;">並網供電</div>
-                    </div>
-                    <div class="cell">
-                        <div class="toggle-with-text">
-                            <label class="custom-toggle-button" title="@(Grid_tied_power_feeding_enable ? "On" : "Off")">
-                                <input type="checkbox" @bind="Grid_tied_power_feeding_enable" disabled="@(!Grid_tied_power_feeding_touchable)" />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span>@(Grid_tied_power_feeding_enable ? "ON" : "OFF")</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="small-row">
-                    <div class="cell">
-                        @* <h3 class="desktop-only">輸出優先級</h3> *@
-                        <div class="alarm-label" style="font-size: 1.2rem; font-weight: bold;">輸出優先級</div>
-                    </div>
-                    <div class="cell">
-                        <select value="@selectedOutputPriority.ToString()" @onchange="OnOutputPrioritySelectChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true" disabled="@(!Output_priority_touchable)" class="priority-select">
-                            <option value="Utility">Utility</option>
-                            <option value="Battery">Battery</option>
-                            <option value="Solar">Solar</option>
-                        </select>
-                    </div>
 
-                    
-                </div>
-                <div class="small-row">
-                    <div class="cell">
-                        @* <h3 class="desktop-only">充電優先級</h3> *@
-                        <div class="alarm-label" style="font-size: 1.2rem; font-weight: bold;">充電優先級</div>
+            <div class="w50">
+                <div class="right-part-layout card-container-base">
+                    <div class="small-row">
+                        <div class="cell">
+                            @* <h3 class="desktop-only">AC模式充電器</h3> *@
+                            <div class="alarm-label" style="font-size: 1.2rem; font-weight: bold;">AC模式充電器</div>
+                        </div>
+                        <div class="cell">
+                            <div class="toggle-with-text">
+                                <label class="custom-toggle-button" title="@(AC_mode_charging_enable ? "On" : "Off")">
+                                    <input type="checkbox" @bind="AC_mode_charging_enable" disabled="@(!AC_mode_charging_touchable)" />
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span>@(AC_mode_charging_enable ? "ON" : "OFF")</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="cell">
-                        <select value="@selectedChargingPriority.ToString()" @onchange="OnChargingPrioritySelectChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true" disabled="@(!Charge_priority_touchable)" class="priority-select">
-                            <option value="Utility">Utility</option>
-                            <option value="Solar">Solar</option>
-                        </select>
+                    <div class="small-row">
+                        <div class="cell">
+                            @* <h3 class="desktop-only">並網供電</h3> *@
+                            <div class="alarm-label" style="font-size: 1.2rem; font-weight: bold;">並網供電</div>
+                        </div>
+                        <div class="cell">
+                            <div class="toggle-with-text">
+                                <label class="custom-toggle-button" title="@(Grid_tied_power_feeding_enable ? "On" : "Off")">
+                                    <input type="checkbox" @bind="Grid_tied_power_feeding_enable" disabled="@(!Grid_tied_power_feeding_touchable)" />
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span>@(Grid_tied_power_feeding_enable ? "ON" : "OFF")</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="small-row">
+                        <div class="cell">
+                            @* <h3 class="desktop-only">輸出優先級</h3> *@
+                            <div class="alarm-label" style="font-size: 1.2rem; font-weight: bold;">輸出優先級</div>
+                        </div>
+                        <div class="cell">
+                            <select value="@selectedOutputPriority.ToString()" @onchange="OnOutputPrioritySelectChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true" disabled="@(!Output_priority_touchable)" class="priority-select">
+                                <option value="@OUTPUT_PRIORITY.Utility">Utility</option>
+                                <option value="@OUTPUT_PRIORITY.Battery">Battery</option>
+                                <option value="@OUTPUT_PRIORITY.Solar">Solar</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="small-row">
+                        <div class="cell">
+                            @* <h3 class="desktop-only">充電優先級</h3> *@
+                            <div class="alarm-label" style="font-size: 1.2rem; font-weight: bold;">充電優先級</div>
+                        </div>
+                        <div class="cell">
+                            <select value="@selectedChargingPriority.ToString()" @onchange="OnChargingPrioritySelectChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true" disabled="@(!Charge_priority_touchable)" class="priority-select">
+                                <option value="Utility">Utility</option>
+                                <option value="Solar">Solar</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="w100">
-            <div class="bottom-container card-container-base">
-                <div class="alarms-col">
-                    <div class="alarm-row">
-                        <div class="alarm-label">Battery alarm</div>
-                        <div class="alarm-input">
-                            <input type="number" @bind-value="Battery_alarm_value" @bind-value:after="OnBatteryAlarmChanged" placeholder="Battery alarm" min="@Battery_alarm_now_min" max="@Battery_alarm_now_max" step="0.1" />
+            <div class="w100">
+                <div class="bottom-container card-container-base">
+                    <div class="alarms-col">
+                        <div class="alarm-row">
+                            <div class="alarm-label">Battery alarm</div>
+                            <div class="alarm-input">
+                                <input type="number" @bind-value="Battery_alarm_value" @bind-value:after="OnBatteryAlarmChanged" placeholder="Battery alarm" min="@Battery_alarm_now_min" max="@Battery_alarm_now_max" step="0.1" />
+                            </div>
+                            <div class="alarm-slider">
+                                <input type="range" @bind="Battery_alarm_value" @bind:event="oninput" @bind:after="OnBatteryAlarmChanged" min="@Battery_alarm_now_min" max="@Battery_alarm_now_max" step="0.1" class="custom-slider" />
+                            </div>
                         </div>
-                        <div class="alarm-slider">
-                            <input type="range" @bind="Battery_alarm_value" @bind:event="oninput" @bind:after="OnBatteryAlarmChanged" min="@Battery_alarm_now_min" max="@Battery_alarm_now_max" step="0.1" class="custom-slider" />
-                        </div>
-                    </div>
-                    
-                    <div class="alarm-row">
-                        <div class="alarm-label">Battery shutdown</div>
-                        <div class="alarm-input">
-                            <input type="number" @bind-value="Battery_shutdown_value" @bind-value:after="OnBatteryShutdownChanged" placeholder="Battery shutdown" min="@(DataCenter.INV.BAT_Shutdown_Min_Display)" max="@(Battery_shutdown_dynamic_upperBound)" step="0.1" />
-                        </div>
-                        <div class="alarm-slider">
-                            <input type="range" @bind="Battery_shutdown_value" @bind:event="oninput" @bind:after="OnBatteryShutdownChanged" min="@(DataCenter.INV.BAT_Shutdown_Min_Display)" max="@(Battery_shutdown_dynamic_upperBound)" step="0.1" class="custom-slider" />
-                        </div>
-                    </div>
 
-                    <div class="alarm-row">
-                        <div class="alarm-label">Battery recharge</div>
-                        <div class="alarm-input">
-                            <input type="number" @bind-value="Battery_recharge_value" @bind-value:after="OnBatteryRechargeChanged" placeholder="Battery recharge" min="@(DataCenter.INV.BAT_Recharge_Min_Display)" max="@(Battery_recharge_dynamic_upperBound)" step="0.1" />
+                        <div class="alarm-row">
+                            <div class="alarm-label">Battery shutdown</div>
+                            <div class="alarm-input">
+                                <input type="number" @bind-value="Battery_shutdown_value" @bind-value:after="OnBatteryShutdownChanged" placeholder="Battery shutdown" min="@(Battery_shdn_now_min)" max="@(Battery_shutdown_dynamic_upperBound)" step="0.1" />
+                            </div>
+                            <div class="alarm-slider">
+                                <input type="range" @bind="Battery_shutdown_value" @bind:event="oninput" @bind:after="OnBatteryShutdownChanged" min="@(Battery_shdn_now_min)" max="@(Battery_shutdown_dynamic_upperBound)" step="0.1" class="custom-slider" />
+                            </div>
                         </div>
-                        <div class="alarm-slider">
-                            <input type="range" @bind="Battery_recharge_value" @bind:event="oninput" @bind:after="OnBatteryRechargeChanged" min="@(DataCenter.INV.BAT_Recharge_Min_Display)" max="@(Battery_recharge_dynamic_upperBound)" step="0.1" class="custom-slider" />
-                        </div>
+
+                        
                     </div>
-                </div>
-                <div class="alarms-col">
-                    <div class="alarm-row">
-                        <div class="alarm-label">Battery capacity</div>
-                        <div class="alarm-input">
-                            <input type="number" @bind-value="Battery_capacity_value" @bind-value:event="oninput" @bind-value:after="OnBatteryCapacityChanged" placeholder="Battery capacity"
-                                   min="0" max="@(DataCenter.INV.BAT_Capacity_Max)" step="1" />
+                    <div class="alarms-col">
+                        <div class="alarm-row">
+                            @* <div class="alarm-label">Battery capacity</div>
+                            <div class="alarm-input">
+                                <input type="number" @bind-value="Battery_capacity_value" @bind-value:event="oninput" @bind-value:after="OnBatteryCapacityChanged" placeholder="Battery capacity"
+                                       min="0" max="@(DataCenter.INV.BAT_Capacity_Max)" step="1" />
+                            </div>
+                            <div class="alarm-slider">
+                                <input type="range" @bind="Battery_capacity_value" @bind:event="oninput" @bind:after="OnBatteryCapacityChanged"
+                                       min="0" max="@(DataCenter.INV.BAT_Capacity_Max)" step="1" class="custom-slider" />
+                            </div> *@
+                            <div class="alarm-label">Battery recharge</div>
+                            <div class="alarm-input">
+                                <input type="number" @bind-value="Battery_recharge_value" @bind-value:after="OnBatteryRechargeChanged" placeholder="Battery recharge" min="@(Battery_rchg_now_min)" max="@(Battery_recharge_dynamic_upperBound)" step="0.1" />
+                            </div>
+                            <div class="alarm-slider">
+                                <input type="range" @bind="Battery_recharge_value" @bind:event="oninput" @bind:after="OnBatteryRechargeChanged" min="@(Battery_rchg_now_min)" max="@(Battery_recharge_dynamic_upperBound)" step="0.1" class="custom-slider" />
+                            </div>
                         </div>
-                        <div class="alarm-slider">
-                            <input type="range" @bind="Battery_capacity_value" @bind:event="oninput" @bind:after="OnBatteryCapacityChanged"
-                                   min="0" max="@(DataCenter.INV.BAT_Capacity_Max)" step="1" class="custom-slider" />
-                        </div>
-                    </div>
-                    <div class="alarm-row">
-                        <div class="alarm-label">Battery OV alarm</div>
-                        <div class="alarm-input">
-                            <input type="number" @bind-value="Battery_OV_alarm_value" @bind-value:after="OnBatteryOVAlarmChanged" placeholder="Battery OV alarm"
-                                   min="@(DataCenter.INV.BAT_OV_Alarm_Min_Display)" max="@(DataCenter.INV.BAT_OV_Alarm_Max_Display)" step="0.1" />
-                        </div>
-                        <div class="alarm-slider">
-                            <input type="range" @bind="Battery_OV_alarm_value" @bind:event="oninput" @bind:after="OnBatteryOVAlarmChanged"
-                                   min="@(DataCenter.INV.BAT_OV_Alarm_Min_Display)" max="@(DataCenter.INV.BAT_OV_Alarm_Max_Display)" step="0.1" class="custom-slider" />
+                        <div class="alarm-row">
+                            <div class="alarm-label">Battery OV alarm</div>
+                            <div class="alarm-input">
+                                <input type="number" @bind-value="Battery_ov_alarm_value" @bind-value:after="OnBatteryOVAlarmChanged" placeholder="Battery OV alarm"
+                                       min="@(Battery_ov_alm_now_min)" max="@(Battery_ov_alm_now_max)" step="0.1" />
+                            </div>
+                            <div class="alarm-slider">
+                                <input type="range" @bind="Battery_ov_alarm_value" @bind:event="oninput" @bind:after="OnBatteryOVAlarmChanged"
+                                       min="@(Battery_ov_alm_now_min)" max="@(Battery_ov_alm_now_max)" step="0.1" class="custom-slider" />
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
+    </div>
 @code
 {
     [CascadingParameter(Name = "MainLayout")] public MainLayout? MainLayout { get; set; }
 
-    //For log
-    private string _category = "";
-
-    private bool isMobile;
-    private DotNetObjectReference<Inverter_setting> dotNetRef;
+    private string _category = string.Empty;
+    private bool modal_IsOpen;
+    private string? AlertMessage_parent;
+    private string ConfirmBtn_Text_parent = string.Empty;
+    private string CancelBtn_Text_parent = string.Empty;
+    public EventCallback ConfirmBtn_Func_parent { get; set; } = EventCallback.Empty;
+    public EventCallback CancelBtn_Func_parent { get; set; } = EventCallback.Empty;
     private bool _isLoading = true;
-    private bool oldScalingFactor_OK = false;
+    private bool oldScalingFactor_OK;
+    private string? selectedFreqType;
+    private string? selectedVoltType;
+    private int waveCount = 5;
+    private double period = 144;
+    private double peak = 240;
+    private DotNetObjectReference<Inverter_setting>? dotNetRef;
 
-    bool modal_IsOpen = false;
-    string? AlertMessage_parent = null;
-    string? ConfirmBtn_Text_parent = null;
-    string? CancelBtn_Text_parent = null;
-    public EventCallback ConfirmBtn_Func_parent {get; set;}
-    public EventCallback CancelBtn_Func_parent {get; set;}
-
-    //DataCenter紀錄共用的資料，只有多個user中的某個user按下儲存設定的時候，才會去寫到DataCenter的資料，然後用DataHub去推送到其他User的頁面
-    private string? selectedFreqType = null;
-    private string? selectedVoltType = null;
-    private double peak;
-    private double period;
-    private int waveCount;
-    
     private bool AC_mode_charging_touchable = true;
     private bool Grid_tied_power_feeding_touchable = true;
     private bool Output_priority_touchable = true;
@@ -227,168 +246,43 @@
     private bool Grid_tied_power_feeding_enable = false;
     private OUTPUT_PRIORITY selectedOutputPriority = OUTPUT_PRIORITY.Utility;
     private CHARGING_PRIORITY selectedChargingPriority = CHARGING_PRIORITY.Utility;
-    
+
     private double  Battery_alarm_value = 0;
     private double  Battery_shutdown_value = 0;
     private double  Battery_recharge_value = 0;
     private int    Battery_capacity_value = 0;
-    private double  Battery_OV_alarm_value = 0;
+    private double  Battery_ov_alarm_value = 0;
     private const double BAT_ALARM_SHDN_DIFF = 0.2;
     private bool topRowCallbacksRegistered = false;
 
-    private double Battery_alarm_now_min => DataCenter.INV.BAT_Alarm_Min_Display;
-    private double Battery_alarm_now_max => Math.Min(DataCenter.Battery.FV_Display, DataCenter.INV.BAT_Alarm_Max_Display);
+    private IReadOnlyList<SubSystem> _subSystemOptions = Array.Empty<SubSystem>();
+    private string? _selectedSubSystemKey;
+    private string SelectedSubSystemKey => _selectedSubSystemKey ?? string.Empty;
+    private bool _subsystemHeartbeatSubscribed = false;
+    private bool _isRefreshingSubSystemOptions = false;
 
-    private double Battery_shutdown_dynamic_upperBound => Math.Min(ScalingComputer.AutoSnapToDecimal_doubleVer(Battery_alarm_value - BAT_ALARM_SHDN_DIFF), DataCenter.INV.BAT_Shutdown_Max_Display);
-    private double Battery_recharge_dynamic_upperBound => ScalingComputer.AutoSnapToDecimal_doubleVer(DataCenter.Battery.FV_Display);
+    // private double Battery_alarm_now_min => DataCenter.INV.BAT_Alarm_Min_Display;
+    // private double Battery_alarm_now_max => Math.Min(DataCenter.Battery.FV_Display, DataCenter.INV.BAT_Alarm_Max_Display);
+    private double Battery_alarm_now_min = 0.0, Battery_alarm_now_max = 0.0;
+    private double Battery_shdn_now_min = 0.0, Battery_shdn_now_max = 0.0;
+    private double Battery_shutdown_dynamic_upperBound => Math.Min(ScalingComputer.AutoSnapToDecimal_doubleVer(Battery_alarm_value - BAT_ALARM_SHDN_DIFF), Battery_shdn_now_max);
+    private double Battery_rchg_now_min = 0.0, Battery_rchg_now_max = 0.0, FV_now_val = 0.0;
+    private double Battery_recharge_dynamic_upperBound => ScalingComputer.AutoSnapToDecimal_doubleVer(FV_now_val);
+    private double Battery_ov_alm_now_min = 0.0, Battery_ov_alm_now_max = 0.0;
 
-    private void OnBatteryAlarmChanged()   { _ = AlarmValueChange_validation(Battery_alarm_value, "alarm"); }
-    private void OnBatteryShutdownChanged() { _ = AlarmValueChange_validation(Battery_shutdown_value, "shutdown"); }
-    private void OnBatteryRechargeChanged() { _ = AlarmValueChange_validation(Battery_recharge_value, "recharge"); }
-    private void OnBatteryCapacityChanged()   { _ = AlarmValueChange_validation(Battery_capacity_value, "capacity"); }
-    private void OnBatteryOVAlarmChanged() { _ = AlarmValueChange_validation(Battery_OV_alarm_value, "OV_alarm"); }
 
-    private async Task AlarmValueChange_validation(double value, string type)
-    {
-        //value是Display值 (只有 capacity 是 uint類型)
-        //用Display值進行比較
-        double upperBound = 0;
-        double lowerBound = 0;
-        switch(type)
-        {
-            case "alarm":
-                //check BAT_Alarm
-                upperBound = Battery_alarm_now_max;
-                lowerBound = Battery_alarm_now_min;
-                Console.WriteLine($"[alarm changed][Alarm] upperBound = {upperBound}, lowerBound = {lowerBound}");
-                if(value > upperBound){Battery_alarm_value = upperBound;}
-                else if(value < lowerBound){Battery_alarm_value = lowerBound;}
-                else{Battery_alarm_value = value;}
-                Console.WriteLine($"Battery_alarm_value = {Battery_alarm_value}");
 
-                //check BAT_shutdown (這裡的Battery_alarm_value已是更新過的)
-                upperBound = Battery_shutdown_dynamic_upperBound;
-                lowerBound = DataCenter.INV.BAT_Shutdown_Min_Display;
-                Console.WriteLine($"[alarm changed][Shutdown] upperBound = {upperBound}, lowerBound = {lowerBound}");
-                if(Battery_shutdown_value > upperBound){Battery_shutdown_value = upperBound;}
-                else if(Battery_shutdown_value < lowerBound){Battery_shutdown_value = lowerBound;}
-
-                break;
-            case "shutdown":
-                upperBound = Battery_shutdown_dynamic_upperBound;
-                lowerBound = DataCenter.INV.BAT_Shutdown_Min_Display;
-                if(value > upperBound){Battery_shutdown_value = upperBound;}
-                else if(value < lowerBound){Battery_shutdown_value = lowerBound;}
-                else{Battery_shutdown_value = value;}
-
-                break;
-            case "recharge":
-                upperBound = DataCenter.Battery.FV_Display;
-                lowerBound = DataCenter.INV.BAT_Recharge_Min_Display;
-                if(value > upperBound){Battery_recharge_value = upperBound;}
-                else if(value < lowerBound){Battery_recharge_value = lowerBound;}
-                else{Battery_recharge_value = value;}
-                
-                break;
-            case "OV_alarm":
-                upperBound = DataCenter.INV.BAT_OV_Alarm_Max_Display;
-                lowerBound = DataCenter.INV.BAT_OV_Alarm_Min_Display;
-                if(value > upperBound){Battery_OV_alarm_value = upperBound;}
-                else if(value < lowerBound){Battery_OV_alarm_value = lowerBound;}
-                else{Battery_OV_alarm_value = value;}
-
-                break;
-            default:
-                break;
-        }
-        StateHasChanged();
-    }
-
-    private async Task AlarmValueChange_validation(int value, string type)
-    {
-        if(type == "capacity")
-        {
-            int upperBound = DataCenter.INV.BAT_Capacity_Max;
-            int lowerBound = 0;
-            if(value > upperBound){Battery_capacity_value = upperBound;}
-            else if(value < lowerBound){Battery_capacity_value = lowerBound;}
-            else{Battery_capacity_value = value;}
-        }
-    }
-
-    private IEnumerable<string> ValidateHint<T>(T value, T max, T min) where T : IComparable<T>
-    {    
-        if(value.CompareTo(min) < 0)
-        {
-            yield return $"輸入低於下限{min}";
-        }
-        else if(value.CompareTo(max) > 0)
-        {
-            yield return $"輸入高於上限{max}";
-        }
-    }
-
-    
-
-    private void FixValue<T>(MudTextField<T>? field, T val, T min, T max) where T : IComparable<T>
-    {
-        T corrected = val;
-        
-
-        if(val.CompareTo(min) < 0)
-        {
-            corrected = min;
-        }
-        else if(val.CompareTo(max) > 0)
-        {
-            corrected = max;
-        }
-
-        if(!EqualityComparer<T>.Default.Equals(val, corrected))
-        {
-            StateHasChanged();
-        }
-
-        field?.ResetValidation();
-    }
-
+    bool FirstAutoGet_SubSys_done = false;
+    bool DotNetHelper_Is_OK = false;
+    List<string> Series100VAC_List = new List<string>{"100VAC","110VAC","115VAC","120VAC"};
+    List<string> Series200VAC_List = new List<string>{"200VAC","220VAC","230VAC","240VAC"};
+    List<string> ShowSeriesSelelction_List = new List<string>();
+    #region System Task
     protected override void OnInitialized()
     {
         //For log
         _category = GetType().FullName!;
-
-        //Event Hook
-        DataCenter.INV.OnUpdated += OnINVChanged;
-        _isLoading = !commonData.ScalingFactor_OK;
-        //這裡加入初始化頁面數值流程
-        // var newInit = new INV_InitData();
-        // DataCenter.INV.UpdateFrom(newInit);
-
-        oldScalingFactor_OK                 = commonData.ScalingFactor_OK;
-
-        selectedFreqType                    = DataCenter.INV.ACF_Display_str;
-        selectedVoltType                    = DataCenter.INV.ACV_Display_str;
-
-        AC_mode_charging_enable             = DataCenter.INV.AC_mode_charging_enable;
-        Grid_tied_power_feeding_enable      = DataCenter.INV.Grid_tied_power_feeding_enable;
-        
-        AC_mode_charging_touchable          = DataCenter.INV.AC_mode_charging_touchable;
-        Grid_tied_power_feeding_touchable   = DataCenter.INV.Grid_tied_power_feeding_touchable;
-        Output_priority_touchable           = DataCenter.INV.Output_priority_touchable;
-        Charge_priority_touchable           = DataCenter.INV.Charge_priority_touchable;
-
-        Battery_alarm_value                 = DataCenter.INV.BAT_Alarm_Display;
-        Battery_shutdown_value              = DataCenter.INV.BAT_Shutdown_Display;
-        Battery_recharge_value              = DataCenter.INV.BAT_Recharge_Display;
-        Battery_OV_alarm_value              = DataCenter.INV.BAT_OV_Alarm_Display;
-        Battery_capacity_value              = DataCenter.INV.BAT_Capacity_Display;
-
-        Console.WriteLine($"[INV_Init] Battery_alarm_value = {Battery_alarm_value}");
-        Console.WriteLine($"[INV_Init] Battery_shutdown_value = {Battery_shutdown_value}");
-        Console.WriteLine($"[INV_Init] Battery_recharge_value = {Battery_recharge_value}");
-        Console.WriteLine($"[INV_Init] Battery_OV_alarm_value = {Battery_OV_alarm_value}");
-        Console.WriteLine($"[INV_Init] Battery_capacity_value = {Battery_capacity_value}");
-        Console.WriteLine($"Grid_touchable = {Grid_tied_power_feeding_touchable}, AC_mode_touchable = {AC_mode_charging_touchable}");
+        ShowSeriesSelelction_List = Series100VAC_List;
     }
 
     protected override void OnParametersSet()
@@ -402,21 +296,240 @@
             topRowCallbacksRegistered = true;
         }
     }
-
-    private void OnINVChanged()
-    {
-        InvokeAsync(StateHasChanged);
-    }
-
     public void Dispose()
     {
-        DataCenter.INV.OnUpdated -= OnINVChanged;
-        Heartbeat.OnTick -= Check_ScalingFactor_Status;
+        // DataCenter.INV.OnUpdated -= OnINVChanged;
+        // Heartbeat.OnTick -= Check_ScalingFactor_Status;
+        if (_subsystemHeartbeatSubscribed)
+        {
+            Heartbeat.OnTick -= OnHeartbeatTickAsync;
+            _subsystemHeartbeatSubscribed = false;
+        }
         if (topRowCallbacksRegistered)
         {
             MainLayout?.ClearTopRowCallbacks(this);
             topRowCallbacksRegistered = false;
         }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+
+        if (firstRender)
+        {
+            dotNetRef = DotNetObjectReference.Create(this);
+            DotNetHelper_Is_OK = true;
+            await JS.InvokeVoidAsync("startINVHub", dotNetRef);
+
+            await OnChartTypeChanged();
+            await DrawChart();
+            // Heartbeat.OnTick += Check_ScalingFactor_Status;
+            if (!_subsystemHeartbeatSubscribed)
+            {
+                Heartbeat.OnTick += OnHeartbeatTickAsync;
+                _subsystemHeartbeatSubscribed = true;
+            }
+
+            await RefreshSubSystemOptionsAsync();
+        }
+    }
+    #endregion System Task
+
+    #region SubSystemFuncs
+    private static string BuildKey(string? port, string? protocol) => $"{port ?? string.Empty}|{protocol ?? string.Empty}";
+
+    private bool ContainsSubSystemKey(string? key)
+    {
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            return false;
+        }
+        foreach (var subSystem in _subSystemOptions)
+        {
+            if (string.Equals(BuildKey(subSystem.Port, subSystem.Protocol), key, System.StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private string GetSubSystemDisplay(SubSystem subSystem)
+    {
+        var port = string.IsNullOrWhiteSpace(subSystem.Port) ? "Unknown" : subSystem.Port;
+        var protocol = string.IsNullOrWhiteSpace(subSystem.Protocol) ? "N/A" : subSystem.Protocol;
+        return $"{port} - {protocol}";
+    }
+
+    private (string Port, string Protocol) GetSelectedSubSystemPortAndProtocol()
+    {
+        if (string.IsNullOrWhiteSpace(_selectedSubSystemKey))
+        {
+            return (string.Empty, string.Empty);
+        }
+
+        var parts = _selectedSubSystemKey.Split('|');
+        if (parts.Length != 2)
+        {
+            return (string.Empty, string.Empty);
+        }
+
+        return (parts[0], parts[1]);
+    }
+
+    private async Task RefreshSubSystemOptionsAsync()
+    {
+        var snapshot = SubSystemManager.GetAllSubSystems_Ref_In_List();
+        if(snapshot is null || snapshot.Count == 0)
+        {
+            _subSystemOptions = Array.Empty<SubSystem>();
+            _selectedSubSystemKey = null;
+            return;
+        }
+
+        //Local變數，取得最新的子系統List快照
+        _subSystemOptions = snapshot;
+        if(!string.IsNullOrWhiteSpace(_selectedSubSystemKey) && ContainsSubSystemKey(_selectedSubSystemKey))
+        {
+            return;
+        }
+        _selectedSubSystemKey = _subSystemOptions.Count > 0
+            ? BuildKey(_subSystemOptions[0].Port, _subSystemOptions[0].Protocol)
+            : null;
+    }
+
+    private async Task Local_OnSubSystemChanged(ChangeEventArgs e)
+    {
+        var rawValue = e.Value?.ToString();
+        if(string.IsNullOrWhiteSpace(rawValue))
+        {
+            _selectedSubSystemKey = null;
+        }
+        Console.WriteLine($"[Inverter_setting][Local_OnSubSystemChanged] rawValue = {rawValue}");
+        _selectedSubSystemKey = ContainsSubSystemKey(rawValue) ? rawValue : null;
+
+        await subSystemSelectionChangedHandler();
+    }
+
+    private async Task ReSubscribeSubSys()
+    {
+        //1. [JS]嘗試解除當前訂閱的子系統
+        await JS.InvokeVoidAsync("unsubscribeAllSubSys");
+        //2. [JS]訂閱新的子系統
+        var (port, protocol) = GetSelectedSubSystemPortAndProtocol();
+        Console.WriteLine($"[ReSubscribeSubSys] port = {port}, protocol = {protocol}");
+        await JS.InvokeVoidAsync("subscribeInverterHub", port, protocol);
+    }
+
+    private async Task subSystemSelectionChangedHandler()
+    {
+        //1. 重新訂閱子系統
+        await ReSubscribeSubSys();
+        //2. 改變VAC_List
+        char type = GetVAC_Series_By_mdlName();
+
+        switch(type)
+        {
+            case '1': ShowSeriesSelelction_List = Series100VAC_List; break;
+            case '2': ShowSeriesSelelction_List = Series200VAC_List; break;
+            default : ShowSeriesSelelction_List = Series100VAC_List; break;
+        }
+
+    }
+    #endregion SubSystemFuncs
+
+    #region Value Change & Validation
+    private void OnBatteryAlarmChanged()   { _ = AlarmValueChange_validation(Battery_alarm_value, "alarm"); }
+    private void OnBatteryShutdownChanged() { _ = AlarmValueChange_validation(Battery_shutdown_value, "shutdown"); }
+    private void OnBatteryRechargeChanged() { _ = AlarmValueChange_validation(Battery_recharge_value, "recharge"); }
+    private void OnBatteryCapacityChanged()   { _ = AlarmValueChange_validation(Battery_capacity_value, "capacity"); }
+    private void OnBatteryOVAlarmChanged() { _ = AlarmValueChange_validation(Battery_ov_alarm_value, "OV_alarm"); }
+
+    private async Task AlarmValueChange_validation(double value, string type)
+    {
+        //value是Display值 (只有 capacity 是 uint類型)
+        //用Display值進行比較
+        double upperBound = 0;
+        double lowerBound = 0;
+        switch(type)
+        {
+            case "alarm":
+                //check BAT_Alarm
+                upperBound = Battery_alarm_now_max;
+                lowerBound = Battery_alarm_now_min;
+                // Console.WriteLine($"[alarm changed][Alarm] upperBound = {upperBound}, lowerBound = {lowerBound}");
+                if(value > upperBound){Battery_alarm_value = upperBound;}
+                else if(value < lowerBound){Battery_alarm_value = lowerBound;}
+                else{Battery_alarm_value = value;}
+                // Console.WriteLine($"Battery_alarm_value = {Battery_alarm_value}");
+
+                //check BAT_shutdown (這裡的Battery_alarm_value已是更新過的)
+                upperBound = Battery_shutdown_dynamic_upperBound;
+                lowerBound = Battery_shdn_now_min;
+                // Console.WriteLine($"[alarm changed][Shutdown] upperBound = {upperBound}, lowerBound = {lowerBound}");
+                if(Battery_shutdown_value > upperBound){Battery_shutdown_value = upperBound;}
+                else if(Battery_shutdown_value < lowerBound){Battery_shutdown_value = lowerBound;}
+
+                break;
+            case "shutdown":
+                upperBound = Battery_shutdown_dynamic_upperBound;
+                lowerBound = Battery_shdn_now_min;
+                if(value > upperBound){Battery_shutdown_value = upperBound;}
+                else if(value < lowerBound){Battery_shutdown_value = lowerBound;}
+                else{Battery_shutdown_value = value;}
+
+                break;
+            case "recharge":
+                upperBound = FV_now_val;
+                lowerBound = Battery_rchg_now_min;
+                if(value > upperBound){Battery_recharge_value = upperBound;}
+                else if(value < lowerBound){Battery_recharge_value = lowerBound;}
+                else{Battery_recharge_value = value;}
+
+                break;
+            case "OV_alarm":
+                upperBound = Battery_ov_alm_now_max;
+                lowerBound = Battery_ov_alm_now_min;
+                if(value > upperBound){Battery_ov_alarm_value = upperBound;}
+                else if(value < lowerBound){Battery_ov_alarm_value = lowerBound;}
+                else{Battery_ov_alarm_value = value;}
+
+                break;
+            default:
+                break;
+        }
+        StateHasChanged();
+    }
+
+    private async Task AlarmValueChange_validation(int value, string type)
+    {
+        if(type == "capacity")
+        {
+            int upperBound = 9999;
+            int lowerBound = 0;
+            if(value > upperBound){Battery_capacity_value = upperBound;}
+            else if(value < lowerBound){Battery_capacity_value = lowerBound;}
+            else{Battery_capacity_value = value;}
+        }
+    }
+    #endregion Value Change & Validation
+
+    #region UI Event Handlers
+    private Task OnSaveButtonClick()
+    {
+        TriggerAlert("Save");
+        return Task.CompletedTask;
+    }
+
+    private async Task OnHeartbeatTickAsync()
+    {
+        await RefreshSubSystemOptionsAsync();
+        if(FirstAutoGet_SubSys_done is false && DotNetHelper_Is_OK is true)
+        {
+            FirstAutoGet_SubSys_done = true;
+            await subSystemSelectionChangedHandler();
+        }
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task OnFreqTypeChanged(ChangeEventArgs e)
@@ -433,7 +546,7 @@
 
     private void OnOutputPriorityChanged()
     {
-        Console.WriteLine($"Output Priority : {selectedOutputPriority}");
+        Console.WriteLine($"Output Priority : enum = {(int)selectedOutputPriority}, str = {selectedOutputPriority}");
     }
 
     private void OnOutputPrioritySelectChanged(ChangeEventArgs e)
@@ -447,7 +560,7 @@
 
     private void OnChargingPriorityChanged()
     {
-        Console.WriteLine($"Charge Priority : {selectedChargingPriority}");
+        Console.WriteLine($"Charge Priority : enum = {(int)selectedChargingPriority}, str= {selectedChargingPriority}");
     }
 
     private void OnChargingPrioritySelectChanged(ChangeEventArgs e)
@@ -458,7 +571,9 @@
             OnChargingPriorityChanged();
         }
     }
+    #endregion UI Event Handlers
 
+    #region Chart Helpers
     private async Task OnChartTypeChanged()
     {
         switch(selectedFreqType)
@@ -494,63 +609,6 @@
         await DrawChart();
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-
-        if (firstRender)
-        {
-            dotNetRef = DotNetObjectReference.Create(this);
-            await JS.InvokeVoidAsync("startINVHub", dotNetRef);
-
-            await OnChartTypeChanged();
-            await DrawChart();
-            Heartbeat.OnTick += Check_ScalingFactor_Status;
-        }
-    }
-
-
-    public async Task Check_ScalingFactor_Status()
-    {
-        if(oldScalingFactor_OK != commonData.ScalingFactor_OK)
-        {
-            if(commonData.ScalingFactor_OK is true)
-            {
-                _isLoading = false;
-                AppLogger.Log_To_File_log(_category, $"[Inverter_setting][Check_ScalingFactor_Status] OK = {commonData.ScalingFactor_OK}, _isloding = {_isLoading}",      AppLogLevel.Trace);
-            }
-            else
-            {
-                _isLoading = true;
-                AppLogger.Log_To_File_log(_category, $"[Inverter_setting][Check_ScalingFactor_Status] OK = {commonData.ScalingFactor_OK}, _isloading = {_isLoading}",      AppLogLevel.Trace);
-            }
-            
-
-            oldScalingFactor_OK = commonData.ScalingFactor_OK;
-            
-            //Update UI values
-            selectedFreqType                    = DataCenter.INV.ACF_Display_str;
-            selectedVoltType                    = DataCenter.INV.ACV_Display_str;
-
-            AC_mode_charging_enable             = DataCenter.INV.AC_mode_charging_enable;
-            Grid_tied_power_feeding_enable      = DataCenter.INV.Grid_tied_power_feeding_enable;
-            
-            AC_mode_charging_touchable          = DataCenter.INV.AC_mode_charging_touchable;
-            Grid_tied_power_feeding_touchable   = DataCenter.INV.Grid_tied_power_feeding_touchable;
-            Output_priority_touchable           = DataCenter.INV.Output_priority_touchable;
-            Charge_priority_touchable           = DataCenter.INV.Charge_priority_touchable;
-
-            Battery_alarm_value                 = DataCenter.INV.BAT_Alarm_Display;
-            Battery_shutdown_value              = DataCenter.INV.BAT_Shutdown_Display;
-            Battery_recharge_value              = DataCenter.INV.BAT_Recharge_Display;
-            Battery_OV_alarm_value              = DataCenter.INV.BAT_OV_Alarm_Display;
-            Battery_capacity_value              = DataCenter.INV.BAT_Capacity_Display;
-
-            await OnChartTypeChanged();
-            await InvokeAsync(StateHasChanged);
-            AppLogger.Log_To_File_log(_category, $"[Inverter_setting][Check_ScalingFactor_Status] Refreshed UI", AppLogLevel.Trace);
-        }
-    }
-
     private async Task DrawChart()
     {
         await JS.InvokeVoidAsync("drawChart_Sin", new {
@@ -565,7 +623,9 @@
             totalDegrees = 720
         });
     }
+    #endregion Chart Helpers
     
+    #region Top Row & Alerts
     private async Task ReceiveFrom_TopRow_SaveINVSetting()
     {
         TriggerAlert("Save");
@@ -594,13 +654,6 @@
                 ConfirmBtn_Func_parent  = EventCallback.Factory.Create(this, ConfirmSave);
                 CancelBtn_Func_parent   = EventCallback.Factory.Create(this, CancelSave);
                 break;
-            case "DefaultVal":
-                AlertMessage_parent     = "確定要還原預設？";
-                ConfirmBtn_Text_parent  = "確定";
-                CancelBtn_Text_parent   = "取消";
-                ConfirmBtn_Func_parent  = EventCallback.Factory.Create(this, ConfirmDefault);
-                CancelBtn_Func_parent   = EventCallback.Factory.Create(this, CancelDefault);
-                break;
             default:
                 break;
         }
@@ -617,184 +670,164 @@
         //Close Alert
         AlertMessage_parent = null;
     }
-    
+    #endregion Top Row & Alerts
 
-    private async Task<Dictionary<string, byte[]>> nowUIData_transformTo_apiWriteData()
+
+    #region Save Workflow
+    private List<Post_RealSingleRawSettingCMD_JsonFormat> nowUiData_transformTo_apiWriteData()
     {
-        Dictionary<string, byte[]> packedByteData = new();
-        byte[] Output_ACF_Set   = new byte[2];
-        byte[] Output_ACV_Set   = new byte[2];
-        byte[] INV_CONFIG       = new byte[2]; //Output_Prio, CHG_Prio
-        byte[] BAT_ALM_VOLT     = new byte[2];
-        byte[] BAT_SHDN_VOLT    = new byte[2];
-        byte[] BAT_RCHG_VOLT    = new byte[2];
-        byte[] BAT_OV_ALM_VOLT  = new byte[2];
-        byte[] INV_OPERATION    = new byte[2]; //GRID_Enable, AC_CHARGER_Enable
-        
-        //Output ACF_Set
-        switch(selectedFreqType?.ToLowerInvariant())
+        List<Post_RealSingleRawSettingCMD_JsonFormat> configuredCmdData_list = new List<Post_RealSingleRawSettingCMD_JsonFormat>();
+
+        string port = string.Empty;
+        string protocol = string.Empty;
+        (port, protocol) = GetSelectedSubSystemPortAndProtocol();
+        Console.WriteLine($"[nowUiData_transformTo_apiWriteData] port = {port}, protocol = {protocol}");
+
+        //Output_ACF_Set (0x0103 "BIT_0")
+        var ACF_Bits_tmp = SubSystemManager.GetRealBitsFormat(port, protocol, "0103");
+        if (ACF_Bits_tmp != null)
         {
-            case "50hz": 
-                Output_ACF_Set[0] = 1;
-                break;
-            case "60hz":
-                Output_ACF_Set[0] = 2;
-                break;
-            default:
-                Output_ACF_Set[0] = 0;
-                break;
+            switch(selectedFreqType)
+            {
+                case "50Hz": ACF_Bits_tmp["BIT_0"] = 1; break;
+                case "60Hz": ACF_Bits_tmp["BIT_0"] = 2; break;
+                default:     ACF_Bits_tmp["BIT_0"] = 3; break;
+            }
+
+            if(ACF_Bits_tmp["BIT_0"] != 3)
+            {
+                var Output_ACF_Set_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "0103", RealBits: ACF_Bits_tmp);
+                if(Output_ACF_Set_cmdData != null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUiData_transformTo_apiWriteData] cmdCode = 0103, cmdData add into configurableCmdData_list", AppLogLevel.Trace); 
+                    configuredCmdData_list.Add(Output_ACF_Set_cmdData);
+                }
+            }
         }
-        //Output ACV_Set
-        switch(selectedVoltType?.ToLowerInvariant())
+        //Output_ACV_Set (0x0102 "BIT_0")
+        var ACV_Bits_tmp = SubSystemManager.GetRealBitsFormat(port, protocol, "0102");
+        if(ACV_Bits_tmp != null)
         {
-            case "100vac" : 
-            case "200vac" :
-                Output_ACV_Set[0] = 1;
-                break;
-            case "110vac":
-            case "220vac":
-                Output_ACV_Set[0] = 2;
-                break;
-            case "115vac":
-            case "230vac":
-                Output_ACV_Set[0] = 3;
-                break;
-            case "120vac":
-            case "240vac":
-                Output_ACV_Set[0] = 4;
-                break;
-            default:
-                Output_ACV_Set[0] = 0;
-                break;
+            switch(selectedVoltType)
+            {
+                case "100VAC": ACV_Bits_tmp["BIT_0"] = 1; break;
+                case "110VAC": ACV_Bits_tmp["BIT_0"] = 2; break;
+                case "115VAC": ACV_Bits_tmp["BIT_0"] = 3; break;
+                case "120VAC": ACV_Bits_tmp["BIT_0"] = 4; break;
+                case "200VAC": ACV_Bits_tmp["BIT_0"] = 1; break;
+                case "220VAC": ACV_Bits_tmp["BIT_0"] = 2; break;
+                case "230VAC": ACV_Bits_tmp["BIT_0"] = 3; break;
+                case "240VAC": ACV_Bits_tmp["BIT_0"] = 4; break;
+                default:       ACV_Bits_tmp["BIT_0"] = 5; break;
+            }
+            Console.WriteLine($"ACV_Bits_tmp[\"BIT_0\"] = {ACV_Bits_tmp["BIT_0"]}");
+
+            if(ACV_Bits_tmp["BIT_0"] != 5)
+            {
+                var Output_ACV_Set_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "0102", RealBits: ACV_Bits_tmp);
+                if(Output_ACV_Set_cmdData != null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUiData_transformTo_apiWriteData] cmdCode = 0102, cmdData add into configurableCmdData_list", AppLogLevel.Trace);
+                    configuredCmdData_list.Add(Output_ACV_Set_cmdData);
+                }
+            }    
         }
 
-        //INV_CONFIG(Output_Prio)
-        switch(selectedOutputPriority)
+        //CHG_Enable (0x0100 "BIT_2")
+        //GRID_Enable (0x0100 "BIT_3")
+        var AddrValues_List = SubSystemManager.GetAddrValues_Copy(port, protocol, "0100");
+        if(AddrValues_List != null && AddrValues_List.Count > 0)
         {
-            case OUTPUT_PRIORITY.Utility:
-                INV_CONFIG[0] = (byte)(INV_CONFIG[0] & (byte)(0b_1111_1100));
-                break;
-            case OUTPUT_PRIORITY.Battery:
-                INV_CONFIG[0] = (byte)(INV_CONFIG[0] & (byte)(0b_1111_1100));
-                INV_CONFIG[0] = (byte)(INV_CONFIG[0] | (byte)(0b_0000_0001));
-                break;
-            case OUTPUT_PRIORITY.Solar:
-                INV_CONFIG[0] = (byte)(INV_CONFIG[0] & (byte)(0b_1111_1100));
-                INV_CONFIG[0] = (byte)(INV_CONFIG[0] | (byte)(0b_0000_0010));
-                break;
-            default:
-                INV_CONFIG[0] = (byte)(INV_CONFIG[0] & (byte)(0b_1111_1100));
-                break;
-        }
-        
-        //INV_CONFIG(CHG_PRIO)
-        switch(selectedChargingPriority)
-        {
-            case CHARGING_PRIORITY.Utility:
-                INV_CONFIG[0] = (byte)(INV_CONFIG[0] & (byte)(0b_1111_0011));
-                break;
-            case CHARGING_PRIORITY.Solar:
-                INV_CONFIG[0] = (byte)(INV_CONFIG[0] & (byte)(0b_1111_0011));
-                INV_CONFIG[0] = (byte)(INV_CONFIG[0] | (byte)(0b_0000_0100));
-                break;
-            default:
-                INV_CONFIG[0] = (byte)(INV_CONFIG[0] & (byte)(0b_1111_0011));
-                break;
+            foreach(var addrValue in AddrValues_List)
+            {
+                var Bits_tmp = addrValue.Value.Bits;
+                if(Bits_tmp != null)
+                {
+                    
+                    Bits_tmp["BIT_2"] = AC_mode_charging_enable ? 1 : 0;
+                    Bits_tmp["BIT_3"] = Grid_tied_power_feeding_enable ? 1 : 0;
+                }
+            }
+
+            var INV_OPERATION_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "0100", RealPerAddrValues: AddrValues_List);
+            if(INV_OPERATION_cmdData != null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUiData_transformTo_apiWriteData] cmdCode = 0100, cmdData add into configurableCmdData_list", AppLogLevel.Trace);
+                configuredCmdData_list.Add(INV_OPERATION_cmdData);
+            }
         }
 
-        //INV_OPERATION(CHG_EN) for all INV
-        if(AC_mode_charging_enable is true)
+        //OutputPrio (0x0101 "BIT_0")
+        //ChargingPrio (0x0101 "BIT_2")
+        var INV_CONFIG_Bits_tmp = SubSystemManager.GetRealBitsFormat(port, protocol, "0101");
+        if(INV_CONFIG_Bits_tmp != null)
         {
-            INV_OPERATION[0] = (byte)(INV_OPERATION[0] | (byte)(0b_0000_0100));
-        }
-        else
-        {
-            INV_OPERATION[0] = (byte)(INV_OPERATION[0] & (byte)(0b_1111_1011));
+            INV_CONFIG_Bits_tmp["BIT_0"] = (int)selectedOutputPriority;
+            INV_CONFIG_Bits_tmp["BIT_2"] = (int)selectedChargingPriority;
+            var INV_CONFIG_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "0101", RealBits: INV_CONFIG_Bits_tmp);
+            if(INV_CONFIG_cmdData != null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUiData_transformTo_apiWriteData] cmdCode = 0101, cmdData add into configurableCmdData_list", AppLogLevel.Trace);
+                configuredCmdData_list.Add(INV_CONFIG_cmdData);
+            } 
         }
 
-        //INV_OPERATION(GRID_EN) for all INV
-        if(Grid_tied_power_feeding_enable is true)
+        // Battery_alarm_value
+        var BAT_ALM_VOLT_val_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "00B9", RealNumber: Battery_alarm_value);
+        if(BAT_ALM_VOLT_val_cmdData != null)
         {
-            INV_OPERATION[0] = (byte)(INV_OPERATION[0] | (byte)(0b_0000_1000));
+            AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUiData_transformTo_apiWriteData] cmdCode = 00B9, cmdData add into configurableCmdData_list", AppLogLevel.Trace);
+            configuredCmdData_list.Add(BAT_ALM_VOLT_val_cmdData);
         }
-        else
+        // Battery_shutdown_value
+        var BAT_SHUTDOWN_VOLT_val_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "00BA", RealNumber: Battery_shutdown_value);
+        if(BAT_SHUTDOWN_VOLT_val_cmdData != null)
         {
-            INV_OPERATION[0] = (byte)(INV_OPERATION[0] & (byte)(0b_1111_0111));
+            AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUiData_transformTo_apiWriteData] cmdCode = 00BA, cmdData add into configurableCmdData_list", AppLogLevel.Trace);
+            configuredCmdData_list.Add(BAT_SHUTDOWN_VOLT_val_cmdData);
         }
-        
-        BAT_ALM_VOLT    = await writeProcess.UIvalueTransformToWriteFormat(Battery_alarm_value,     "BAT_ALM_VOLT");
-        BAT_SHDN_VOLT   = await writeProcess.UIvalueTransformToWriteFormat(Battery_shutdown_value,  "BAT_SHDN_VOLT");
-        BAT_RCHG_VOLT   = await writeProcess.UIvalueTransformToWriteFormat(Battery_recharge_value,  "BAT_RCHG_VOLT");
-        BAT_OV_ALM_VOLT = await writeProcess.UIvalueTransformToWriteFormat(Battery_OV_alarm_value,  "BAT_OV_ALM_VOLT");
-    
-        AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUIData_transformTo_apiWriteData] Output_ACF_Set    = {Output_ACF_Set[1]:X2} {Output_ACF_Set[0]:X2}",      AppLogLevel.Trace);
-        AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUIData_transformTo_apiWriteData] Output_ACV_Set    = {Output_ACV_Set[1]:X2} {Output_ACV_Set[0]:X2}",      AppLogLevel.Trace);
-        AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUIData_transformTo_apiWriteData] INV_CONFIG        = {INV_CONFIG[1]:X2} {INV_CONFIG[0]:X2}",              AppLogLevel.Trace);
-        AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUIData_transformTo_apiWriteData] BAT_ALM_VOLT      = {BAT_ALM_VOLT[1]:X2} {BAT_ALM_VOLT[0]:X2}",          AppLogLevel.Trace);
-        AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUIData_transformTo_apiWriteData] BAT_SHDN_VOLT     = {BAT_SHDN_VOLT[1]:X2} {BAT_SHDN_VOLT[0]:X2}",        AppLogLevel.Trace);
-        AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUIData_transformTo_apiWriteData] BAT_RCHG_VOLT     = {BAT_RCHG_VOLT[1]:X2} {BAT_RCHG_VOLT[0]:X2}",        AppLogLevel.Trace);
-        AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUIData_transformTo_apiWriteData] BAT_OV_ALM_VOLT   = {BAT_OV_ALM_VOLT[1]:X2} {BAT_OV_ALM_VOLT[0]:X2}",    AppLogLevel.Trace);
-        AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUIData_transformTo_apiWriteData] INV_OPERATION     = {INV_OPERATION[1]:X2} {INV_OPERATION[0]:X2}",        AppLogLevel.Trace);
-        
-        //packing
-        packedByteData["Output_ACF_Set"]    = Output_ACF_Set;
-        packedByteData["Output_ACV_Set"]    = Output_ACV_Set;
-        packedByteData["INV_CONFIG"]        = INV_CONFIG;
-        packedByteData["BAT_ALM_VOLT"]      = BAT_ALM_VOLT;
-        packedByteData["BAT_SHDN_VOLT"]     = BAT_SHDN_VOLT;
-        packedByteData["BAT_RCHG_VOLT"]     = BAT_RCHG_VOLT;
-        packedByteData["BAT_OV_ALM_VOLT"]   = BAT_OV_ALM_VOLT;
-        packedByteData["INV_OPERATION"]     = INV_OPERATION;
+        // Battery_recharge_value
+        var BAT_RECHARGE_VOLT_val_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "00BB", RealNumber: Battery_recharge_value);
+        if(BAT_RECHARGE_VOLT_val_cmdData != null)
+        {
+            AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUiData_transformTo_apiWriteData] cmdCode = 00BB, cmdData add into configurableCmdData_list", AppLogLevel.Trace);
+            configuredCmdData_list.Add(BAT_RECHARGE_VOLT_val_cmdData);
+        }
+        // Battery_ov_alarm_value
+        var BAT_OV_ALM_VOLT_val_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "00BC", RealNumber: Battery_ov_alarm_value);
+        if(BAT_OV_ALM_VOLT_val_cmdData != null)
+        {
+            AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUiData_transformTo_apiWriteData] cmdCode = 00BC, cmdData add into configurableCmdData_list", AppLogLevel.Trace);
+            configuredCmdData_list.Add(BAT_OV_ALM_VOLT_val_cmdData);
+        }
 
-        return packedByteData;
+        return configuredCmdData_list;
     }
 
     private async Task ConfirmSave()
     {
-        
-        INVSetting Data = new INVSetting()
-        {
-            new_ACF_Display_str = selectedFreqType ?? "",
-            new_ACV_Display_str = selectedVoltType ?? "",
 
-            new_AC_mode_charging_enable = AC_mode_charging_enable,
-            new_Grid_tied_feeding_enable = Grid_tied_power_feeding_enable,
-            new_Output_priority = (byte)selectedOutputPriority,
-            new_Charge_priority = (byte)selectedChargingPriority,
-
-            new_BAT_Alarm_Display = Battery_alarm_value,
-            new_BAT_Shutdown_Display = Battery_shutdown_value,
-            new_BAT_Recharge_Display = Battery_recharge_value,
-            new_BAT_OV_Alarm_Value = Battery_OV_alarm_value,
-            new_BAT_Capacity_Value = Battery_capacity_value
-        };
-
-        Console.WriteLine($"new_BAT_Recharge_Display = {Data.new_BAT_Recharge_Display}");
-        Console.WriteLine($"new_BAT_Recharge_Display = {Data.new_BAT_OV_Alarm_Value}");
-        
-        //1. 轉 UI值 成 WriteAPI值
-        var _packedByteData_dict = await nowUIData_transformTo_apiWriteData();
-
-        //2. packedByteData 傳到 WriteProcess 發送
         try
         {
-            bool isWriteSuccess = await writeProcess.Write_To_Framework(_packedByteData_dict, 0); //當前 SubSys是寫死的，會直接 assign成 _globalVar.ActiveSubAppSystemID 
-            if(isWriteSuccess is false)
+            string port = string.Empty;
+            string protocol = string.Empty;
+            (port, protocol) = GetSelectedSubSystemPortAndProtocol();
+
+            //1. 轉 UI值 成 WriteAPI值
+            var apiWriteData = nowUiData_transformTo_apiWriteData();
+
+            //2. apiWriteData 傳到 SubSystemManager 發送
+            bool isWriteSuccess = await SubSystemManager.WriteCmdsToFramework(port, protocol, apiWriteData, 1);
+            if (isWriteSuccess is false)
             {
                 AppLogger.Log_To_File_log(_category, $"[Inverter_setting][ConfirmSave] Writing To device failed", AppLogLevel.Trace);
                 return;
             }
-            
-            //成功寫值到Framework之後
-            //3. 將設定值存於記憶體、JsonFile
-            bool isSaveSettingToFile_Succ = await DataCenter.save_INVSetting(Data);
-            if(isSaveSettingToFile_Succ is false)
-            {
-                AppLogger.Log_To_File_log(_category, $"[Inverter_setting][ConfirmSave] save To memory or Json failed", AppLogLevel.Trace);
-                return;
-            }
-            //4. 同步INV setting值到其他Client端
-            await DataCenter.BroadcastINVChangeAsync();     
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Log_To_File_log(_category, $"[Inverter_setting][ConfirmSave] Exception: {ex.Message}", AppLogLevel.Error);
+            return;
         }
         finally
         {
@@ -802,21 +835,6 @@
             CloseModal();
             Console.WriteLine("[ConfirmSave]");
         }
-           
-        
-        //3. 成功設定的話
-        // if(isWriteSuccess)
-        // {
-        //     //4. 將設定值儲存於json檔案(待辦)
-        //     if(DataCenter.INV.SaveSettingData(Data))
-        //     {   
-        //         //5. 同步INV setting值到其他Client端
-        //         await DataCenter.BroadcastINVChangeAsync();
-
-        //         //6. 將設定值儲存於 JSON 檔案
-        //         await DataCenter.save_INVSetting_To_JsonFile();
-        //     }
-        // }
     }
 
     private async Task CancelSave()
@@ -824,25 +842,12 @@
         CloseAlert();
         CloseModal();
     }
-
-    //待辦(等API更新)
-    private async Task ConfirmDefault()
-    {
-        DataCenter.INV.UpdateFrom(new INV_InitData()); //這邊已經把Default值存入DataCenter
-        await DataCenter.BroadcastINVChangeAsync();
-        CloseAlert();
-        CloseModal();
-    }
-
-    private async Task CancelDefault()
-    {
-        CloseAlert();
-        CloseModal();
-    }
+    #endregion Save Workflow
 
 
-    [JSInvokable("OnINVUpdated")]
-    public void OnINVUpdated(JsonElement INVData)
+    #region JS Interop Callbacks
+    [JSInvokable("OnSubSysUpdated")]
+    public async Task OnSubSysUpdated(JsonElement SubSysConfigurableData)
     {
         // 解析 INVData → 更新 UI
         // 然後刷新畫面
@@ -851,29 +856,100 @@
             PropertyNameCaseInsensitive = true
         };
 
-        var ReceiveData_FromSignalR = INVData.Deserialize<INVSetting_To_JS>(options);
+        var ReceiveData_FromSignalR = SubSysConfigurableData.Deserialize<PageUsableVars>(options);
         if (ReceiveData_FromSignalR == null)
         {
-            Console.WriteLine("❌ 無法反序列化 BatterySetting_To_JS");
+            Console.WriteLine("❌[Inverter_setting][OnSubSysUpdated] 無法反序列化 SubSysConfigurableData_To_JS");
             return;
         }
-        Console.WriteLine("🔁 收到 INV資料 更新");
+        Console.WriteLine("🔁 收到 SubSysConfigurableData 更新");
 
+        selectedFreqType = ReceiveData_FromSignalR.Output_ACF_Set;
+        selectedVoltType = GetAC_InputType_By_mdlName(ReceiveData_FromSignalR.Output_ACV_Set);
+        AC_mode_charging_enable = ReceiveData_FromSignalR.CHG_Enable;
+        Grid_tied_power_feeding_enable = ReceiveData_FromSignalR.GRID_Enable;
+        selectedOutputPriority = ReceiveData_FromSignalR.OutputPrio;
+        selectedChargingPriority = ReceiveData_FromSignalR.ChargingPrio;
 
-        selectedFreqType = ReceiveData_FromSignalR.acf_display_str;
-        selectedVoltType = ReceiveData_FromSignalR.acv_display_str;
+        //從FrameWork讀回來的時候，不會進到這四個if-statement，因為機器的值不會在上下限之外
+        if( ReceiveData_FromSignalR.BAT_ALM_VOLT_val < ReceiveData_FromSignalR.BAT_ALM_VOLT_Min_val || 
+            ReceiveData_FromSignalR.BAT_ALM_VOLT_val > ReceiveData_FromSignalR.BAT_ALM_VOLT_Max_val ) {ReceiveData_FromSignalR.BAT_ALM_VOLT_val = ReceiveData_FromSignalR.BAT_ALM_VOLT_Max_val;}
+        if( ReceiveData_FromSignalR.BAT_SHDN_VOLT_val < ReceiveData_FromSignalR.BAT_SHDN_VOLT_Min_val || 
+            ReceiveData_FromSignalR.BAT_SHDN_VOLT_val > ReceiveData_FromSignalR.BAT_SHDN_VOLT_Max_val ) {ReceiveData_FromSignalR.BAT_SHDN_VOLT_val = ReceiveData_FromSignalR.BAT_SHDN_VOLT_Max_val;}
+        if( ReceiveData_FromSignalR.BAT_RCHG_VOLT_val < ReceiveData_FromSignalR.BAT_RCHG_VOLT_Min_val || 
+            ReceiveData_FromSignalR.BAT_RCHG_VOLT_val > ReceiveData_FromSignalR.BAT_RCHG_VOLT_Max_val ) {ReceiveData_FromSignalR.BAT_RCHG_VOLT_val = ReceiveData_FromSignalR.BAT_RCHG_VOLT_Max_val;}
+        if( ReceiveData_FromSignalR.BAT_OV_ALM_VOLT_val < ReceiveData_FromSignalR.BAT_OV_ALM_VOLT_Min_val || 
+            ReceiveData_FromSignalR.BAT_OV_ALM_VOLT_val > ReceiveData_FromSignalR.BAT_OV_ALM_VOLT_Max_val ) {ReceiveData_FromSignalR.BAT_OV_ALM_VOLT_val = ReceiveData_FromSignalR.BAT_OV_ALM_VOLT_Max_val;}
 
-        AC_mode_charging_enable = ReceiveData_FromSignalR.ac_mode_charging_enable;
-        Grid_tied_power_feeding_enable = ReceiveData_FromSignalR.grid_tied_feeding_enable;
-        selectedOutputPriority = (OUTPUT_PRIORITY)ReceiveData_FromSignalR.output_priority;
-        selectedChargingPriority = (CHARGING_PRIORITY)ReceiveData_FromSignalR.charge_priority;
-
-        Battery_alarm_value = ReceiveData_FromSignalR.bat_alarm_display;
-        Battery_shutdown_value = ReceiveData_FromSignalR.bat_shutdown_display;
-        Battery_recharge_value = ReceiveData_FromSignalR.bat_recharge_display;
-        Battery_OV_alarm_value = ReceiveData_FromSignalR.bat_ov_alarm_display;
-        Battery_capacity_value = ReceiveData_FromSignalR.bat_capacity_value;
         
-        InvokeAsync(StateHasChanged);
+        Battery_alarm_value = ReceiveData_FromSignalR.BAT_ALM_VOLT_val;
+        Battery_alarm_now_min = ReceiveData_FromSignalR.BAT_ALM_VOLT_Min_val;
+        Battery_alarm_now_max = ReceiveData_FromSignalR.BAT_ALM_VOLT_Max_val;
+
+        Battery_shutdown_value = ReceiveData_FromSignalR.BAT_SHDN_VOLT_val;
+        Battery_shdn_now_min = ReceiveData_FromSignalR.BAT_SHDN_VOLT_Min_val;
+        Battery_shdn_now_max = ReceiveData_FromSignalR.BAT_SHDN_VOLT_Max_val;
+
+        Battery_recharge_value = ReceiveData_FromSignalR.BAT_RCHG_VOLT_val;
+        Battery_rchg_now_min = ReceiveData_FromSignalR.BAT_RCHG_VOLT_Min_val;
+        Battery_rchg_now_max = ReceiveData_FromSignalR.BAT_RCHG_VOLT_Max_val;
+        FV_now_val = ReceiveData_FromSignalR.CURVE_FV_val;
+
+        Battery_ov_alarm_value = ReceiveData_FromSignalR.BAT_OV_ALM_VOLT_val;
+        Battery_ov_alm_now_min = ReceiveData_FromSignalR.BAT_OV_ALM_VOLT_Min_val;
+        Battery_ov_alm_now_max = ReceiveData_FromSignalR.BAT_OV_ALM_VOLT_Max_val;
+        // Battery_capacity_value = ReceiveData_FromSignalR.bat_capacity_value;
+
+        await OnChartTypeChanged();
+        await InvokeAsync(StateHasChanged);
     }
+
+    private string GetAC_InputType_By_mdlName(string rcv_fromSignalR_acv_display_str)
+    {
+        
+        //0. 拆解 rcv_fromSignalR_acv_display_str
+        var parts = rcv_fromSignalR_acv_display_str.Split('/');
+        string Series100 = parts[0] + "VAC";
+        string Series200 = parts[1] + "VAC";
+
+        char type = GetVAC_Series_By_mdlName();
+        switch(type)
+        {
+            case '1':
+                return Series100;
+            case '2':
+                return Series200;
+            default:
+                return Series100;
+        }
+    }
+
+    private char GetVAC_Series_By_mdlName()
+    {
+        //1. 取得選取的子系統的 port & protocol
+        string port = string.Empty;
+        string protocol = string.Empty;
+        (port, protocol) = GetSelectedSubSystemPortAndProtocol();
+
+        //2. 透過 SubSystemManager 取得 SubSystem 參考
+        var subsys = SubSystemManager.GetOneSubSystem_Ref(port, protocol);
+        if(subsys is null)
+        {
+            AppLogger.Log_To_File_log(_category, $"[Inverter_setting][GetAC_InputType_By_mdlName] 無法取得 SubSystem 參考，port = {port}, protocol = {protocol}", AppLogLevel.Warning);
+            return '1';
+        }
+
+        //3. 取得SubSystem 的 ModelName
+        string mdlName = subsys.ModelName ?? string.Empty;
+        if(string.IsNullOrWhiteSpace(mdlName))
+        {
+            AppLogger.Log_To_File_log(_category, $"[Inverter_setting][GetAC_InputType_By_mdlName] SubSystem ModelName 為空，port = {port}, protocol = {protocol}", AppLogLevel.Warning);
+            return '1';
+        }
+
+        //4. 根據 ModelName 判斷 AC_InputType
+        char type = mdlName.Length >= 7 ? mdlName[6] : '1'; //從第7個字元判斷，'1'代表100VAC系列，'2'代表200VAC系列，預設或錯誤都是'1'
+        return type;
+    }
+    #endregion JS Interop Callbacks
 }

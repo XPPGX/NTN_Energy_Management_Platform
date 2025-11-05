@@ -59,12 +59,12 @@ window.unsubscribeAllSubSys = async function()
     if(connection_Battery_Hub)
     {
         await connection_Battery_Hub.invoke("UnsubscribeAllSubSys");
-        console.log("📭 All subsystem subscriptions removed.");
+        console.log("📭 BatteryHub All subsystem subscriptions removed.");
     }
     if(connection_INV_Hub)
     {
         await connection_INV_Hub.invoke("UnsubscribeAllSubSys");
-        console.log("📭 All subsystem subscriptions removed.");
+        console.log("📭 INV_Hub All subsystem subscriptions removed.");
     }
 }
 
@@ -133,10 +133,33 @@ window.startINVHub = async function(dotNetHelper)
         drawSinChart_Helper(INVData);
         dotNetHelper.invokeMethodAsync("OnINVUpdated", INVData);
     });
+
+    connection_INV_Hub.on("UpdateNowConfigurableVars", function(port, protocol, sendValue)
+    {
+        console.log("🔔 Received UpdateNowConfigurableVars");
+        console.log(`Port: ${port}, Protocol: ${protocol}`);
+        console.log(sendValue);
+
+        dotNetHelper.invokeMethodAsync("OnSubSysUpdated", sendValue);
+    });
     await connection_INV_Hub.start();
     console.log("✅ SignalR connected (non-module)");
 }
-
+window.subscribeInverterHub = async function(port, protocol)
+{
+    console.log(`Subscribing to Inverter Hub with port: ${port}, protocol: ${protocol}`);
+    if(!connection_INV_Hub)
+    {
+        console.log("Inverter Hub connection is not established.");
+        return;
+    }
+    if(port == null || protocol == null)
+    {
+        console.log("Port or Protocol is null. Cannot subscribe to subsystem.");
+        return;
+    }
+    await connection_INV_Hub.invoke("SubscribeSubSys", port, protocol);
+}
 window.drawSinChart_Helper = function(INV_setting)
 {
     let waveCount;

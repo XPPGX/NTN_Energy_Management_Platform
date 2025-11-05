@@ -210,7 +210,6 @@ namespace demoVer.Models
         public uint BYPASS_MODE_Count { get; set; } = 0;
         public uint CHARGING_MODE_Count { get; set; } = 0;
         public uint STANDBY_MODE_Count { get; set; } = 0;
-
         private void setMode(ConstDefinition.SYS_Mode_Options mode) => nowMode = mode;
         public ArrowDirections ArrowDirections { get; private set; } = ArrowDirections.Hidden;
         public string DisplayModeName => nowMode.ToDisplayName();

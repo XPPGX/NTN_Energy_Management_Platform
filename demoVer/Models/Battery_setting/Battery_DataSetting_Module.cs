@@ -280,7 +280,6 @@ namespace demoVer.Models
                 }
                 else
                 {
-                    Console.WriteLine("Curve FV : factor = 0");
                     return 0;   
                 }
             }

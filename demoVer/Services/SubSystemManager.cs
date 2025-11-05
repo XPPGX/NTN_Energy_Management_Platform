@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.ComponentModel;
 using demoVer.Components;
+using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Http.Connections;
 
 namespace demoVer.Services
 {
@@ -204,7 +206,39 @@ namespace demoVer.Services
                                 AppLogger.Log_To_File_log(_category, $"[SubSystemManager][createOneWriteCmdData] RealPerAddrValues is null for (port, protocol, cmdCode) = ({port}, {protocol}, {clearCmdCode})", AppLogLevel.Warning);
                                 return null;
                             }
+                            bool AddrValues_AllTheSame = true;
+                            //取得目前SubSystem中該CmdCode的AddrValues
+                            var nowAddrValues = GetAddrValues_Copy(port, protocol, clearCmdCode);
 
+                            //!!目前只支援對整個子系統的AddrValues設定相同的值，所以只要
+                            //取RealPerAddrValues的某一個Addr的Bits去比對nowAddrValues的其他Addr的Bits是否都相同即可
+                            var Real_FirstAddrInSubSystem_Bits = RealPerAddrValues[0].Value.Bits;
+                            foreach (var addrValue in nowAddrValues!)
+                            {
+                                //比對每一個Addr的Bits是否都與Real_FirstAddrInSubSystem_Bits相同
+                                foreach (var key_val_pair in Real_FirstAddrInSubSystem_Bits!)
+                                {
+                                    if (addrValue.Value.Bits != null && addrValue.Value.Bits.TryGetValue(key_val_pair.Key, out var nowBitVal))
+                                    {
+                                        if (nowBitVal == key_val_pair.Value)
+                                        {
+                                            AddrValues_AllTheSame = true;
+                                        }
+                                        else
+                                        {
+                                            AddrValues_AllTheSame = false;
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                if(AddrValues_AllTheSame is false){ break; }
+                            }
+                            if (AddrValues_AllTheSame is true)
+                            {
+                                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][createOneWriteCmdData] RealPerAddrValues is same as current value for (port, protocol, cmdCode) = ({port}, {protocol}, {clearCmdCode}), for all addr in the SubSystem", AppLogLevel.Debug);
+                                return null;
+                            }
                             writeCmdData.AddrValues = RealPerAddrValues; // By Reference，所以不用創建新物件(由用到的頁面負責創建並傳進來)
                         }
                         else
@@ -293,6 +327,37 @@ namespace demoVer.Services
             }
         }
 
+        public List<AddrValue>? GetAddrValues_Copy(string port, string protocol, string clearCmdCode)
+        {
+            var subsys = GetOneSubSystem_Ref(port, protocol);
+            if (subsys is null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][GetAddrValues_Copy] subsys is null for (port, protocol) = ({port}, {protocol})", AppLogLevel.Warning);
+                return null;
+            }
+            if (!subsys.InfosForWriteCmd.TryGetValue(clearCmdCode, out var oneCmdData))
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][GetAddrValues_Copy] oneCmdData is null for (port, protocol, cmdCode) = ({port}, {protocol}, {clearCmdCode})", AppLogLevel.Warning);
+                return null;
+            }
+
+            if (!string.Equals(oneCmdData.DataFormat, "BitField", StringComparison.OrdinalIgnoreCase))
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][GetAddrValues_Copy] DataFormat is not BitField for (port, protocol, cmdCode) = ({port}, {protocol}, {clearCmdCode})", AppLogLevel.Warning);
+                return null;
+            }
+            try
+            {
+
+                List<AddrValue> addrValues_copy = subsys.InfosForWriteCmd[clearCmdCode].AddrValues!.Select(x => x.deepClone()).ToList();
+                return addrValues_copy;
+            }
+            catch (Exception e)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][GetAddrValues_Copy] Exception: {e.Message}", AppLogLevel.Error);
+                return null;
+            }
+        }
         /// <summary>
         /// 比較某個命令新讀回來的資料與要設定到Framework的某個資料是否相同
         /// </summary>

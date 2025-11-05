@@ -84,6 +84,21 @@ namespace demoVer.Models
 
         [JsonPropertyName("dirty")]
         public bool Dirty { get; set; }
+
+        public AddrValue deepClone()
+        {
+            return new AddrValue
+            {
+                Addr = this.Addr,
+                Value = new WriteVal
+                {
+                    Number = this.Value.Number,
+                    Text = this.Value.Text,
+                    Bits = new Dictionary<string, int>(this.Value.Bits ?? new())
+                },
+                Dirty = this.Dirty
+            };
+        }
     }
 
     public class Post_RealSingleRawSettingCMD_JsonFormat
@@ -100,7 +115,7 @@ namespace demoVer.Models
         [JsonPropertyName("Target")]
         public WriteVal? Target { get; set; }
         
-        [JsonPropertyName("AddrValues")]
+        [JsonPropertyName("addrValues")]
         public List<AddrValue>? AddrValues { get; set; }
     }
 }

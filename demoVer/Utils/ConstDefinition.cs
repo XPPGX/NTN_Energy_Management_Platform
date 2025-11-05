@@ -4,6 +4,9 @@ namespace demoVer.Utils
     {
         #region Common
         public const int Max_PortDeviceNum = 64;
+        public const string Str_50Hz = "50Hz";
+        public const string Str_60Hz = "60Hz";
+        public const string Str_AC_InputType_100VAC = "100VAC";
         #endregion 
 
         #region AddressOffset
@@ -38,7 +41,6 @@ namespace demoVer.Utils
             AC_OK = 11,
             SHUTDOWN = 12,
         }
-
         #endregion INV_Mode_Status
     }
 }

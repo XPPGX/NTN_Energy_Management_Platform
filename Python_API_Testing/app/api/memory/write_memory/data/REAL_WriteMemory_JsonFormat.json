@@ -50,7 +50,7 @@
             "shift": null,
             "bitcontrol": null,
             "target": {
-                "number": 24.8,
+                "number": 20,
                 "text": null,
                 "bits": null
             },
@@ -161,7 +161,7 @@
                 "bits": {
                     "BIT_0": 0,
                     "BIT_2": 0,
-                    "BIT_6": 0,
+                    "BIT_6": 1,
                     "BIT_7": 0,
                     "BIT_8": 1,
                     "BIT_9": 0,
@@ -240,7 +240,7 @@
             "shift": null,
             "bitcontrol": null,
             "target": {
-                "number": 18.8,
+                "number": 19.7,
                 "text": null,
                 "bits": null
             },
@@ -259,7 +259,7 @@
             "shift": null,
             "bitcontrol": null,
             "target": {
-                "number": 18.4,
+                "number": 19.5,
                 "text": null,
                 "bits": null
             },
@@ -278,7 +278,7 @@
             "shift": null,
             "bitcontrol": null,
             "target": {
-                "number": 18.4,
+                "number": 18.8,
                 "text": null,
                 "bits": null
             },
@@ -510,8 +510,8 @@
                 "number": null,
                 "text": null,
                 "bits": {
-                    "BIT_0": 0,
-                    "BIT_2": 0,
+                    "BIT_0": 1,
+                    "BIT_2": 1,
                     "BIT_8": 0,
                     "BIT_10": 0
                 }
@@ -531,7 +531,7 @@
             "shift": null,
             "bitcontrol": [
                 {
-                    "name": "BIT_4",
+                    "name": "BIT_0",
                     "bit": 4,
                     "length": 3,
                     "valueMap": {
@@ -546,7 +546,7 @@
                 "number": null,
                 "text": null,
                 "bits": {
-                    "BIT_4": 0
+                    "BIT_0": 1
                 }
             },
             "targetDirty": false,
@@ -578,7 +578,7 @@
                 "number": null,
                 "text": null,
                 "bits": {
-                    "BIT_0": 0
+                    "BIT_0": 1
                 }
             },
             "targetDirty": false,

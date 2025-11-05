@@ -40,7 +40,7 @@
     <div class="top">
         <div class="leftPart">
             <div class="subsystem-select-group">
-                <label for="subsystem-select" class="local-label">子系統選擇</label>
+                <label for="subsystem-select" class="local-label" style="margin-bottom: 0px!important;">子系統</label>
                 <select id="subsystem-select" class="subsystem-select" value="@SelectedSubSystemKey" @onchange="Local_OnSubSystemChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
                     @if(_subSystemOptions.Count == 0)
                     {
@@ -199,9 +199,9 @@
     bool DotNetHelper_Is_OK = false;
     bool FirstAutoGet_SubSys_done = false;
     bool modal_IsOpen = false;
-    string AlertMessage_parent = null;
-    string ConfirmBtn_Text_parent = null;
-    string CancelBtn_Text_parent = null;
+    string AlertMessage_parent = string.Empty;
+    string ConfirmBtn_Text_parent = string.Empty;
+    string CancelBtn_Text_parent = string.Empty;
     public EventCallback ConfirmBtn_Func_parent {get; set;}
     public EventCallback CancelBtn_Func_parent {get; set;}
     private IReadOnlyList<SubSystem> _subSystemOptions = Array.Empty<SubSystem>();
@@ -412,7 +412,7 @@
 
         }
 
-        Console.WriteLine($"[Local_OnSubSystemChanged] rawValue = {rawValue}");
+        Console.WriteLine($"[Battery_setting][Local_OnSubSystemChanged] rawValue = {rawValue}");
         _selectedSubSystemKey = ContainsSubSystemKey(rawValue) ? rawValue : null;
         
         await subSystemSelectionChangedHandler();
@@ -620,6 +620,12 @@
         //Close Alert
         AlertMessage_parent = null;
     }
+    
+    private async Task OnSaveButtonClick()
+    {
+        // await ReceiveFrom_TopRow_SaveBatterySetting();
+        TriggerAlert("Save");
+    }
     #endregion UI InteractionFuncs
 
 
@@ -633,7 +639,7 @@
         string port = string.Empty;
         string protocol = string.Empty;
         (port, protocol) = GetSelectedSubSystemPortAndProtocol();
-        Console.WriteLine($"[nowUIData_transformTo_apiWriteData] port: {port}, protocol: {protocol}");
+        Console.WriteLine($"[nowUiData_transformTo_apiWriteData] port: {port}, protocol: {protocol}");
 
         //CC (0x00B0)
         var cc_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "00B0", RealNumber: sliderValues[0]);
@@ -656,7 +662,7 @@
         //CVT_Enabel in (0x00B4 "BIT_9")
         //FVT Enabel in (0x00B4 "BIT_10")
 
-        Console.WriteLine($"[nowUIData_transformTo_apiWriteData] selectedStage: {selectedStage}, CCT_Enable: {CCT_Enable}, CVT_Enable: {CVT_Enable}, FVT_Enable: {FVT_Enable}");
+        Console.WriteLine($"[nowUiData_transformTo_apiWriteData] selectedStage: {selectedStage}, CCT_Enable: {CCT_Enable}, CVT_Enable: {CVT_Enable}, FVT_Enable: {FVT_Enable}");
         var Bits_tmp = SubSystemManager.GetRealBitsFormat(port, protocol, "00B4");
         if(Bits_tmp != null)
         {
@@ -664,26 +670,26 @@
             Bits_tmp["BIT_8"] = CCT_Enable ? 1 : 0;
             Bits_tmp["BIT_9"] = CVT_Enable ? 1 : 0;
             Bits_tmp["BIT_10"] = FVT_Enable ? 1 : 0;
-            Console.WriteLine($"[nowUIData_transformTo_apiWriteData] Bits_tmp: {JsonSerializer.Serialize(Bits_tmp)}");
+            Console.WriteLine($"[nowUiData_transformTo_apiWriteData] Bits_tmp: {JsonSerializer.Serialize(Bits_tmp)}");
             var curveStage_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "00B4", RealBits: Bits_tmp);
             if (curveStage_cmdData != null) { configurableCmdDatas.Add(curveStage_cmdData); }
         }
         //CC_Timeout (0x00B5)
-        var cc_timeout_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "00B5", CC_Timeout_value);
+        var cc_timeout_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "00B5", RealNumber: CC_Timeout_value);
         if (cc_timeout_cmdData != null) { configurableCmdDatas.Add(cc_timeout_cmdData); }
 
         //CV_Timeout (0x00B6)
-        var cv_timeout_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "00B6", CV_Timeout_value);
+        var cv_timeout_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "00B6", RealNumber: CV_Timeout_value);
         if (cv_timeout_cmdData != null) { configurableCmdDatas.Add(cv_timeout_cmdData); }
 
         //FV_Timeout (0x00B7)
-        var fv_timeout_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "00B7", FV_Timeout_value);
+        var fv_timeout_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "00B7", RealNumber: FV_Timeout_value);
         if (fv_timeout_cmdData != null) { configurableCmdDatas.Add(fv_timeout_cmdData); }
 
         //[Debug] print out all the cmdCodes in configurableCmdDatas
         foreach(var cmdData in configurableCmdDatas)
         {
-            AppLogger.Log_To_File_log(_category, $"[nowUIData_transformTo_apiWriteData] cmdName: {cmdData.CommandName}, RealNumber: {cmdData.Target!.Number}, RealBits: {JsonSerializer.Serialize(cmdData.Target!.Bits)}", AppLogLevel.Debug);      
+            AppLogger.Log_To_File_log(_category, $"[nowUiData_transformTo_apiWriteData] cmdName: {cmdData.CommandName}, RealNumber: {cmdData.Target!.Number}, RealBits: {JsonSerializer.Serialize(cmdData.Target!.Bits)}", AppLogLevel.Debug);      
         }
 
         return configurableCmdDatas;
@@ -707,7 +713,7 @@
             //1. 轉 UI值 成 WriteAPI值
             List<Post_RealSingleRawSettingCMD_JsonFormat> apiWriteData = nowUiData_transformTo_apiWriteData(sliderValues);
 
-            //2. apiWriteData 傳到 WriteProcess發送
+            //2. apiWriteData 傳到 SubSystemManager 發送
             bool isWriteSuccess = await SubSystemManager.WriteCmdsToFramework(port, protocol, apiWriteData, 0);
             if(isWriteSuccess is false)
             {
@@ -778,11 +784,12 @@
         var ReceiveData_FromSignalR = SubSysConfigurableData.Deserialize<PageUsableVars>(options);
         if (ReceiveData_FromSignalR == null)
         {
-            Console.WriteLine("❌ 無法反序列化 BatterySetting_To_JS");
+            Console.WriteLine("❌ [Battery_setting][OnSubSysUpdated] 無法反序列化 SubSysConfigurableData_To_JS");
             return;
         }
         Console.WriteLine("🔁 收到 SubSysConfigurableData 更新");
 
+        //從FrameWork讀回來的時候，不會進到這四個if-statement，因為機器的值不會在上下限之外
         if ( ReceiveData_FromSignalR.CURVE_CC_val < ReceiveData_FromSignalR.CURVE_CC_Min_val ||
              ReceiveData_FromSignalR.CURVE_CC_val > ReceiveData_FromSignalR.CURVE_CC_Max_val ) { ReceiveData_FromSignalR.CURVE_CC_val = ReceiveData_FromSignalR.CURVE_CC_Min_val; } //CC
         if ( ReceiveData_FromSignalR.CURVE_TC_val < ReceiveData_FromSignalR.CURVE_TC_Min_val ||
@@ -859,7 +866,6 @@
     {
         //1. 重新訂閱子系統
         await ReSubscribeSubSys();
-        // await InitVerticalSliders();
     }
     #endregion JsCallerAndCallee
 
@@ -874,14 +880,5 @@
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task OnRefreshButtonClick()
-    {
-        await InvokeAsync(StateHasChanged);
-    }
-
-    private async Task OnSaveButtonClick()
-    {
-        // await ReceiveFrom_TopRow_SaveBatterySetting();
-        TriggerAlert("Save");
-    }
+    
 }
