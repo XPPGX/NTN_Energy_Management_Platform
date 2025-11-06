@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using demoVer.Models;
 using MudBlazor;
+using demoVer.Services;
 namespace demoVer.Utils
 {
     public static class GetNowValueHelper
@@ -54,27 +55,31 @@ namespace demoVer.Utils
                 }
 
                 //取Bit6(CurveStage)
-                if (cmdSettingData.Target.Bits.TryGetValue("BIT_6", out int val))
+                var CurveStage_Bitkey = cmdSettingData.GetBitKey(6);
+                if (CurveStage_Bitkey is not null && cmdSettingData.Target.Bits.TryGetValue(CurveStage_Bitkey, out int val))
                 {
                     if (val == 1) { selectStage = true; }
                     else { selectStage = false; }
                 }
 
                 //取Bit8 (CCT_Enable)
-                if (cmdSettingData.Target.Bits.TryGetValue("BIT_8", out int val2))
+                var CCT_Enable_BitKey = cmdSettingData.GetBitKey(8);
+                if (CCT_Enable_BitKey is not null && cmdSettingData.Target.Bits.TryGetValue(CCT_Enable_BitKey, out int val2))
                 {
                     if (val2 == 1) { CCT_Enable = true; }
                     else { CCT_Enable = false; }
                 }
 
                 //取Bit9 (CVT_Enable)
-                if (cmdSettingData.Target.Bits.TryGetValue("BIT_9", out int val3))
+                var CVT_Enable_BitKey = cmdSettingData.GetBitKey(9);
+                if (CVT_Enable_BitKey is not null && cmdSettingData.Target.Bits.TryGetValue(CVT_Enable_BitKey, out int val3))
                 {
                     if (val3 == 1) { CVT_Enable = true; }
                     else { CVT_Enable = false; }
                 }
                 //取Bit10 (FVT_Enable)
-                if (cmdSettingData.Target.Bits.TryGetValue("BIT_10", out int val4))
+                var FVT_Enable_BitKey = cmdSettingData.GetBitKey(10);
+                if (FVT_Enable_BitKey is not null && cmdSettingData.Target.Bits.TryGetValue(FVT_Enable_BitKey, out int val4))
                 {
                     if (val4 == 1) { FVT_Enable = true; }
                     else { FVT_Enable = false; }
@@ -167,7 +172,8 @@ namespace demoVer.Utils
                 }
 
                 //取OutputPriority
-                if (cmdSettingData.Target.Bits.TryGetValue("BIT_0", out int val1))
+                var OutputPrio_BitKey = cmdSettingData.GetBitKey(0);
+                if (OutputPrio_BitKey is not null && cmdSettingData.Target.Bits.TryGetValue(OutputPrio_BitKey, out int val1))
                 {
                     outputPrio = val1 switch
                     {
@@ -178,7 +184,8 @@ namespace demoVer.Utils
                     };
                 }
                 //取ChargingPriority
-                if (cmdSettingData.Target.Bits.TryGetValue("BIT_2", out int val2))
+                var ChargingPrio_BitKey = cmdSettingData.GetBitKey(2);
+                if (ChargingPrio_BitKey is not null && cmdSettingData.Target.Bits.TryGetValue(ChargingPrio_BitKey, out int val2))
                 {
                     chargingPrio = val2 switch
                     {
@@ -239,12 +246,14 @@ namespace demoVer.Utils
                 }
                 var firstBitsDict = firstAddrValue.Value.Bits;
                 //取CHG_EN
-                if (firstBitsDict.TryGetValue("BIT_2", out int val1))
+                var CHG_EN_BitKey = cmdSettingData.GetBitKey(2);
+                if (CHG_EN_BitKey is not null && firstBitsDict.TryGetValue(CHG_EN_BitKey, out int val1))
                 {
                     CHG_EN = val1 == 1;
                 }
                 //取GRID_EN
-                if(firstBitsDict.TryGetValue("BIT_3", out int val2))
+                var GRID_EN_BitKey = cmdSettingData.GetBitKey(3);
+                if (GRID_EN_BitKey is not null && firstBitsDict.TryGetValue(GRID_EN_BitKey, out int val2))
                 {
                     GRID_EN = val2 == 1;
                 }
@@ -290,7 +299,8 @@ namespace demoVer.Utils
                 }
 
                 //取Bit0 (ACF_Enable)
-                if (cmdSettingData.Target.Bits.TryGetValue("BIT_0", out int val))
+                var ACF_Enable_BitKey = cmdSettingData.GetBitKey(0);
+                if (ACF_Enable_BitKey is not null && cmdSettingData.Target.Bits.TryGetValue(ACF_Enable_BitKey, out int val))
                 {
                     switch (val)
                     {
@@ -347,7 +357,8 @@ namespace demoVer.Utils
                 }
                 
                 //取Bit0 (ACV_Set)
-                if (cmdSettingData.Target.Bits.TryGetValue("BIT_0", out int val))
+                var ACV_Set_BitKey = cmdSettingData.GetBitKey(0);
+                if (ACV_Set_BitKey is not null && cmdSettingData.Target.Bits.TryGetValue(ACV_Set_BitKey, out int val))
                 {
                     switch (val)
                     {

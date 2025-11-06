@@ -326,6 +326,18 @@ namespace demoVer.Services
                 return null;
             }
         }
+        
+        public string? GetBitKey_FromSubSys(string port, string protocol, string clearCmdCode, int bitPostion)
+        {
+            var subsys = GetOneSubSystem_Ref(port, protocol);
+            if (subsys is null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][GetBitKey_FromSubSys] subsys is null for (port, protocol) = ({port}, {protocol})", AppLogLevel.Warning);
+                return null;
+            }
+
+            return subsys.GetBitKey_FromCmdInfo(clearCmdCode, bitPostion);
+        }
 
         public List<AddrValue>? GetAddrValues_Copy(string port, string protocol, string clearCmdCode)
         {

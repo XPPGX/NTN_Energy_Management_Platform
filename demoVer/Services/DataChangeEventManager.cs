@@ -320,7 +320,8 @@ namespace demoVer.Services
             //3. 綁定事件：綁在SubSystem的SettingChanged事件，只綁一次，以(port, protocol)判斷
             EnsureHook(port, protocol, subsys);
             //4. 第一次訂閱，主動推送一次目前值
-            OnSubSystemChanged(port, protocol, subsys);
+            // OnSubSystemChanged(port, protocol, subsys);
+            FirstPush_SubSystem(connectionId, port, protocol, subsys);
             AppLogger.Log_To_File_log(_category, $"[WriteDataChangeEventManager][Subscribe Cmd] First Push Data", AppLogLevel.Debug);
         }
 
@@ -395,6 +396,24 @@ namespace demoVer.Services
             AppLogger.Log_To_File_log(_category, $"[WriteDataChangeEventManager][EnsureHook] Hooked handler for : {protocol}@{port}", AppLogLevel.Trace);
         }
         
+        public void FirstPush_SubSystem(string connectionId, string port, string protocol, SubSystem subsys)
+        {
+            AppLogger.Log_To_File_log(_category, $"[FirstPush_SubSystem] {protocol}@{port}", AppLogLevel.Trace);
+            try
+            {
+                // 1. 取資料
+                var sendValue = subsys.nowConfigurableVars; //這裡直接送整個Class出去，由Js傳回C#的時候取出當前設定頁面需要的值
+
+                // 2. JS：SignalR 送
+                _hubContext.Clients.Client(connectionId).SendAsync(
+                    "UpdateNowConfigurableVars", port, protocol, sendValue
+                );
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[FirstPush_SubSystem] Error: {ex}", AppLogLevel.Error);
+            } 
+        }
         public void OnSubSystemChanged(string port, string protocol, SubSystem subsys)
         {
             var key = (port, protocol);

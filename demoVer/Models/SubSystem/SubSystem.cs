@@ -195,6 +195,29 @@ namespace demoVer.Models
             }
             return (string.Empty, false);
         }
+        public string? GetBitKey_FromCmdInfo(string clearCmdCode, int bitPosition)
+        {
+            try
+            {
+                if (!InfosForWriteCmd.ContainsKey(clearCmdCode))
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][GetBitKey_FromCmdInfo] clearCmdCode {clearCmdCode} not found in InfosForWriteCmd", AppLogLevel.Warning);
+                    return null;
+                }
+                var cmdInfo = InfosForWriteCmd[clearCmdCode];
+
+                var correctKey = cmdInfo.GetBitKey(bitPosition);
+                
+                AppLogger.Log_To_File_log(_category, $"[SubSystem][GetBitKey_FromCmdInfo] clearCmdCode {clearCmdCode}, bitPosition {bitPosition} => BitKey: {correctKey}", AppLogLevel.Debug);
+                return correctKey;
+            }
+            catch (Exception e)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystem][GetBitKey_FromCmdInfo] Exception: {e.Message}", AppLogLevel.Error);
+                return null;
+            }
+            
+        }
         #endregion For Writable Cmd
 
         #region Computed In SubSystem

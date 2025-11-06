@@ -213,6 +213,7 @@
     private bool Init_Flag = false;
     private List<ElementReference>  FillRefs = new();
     private List<ElementReference>  ThumbRefs = new();
+    private bool _sliderFillRefreshRequested;
 
     private bool _heartbeatSubscribed = false;
     private int _heartbeatCounter = 0;
@@ -302,6 +303,12 @@
             {
                 StateHasChanged();
             }
+        }
+
+        if (_sliderFillRefreshRequested && DotNetHelper_Is_OK)
+        {
+            _sliderFillRefreshRequested = false;
+            await JS.InvokeVoidAsync("sliderFill.refresh");
         }
     }
 
@@ -551,6 +558,7 @@
         {
             CC_Timeout_value = 0;
         }
+        _sliderFillRefreshRequested = true;
     }
 
     private void OnCVTimeoutValueChanged()
@@ -559,6 +567,7 @@
         {
             CV_Timeout_value = 0;
         }
+        _sliderFillRefreshRequested = true;
     }
 
     private void OnFVTimeoutValueChanged()
@@ -567,6 +576,7 @@
         {
             FV_Timeout_value = 0;
         }
+        _sliderFillRefreshRequested = true;
     }
 
     private async Task ReceiveFrom_TopRow_SaveBatterySetting()
@@ -661,15 +671,22 @@
         //CCT_Enable in (0x00B4 "BIT_8")
         //CVT_Enabel in (0x00B4 "BIT_9")
         //FVT Enabel in (0x00B4 "BIT_10")
-
         Console.WriteLine($"[nowUiData_transformTo_apiWriteData] selectedStage: {selectedStage}, CCT_Enable: {CCT_Enable}, CVT_Enable: {CVT_Enable}, FVT_Enable: {FVT_Enable}");
+        var CurveStage_BitKey = SubSystemManager.GetBitKey_FromSubSys(port, protocol, "00B4", 6);
+        var CCT_Enable_BitKey = SubSystemManager.GetBitKey_FromSubSys(port, protocol, "00B4", 8);
+        var CVT_Enable_BitKey = SubSystemManager.GetBitKey_FromSubSys(port, protocol, "00B4", 9);
+        var FVT_Enable_BitKey = SubSystemManager.GetBitKey_FromSubSys(port, protocol, "00B4", 10);
         var Bits_tmp = SubSystemManager.GetRealBitsFormat(port, protocol, "00B4");
         if(Bits_tmp != null)
         {
-            Bits_tmp["BIT_6"] = selectedStage ? 1 : 0;
+            if(CurveStage_BitKey is not null){Bits_tmp[CurveStage_BitKey] = selectedStage ? 1 : 0;}
+            if(CCT_Enable_BitKey is not null){Bits_tmp[CCT_Enable_BitKey] = CCT_Enable ? 1 : 0;}
+            if(CVT_Enable_BitKey is not null){Bits_tmp[CVT_Enable_BitKey] = CVT_Enable ? 1 : 0;}
+            if(FVT_Enable_BitKey is not null){Bits_tmp[FVT_Enable_BitKey] = FVT_Enable ? 1 : 0;}
+            @* Bits_tmp["BIT_6"] = selectedStage ? 1 : 0;
             Bits_tmp["BIT_8"] = CCT_Enable ? 1 : 0;
             Bits_tmp["BIT_9"] = CVT_Enable ? 1 : 0;
-            Bits_tmp["BIT_10"] = FVT_Enable ? 1 : 0;
+            Bits_tmp["BIT_10"] = FVT_Enable ? 1 : 0; *@
             Console.WriteLine($"[nowUiData_transformTo_apiWriteData] Bits_tmp: {JsonSerializer.Serialize(Bits_tmp)}");
             var curveStage_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "00B4", RealBits: Bits_tmp);
             if (curveStage_cmdData != null) { configurableCmdDatas.Add(curveStage_cmdData); }
@@ -850,6 +867,7 @@
         FV_Timeout_value    = (int)ReceiveData_FromSignalR.FV_Timeout_val;
 
         await reDrawChart_Stage();
+        _sliderFillRefreshRequested = true;
         // await InvokeAsync(StateHasChanged);
     }
 

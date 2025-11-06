@@ -241,6 +241,7 @@
     private bool Grid_tied_power_feeding_touchable = true;
     private bool Output_priority_touchable = true;
     private bool Charge_priority_touchable = true; 
+    private bool _sliderRefreshRequested;
 
     private bool AC_mode_charging_enable = false;
     private bool Grid_tied_power_feeding_enable = false;
@@ -331,6 +332,12 @@
             }
 
             await RefreshSubSystemOptionsAsync();
+        }
+
+        if (_sliderRefreshRequested && DotNetHelper_Is_OK)
+        {
+            _sliderRefreshRequested = false;
+            await JS.InvokeVoidAsync("sliderFill.refresh");
         }
     }
     #endregion System Task
@@ -498,6 +505,7 @@
             default:
                 break;
         }
+        _sliderRefreshRequested = true;
         StateHasChanged();
     }
 
@@ -511,6 +519,7 @@
             else if(value < lowerBound){Battery_capacity_value = lowerBound;}
             else{Battery_capacity_value = value;}
         }
+        _sliderRefreshRequested = true;
     }
     #endregion Value Change & Validation
 
@@ -624,7 +633,7 @@
         });
     }
     #endregion Chart Helpers
-    
+
     #region Top Row & Alerts
     private async Task ReceiveFrom_TopRow_SaveINVSetting()
     {
@@ -684,57 +693,69 @@
         Console.WriteLine($"[nowUiData_transformTo_apiWriteData] port = {port}, protocol = {protocol}");
 
         //Output_ACF_Set (0x0103 "BIT_0")
+        var Output_ACF_BitKey = SubSystemManager.GetBitKey_FromSubSys(port, protocol, "0103", 0);
         var ACF_Bits_tmp = SubSystemManager.GetRealBitsFormat(port, protocol, "0103");
         if (ACF_Bits_tmp != null)
         {
-            switch(selectedFreqType)
+            if(Output_ACF_BitKey is not null)
             {
-                case "50Hz": ACF_Bits_tmp["BIT_0"] = 1; break;
-                case "60Hz": ACF_Bits_tmp["BIT_0"] = 2; break;
-                default:     ACF_Bits_tmp["BIT_0"] = 3; break;
-            }
-
-            if(ACF_Bits_tmp["BIT_0"] != 3)
-            {
-                var Output_ACF_Set_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "0103", RealBits: ACF_Bits_tmp);
-                if(Output_ACF_Set_cmdData != null)
+                switch(selectedFreqType)
                 {
-                    AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUiData_transformTo_apiWriteData] cmdCode = 0103, cmdData add into configurableCmdData_list", AppLogLevel.Trace); 
-                    configuredCmdData_list.Add(Output_ACF_Set_cmdData);
+                    case "50Hz": ACF_Bits_tmp[Output_ACF_BitKey] = 1; break;
+                    case "60Hz": ACF_Bits_tmp[Output_ACF_BitKey] = 2; break;
+                    default:     ACF_Bits_tmp[Output_ACF_BitKey] = 3; break;
+                }
+
+                if(ACF_Bits_tmp[Output_ACF_BitKey] != 3)
+                {
+                    var Output_ACF_Set_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "0103", RealBits: ACF_Bits_tmp);
+                    if(Output_ACF_Set_cmdData != null)
+                    {
+                        AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUiData_transformTo_apiWriteData] cmdCode = 0103, cmdData add into configurableCmdData_list", AppLogLevel.Trace); 
+                        configuredCmdData_list.Add(Output_ACF_Set_cmdData);
+                    }
                 }
             }
+
+
         }
         //Output_ACV_Set (0x0102 "BIT_0")
+        var Output_ACV_BitKey = SubSystemManager.GetBitKey_FromSubSys(port, protocol, "0102", 0);
         var ACV_Bits_tmp = SubSystemManager.GetRealBitsFormat(port, protocol, "0102");
         if(ACV_Bits_tmp != null)
         {
-            switch(selectedVoltType)
+            if (Output_ACV_BitKey is not null)
             {
-                case "100VAC": ACV_Bits_tmp["BIT_0"] = 1; break;
-                case "110VAC": ACV_Bits_tmp["BIT_0"] = 2; break;
-                case "115VAC": ACV_Bits_tmp["BIT_0"] = 3; break;
-                case "120VAC": ACV_Bits_tmp["BIT_0"] = 4; break;
-                case "200VAC": ACV_Bits_tmp["BIT_0"] = 1; break;
-                case "220VAC": ACV_Bits_tmp["BIT_0"] = 2; break;
-                case "230VAC": ACV_Bits_tmp["BIT_0"] = 3; break;
-                case "240VAC": ACV_Bits_tmp["BIT_0"] = 4; break;
-                default:       ACV_Bits_tmp["BIT_0"] = 5; break;
-            }
-            Console.WriteLine($"ACV_Bits_tmp[\"BIT_0\"] = {ACV_Bits_tmp["BIT_0"]}");
-
-            if(ACV_Bits_tmp["BIT_0"] != 5)
-            {
-                var Output_ACV_Set_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "0102", RealBits: ACV_Bits_tmp);
-                if(Output_ACV_Set_cmdData != null)
+                switch(selectedVoltType)
                 {
-                    AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUiData_transformTo_apiWriteData] cmdCode = 0102, cmdData add into configurableCmdData_list", AppLogLevel.Trace);
-                    configuredCmdData_list.Add(Output_ACV_Set_cmdData);
+                    case "100VAC": ACV_Bits_tmp[Output_ACV_BitKey] = 1; break;
+                    case "110VAC": ACV_Bits_tmp[Output_ACV_BitKey] = 2; break;
+                    case "115VAC": ACV_Bits_tmp[Output_ACV_BitKey] = 3; break;
+                    case "120VAC": ACV_Bits_tmp[Output_ACV_BitKey] = 4; break;
+                    case "200VAC": ACV_Bits_tmp[Output_ACV_BitKey] = 1; break;
+                    case "220VAC": ACV_Bits_tmp[Output_ACV_BitKey] = 2; break;
+                    case "230VAC": ACV_Bits_tmp[Output_ACV_BitKey] = 3; break;
+                    case "240VAC": ACV_Bits_tmp[Output_ACV_BitKey] = 4; break;
+                    default:       ACV_Bits_tmp[Output_ACV_BitKey] = 5; break;
                 }
-            }    
+                Console.WriteLine($"ACV_Bits_tmp[{Output_ACV_BitKey}] = {ACV_Bits_tmp[Output_ACV_BitKey]}");
+
+                if(ACV_Bits_tmp[Output_ACV_BitKey] != 5)
+                {
+                    var Output_ACV_Set_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "0102", RealBits: ACV_Bits_tmp);
+                    if(Output_ACV_Set_cmdData != null)
+                    {
+                        AppLogger.Log_To_File_log(_category, $"[Inverter_setting][nowUiData_transformTo_apiWriteData] cmdCode = 0102, cmdData add into configurableCmdData_list", AppLogLevel.Trace);
+                        configuredCmdData_list.Add(Output_ACV_Set_cmdData);
+                    }
+                }    
+            }
         }
 
         //CHG_Enable (0x0100 "BIT_2")
         //GRID_Enable (0x0100 "BIT_3")
+        var CHG_BitKey = SubSystemManager.GetBitKey_FromSubSys(port, protocol, "0100", 2);
+        var GRID_BitKey = SubSystemManager.GetBitKey_FromSubSys(port, protocol, "0100", 3);
         var AddrValues_List = SubSystemManager.GetAddrValues_Copy(port, protocol, "0100");
         if(AddrValues_List != null && AddrValues_List.Count > 0)
         {
@@ -743,9 +764,10 @@
                 var Bits_tmp = addrValue.Value.Bits;
                 if(Bits_tmp != null)
                 {
-                    
-                    Bits_tmp["BIT_2"] = AC_mode_charging_enable ? 1 : 0;
-                    Bits_tmp["BIT_3"] = Grid_tied_power_feeding_enable ? 1 : 0;
+                    if(CHG_BitKey is not null){Bits_tmp[CHG_BitKey] = AC_mode_charging_enable ? 1 : 0;}
+                    if(GRID_BitKey is not null){ Bits_tmp[GRID_BitKey] = Grid_tied_power_feeding_enable ? 1 : 0;}
+                    // Bits_tmp["BIT_2"] = AC_mode_charging_enable ? 1 : 0;
+                    // Bits_tmp["BIT_3"] = Grid_tied_power_feeding_enable ? 1 : 0;
                 }
             }
 
@@ -759,11 +781,15 @@
 
         //OutputPrio (0x0101 "BIT_0")
         //ChargingPrio (0x0101 "BIT_2")
+        var OutPutPrio_BitKey = SubSystemManager.GetBitKey_FromSubSys(port, protocol, "0101", 0);
+        var ChargePrio_BitKey = SubSystemManager.GetBitKey_FromSubSys(port, protocol, "0101", 2);
         var INV_CONFIG_Bits_tmp = SubSystemManager.GetRealBitsFormat(port, protocol, "0101");
         if(INV_CONFIG_Bits_tmp != null)
         {
-            INV_CONFIG_Bits_tmp["BIT_0"] = (int)selectedOutputPriority;
-            INV_CONFIG_Bits_tmp["BIT_2"] = (int)selectedChargingPriority;
+            // INV_CONFIG_Bits_tmp["BIT_0"] = (int)selectedOutputPriority;
+            // INV_CONFIG_Bits_tmp["BIT_2"] = (int)selectedChargingPriority;
+            if(OutPutPrio_BitKey is not null){INV_CONFIG_Bits_tmp[OutPutPrio_BitKey] = (int)selectedOutputPriority;}
+            if(ChargePrio_BitKey is not null){INV_CONFIG_Bits_tmp[ChargePrio_BitKey] = (int)selectedChargingPriority;}
             var INV_CONFIG_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "0101", RealBits: INV_CONFIG_Bits_tmp);
             if(INV_CONFIG_cmdData != null)
             {
@@ -901,6 +927,7 @@
         // Battery_capacity_value = ReceiveData_FromSignalR.bat_capacity_value;
 
         await OnChartTypeChanged();
+        _sliderRefreshRequested = true;
         await InvokeAsync(StateHasChanged);
     }
 
