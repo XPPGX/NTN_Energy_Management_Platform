@@ -1,1 +1,146 @@
-﻿
+﻿[2025-11-07 11:42:26.222] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-07 11:42:26.239] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 11:42:26.242] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-07 11:42:26.243] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-07 11:42:26.244] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 11:42:26.246] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-07 11:42:26.252] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-07 11:42:26.254] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-07 11:42:26.257] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-07 11:42:26.482] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-11-07 11:42:26.482] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_VIN, cmdType = 
+[2025-11-07 11:42:26.485] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-11-07 11:42:26.486] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_IIN, cmdType = 
+[2025-11-07 11:44:48.309] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-07 11:44:48.321] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 11:44:48.324] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-07 11:44:48.325] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 11:44:48.325] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-07 11:44:48.330] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-07 11:44:48.333] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-07 11:44:48.336] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-07 11:44:48.341] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-07 11:46:04.535] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-07 11:46:04.542] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 11:46:04.545] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-07 11:46:04.546] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-07 11:46:04.546] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 11:46:04.547] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-07 11:46:04.551] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-07 11:46:04.556] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-07 11:46:04.559] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-07 11:47:16.475] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-07 11:47:16.484] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 11:47:16.486] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-07 11:47:16.487] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 11:47:16.487] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-07 11:47:16.492] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-07 11:47:16.495] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-07 11:47:16.499] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-07 11:47:16.502] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-07 11:51:05.414] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-07 11:51:05.422] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 11:51:05.424] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-07 11:51:05.425] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-07 11:51:05.425] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 11:51:05.427] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-07 11:51:05.430] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-07 11:51:05.432] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-07 11:51:05.435] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-07 11:54:20.986] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-07 11:54:20.991] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 11:54:20.992] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-07 11:54:20.993] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-07 11:54:20.993] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 11:54:20.994] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-07 11:54:21.000] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-07 11:54:21.002] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-07 11:54:21.004] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-07 11:58:49.608] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-07 11:58:49.617] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 11:58:49.639] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-07 11:58:49.641] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-07 11:58:49.642] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 11:58:49.649] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-07 11:58:49.707] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-07 11:58:49.728] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-07 11:58:49.955] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-07 11:58:50.075] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-11-07 11:58:50.076] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_VIN, cmdType = 
+[2025-11-07 11:58:50.083] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-11-07 11:58:50.089] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_IIN, cmdType = 
+[2025-11-07 11:59:31.352] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-07 11:59:31.365] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 11:59:31.369] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-07 11:59:31.371] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 11:59:31.371] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-07 11:59:31.380] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-07 11:59:31.386] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-07 11:59:31.393] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-07 11:59:31.405] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-07 11:59:31.621] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-11-07 11:59:31.622] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_VIN, cmdType = 
+[2025-11-07 11:59:31.624] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-11-07 11:59:31.625] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_IIN, cmdType = 
+[2025-11-07 12:01:38.137] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-07 12:01:38.147] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 12:01:38.149] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-07 12:01:38.151] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-07 12:01:38.151] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 12:01:38.154] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-07 12:01:38.157] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-07 12:01:38.158] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-07 12:01:38.160] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-07 12:01:38.629] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-11-07 12:01:38.631] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_VIN, cmdType = 
+[2025-11-07 12:01:38.634] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-11-07 12:01:38.635] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_IIN, cmdType = 
+[2025-11-07 12:10:59.138] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-07 12:10:59.142] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 12:10:59.144] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-07 12:10:59.146] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 12:10:59.146] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-07 12:10:59.151] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-07 12:10:59.152] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-07 12:10:59.154] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-07 12:10:59.155] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-07 13:13:56.768] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-07 13:13:56.780] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 13:13:56.792] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-07 13:13:56.797] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 13:13:56.799] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-07 13:13:56.815] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-07 13:13:56.828] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-07 13:13:56.833] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-07 13:13:56.840] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-07 13:14:25.396] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-07 13:14:25.404] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 13:14:25.406] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-07 13:14:25.407] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 13:14:25.407] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-07 13:14:25.411] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-07 13:14:25.413] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-07 13:14:25.415] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-07 13:14:25.420] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-07 13:17:30.180] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-07 13:17:30.193] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 13:17:30.214] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-07 13:17:30.215] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-07 13:17:30.215] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 13:17:30.217] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-07 13:17:30.221] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-07 13:17:30.223] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-07 13:17:30.227] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-07 13:19:29.147] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-07 13:19:29.157] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 13:19:29.160] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-07 13:19:29.161] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-07 13:19:29.162] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-07 13:19:29.163] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-07 13:19:29.167] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-07 13:19:29.170] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-07 13:19:29.176] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-07 13:19:29.561] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-11-07 13:19:29.561] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_VIN, cmdType = 
+[2025-11-07 13:19:29.564] [ApplyRealDataToChart] oneDeviceData is null for addr = 0
+[2025-11-07 13:19:29.566] [ApplyRealDataToChart] cmdType is not Numeric for Cmd = READ_IIN, cmdType = 

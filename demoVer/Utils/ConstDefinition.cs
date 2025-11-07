@@ -7,6 +7,7 @@ namespace demoVer.Utils
         public const string Str_50Hz = "50Hz";
         public const string Str_60Hz = "60Hz";
         public const string Str_AC_InputType_100VAC = "100VAC";
+        public const int Timeout_Max = 6000; //分鐘
         #endregion 
 
         #region AddressOffset

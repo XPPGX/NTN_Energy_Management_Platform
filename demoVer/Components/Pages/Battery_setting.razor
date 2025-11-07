@@ -121,7 +121,8 @@
                             }
                             else
                             {
-                                <div class="dateTime">@FormatToHourMin(CC_Timeout_value)</div>
+                                @* <div class="dateTime">@FormatToHourMin(CC_Timeout_value)</div> *@
+                                <div class="dateTime">分</div>
                             }
                         </div>
                         @if(!isMobile)
@@ -145,7 +146,8 @@
                             }
                             else
                             {
-                                <div class="dateTime">@FormatToHourMin(CV_Timeout_value)</div>
+                                @* <div class="dateTime">@FormatToHourMin(CV_Timeout_value)</div> *@
+                                <div class="dateTime">分</div>
                             }
                         </div>
                         @if(!isMobile)
@@ -169,7 +171,8 @@
                             }
                             else
                             {
-                                <div class="dateTime">@FormatToHourMin(FV_Timeout_value)</div>
+                                @* <div class="dateTime">@FormatToHourMin(FV_Timeout_value)</div> *@
+                                <div class="dateTime">分</div>
                             }
                         </div>
                         @if(!isMobile)
@@ -330,9 +333,10 @@
 
     private string FormatToHourMin(double totalMin)
     {
-        int hours = (int)(totalMin / 60);
-        int minutes = (int)(totalMin % 60);
-        return $"{hours} 小時 {minutes} 分";
+        @* int hours = (int)(totalMin / 60); *@
+        @* int minutes = (int)(totalMin % 60); *@
+        @* return $"{hours} 小時 {minutes} 分"; *@
+        return $"{totalMin} 分";
     }
 
     private async Task OnStageSelectChanged(ChangeEventArgs e)
@@ -558,6 +562,11 @@
         {
             CC_Timeout_value = 0;
         }
+
+        if(CC_Timeout_value > ConstDefinition.Timeout_Max)
+        {
+            CC_Timeout_value = ConstDefinition.Timeout_Max;
+        }
         _sliderFillRefreshRequested = true;
     }
 
@@ -567,6 +576,11 @@
         {
             CV_Timeout_value = 0;
         }
+
+        if(CV_Timeout_value > ConstDefinition.Timeout_Max)
+        {
+            CV_Timeout_value = ConstDefinition.Timeout_Max;
+        }
         _sliderFillRefreshRequested = true;
     }
 
@@ -575,6 +589,10 @@
         if (FV_Timeout_value < 0)
         {
             FV_Timeout_value = 0;
+        }
+        if(FV_Timeout_value > ConstDefinition.Timeout_Max)
+        {
+            FV_Timeout_value = ConstDefinition.Timeout_Max;
         }
         _sliderFillRefreshRequested = true;
     }

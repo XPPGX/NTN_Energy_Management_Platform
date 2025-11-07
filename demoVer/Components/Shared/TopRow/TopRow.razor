@@ -12,16 +12,22 @@
             <!-- <i class="fas fa-th-large"></i> -->
             <img src="@(IsDarkTheme ? "images/menu-forDark.png" : "images/menu-forLight.png")" alt="menu" class="iconBtn"/>
         </button>
-        @if(Page_index == PAGE.HOME)
+        @if(afterFirstRender_Flag)
         {
-            <button class="topRow-btn" @onclick="showEditButtons">
-                <img src="images/edit.png" alt="edit" class="iconBtn"/>
-            </button>
+            if(!isMobile)
+            {
+                <div class="current_page_label">
+                    <div>@currentPage</div>
+                </div>
+            }
         }
+
+        
         @if(menuOpen)
         {
             <div class="dropdown-menu">
                 <button class="nav-link" @onclick="GoTo_NTN_HOME">NTN首頁</button>
+
                 <button class="nav-link expandable" @onclick="Toggle_expand_sys_setting">
                     <span>系統設定</span>
                     <span class="caret">▾</span>
@@ -33,6 +39,7 @@
                         <button class="nav-link" @onclick="GoTo_Inverter_setting">INV設定</button>
                     </div>
                 }
+                
                 <button class="nav-link expandable" @onclick="Toggle_expand_management">
                     <span>機型管理</span>
                     <span class="caret">▾</span>
@@ -44,7 +51,20 @@
                         <button class="nav-link" @onclick="GoTo_Log">監測報告</button>
                     </div>
                 }
-                <button class="nav-link" @onclick="GoTo_Use_strategy">用電策略</button>
+
+                <button class="nav-link expandable" @onclick="Toggle_expand_AI_application">
+                    <span>AI應用</span>
+                    <span class="caret">▾</span>
+                </button>
+                @if(expand_AI_applicaiton)
+                {
+                    <div class="sub-menu">
+                        <button class="nav-link nav-link-inactive">效率分析</button>
+                        <button class="nav-link nav-link-inactive">智慧用電</button>
+                        <button class="nav-link nav-link-inactive">失效分析</button>
+                        <button class="nav-link nav-link-inactive">預測維護</button>
+                    </div>
+                }
             </div>
         }
         <div class="current-tab">
@@ -55,6 +75,7 @@
     <div class="right-items">
         @if(afterFirstRender_Flag)
         {
+            
             if(showEditBtn_Flag && Page_index == PAGE.HOME)
             {
                 //show "+" button
@@ -65,6 +86,13 @@
                     <img src="images/add.png" alt="plus" class="iconBtn"/>
                 </button>
             }
+            @if(Page_index == PAGE.HOME)
+            {
+                <button class="topRow-btn" @onclick="showEditButtons">
+                    <img src="images/edit.png" alt="edit" class="iconBtn"/>
+                </button>
+            }
+
             if( Page_index == PAGE.BATTERY_SETTING)
             {
                 @* <button class="topRow-btn" @onclick="apply_battery_setting">
@@ -89,12 +117,6 @@
                 <img src="images/night-mode.png" class="iconBtn"/>
             </button>
 
-            if(!isMobile)
-            {
-                <div class="current_page_label">
-                    <div>@currentPage</div>
-                </div>
-            }
         }
 
         <img src="images/logo.png" alt="logo" class="clickable-logo" @onclick="GoTo_Framework"/>
@@ -111,6 +133,7 @@
     private bool menuOpen = false;
     private bool expand_sys_setting = false;
     private bool expand_management = false;
+    private bool expand_AI_applicaiton = false;
 
     private string currentPage;
     private string currentRoute = "test";
@@ -227,7 +250,10 @@
         expand_sys_setting = !expand_sys_setting;
     }
 
-    
+    private void Toggle_expand_AI_application()
+    {
+        expand_AI_applicaiton = !expand_AI_applicaiton;
+    }
     @* private void GoTo_NTN_HOME()
     {
         NavManager.NavigateTo("/");
