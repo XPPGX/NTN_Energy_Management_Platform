@@ -261,12 +261,7 @@
             AppLogger.Log_To_File_log(_category, "[NTN_Home][OnAfterRenderAsync] First Rendered", AppLogLevel.Trace);
             heartbeat.OnTick += TickTask;
             try{
-                //[Debug] try drag function
-                // var dotNetRef = DotNetObjectReference.Create(this);
-                
-                @* Console.WriteLine("TEST1");
-                await new ThemeLoader().ApplyTheme(JS);
-                Console.WriteLine("TEST2"); *@
+
                 await JS.InvokeVoidAsync("initSortable", showEditBtn_Flag);
                 await JS.InvokeVoidAsync("DotNetHelperRegister", DotNetObjectReference.Create(this));
                 await JS.InvokeVoidAsync("getCardOrder");

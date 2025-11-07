@@ -503,29 +503,50 @@ namespace demoVer.Services
     
         /// <summary>
         /// 用於更新SubSystem的(在背景執行緒中執行的任務，不等待其完成。)
-        /// 1. Setting Range。
-        /// 2. Write_CMD Info。
-        /// 3. 
+        /// 1. Setting Range
+        /// 2. Write_CMD Info
+        /// 3. Cmd_Unit_ConcurrentDict
         /// </summary>
         private void FireAndForgetTask(string port, string protocol, string new_epoch)
         {
+            
             _ = Task.Run(async () =>
             {
+                var oneSubSys_FireAndForgetLock = _subSystemManager.GetSubSys_FireAndForgetLock(port, protocol);
+                if (oneSubSys_FireAndForgetLock is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is null for (port, protocol) = ({port}, {protocol})", AppLogLevel.Error);
+                    return;
+                }
+
+                //嘗試鎖定 SubSystem 的 FireAndForget Lock
+                if (!await oneSubSys_FireAndForgetLock.WaitAsync(0))
+                {
+                    AppLogger.Log_To_File_log(_category, $"[PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = ({port}, {protocol})", AppLogLevel.Error);
+                    return;
+                }
                 try
                 {
                     //1. 取得 Setting Range
                     await _subSystemManager.UpdateSubSystem_SettingRange(port, protocol);
-
+                    AppLogger.Log_To_File_log(_category, $"[PollingRead][FireAndForgetTask] ~SettingRange~ updated for (port, protocol) = ({port}, {protocol})", AppLogLevel.Debug);
                     //2. 取得 Write CMD Info
                     await _subSystemManager.UpdateSubSystem_WriteCmdInfo(port, protocol);
-                    
-                    AppLogger.Log_To_File_log(_category, $"[PollingRead][FireAndForgetTask] UpdateSubSystem_SettingRange done for (port, protocol) = ({port}, {protocol})", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, $"[PollingRead][FireAndForgetTask] ~WriteCmdInfo~ updated for (port, protocol) = ({port}, {protocol})", AppLogLevel.Debug);
+                    //3. 取得 Read CMD Info
+                    await _subSystemManager.UpdateSubSystem_CmdUnitDict(port, protocol);
+                    AppLogger.Log_To_File_log(_category, $"[PollingRead][FireAndForgetTask] ~ReadCmdUnit~ updated for (port, protocol) = ({port}, {protocol})", AppLogLevel.Debug);
+
                     //更新 epoch，以免重複呼叫 API 取得 SettingRange
                     _subSystemManager.RegistedSubSystems[port][protocol].epoch = new_epoch;
                 }
                 catch (Exception ex)
                 {
                     AppLogger.Log_To_File_log(_category, $"[PollingRead][FireAndForgetTask] Error : {ex}", AppLogLevel.Error);
+                }
+                finally
+                {
+                    oneSubSys_FireAndForgetLock.Release();
                 }
             });
         }

@@ -62,9 +62,8 @@
                 <div class="@arrowService.triGroup1.GetGroupClass()" style="@arrowService.triGroup1.GetGridAreaStyle()">
                     @for (int i = 0; i < arrowService.triGroup1.Count; i++)
                     {
-                        var baseClass = arrowService.triGroup1.GetTriangleBaseClass();
-                        var active = i == arrowService.triGroup1.activeIndex ? "active" : "";
-                        <div class="@($"{baseClass} {active}")"></div>
+                        var triangleClass = arrowService.triGroup1.GetTriangleClass(i);
+                        <div class="@triangleClass"></div>
                     }
                 </div>
             }
@@ -74,9 +73,8 @@
                 <div class="@arrowService.triGroup2.GetGroupClass()" style="@arrowService.triGroup2.GetGridAreaStyle()">
                     @for (int i = 0; i < arrowService.triGroup2.Count; i++)
                     {
-                        var baseClass = arrowService.triGroup2.GetTriangleBaseClass();
-                        var active = i == arrowService.triGroup2.activeIndex ? "active" : "";
-                        <div class="@($"{baseClass} {active}")"></div>
+                        var triangleClass = arrowService.triGroup2.GetTriangleClass(i);
+                        <div class="@triangleClass"></div>
                     }
                 </div>
             }
@@ -86,9 +84,8 @@
                 <div class="@arrowService.triGroup3.GetGroupClass()" style="@arrowService.triGroup3.GetGridAreaStyle()">
                     @for (int i = 0; i < arrowService.triGroup3.Count; i++)
                     {
-                        var baseClass = arrowService.triGroup3.GetTriangleBaseClass();
-                        var active = i == arrowService.triGroup3.activeIndex ? "active" : "";
-                        <div class="@($"{baseClass} {active}")"></div>
+                        var triangleClass = arrowService.triGroup3.GetTriangleClass(i);
+                        <div class="@triangleClass"></div>
                     }
                 </div>
             }
@@ -97,34 +94,14 @@
             
             <div class="grid-col">
                 <div class="placeholder">
-                    @* @if (arrowService.triGroup1.get_showArrowFlag())
-                    {
-                        <div class="arrows-in-cell" style="@arrowService.triGroup1.GetGridAreaStyle()">
-                            @for (int i = 0; i < arrowService.triGroup1.Count; i++)
-                            {
-                                var baseClass = arrowService.triGroup1.GetTriangleBaseClass();
-                                var active = i == arrowService.triGroup1.activeIndex ? "active" : "";
-                                <div class="@($"{baseClass} {active}")"></div>
-                            }
-                        </div>
-                    } *@
+                    @* Placeholder for future arrow rendering backups *@
                 </div>
                 <div class="grid-label"></div>
             </div>
             
             <div class="grid-col">
                 <div class="placeholder">
-                    @* @if (arrowService.triGroup2.get_showArrowFlag())
-                    {
-                        <div class="arrows-in-cell" style="@arrowService.triGroup2.GetGridAreaStyle()">
-                            @for (int i = 0; i < arrowService.triGroup2.Count; i++)
-                            {
-                                var baseClass = arrowService.triGroup2.GetTriangleBaseClass();
-                                var active = i == arrowService.triGroup2.activeIndex ? "active" : "";
-                                <div class="@($"{baseClass} {active}")"></div>
-                            }
-                        </div>
-                    } *@
+                    @* Placeholder for future arrow rendering backups *@
                 </div>
                 <div class="grid-label"></div>
             </div>
@@ -135,17 +112,7 @@
             <div class="placeholder"></div>
             <div class="grid-col">
                 <div class="placeholder">
-                    @* @if (arrowService.triGroup3.get_showArrowFlag())
-                    {
-                        <div class="arrows-in-cell" style="@arrowService.triGroup3.GetGridAreaStyle()">
-                            @for (int i = 0; i < arrowService.triGroup3.Count; i++)
-                            {
-                                var baseClass = arrowService.triGroup3.GetTriangleBaseClass();
-                                var active = i == arrowService.triGroup3.activeIndex ? "active" : "";
-                                <div class="@($"{baseClass} {active}")"></div>
-                            }
-                        </div>
-                    } *@
+                    @* Placeholder for future arrow rendering backups *@
                 </div>
             </div>
             <div class="placeholder"></div>
@@ -273,8 +240,13 @@
 
     private void ApplyActiveSubsystem()
     {
+        var directions = activeSubSystem?.ArrowDirections ?? ArrowDirections.Hidden;
+        var shouldFallback = activeSubSystem is null || !directions.AnyVisible;
+
+        arrowService.SetFallbackMode(shouldFallback);
+
         local_INV_MODE_str = activeSubSystem?.DisplayModeName ?? ConstDefinition.DEFAULT_MODE_str;
-        arrowService.UpdateDirections(activeSubSystem?.ArrowDirections ?? ArrowDirections.Hidden);
+        arrowService.UpdateDirections(directions);
     }
 
     private void OnArrowTick()

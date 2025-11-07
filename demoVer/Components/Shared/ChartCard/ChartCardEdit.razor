@@ -296,6 +296,9 @@
     private Dictionary<string, string>? show_cmd_unit_Dict_ref;
     private List<string> UnitLists = new();
 
+    private static readonly Dictionary<string, ChartCardDraftState> _draftStore = new(StringComparer.Ordinal);
+    private ChartCardDraftState? _pendingDraft;
+
     private CHART_SETTING_STAGE CHART_setting_stage = CHART_SETTING_STAGE.OVERVIEW;
     private CHART_SETTING edit_ChartSetting_Clone = new();
     private CHART_SINGLE_DATA_LINE blank_singleDataLine = new();
@@ -340,14 +343,7 @@
         if (_isFirstParameterSet)
         {
             _isFirstParameterSet = false;
-
-            edit_ChartSetting_Clone = currentCardInfo.Chart_Setting?.DeepClone() ?? new CHART_SETTING();
-            temp_chartTitle = edit_ChartSetting_Clone.ChartTitle ?? currentCardInfo.cardName ?? string.Empty;
-
-            if (edit_ChartSetting_Clone.chart_single_data_lines is null)
-            {
-                edit_ChartSetting_Clone.chart_single_data_lines = new List<CHART_SINGLE_DATA_LINE>();
-            }
+            InitializeFromCurrentCard();
         }
     }
 
@@ -364,6 +360,7 @@
 
     public void Dispose()
     {
+        SaveDraft();
         Heartbeat.OnTick -= OnHeartbeatTick;
         objRef?.Dispose();
     }
@@ -503,6 +500,7 @@
         }
 
         CHART_setting_stage = CHART_SETTING_STAGE.SELECT_MACHINE_CMD;
+        ApplyPendingDraftIfAvailable();
     }
 
     private void InitSummaryCMDs()
@@ -655,6 +653,22 @@
     private void OnLineClick(int index, CHART_SINGLE_DATA_LINE temp)
     {
         SingleLine_index = index;
+        if (TryRestoreDraft(out var draft))
+        {
+            if (draft.SingleLineIndex == index)
+            {
+                _pendingDraft = draft;
+            }
+            else
+            {
+                ClearDraft();
+            }
+        }
+        else
+        {
+            _pendingDraft = null;
+        }
+
         Edit_inCorrespondingStage();
     }
 
@@ -709,6 +723,7 @@
         currentCardInfo.cardName = temp_chartTitle;
 
         OnCardInfoUpdated.InvokeAsync(currentCardInfo);
+        ClearDraft();
     }
 
     private void YAxisChanged(ChangeEventArgs args)
@@ -805,4 +820,215 @@
     {
         Console.WriteLine(debugMessage);
     }
+
+    private void InitializeFromCurrentCard()
+    {
+        edit_ChartSetting_Clone = currentCardInfo.Chart_Setting?.DeepClone() ?? new CHART_SETTING();
+        if (edit_ChartSetting_Clone.chart_single_data_lines is null)
+        {
+            edit_ChartSetting_Clone.chart_single_data_lines = new List<CHART_SINGLE_DATA_LINE>();
+        }
+
+        temp_chartTitle = !string.IsNullOrEmpty(edit_ChartSetting_Clone.ChartTitle)
+            ? edit_ChartSetting_Clone.ChartTitle!
+            : currentCardInfo.cardName ?? string.Empty;
+
+        CHART_setting_stage = CHART_SETTING_STAGE.OVERVIEW;
+        blank_singleDataLine = new CHART_SINGLE_DATA_LINE();
+        SingleLine_index = 0;
+        temp_Y_singleTitle = string.Empty;
+        chartForm_errorMessage = string.Empty;
+        chartMachineCmdError = string.Empty;
+        yTitleError = string.Empty;
+        yAxisError = string.Empty;
+        colorError = string.Empty;
+        currentSelected_Addr = 9999;
+        chartNowSelectedAddr = 9999;
+        chartNowSelectedCMD = string.Empty;
+        show_cmd_unit_Dict_ref = null;
+        UnitLists = new List<string>();
+    }
+
+    private bool TryRestoreDraft(out ChartCardDraftState draft)
+    {
+        draft = null!;
+        if (currentCardInfo?.ID is not string cardId || string.IsNullOrWhiteSpace(cardId))
+        {
+            return false;
+        }
+
+        if (_draftStore.TryGetValue(cardId, out var storedDraft))
+        {
+            draft = storedDraft;
+            return true;
+        }
+
+        return false;
+    }
+
+    private void ApplyPendingDraftIfAvailable()
+    {
+        if (_pendingDraft is null)
+        {
+            return;
+        }
+
+        var draft = _pendingDraft;
+        _pendingDraft = null;
+        ApplyDraft(draft);
+    }
+
+    private void ApplyDraft(ChartCardDraftState draft)
+    {
+        edit_ChartSetting_Clone = draft.ChartSetting.DeepClone();
+        if (edit_ChartSetting_Clone.chart_single_data_lines is null)
+        {
+            edit_ChartSetting_Clone.chart_single_data_lines = new List<CHART_SINGLE_DATA_LINE>();
+        }
+
+        CHART_setting_stage = draft.Stage;
+        blank_singleDataLine = CloneSingleLine(draft.BlankLine);
+        var maxIndex = Math.Max(edit_ChartSetting_Clone.chart_single_data_lines.Count - 1, 0);
+        SingleLine_index = Math.Clamp(draft.SingleLineIndex, 0, maxIndex);
+        temp_Y_singleTitle = draft.TempYTitle ?? string.Empty;
+        temp_chartTitle = draft.TempChartTitle ?? string.Empty;
+        chartForm_errorMessage = string.Empty;
+        chartMachineCmdError = string.Empty;
+        yTitleError = string.Empty;
+        yAxisError = string.Empty;
+        colorError = string.Empty;
+        currentSelected_Addr = draft.CurrentSelectedAddr;
+        chartNowSelectedAddr = draft.ChartNowSelectedAddr;
+        chartNowSelectedCMD = draft.ChartNowSelectedCmd ?? string.Empty;
+        isMobile = draft.IsMobile;
+        UnitLists = draft.UnitOptions is null
+            ? new List<string>()
+            : new List<string>(draft.UnitOptions);
+
+        RestoreLookupsForDraft();
+    }
+
+    private void RestoreLookupsForDraft()
+    {
+        show_cmd_unit_Dict_ref = null;
+
+        if (currentSelected_Addr == 9999)
+        {
+            return;
+        }
+
+        currentSelected_Addr = blank_singleDataLine.addr;
+        chartNowSelectedAddr = blank_singleDataLine.addr;
+        chartNowSelectedCMD = blank_singleDataLine.Cmd ?? string.Empty;
+
+        if (currentSelected_Addr <= 256)
+        {
+            if (!getCMDs())
+            {
+                chartMachineCmdError = string.Empty;
+                return;
+            }
+        }
+        else
+        {
+            return;
+        }
+
+        chartMachineCmdError = string.Empty;
+
+        if (!string.IsNullOrEmpty(blank_singleDataLine.Cmd) && show_cmd_unit_Dict_ref != null &&
+            show_cmd_unit_Dict_ref.TryGetValue(blank_singleDataLine.Cmd, out var unit))
+        {
+            blank_singleDataLine.Unit = unit;
+        }
+    }
+
+    private void SaveDraft()
+    {
+        if (currentCardInfo?.ID is not string cardId || string.IsNullOrWhiteSpace(cardId))
+        {
+            return;
+        }
+
+        if (CHART_setting_stage == CHART_SETTING_STAGE.OVERVIEW || CHART_setting_stage == CHART_SETTING_STAGE.CLOSE_ALL)
+        {
+            _draftStore.Remove(cardId);
+            _pendingDraft = null;
+            UnitLists = new List<string>();
+            return;
+        }
+
+        var state = new ChartCardDraftState(
+            edit_ChartSetting_Clone.DeepClone(),
+            CHART_setting_stage,
+            CloneSingleLine(blank_singleDataLine),
+            SingleLine_index,
+            temp_Y_singleTitle ?? string.Empty,
+            temp_chartTitle ?? string.Empty,
+            chartForm_errorMessage ?? string.Empty,
+            chartMachineCmdError ?? string.Empty,
+            yTitleError ?? string.Empty,
+            yAxisError ?? string.Empty,
+            colorError ?? string.Empty,
+            currentSelected_Addr,
+            chartNowSelectedAddr,
+            chartNowSelectedCMD ?? string.Empty,
+            isMobile,
+            new List<string>(UnitLists)
+        );
+
+        _draftStore[cardId] = state;
+        _pendingDraft = null;
+    }
+
+    private void ClearDraft()
+    {
+        if (currentCardInfo?.ID is not string cardId || string.IsNullOrWhiteSpace(cardId))
+        {
+            _pendingDraft = null;
+            return;
+        }
+
+        _draftStore.Remove(cardId);
+        _pendingDraft = null;
+        UnitLists = new List<string>();
+    }
+
+    private static CHART_SINGLE_DATA_LINE CloneSingleLine(CHART_SINGLE_DATA_LINE? source)
+    {
+        if (source is null)
+        {
+            return new CHART_SINGLE_DATA_LINE();
+        }
+
+        return new CHART_SINGLE_DATA_LINE
+        {
+            status = source.status,
+            addr = source.addr,
+            mdlName = source.mdlName ?? string.Empty,
+            Cmd = source.Cmd ?? string.Empty,
+            Unit = source.Unit ?? string.Empty,
+            Y_axis_selection = source.Y_axis_selection,
+            color = source.color ?? string.Empty,
+            Data = source.Data?.ToArray() ?? Array.Empty<double?>()
+        };
+    }
+
+    private sealed record ChartCardDraftState(
+        CHART_SETTING ChartSetting,
+        CHART_SETTING_STAGE Stage,
+        CHART_SINGLE_DATA_LINE BlankLine,
+        int SingleLineIndex,
+        string TempYTitle,
+        string TempChartTitle,
+        string ChartFormError,
+        string ChartMachineCmdError,
+        string YTitleError,
+        string YAxisError,
+        string ColorError,
+        uint CurrentSelectedAddr,
+        uint ChartNowSelectedAddr,
+        string ChartNowSelectedCmd,
+        bool IsMobile,
+        List<string> UnitOptions);
 }

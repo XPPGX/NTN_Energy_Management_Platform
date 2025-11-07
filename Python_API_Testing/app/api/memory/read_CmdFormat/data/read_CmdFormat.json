@@ -1,0 +1,161 @@
+{
+    "port": "MOD1",
+    "addr": 0,
+    "protocolName": "NTN-5K_MOD.json",
+    "timestamp": "0001-01-01T00:00:00",
+    "values": {
+        "READ_VIN": {
+            "unit": "V"
+        },
+        "READ_IIN": {
+            "unit": "A"
+        },
+        "READ_FREQ": {
+            "unit": "Hz"
+        },
+        "READ_TEMPERATURE_1": {
+            "unit": "℃"
+        },
+        "READ_FAN_SPEED_1": {
+            "unit": "RPM"
+        },
+        "READ_FAN_SPEED_2": {
+            "unit": "RPM"
+        },
+        "MFR_ID": {
+            "unit": ""
+        },
+        "MFR_MODEL": {
+            "unit": ""
+        },
+        "MFR_REVISION": {
+            "unit": ""
+        },
+        "MFR_LOCATION": {
+            "unit": ""
+        },
+        "MFR_DATE": {
+            "unit": ""
+        },
+        "MFR_SERIAL": {
+            "unit": ""
+        },
+        "CURVE_CC": {
+            "unit": "A"
+        },
+        "CURVE_CV": {
+            "unit": "V"
+        },
+        "CURVE_FV": {
+            "unit": "V"
+        },
+        "CURVE_TC": {
+            "unit": "A"
+        },
+        "CURVE_CONFIG": {
+            "unit": ""
+        },
+        "CURVE_CC_TIMEOUT": {
+            "unit": "Sec"
+        },
+        "CURVE_CV_TIMEOUT": {
+            "unit": "Sec"
+        },
+        "CURVE_FV_TIMEOUT": {
+            "unit": "Sec"
+        },
+        "CHG_STATUS": {
+            "unit": ""
+        },
+        "BAT_ALM_VOLT": {
+            "unit": "V"
+        },
+        "BAT_SHDN_VOLT": {
+            "unit": "V"
+        },
+        "BAT_RCHG_VOLT": {
+            "unit": "V"
+        },
+        "BAT_OV_ALM_VOLT": {
+            "unit": "V"
+        },
+        "SCALING_FACTOR": {
+            "unit": ""
+        },
+        "SYSTEM_CONFIG": {
+            "unit": ""
+        },
+        "INV_OPERATION": {
+            "unit": ""
+        },
+        "INV_CONFIG": {
+            "unit": ""
+        },
+        "Output_ACV_Set": {
+            "unit": ""
+        },
+        "Output_ACF_Set": {
+            "unit": ""
+        },
+        "READ_AC_FOUT": {
+            "unit": "Hz"
+        },
+        "READ_AC_VOUT": {
+            "unit": "V"
+        },
+        "READ_OP_LD_PCNT": {
+            "unit": ""
+        },
+        "READ_OP_WATT": {
+            "unit": "W"
+        },
+        "READ_OP_VA": {
+            "unit": "VA"
+        },
+        "READ_VBAT": {
+            "unit": "V"
+        },
+        "READ_CHG_CURR": {
+            "unit": "A"
+        },
+        "INV_STATUS": {
+            "unit": ""
+        },
+        "INV_FAULT": {
+            "unit": ""
+        },
+        "READ_BP_WATT": {
+            "unit": "W"
+        },
+        "READ_BP_VA": {
+            "unit": "VA"
+        },
+        "READ_AC_IOUT": {
+            "unit": "A"
+        },
+        "READ_CC_SETVALUE": {
+            "unit": ""
+        },
+        "READ_CV_SETVALUE": {
+            "unit": ""
+        },
+        "READ_FV_SETVALUE": {
+            "unit": ""
+        },
+        "READ_TC_SETVALUE": {
+            "unit": ""
+        },
+        "READ_BAT_ALM_SETVALUE": {
+            "unit": ""
+        },
+        "READ_BAT_SHDN_SETVALUE": {
+            "unit": ""
+        },
+        "READ_BAT_RCHG_SETVALUE": {
+            "unit": ""
+        },
+        "READ_BAT_OV_ALM_SETVALUE": {
+            "unit": ""
+        }
+    }
+}

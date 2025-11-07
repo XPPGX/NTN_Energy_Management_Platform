@@ -1,5 +1,6 @@
 @namespace demoVer.Shared
 @inherits LayoutComponentBase
+@implements IDisposable
 
 @using System
 @using System.Collections.Generic
@@ -108,23 +109,21 @@
 	private STATUS_SETTING_STAGE STATUS_setting_stage = STATUS_SETTING_STAGE.OVERVIEW;
 	private LINK_STATUS_Pair? currentEdit_LINK_STATUS_pair_ref;
 	private List<LINK_STATUS_Pair> edit_Link_STATUS_Pairs = new();
+	private int? _currentEditIndex;
 
     private bool _isFirstParameterSet = false;
+	private static readonly Dictionary<string, RunningDiagramDraft> _draftStore = new(StringComparer.Ordinal);
+	private bool _skipDraftSave;
 
 	protected override void OnInitialized()
 	{
 		imgFolderPath = Path.Combine(WebHostEnvironment.WebRootPath, "images/user_selections");
 		LoadIconPaths();
-        
-        edit_Link_STATUS_Pairs = currentCardInfo.Link_STATUS_Pairs?
-            .Select(pair => pair.DeepClone()).ToList() ?? new List<LINK_STATUS_Pair>();
 
-        EnsureStatusSlots();
-        STATUS_setting_stage = STATUS_SETTING_STAGE.OVERVIEW;
-        currentEdit_LINK_STATUS_pair_ref = null;
+		InitializeFromCard();
 		selectedSubsystemKey = currentCardInfo.SelectedSubsystemKey;
 		RefreshSubsystemOptions();
-        Console.WriteLine($"[3]RunningDiagramCardEdit OnAfterRender STATUS_setting_stage  = {STATUS_setting_stage}");
+		RestoreDraftIfAvailable();
 	}
 
 	protected override void OnParametersSet()
@@ -137,15 +136,10 @@
                 return;
             }
 
-            edit_Link_STATUS_Pairs = currentCardInfo.Link_STATUS_Pairs?
-                .Select(pair => pair.DeepClone()).ToList() ?? new List<LINK_STATUS_Pair>();
-
-            EnsureStatusSlots();
-            STATUS_setting_stage = STATUS_SETTING_STAGE.OVERVIEW;
-            currentEdit_LINK_STATUS_pair_ref = null;
+			InitializeFromCard();
 			selectedSubsystemKey = currentCardInfo.SelectedSubsystemKey;
 			RefreshSubsystemOptions();
-            Console.WriteLine($"[3]RunningDiagramCardEdit OnAfterRender STATUS_setting_stage  = {STATUS_setting_stage}");
+			RestoreDraftIfAvailable();
         }
 	}
 
@@ -251,7 +245,10 @@
 
 	private void selectImg_LINK_STATUS(LINK_STATUS_Pair item)
 	{
-		currentEdit_LINK_STATUS_pair_ref = item;
+		_currentEditIndex = edit_Link_STATUS_Pairs.IndexOf(item);
+		currentEdit_LINK_STATUS_pair_ref = _currentEditIndex is >= 0 and < int.MaxValue
+			? edit_Link_STATUS_Pairs[_currentEditIndex.Value]
+			: null;
 		STATUS_setting_stage = STATUS_SETTING_STAGE.SELECT_ICON_STAGE;
 	}
 
@@ -264,10 +261,13 @@
 
 		currentEdit_LINK_STATUS_pair_ref.iconPath = imgPath;
 		STATUS_setting_stage = STATUS_SETTING_STAGE.OVERVIEW;
+		currentEdit_LINK_STATUS_pair_ref = null;
+		_currentEditIndex = null;
 	}
 
 	private void Confirm_LINK_STATUS()
 	{
+		ClearDraft(skipSave: true);
 		currentCardInfo.Link_STATUS_Pairs = edit_Link_STATUS_Pairs
 			.Select(pair => pair.DeepClone())
 			.ToList();
@@ -276,4 +276,95 @@
 
 		OnCardInfoUpdated.InvokeAsync(currentCardInfo);
 	}
+
+	private void InitializeFromCard()
+	{
+		edit_Link_STATUS_Pairs = currentCardInfo.Link_STATUS_Pairs?
+			.Select(pair => pair.DeepClone()).ToList() ?? new List<LINK_STATUS_Pair>();
+		EnsureStatusSlots();
+		STATUS_setting_stage = STATUS_SETTING_STAGE.OVERVIEW;
+		currentEdit_LINK_STATUS_pair_ref = null;
+		_currentEditIndex = null;
+		_skipDraftSave = false;
+	}
+
+	private void RestoreDraftIfAvailable()
+	{
+		if (currentCardInfo?.ID is not string id || string.IsNullOrWhiteSpace(id))
+		{
+			return;
+		}
+
+		if (!_draftStore.TryGetValue(id, out var draft))
+		{
+			return;
+		}
+
+		edit_Link_STATUS_Pairs = draft.StatusPairs
+			.Select(pair => pair.DeepClone())
+			.ToList();
+		EnsureStatusSlots();
+		STATUS_setting_stage = draft.Stage;
+		_currentEditIndex = draft.EditingIndex;
+		if (_currentEditIndex is >= 0 && _currentEditIndex < edit_Link_STATUS_Pairs.Count)
+		{
+			currentEdit_LINK_STATUS_pair_ref = edit_Link_STATUS_Pairs[_currentEditIndex.Value];
+		}
+		else
+		{
+			currentEdit_LINK_STATUS_pair_ref = null;
+			_currentEditIndex = null;
+			STATUS_setting_stage = STATUS_SETTING_STAGE.OVERVIEW;
+		}
+		_skipDraftSave = false;
+	}
+
+	private void SaveDraft()
+	{
+		if (_skipDraftSave)
+		{
+			_skipDraftSave = false;
+			return;
+		}
+
+		if (currentCardInfo?.ID is not string id || string.IsNullOrWhiteSpace(id))
+		{
+			return;
+		}
+
+		var snapshot = edit_Link_STATUS_Pairs
+			.Select(pair => pair.DeepClone())
+			.ToList();
+
+		var draft = new RunningDiagramDraft(snapshot, STATUS_setting_stage, _currentEditIndex);
+		_draftStore[id] = draft;
+	}
+
+	private void ClearDraft()
+	{
+		ClearDraft(skipSave: false);
+	}
+
+	private void ClearDraft(bool skipSave)
+	{
+		if (currentCardInfo?.ID is not string id || string.IsNullOrWhiteSpace(id))
+		{
+			return;
+		}
+
+		_draftStore.Remove(id);
+		if (skipSave)
+		{
+			_skipDraftSave = true;
+			currentEdit_LINK_STATUS_pair_ref = null;
+			_currentEditIndex = null;
+		}
+	}
+
+	public void Dispose()
+	{
+		SaveDraft();
+	}
+
+	private sealed record RunningDiagramDraft(List<LINK_STATUS_Pair> StatusPairs, STATUS_SETTING_STAGE Stage, int? EditingIndex);
 }

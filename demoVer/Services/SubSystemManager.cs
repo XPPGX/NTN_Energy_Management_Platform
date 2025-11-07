@@ -50,6 +50,37 @@ namespace demoVer.Services
             return null;
         }
 
+        /// <summary>
+        /// 取得所有子系統的port, realAddr, storingAddr清單
+        /// </summary>
+        /// <returns>List : port, protocol, realAddr, storingAddr </returns>
+        public List<(string, string,uint, uint)> GetAllSubSystem_PortAddr_pairInList()
+        {
+            List<(string, string, uint, uint)> portAddrPair_List = new();
+            GetAllSubSystems_Ref_In_List().ForEach(subsys =>
+            {
+                var subsys_addrList = subsys.GetAddrList();
+                foreach (var realAddr in subsys_addrList)
+                {
+                    string port = subsys.Port;
+                    string protocol = subsys.Protocol;
+                    uint storingAddr = realAddr + Custom.getAddrOffsetByPort(port);
+                    portAddrPair_List.Add((port, protocol,realAddr, storingAddr));
+                }
+            });
+            // Console.WriteLine($"[SubSystemManager][GetAllSubSystem_PortAddr_pairInList] AllSubSysRef_Count = {GetAllSubSystems_Ref_In_List().Count}, portAddrPair_Count = {portAddrPair_List.Count}");
+            return portAddrPair_List;
+        }
+
+        public SemaphoreSlim? GetSubSys_FireAndForgetLock(string port, string protocol)
+        {
+            var subsys = GetOneSubSystem_Ref(port, protocol);
+            if (subsys is not null)
+            {
+                return subsys.SubSystem_FireAndForget_Lock;
+            }
+            return null;
+        }
         public async Task UpdateSubSystem_SettingRange(string port, string protocol)
         {
             try
@@ -69,7 +100,6 @@ namespace demoVer.Services
 
                         // Update SubSystem's SettingRanges
                         var RangesDict = response.ranges;
-                        AppLogger.Log_To_File_log(_category, $"[SubSystemManager][UpdateSubSystem_SettingRange] Start for (port, protocol) = ({port}, {protocol})", AppLogLevel.Debug);
                         await subsys.UpdateSettingRanges_From(RangesDict);
 
                         //[Debug] 以 Json 格式印出 SettingRanges 
@@ -78,7 +108,6 @@ namespace demoVer.Services
                         // });
                         // Console.WriteLine(Json_Str);
 
-                        AppLogger.Log_To_File_log(_category, $"[SubSystemManager][UpdateSubSystem_SettingRange] done for (port, protocol) = ({port}, {protocol})", AppLogLevel.Debug);
                     }
                 }
             }
@@ -96,7 +125,6 @@ namespace demoVer.Services
                 {
                     if (protocolDict.TryGetValue(protocol, out var subsys))
                     {
-
                         // Call Get_Write_API to get the latest Write CMD Info
                         var response = await _apiManager.apiReadReal_SettingData(port, protocol);
 
@@ -115,15 +143,47 @@ namespace demoVer.Services
                         }
 
                         // Update SubSystem's Write CMD info using the overwrite approach.
-                        AppLogger.Log_To_File_log(_category, $"[SubSystemManager][UpdateSubSystem_WriteCmdInfo] Start for (port, protocol) = ({port}, {protocol})", AppLogLevel.Debug);
                         await subsys.UpdateInfosForWriteCmd_From(response[protocol]);
-                        AppLogger.Log_To_File_log(_category, $"[SubSystemManager][UpdateSubSystem_WriteCmdInfo] done for (port, protocol) = ({port}, {protocol})", AppLogLevel.Debug);
                     }
                 }
             }
             catch (Exception e)
             {
                 AppLogger.Log_To_File_log(_category, $"[SubSystemManager][UpdateSubSystem_WriteCmdInfo] Exception: {e.Message}", AppLogLevel.Error);
+            }
+        }
+
+        public async Task UpdateSubSystem_CmdUnitDict(string port, string protocol)
+        {
+            try
+            {
+                //Call API
+                var response = await _apiManager.apiRead_CmdFormat(port, protocol);
+
+                //Check response
+                if (response is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystemManager][UpdateSubSystem_CmdUnitDict] response is null for (port, protocol) = ({port}, {protocol})", AppLogLevel.Warning);
+                    return;
+                }
+                if (response.values is null || response.values.Count == 0)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystemManager][UpdateSubSystem_CmdUnitDict] response.values is null or empty for (port, protocol) = ({port}, {protocol})", AppLogLevel.Warning);
+                    return;
+                }
+
+                var subsys = GetOneSubSystem_Ref(port, protocol);
+                if (subsys is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystemManager][UpdateSubSystem_CmdUnitDict] subsys is null for (port, protocol) = ({port}, {protocol})", AppLogLevel.Warning);
+                    return;
+                }
+
+                await subsys.Update_ReadCmd_With_Unit(response);
+            }
+            catch (Exception e)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][UpdateSubSystem_CmdUnitDict] Exception: {e.Message}", AppLogLevel.Error);
             }
         }
 
@@ -144,6 +204,16 @@ namespace demoVer.Services
                 }
             }
             return string.Empty;
+        }
+
+        public Dictionary<string, string> GetCmd_Unit_Dict_InOneSubSystem(string port, string protocol)
+        {
+            var subsys = GetOneSubSystem_Ref(port, protocol);
+            if (subsys is null)
+            {
+                return new Dictionary<string, string>();
+            }
+            return subsys.GetReadCmd_Unit_Dict();
         }
 
         /// <summary>
@@ -232,7 +302,7 @@ namespace demoVer.Services
                                     }
                                 }
 
-                                if(AddrValues_AllTheSame is false){ break; }
+                                if (AddrValues_AllTheSame is false) { break; }
                             }
                             if (AddrValues_AllTheSame is true)
                             {
@@ -267,7 +337,7 @@ namespace demoVer.Services
                                     }
                                 }
                             }
-                            if(same)
+                            if (same)
                             {
                                 AppLogger.Log_To_File_log(_category, $"[SubSystemManager][createOneWriteCmdData] RealBits is same as current value for (port, protocol, cmdCode) = ({port}, {protocol}, {clearCmdCode})", AppLogLevel.Debug);
                                 return null;

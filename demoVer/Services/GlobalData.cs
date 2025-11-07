@@ -282,6 +282,15 @@ namespace demoVer.Services
             }
         }
 
+        public List<(string, string, uint, uint)> GetAllSubSys_PortAddrPair_InList_FromSubSysManager()
+        {
+            return _subSystemManager.GetAllSubSystem_PortAddr_pairInList();
+        }
+        public Dictionary<string, string> GetCmdUnit_Dict_FromSubsysManager(string port, string protocol)
+        {
+            return _subSystemManager.GetCmd_Unit_Dict_InOneSubSystem(port, protocol);
+        }
+
         public List<(uint, string)>? Get_addr_and_ModelNames_List()
         {
             try

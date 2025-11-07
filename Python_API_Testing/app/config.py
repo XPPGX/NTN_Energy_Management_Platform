@@ -11,6 +11,7 @@ READ_MEMORY_DATA_DIR = API_MEMORY_DIR / "read_memory" / "data"
 READ_REAL_DATA_DIR = API_MEMORY_DIR / "read_real" / "data"
 WRITE_MEMORY_DATA_DIR = API_MEMORY_DIR / "write_memory" / "data"
 SETTING_RANGE_DIR = API_MEMORY_DIR / "setting_range" / "data"
+READ_CMD_FORMAT_DIR = API_MEMORY_DIR / "read_CmdFormat" / "data"
 
 INV_DATA_FILE = READ_MEMORY_DATA_DIR / "INV_DATA.json"
 INV_DATA_V1_1_FILE = READ_REAL_DATA_DIR / "INV_DATA_V1-1.json"
@@ -19,6 +20,7 @@ LINK_STATUS_FILE = LINK_STATUS_DATA_DIR / "link_status.json"
 DEFAULT_MEMORY_FILE = WRITE_MEMORY_DATA_DIR / "WriteMemory_JsonFormat.json"
 DEFAULT_REAL_WRITE_FILE = WRITE_MEMORY_DATA_DIR / "REAL_WriteMemory_JsonFormat.json"
 PARTITION_STATUS_FILE = SETTING_RANGE_DIR / "setting_range.json"
+READ_CMD_FORMAT_FILE = READ_CMD_FORMAT_DIR / "read_CmdFormat.json"
 TZ_TAIPEI = timezone(timedelta(hours=8))
 USE_RANDOM_DATA = True
 LINK_STATUS_REFRESH_INTERVAL = 2.0  # seconds

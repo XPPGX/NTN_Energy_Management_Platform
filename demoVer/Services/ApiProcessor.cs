@@ -325,15 +325,15 @@ namespace demoVer.Services
                 return false;
             }
         }
-        
-        public async Task<Setting_Range> apiRead_SettingRange(string type, string protocolFileName)
+
+        public async Task<Setting_Range?> apiRead_SettingRange(string type, string protocolFileName)
         {
             try
             {
                 string url = $"/api/memory/partition-status?type={type}&protocol={protocolFileName}";
                 var result = await _http.GetFromJsonAsync<Setting_Range>(url);
 
-                if(result == null)
+                if (result == null)
                 {
                     throw new Exception($"[apiRead_SettingRange] Read_API_Json == null");
                 }
@@ -345,9 +345,34 @@ namespace demoVer.Services
                 AppLogger.Log_To_File_log(_category, $"[ApiManager][apiRead_SettingRange] Http_Error: {ex}", AppLogLevel.Debug);
                 return null;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 AppLogger.Log_To_File_log(_category, $"[ApiManager][apiRead_SettingRange] Error : {ex.Message}", AppLogLevel.Error);
+                return null;
+            }
+        }
+        
+        public async Task<ProtocolFormat?> apiRead_CmdFormat(string type, string protocolFileName)
+        {
+            try
+            {
+                string url = $"/api/memory/read-attribute?type={type}&protocol={protocolFileName}";
+                var result = await _http.GetFromJsonAsync<ProtocolFormat>(url);
+
+                if(result == null)
+                {
+                    throw new Exception($"[apiRead_CmdFormat] Read_API_Json == null");
+                }
+                return result;
+            }
+            catch (HttpRequestException ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[ApiManager][apiRead_CmdFormat] Http_Error: {ex}", AppLogLevel.Debug);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[ApiManager][apiRead_CmdFormat] Error : {ex.Message}", AppLogLevel.Error);
                 return null;
             }
         }

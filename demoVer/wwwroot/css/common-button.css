@@ -1,4 +1,191 @@
-/********** Minimal Flat Toggle Button **********/
+/********** Button **********/
+/*
+[Usage]
+
+<button class="btn btn-blue">@Var1_Text</button>
+
+<button class="btn btn-blue no-flex">@Var1_Text</button>
+*/
+.btn
+{
+    flex: 1;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.btn:hover
+{
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.btn-blue
+{
+    background: var(--bg-secondary);
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+}
+.btn-blue:hover
+{
+    background: var(--bg-accent);
+    box-shadow: 0 0 10px var(--accent-color);
+}
+
+.btn-red
+{
+    background: var(--bg-secondary);
+    color: var(--error-color);
+    border: 1px solid var(--error-color);
+}
+.btn-red:hover
+{
+    background: var(--bg-accent);
+    box-shadow: 0 0 8px var(--error-color);
+}
+
+.btn-teal
+{
+    background: var(--bg-secondary);
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
+}
+.btn-teal:hover
+{
+    background: var(--bg-accent);
+    box-shadow: 0 0 10px var(--success-color);
+}
+
+.btn-amber
+{
+    background: var(--bg-secondary);
+    color: var(--warning-color);
+    border: 1px solid var(--warning-color);
+}
+.btn-amber:hover
+{
+    background: var(--bg-accent);
+    box-shadow: 0 0 8px var(--warning-color);
+}
+
+.btn-neutral
+{
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+.btn-neutral:hover
+{
+    background: var(--bg-accent);
+    box-shadow: 0 0 6px var(--border-color);
+}
+
+.btn-violet {
+    background: var(--bg-secondary);
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+}
+.btn-violet:hover {
+    background: var(--bg-accent);
+    box-shadow: 0 0 8px var(--accent-color);
+}
+
+.btn-emerald
+{
+    background: var(--bg-secondary);
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
+}
+.btn-emerald:hover
+{
+    background: var(--bg-accent);
+    color: var(--text-primary);
+    box-shadow: 0 0 10px var(--success-color);
+}
+
+.btn-bubble-red
+{
+    background: var(--error-color);
+    color: var(--bg-primary);
+}
+.btn-bubble-red:hover
+{
+    background: var(--accent-hover);
+}
+
+.btn-primary {
+    background: var(--accent-color);
+    color: var(--bg-primary);
+    border: 1px solid var(--accent-color);
+}
+.btn-primary:hover {
+    background: var(--accent-hover);
+    box-shadow: 0 0 6px var(--accent-color);
+}
+
+.btn-green {
+    background: var(--success-color);
+    color: var(--bg-primary);
+    border: 1px solid var(--success-color);
+}
+.btn-green:hover {
+    background: var(--success-hover, var(--success-color));
+    box-shadow: 0 0 6px var(--success-color);
+}
+
+.btn.no-flex
+{
+    flex: initial;
+}
+
+.info-action-button
+{
+    width: 120px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+.btn-add {
+    background: var(--accent-color);
+    color: var(--bg-primary);
+    border: 1px solid var(--accent-color);
+}
+
+.btn-add:hover:not(:disabled) {
+    background: var(--accent-hover);
+    box-shadow: 0 0 6px var(--accent-color);
+}
+
+.btn-add:disabled {
+    background: #cccccc;
+    color: #ffffff;
+    border: 1px solid #cccccc;
+    cursor: not-allowed;
+}
+
+/********** Custom Toggle Button **********/
+/*
+[Usage Example from Battery_setting.razor]
+
+<label class="custom-toggle-button" title="@(CCT_Enable ? "On" : "Off")">
+    <input type="checkbox" @bind="CCT_Enable" />
+    <span class="toggle-slider"></span>
+</label>
+
+<label class="custom-toggle-button" title="@(CVT_Enable ? "On" : "Off")">
+    <input type="checkbox" @bind="CVT_Enable" />
+    <span class="toggle-slider"></span>
+</label>
+
+<label class="custom-toggle-button" title="@(FVT_Enable ? "On" : "Off")">
+    <input type="checkbox" @bind="FVT_Enable" />
+    <span class="toggle-slider"></span>
+</label>
+*/
 .custom-toggle-button {
     position: relative;
     display: inline-block;

@@ -43,9 +43,17 @@ namespace demoVer.Models
             this.ModelName = source.ModelName;
             // this.AddrSet.UnionWith(source.Addr);
         }
+
+        public List<uint> GetAddrList() => AddrSet.ToList();
         #endregion From Status API
 
         #region For Writable Cmd
+        /***************************************************************************
+         *                   SubSystem物件的 FireAndForget Lock
+         **************************************************************************/
+         /// <summary>給 SubSystemManager 使用的 FireAndForget 鎖，確保同一時間，一個子系統只有一個 FireAndForget 流程在進行</summary>
+        public readonly SemaphoreSlim SubSystem_FireAndForget_Lock = new(1, 1);
+
         /***************************************************************************
          *                         Range 相關資料結構與方法
          **************************************************************************/
@@ -58,6 +66,7 @@ namespace demoVer.Models
 
             try
             {
+                AppLogger.Log_To_File_log(_category, $"[SubSystem][UpdateSettingRanges_From] Start for (port, protocol) = ({this.Port}, {this.Protocol})", AppLogLevel.Debug);
                 foreach (var (HexCmd, newRange_Obj) in newRanges)
                 {
                     if (this.SettingRanges.ContainsKey(HexCmd))
@@ -78,6 +87,7 @@ namespace demoVer.Models
                     //觸發 OnChanged 事件
                     OnChanged?.Invoke();
                 }
+                AppLogger.Log_To_File_log(_category, $"[SubSystem][UpdateSettingRanges_From] done for (port, protocol) = ({this.Port}, {this.Protocol})", AppLogLevel.Debug);
             }
             catch (Exception e)
             {
@@ -105,6 +115,7 @@ namespace demoVer.Models
 
             try
             {
+                AppLogger.Log_To_File_log(_category, $"[SubSystem][UpdateInfosForWriteCmd_From] Start for (port, protocol) = ({this.Port}, {this.Protocol})", AppLogLevel.Debug);
                 foreach (var new_singleRawSettingCmd in newInfos)
                 {
                     //取出 cmdCode 作為 key
@@ -130,6 +141,7 @@ namespace demoVer.Models
                     //觸發 OnChanged 事件
                     OnChanged?.Invoke();
                 }
+                AppLogger.Log_To_File_log(_category, $"[SubSystem][UpdateInfosForWriteCmd_From] done for (port, protocol) = ({this.Port}, {this.Protocol})", AppLogLevel.Debug);
             }
             catch (Exception e)
             {
@@ -207,7 +219,7 @@ namespace demoVer.Models
                 var cmdInfo = InfosForWriteCmd[clearCmdCode];
 
                 var correctKey = cmdInfo.GetBitKey(bitPosition);
-                
+
                 AppLogger.Log_To_File_log(_category, $"[SubSystem][GetBitKey_FromCmdInfo] clearCmdCode {clearCmdCode}, bitPosition {bitPosition} => BitKey: {correctKey}", AppLogLevel.Debug);
                 return correctKey;
             }
@@ -216,9 +228,58 @@ namespace demoVer.Models
                 AppLogger.Log_To_File_log(_category, $"[SubSystem][GetBitKey_FromCmdInfo] Exception: {e.Message}", AppLogLevel.Error);
                 return null;
             }
-            
+
         }
         #endregion For Writable Cmd
+
+        #region For Read Cmd Format
+
+        public ConcurrentDictionary<string, string> ReadCmd_Unit_ConDict { get; set; } = new(); //Key: cmdName, Value: unit string
+        private readonly SemaphoreSlim _ReadCmd_Unit_Lock = new(1, 1);
+
+        public async Task Update_ReadCmd_With_Unit(ProtocolFormat? newReadCmd_with_Unit)
+        {
+            await _ReadCmd_Unit_Lock.WaitAsync();
+            try
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystem][Update_ReadCmd_With_Unit] Start for (port, protocol) = ({this.Port}, {this.Protocol})", AppLogLevel.Debug);
+                ReadCmd_Unit_ConDict.Clear();
+                if (newReadCmd_with_Unit is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Update_ReadCmd_With_Unit] newReadCmd_with_Unit is null, skip updating", AppLogLevel.Warning);
+                    return;
+                }
+                var newValues = newReadCmd_with_Unit.values;
+                foreach (var (cmdName, unitObj) in newValues)
+                {
+                    if (unitObj.unit is not null)
+                    {
+                        ReadCmd_Unit_ConDict[cmdName] = unitObj.unit;
+                    }
+                }
+
+                //[Debug]印出更新結果
+                foreach (var (cmdCode, unitStr) in ReadCmd_Unit_ConDict)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Update_ReadCmd_With_Unit] Updated Read Cmd Unit: CmdCode {cmdCode}, Unit: {unitStr}", AppLogLevel.Debug);
+                }
+                AppLogger.Log_To_File_log(_category, $"[SubSystem][Update_ReadCmd_With_Unit] done for (port, protocol) = ({this.Port}, {this.Protocol})", AppLogLevel.Debug);
+            }
+            catch (Exception e)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystem][Update_ReadCmd_With_Unit] Exception: {e.Message}", AppLogLevel.Error);
+            }
+            finally
+            {
+                _ReadCmd_Unit_Lock.Release();
+            }
+        }
+            
+        public Dictionary<string, string> GetReadCmd_Unit_Dict()
+        {
+            return ReadCmd_Unit_ConDict.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+        }
+        #endregion For Read Cmd Format
 
         #region Computed In SubSystem
         public bool SubSystemSettingExist { get; set; } = false;

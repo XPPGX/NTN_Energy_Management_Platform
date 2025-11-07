@@ -14,6 +14,7 @@ from .config import (
     INV_DATA_FILE,
     INV_DATA_V1_1_FILE,
     INV_STATUS_DECODE_BY_PORT,
+    READ_CMD_FORMAT_FILE,
     LINK_STATUS_FILE,
     LINK_STATUS_REFRESH_INTERVAL,
     MFR_MODEL_ASCII,
@@ -347,6 +348,16 @@ class AppState:
         if protocol is not None:
             payload["protocol"] = protocol
 
+        return payload
+
+    def get_read_attribute_payload(self, port: str, protocol: str) -> Dict[str, Any]:
+        raw = self._load_json(READ_CMD_FORMAT_FILE)
+        if not isinstance(raw, dict):
+            raise ValueError("read_CmdFormat payload must be a JSON object")
+
+        payload = json.loads(json.dumps(raw))
+        payload["port"] = port
+        payload["protocolName"] = protocol
         return payload
 
     # ------------------------------------------------------------------

@@ -165,17 +165,33 @@
 
 		case INFO_SETTING_STAGE.MACHINE_SELECTION_STAGE:
 			<div class="card-table machine-selection-panel" style="width: 90%; max-height: 240px; overflow-y: auto;">
-				@foreach (var (addr, modelName) in deviceAddr_List)
+				@foreach(var (port, protocol, realAddr, storingAddr) in port_realAddr_storingAddr_List)
 				{
-					(string port, uint realAddr) = globalVar.Get_Port_RealAddr_ByAddr(addr);
-					string displayName = $"[Addr {realAddr,2}]  →  {modelName}";
-					<div class="card-table-row machine-selection-item" @onclick="() => clickMachineName(addr, modelName, displayName)" style="cursor: pointer;">
+					//addr : 0~255 為單一設備，256 為總覽
+					//realAddr : 真實地址，用於顯示, 0~63 配合 port顯示。
+
+					string displayName = $"[Addr {realAddr,2}]";
+					<div class="card-table-row machine-selection-item" @onclick="() => clickMachineName(port, protocol, storingAddr, displayName)" style="cursor: pointer;">
 						<div class="card-table-item">
 							<span class="card-table-label">@port</span>
 							<span class="card-table-value">@displayName</span>
 						</div>
 					</div>
 				}
+				@* @foreach (var (addr, modelName) in deviceAddr_List)
+				{
+					//addr : 0~255 為單一設備，256 為總覽
+					//realAddr : 真實地址，用於顯示, 0~63 配合 port顯示。
+
+					(string port, uint realAddr) = globalVar.Get_Port_RealAddr_ByAddr(addr);
+					string displayName = $"[Addr {realAddr,2}]  →  {modelName}";
+					<div class="card-table-row machine-selection-item" @onclick="() => clickMachineName(addr, displayName)" style="cursor: pointer;">
+						<div class="card-table-item">
+							<span class="card-table-label">@port</span>
+							<span class="card-table-value">@displayName</span>
+						</div>
+					</div>
+				} *@
 			</div>
 			break;
 
@@ -227,6 +243,8 @@
 	private INFO_DataItem? currentEdit_INFO_DataItem_ref;
 	private INFO_DataFormat? currentEdit_INFO_DataFormat_ref;
 	private uint currentSelected_Addr;
+	private string currentSelected_Port = string.Empty;
+	private string currentSelected_Protocol = string.Empty;
 	private string edit_CardName = string.Empty;
 	private bool showMenu = false;
 	private double menuX;
@@ -237,6 +255,7 @@
 	private Action? ConfirmCallback;
 
 	private List<(uint, string)> deviceAddr_List = new();
+	private List<(string, string, uint, uint)> port_realAddr_storingAddr_List = new();
 	private List<INFO_DataItem> edit_INFO_DataItems = new();
 	private string imgFolderPath = string.Empty;
 	private List<string> imgRelativePaths = new();
@@ -288,7 +307,8 @@
 	{
 		if (HeartBeatCounter == 0)
 		{
-			refreshDevicesList();
+			refreshPortAddrList();
+			@* refreshDevicesList(); *@
 		}
 
 		HeartBeatCounter = (HeartBeatCounter + 1) % 3;
@@ -317,6 +337,19 @@
 		catch (Exception e)
 		{
 			AppLogger.Log_To_File_log(_category, $"[InfoCardEdit][refreshDevicesList] Error : {e}", AppLogLevel.Error);
+		}
+	}
+
+	private void refreshPortAddrList()
+	{
+		try
+		{
+			var tempPort_realAddr_storingAddr_List = globalVar.GetAllSubSys_PortAddrPair_InList_FromSubSysManager();
+			port_realAddr_storingAddr_List = tempPort_realAddr_storingAddr_List ?? new List<(string, string, uint, uint)>();
+		}
+		catch(Exception e)
+		{
+			AppLogger.Log_To_File_log(_category, $"[InfoCardEdit][refreshPortAddrList] Error : {e}", AppLogLevel.Error);
 		}
 	}
 
@@ -349,9 +382,16 @@
 					oneDevice_cmd_unit_Dict.Clear();
 				}
 
-				var deviceDict = globalVar.Get_oneDevice_Cmd_unit_Dict(currentSelected_Addr);
+				var subsys_protocol_cmdUnit_Dict = globalVar.GetCmdUnit_Dict_FromSubsysManager(currentSelected_Port, currentSelected_Protocol);
+				@* var deviceDict = globalVar.Get_oneDevice_Cmd_unit_Dict(currentSelected_Addr);
 				oneDevice_cmd_unit_Dict = deviceDict ?? new Dictionary<string, string>();
-				show_cmd_unit_Dict_ref = oneDevice_cmd_unit_Dict;
+				show_cmd_unit_Dict_ref = oneDevice_cmd_unit_Dict; *@
+				if(subsys_protocol_cmdUnit_Dict is null || subsys_protocol_cmdUnit_Dict.Count == 0)
+				{
+					AppLogger.Log_To_File_log(_category, $"[InfoCardEdit][getCMDs] Got empty cmd-unit dict for addr : {currentSelected_Addr}", AppLogLevel.Information);
+					return false;
+				}
+				show_cmd_unit_Dict_ref = subsys_protocol_cmdUnit_Dict;
 			}
 			else
 			{
@@ -508,7 +548,12 @@
 
 	private void selectMachine()
 	{
-		if (deviceAddr_List.Count == 0)
+		@* if (deviceAddr_List.Count == 0)
+		{
+			return;
+		} *@
+
+		if(port_realAddr_storingAddr_List.Count == 0)
 		{
 			return;
 		}
@@ -577,15 +622,14 @@
 		return uint.TryParse(span, out value);
 	}
 
-	private void clickMachineName(uint addr, string selectedMachineName, string selectedDisplay)
+	private void clickMachineName(string port, string protocol, uint addr, string selectedDisplay_str)
 	{
 		if (currentEdit_INFO_DataFormat_ref == null)
 		{
 			return;
 		}
+		var modelName = selectedDisplay_str;
 
-		@* var modelName = $"[{addr}] : {selectedMachineName}"; *@
-		var modelName = selectedDisplay;
 		if (!string.Equals(currentEdit_INFO_DataFormat_ref.MachineName, modelName, StringComparison.Ordinal))
 		{
 			currentEdit_INFO_DataFormat_ref.MachineName = modelName;
@@ -595,6 +639,8 @@
 		}
 
 		currentSelected_Addr = addr;
+		currentSelected_Port = port;
+		currentSelected_Protocol = protocol;
 		INFO_setting_stage = INFO_SETTING_STAGE.SETTING_VALUE_AND_CMD_STAGE;
 	}
 

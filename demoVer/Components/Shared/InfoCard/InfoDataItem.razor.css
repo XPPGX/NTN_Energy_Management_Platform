@@ -117,3 +117,17 @@
     letter-spacing: 0.05em;
     white-space: nowrap;
 }
+
+@media(max-width: 1200px) {
+    .overview-inner-card.rightPart{
+        display: flex;
+        flex-direction: column;     
+        gap: 2px;
+        padding: 0px;
+        flex: 0 1 auto;        /* ✅ 不主動撐開父容器 */
+        min-width: 0;          /* ✅ 允許在 flex 中縮小 */
+        max-width: 100%;       /* ✅ 不超過父容器 */
+        overflow: hidden;      /* ✅ 若內部太多內容就截斷 */
+        min-height: 0px!important;
+    }
+}

@@ -4,14 +4,21 @@ namespace demoVer.Models
 
     public class triangle_group
     {
-        public int arrowLeft;
+    private const int DefaultCount = 3;
+
+    public int arrowLeft;
         public int arrowTop;
         public int activeIndex;
         public bool showArrows;
         public bool position_OK;
 
-        public int Count {get; set;} = 3;
-        public ArrowDirection Direction {get; private set;} = ArrowDirection.Hidden;
+    public int Count { get; private set; } = DefaultCount;
+        private ArrowDirection _direction = ArrowDirection.Hidden;
+        private ArrowDirection _placeholderDirection = ArrowDirection.Hidden;
+        public bool UsePlaceholder { get; private set; }
+
+        public ArrowDirection Direction => UsePlaceholder ? _placeholderDirection : _direction;
+        public bool ShouldAnimate => showArrows && !UsePlaceholder && _direction != ArrowDirection.Hidden;
 
         private int _gridRow = 1;
         private int _gridCol = 1;
@@ -64,7 +71,34 @@ namespace demoVer.Models
 
         public string GetGridAreaStyle() => $"grid-row:{_gridRow}; grid-column:{_gridCol};";
 
-        public void SetDirection(ArrowDirection dir) => Direction = dir;
+        public void SetDirection(ArrowDirection dir)
+        {
+            _direction = dir;
+            if (!UsePlaceholder && activeIndex < 0)
+            {
+                activeIndex = 0;
+            }
+        }
+
+        public void SetPlaceholder(bool enabled, ArrowDirection fallbackDirection)
+        {
+            UsePlaceholder = enabled;
+            if (enabled)
+            {
+                _placeholderDirection = fallbackDirection;
+                activeIndex = -1;
+                Count = 1;
+            }
+            else
+            {
+                _placeholderDirection = ArrowDirection.Hidden;
+                if (activeIndex < 0)
+                {
+                    activeIndex = 0;
+                }
+                Count = DefaultCount;
+            }
+        }
         
         public string GetTriangleBaseClass()
         {
@@ -85,12 +119,32 @@ namespace demoVer.Models
             }
         }
 
+        public string GetTriangleClass(int index)
+        {
+            if (UsePlaceholder)
+            {
+                var orientation = Direction is ArrowDirection.Up or ArrowDirection.Down
+                    ? "vertical"
+                    : "horizontal";
+                return $"placeholder-line {orientation}";
+            }
+
+            var baseClass = GetTriangleBaseClass();
+            return index == activeIndex ? $"{baseClass} active" : baseClass;
+        }
+
         public string GetGroupClass()
         {
-            var dirClass = Direction is ArrowDirection.Up or ArrowDirection.Down
+            var effectiveDirection = Direction;
+            var dirClass = effectiveDirection is ArrowDirection.Up or ArrowDirection.Down
                 ? "arrows-in-cell dir-v" : "arrows-in-cell dir-h";
 
-            return (Direction == ArrowDirection.Hidden || !showArrows)
+            if (UsePlaceholder)
+            {
+                return $"{dirClass} placeholder";
+            }
+
+            return (_direction == ArrowDirection.Hidden || !showArrows)
                 ? $"{dirClass} is-invisible" : dirClass;
         }
     }

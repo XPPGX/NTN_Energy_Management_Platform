@@ -15,6 +15,7 @@ namespace demoVer.Services
         public triangle_group triGroup1 { get; } = new();
         public triangle_group triGroup2 { get; } = new();
         public triangle_group triGroup3 { get; } = new();
+    private bool _isFallbackMode;
 
         private Task? _loopTask;
         public event Action? OnTick;
@@ -87,9 +88,22 @@ namespace demoVer.Services
             }
         }
 
+        public void SetFallbackMode(bool enabled)
+        {
+            if (_isFallbackMode == enabled)
+            {
+                return;
+            }
+
+            _isFallbackMode = enabled;
+            triGroup1.SetPlaceholder(enabled, ArrowDirection.Right);
+            triGroup2.SetPlaceholder(enabled, ArrowDirection.Right);
+            triGroup3.SetPlaceholder(enabled, ArrowDirection.Down);
+        }
+
         private static void Step(triangle_group tg)
         {
-            if (!tg.get_showArrowFlag()) return;
+            if (!tg.ShouldAnimate) return;
             int n = tg.Count <= 0 ? 1 : tg.Count;
             int step = (tg.Direction is ArrowDirection.Left or ArrowDirection.Up) ? -1 : 1;
             tg.activeIndex = (tg.activeIndex + step + n) % n;

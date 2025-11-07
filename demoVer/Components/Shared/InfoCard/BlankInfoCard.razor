@@ -63,7 +63,7 @@
 
     public async Task TickTask()
     {
-        checkSubscribeCommandExist();
+        @* checkSubscribeCommandExist(); *@
         @* var tmp = globalVar.Get_INV_Phase(4); *@
     }
     
@@ -144,6 +144,7 @@
             // 如果你想更精細也可比對內容；簡化起見直接重掛
             ResubscribeAll();
         }
+        Console.WriteLine("Test");
     }
 
     private async Task openEditMenu()
@@ -206,8 +207,8 @@
                     _ = InvokeAsync(async () =>
                     {
                         _latest[key] = handler.RealValue;
-                        await Task.Delay(1); //保證Rendering流程順利
-                        StateHasChanged();
+                        await Task.Delay(millisecondsDelay: 1); //保證Rendering流程順利
+                        await InvokeAsync(StateHasChanged);
                     });
                 });
                 _subs.Add(sub);

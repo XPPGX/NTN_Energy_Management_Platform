@@ -71,6 +71,20 @@ def create_routes(state: AppState) -> Blueprint:
 
         return jsonify(payload), 200
 
+    @bp.get("/api/memory/read-attribute")
+    def read_attribute():
+        port = request.args.get("type")
+        protocol = request.args.get("protocol")
+        if not port or not protocol:
+            return jsonify({"error": "type and protocol are required"}), 400
+
+        try:
+            payload = state.get_read_attribute_payload(port, protocol)
+        except (FileNotFoundError, ValueError) as exc:
+            return jsonify({"error": str(exc)}), 500
+
+        return jsonify(payload), 200
+
     @bp.get("/api/memory/read-memory")
     def read_memory():
         port = request.args.get("type", "Unknown")

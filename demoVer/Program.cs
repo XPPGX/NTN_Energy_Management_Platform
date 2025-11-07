@@ -115,7 +115,7 @@ app.MapRazorComponents<App>()
 app.MapControllers();
 app.MapHub<DataHub>("/datahub"); //Sync data for all web that connected with the server
 
-//Server前啟動DataCenter
+//Server Run之前啟動DataCenter
 using (var scope = app.Services.CreateScope())
 {
     var dataCenter = scope.ServiceProvider.GetRequiredService<DataCenter>();
