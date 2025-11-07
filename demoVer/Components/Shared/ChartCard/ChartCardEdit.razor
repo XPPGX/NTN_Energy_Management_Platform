@@ -54,16 +54,21 @@
                                 <label for="chartMachineSelect" style="color: var(--text-primary);">Machine</label>
                                 <select id="chartMachineSelect"
                                         class="custom-select"
-                                        value="@blank_singleDataLine.addr"
                                         @onchange="MachineChanged">
                                     <option value="9999">請選擇一個機器</option>
-                                    @foreach (var (addr, mdlName) in deviceAddr_List)
+                                    @foreach (var (port, protocol, realAddr, storingAddr) in port_protocol_realAddr_storingAddr_List)
                                     {
-                                        @*addr 是存取記憶體時用的，顯示於UI時，是用port + realAddr*@
+                                        string displayName = $"{port, -5} ({realAddr, 3})";
+                                        string optionVal = $"{port}|{protocol}|{storingAddr}";
+                                        <option value="@optionVal">@displayName</option>  
+                                    }
+                                    @* @foreach (var (addr, mdlName) in deviceAddr_List)
+                                    {
+                                        //addr 是存取記憶體時用的，顯示於UI時，是用port + realAddr
                                         var (port, realAddr) = globalVar.Get_Port_RealAddr_ByAddr(addr);
                                         string displayName = $"{port, -5} ({realAddr, 3}) → {mdlName}";
                                         <option value="@addr">@displayName</option>
-                                    }
+                                    } *@
                                 </select>
                             </div>
 
@@ -71,7 +76,6 @@
                                 <label for="chartCmdSelect" style="color: var(--text-primary);">CMD</label>
                                 <select id="chartCmdSelect"
                                         class="custom-select"
-                                        value="@blank_singleDataLine.Cmd"
                                         @onchange="ChartCmdChanged"
                                         disabled="@(show_cmd_unit_Dict_ref?.Any() != true)">
                                     <option value="">請選擇一個命令</option>
@@ -290,6 +294,7 @@
     private bool disableConfirmButton = false;
     private Action? ConfirmCallback;
 
+    private List<(string, string, uint, uint)> port_protocol_realAddr_storingAddr_List = new();
     private List<(uint, string)> deviceAddr_List = new();
     private Dictionary<string, string> oneDevice_cmd_unit_Dict = new();
     private Dictionary<string, string> Summary_cmd_unit_Dict = new();
@@ -313,11 +318,14 @@
 
     private uint currentSelected_Addr = 9999;
     private uint chartNowSelectedAddr = 9999;
+    private string currentSelected_Port = string.Empty;
+    private string currentSelected_Protocol = string.Empty;
     private string chartNowSelectedCMD = string.Empty;
 
     protected override void OnInitialized()
     {
         _category = GetType().FullName ?? nameof(ChartCardEdit);
+        AppLogger.Log_To_File_log(_category, "[ChartCardEdit][OnInitialized] Enter OnInitialized", AppLogLevel.Trace);
         Heartbeat.OnTick += OnHeartbeatTick;
         InitSummaryCMDs();
         refreshDevicesList();
@@ -369,8 +377,10 @@
     {
         try
         {
-            var tempDeviceAddr_List = globalVar.Get_addr_and_ModelNames_List();
-            deviceAddr_List = tempDeviceAddr_List ?? new List<(uint, string)>();
+            @* var tempDeviceAddr_List = globalVar.Get_addr_and_ModelNames_List();
+            deviceAddr_List = tempDeviceAddr_List ?? new List<(uint, string)>(); *@
+            var tempList = globalVar.GetAllSubSys_PortAddrPair_InList_FromSubSysManager();
+            port_protocol_realAddr_storingAddr_List = tempList ?? new List<(string, string, uint, uint)>();
         }
         catch (Exception e)
         {
@@ -520,10 +530,23 @@
             }
             else if (currentSelected_Addr < 256)
             {
-                oneDevice_cmd_unit_Dict.Clear();
-                var deviceDict = globalVar.Get_oneDevice_Cmd_unit_Dict(currentSelected_Addr);
-                oneDevice_cmd_unit_Dict = deviceDict ?? new Dictionary<string, string>();
-                show_cmd_unit_Dict_ref = oneDevice_cmd_unit_Dict;
+                @* oneDevice_cmd_unit_Dict.Clear(); *@
+                @* var deviceDict = globalVar.Get_oneDevice_Cmd_unit_Dict(currentSelected_Addr); *@
+                @* oneDevice_cmd_unit_Dict = deviceDict ?? new Dictionary<string, string>(); *@
+                @* show_cmd_unit_Dict_ref = oneDevice_cmd_unit_Dict; *@
+                Console.WriteLine($"[ChartCardEdit][getCMDs] Get CMDs for Addr: {currentSelected_Addr}");
+                var tmpCmdUnitDict = globalVar.GetCmdUnit_Dict_FromSubsysManager(currentSelected_Port, currentSelected_Protocol);
+                if(tmpCmdUnitDict is null || tmpCmdUnitDict.Count == 0)
+                {
+                    Console.WriteLine($"[ChartCardEdit][getCMDs] No CMDs found for Addr: {currentSelected_Addr}, Port: {currentSelected_Port}, Protocol: {currentSelected_Protocol}");
+                    @* AppLogger.Log_To_File_log(_category, $"[ChartCardEdit][getCMDs] No CMDs found for Addr: {currentSelected_Addr}, Port: {currentSelected_Port}, Protocol: {currentSelected_Protocol}", AppLogLevel.Information); *@
+                }
+                show_cmd_unit_Dict_ref = tmpCmdUnitDict ?? new Dictionary<string, string>();
+                //印出取得的CMD列表
+                foreach (var cmd in show_cmd_unit_Dict_ref)
+                {
+                    Console.WriteLine($"[ChartCardEdit][getCMDs] CMD: {cmd.Key}, Unit: {cmd.Value}");
+                }
             }
             else
             {
@@ -535,18 +558,45 @@
         }
         catch (Exception e)
         {
-            AppLogger.Log_To_File_log(_category, $"[ChartCardEdit][getCMDs] Error : {e}", AppLogLevel.Error);
+            Console.WriteLine($"[ChartCardEdit][getCMDs] Error : {e}");
+            @* AppLogger.Log_To_File_log(_category, $"[ChartCardEdit][getCMDs] Error : {e}", AppLogLevel.Error); *@
             return false;
         }
     }
 
+    private void ResetSelection()
+    {
+        currentSelected_Addr = 9999;
+        currentSelected_Port = string.Empty;
+        currentSelected_Protocol = string.Empty;
+        show_cmd_unit_Dict_ref = null;
+    }
+
     private void MachineChanged(ChangeEventArgs e)
     {
+        @* string optionVal = $"{port}|{protocol}|{storingAddr}"; *@
         chartMachineCmdError = string.Empty;
-
-        if (uint.TryParse(e.Value?.ToString(), out var selected))
+        
+        string valueStr = e.Value?.ToString() ?? string.Empty;
+        if(string.IsNullOrEmpty(valueStr))
         {
-            blank_singleDataLine.addr = selected;
+            ResetSelection();
+            return;
+        }
+
+        var parts = valueStr.Split('|');
+        if(parts.Length < 3)
+        {
+            ResetSelection();
+            return;
+        }
+
+        currentSelected_Port = parts[0];
+        currentSelected_Protocol = parts[1];
+        string storingAddr_str = parts[2];
+        if(uint.TryParse(storingAddr_str, out var storingAddr_uint))
+        {
+            blank_singleDataLine.addr = storingAddr_uint;
         }
         else
         {
@@ -560,10 +610,13 @@
 
         if (blank_singleDataLine.addr < 256)
         {
-            var deviceInfo = deviceAddr_List.FirstOrDefault(x => x.Item1 == blank_singleDataLine.addr);
-            blank_singleDataLine.mdlName = deviceInfo.Item2 ?? string.Empty;
+            @* var deviceInfo = deviceAddr_List.FirstOrDefault(x => x.Item1 == blank_singleDataLine.addr); *@
+            @* blank_singleDataLine.mdlName = deviceInfo.Item2 ?? string.Empty; *@
+            
+            blank_singleDataLine.mdlName = string.Empty;
             currentSelected_Addr = blank_singleDataLine.addr;
 
+            Console.WriteLine($"[ChartCardEdit][MachineChanged] Try to get CMDs");
             if (!getCMDs())
             {
                 chartMachineCmdError = "此設備沒有可用命令";
@@ -579,6 +632,7 @@
         }
         else
         {
+            Console.WriteLine($"[ChartCardEdit][MachineChanged] exit MachineChanged");
             blank_singleDataLine.mdlName = string.Empty;
         }
 

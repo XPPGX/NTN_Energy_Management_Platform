@@ -282,6 +282,9 @@ namespace demoVer.Services
             }
         }
 
+        /// <summary>
+        /// 取得所有子系統的 (port, protocol, realAddr, storingAddr) 清單
+        /// </summary>        
         public List<(string, string, uint, uint)> GetAllSubSys_PortAddrPair_InList_FromSubSysManager()
         {
             return _subSystemManager.GetAllSubSystem_PortAddr_pairInList();

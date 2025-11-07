@@ -195,10 +195,10 @@ namespace demoVer.Models
         public SettingStatus status {get; set; } = SettingStatus.YET;
         public uint addr {get; set;}
         public string mdlName {get; set;}
-    public string Cmd{get; set;} = string.Empty;
-    public string Unit{get; set;} = string.Empty;
+        public string Cmd{get; set;} = string.Empty;
+        public string Unit{get; set;} = string.Empty;
         public bool? Y_axis_selection {get; set;} = null; //選擇要Y_left還是Y_right
-    public string color {get; set;} = string.Empty;
+        public string color {get; set;} = string.Empty;
         public double?[] Data{get; set;} //Y軸資料
     }
 

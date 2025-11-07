@@ -165,7 +165,7 @@
 
 		case INFO_SETTING_STAGE.MACHINE_SELECTION_STAGE:
 			<div class="card-table machine-selection-panel" style="width: 90%; max-height: 240px; overflow-y: auto;">
-				@foreach(var (port, protocol, realAddr, storingAddr) in port_realAddr_storingAddr_List)
+				@foreach(var (port, protocol, realAddr, storingAddr) in port_protocol_realAddr_storingAddr_List)
 				{
 					//addr : 0~255 為單一設備，256 為總覽
 					//realAddr : 真實地址，用於顯示, 0~63 配合 port顯示。
@@ -255,7 +255,7 @@
 	private Action? ConfirmCallback;
 
 	private List<(uint, string)> deviceAddr_List = new();
-	private List<(string, string, uint, uint)> port_realAddr_storingAddr_List = new();
+	private List<(string, string, uint, uint)> port_protocol_realAddr_storingAddr_List = new();
 	private List<INFO_DataItem> edit_INFO_DataItems = new();
 	private string imgFolderPath = string.Empty;
 	private List<string> imgRelativePaths = new();
@@ -345,7 +345,7 @@
 		try
 		{
 			var tempPort_realAddr_storingAddr_List = globalVar.GetAllSubSys_PortAddrPair_InList_FromSubSysManager();
-			port_realAddr_storingAddr_List = tempPort_realAddr_storingAddr_List ?? new List<(string, string, uint, uint)>();
+			port_protocol_realAddr_storingAddr_List = tempPort_realAddr_storingAddr_List ?? new List<(string, string, uint, uint)>();
 		}
 		catch(Exception e)
 		{
@@ -553,7 +553,7 @@
 			return;
 		} *@
 
-		if(port_realAddr_storingAddr_List.Count == 0)
+		if(port_protocol_realAddr_storingAddr_List.Count == 0)
 		{
 			return;
 		}

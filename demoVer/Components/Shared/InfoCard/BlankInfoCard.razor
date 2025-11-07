@@ -144,7 +144,7 @@
             // 如果你想更精細也可比對內容；簡化起見直接重掛
             ResubscribeAll();
         }
-        Console.WriteLine("Test");
+        @* Console.WriteLine("Test"); *@
     }
 
     private async Task openEditMenu()
@@ -228,7 +228,10 @@
                 value = FormatValue(v);
             }
 
-            list.Add(new InfoDataItem.InfoCell(df.UserSettingName, df.Addr, df.ValueName ?? "", value, df.Unit ?? ""));
+            df.UserSettingName = df.UserSettingName ?? "";
+            df.ValueName = df.ValueName ?? "";
+            df.Unit = df.Unit ?? "";
+            list.Add(new InfoDataItem.InfoCell(df.UserSettingName, df.Addr, df.ValueName, value, df.Unit));
         }
         return list;
     }
