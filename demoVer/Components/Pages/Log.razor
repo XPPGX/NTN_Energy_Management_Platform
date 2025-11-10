@@ -60,6 +60,31 @@
                                     <span class="radio-label">MOD Data</span>
                                 </label>
                             </div>
+
+                            <div class="table-select-controls" @onclick:stopPropagation="true">
+                                <button class="btn btn-blue" @onclick="OpenTableSelector">@(string.IsNullOrEmpty(selectedDataTableName) ? "選擇資料表" : "切換資料表")</button>
+
+                                @if (isLoadingDataTables)
+                                {
+                                    <span class="table-loading">載入中...</span>
+                                }
+                                else if (!string.IsNullOrEmpty(dataTableLoadError))
+                                {
+                                    <span class="table-error">@dataTableLoadError</span>
+                                }
+                                else if (!string.IsNullOrEmpty(selectedDataTableName))
+                                {
+                                    <span class="selected-table-label">目前：@selectedDataTableName</span>
+                                }
+                                else if (!string.IsNullOrEmpty(selectedDataType))
+                                {
+                                    <span class="table-error">找不到符合 @selectedDataType 的資料表</span>
+                                }
+                                else
+                                {
+                                    <span class="table-hint">請先選擇資料類型</span>
+                                }
+                            </div>
                         }
                     </div>
 
@@ -141,6 +166,37 @@
                         <div>@col</div>
                     </div>
                 }
+            </div>
+        }
+
+        @if (isTableSelectorOpen)
+        {
+            <div class="table-select-modal" @onclick="CloseTableSelector">
+                <div class="modal-content" @onclick:stopPropagation="true">
+                    <h4>選擇資料表</h4>
+
+                    @if (isLoadingDataTables)
+                    {
+                        <p>載入中...</p>
+                    }
+                    else if (!string.IsNullOrEmpty(dataTableLoadError))
+                    {
+                        <p class="table-error">@dataTableLoadError</p>
+                    }
+                    else if (filteredDataLogTables.Count == 0)
+                    {
+                        <p class="table-hint">找不到符合條件的資料表</p>
+                    }
+                    else
+                    {
+                        @foreach (var table in filteredDataLogTables)
+                        {
+                            <button class="btn table-option" @onclick="() => SelectDataTable(table)">@table</button>
+                        }
+                    }
+
+                    <button class="btn btn-bubble-red" @onclick="CloseTableSelector">關閉</button>
+                </div>
             </div>
         }
 
@@ -227,6 +283,11 @@
     private HashSet<string> visibleColumns      = new();
     private List<string> eventLog_allColumns    = new();
     private List<string> dataLog_allColumns     = new();
+    private List<string> filteredDataLogTables  = new();
+    private string? selectedDataTableName;
+    private bool isTableSelectorOpen;
+    private bool isLoadingDataTables;
+    private string? dataTableLoadError;
     private List<Dictionary<string, object>> tableData = new();
     private string tableHeader = "Table";
     private TableControlBlock TCB = new();
@@ -329,9 +390,25 @@
         isCollapsed = false;
     } 
 
-    private void OnLogTypeChanged(ChangeEventArgs e)
+    private async Task OnLogTypeChanged(ChangeEventArgs e)
     {
         selectedLogType = e.Value?.ToString();
+
+        if (!string.Equals(selectedLogType, "data", StringComparison.OrdinalIgnoreCase))
+        {
+            isTableSelectorOpen = false;
+            isLoadingDataTables = false;
+            dataTableLoadError = null;
+            filteredDataLogTables.Clear();
+            selectedDataTableName = null;
+            await InvokeAsync(StateHasChanged);
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(selectedDataType))
+        {
+            await LoadDataLogTablesAsync();
+        }
     }
 
     private void OnDateChanged(int index, ChangeEventArgs e)
@@ -411,7 +488,7 @@
     private async Task exportClick()
     {
         CollapsePanel();
-        exportTask();
+        await exportTask();
     }
 
     private void PageInputFocus()
@@ -424,18 +501,142 @@
         CurrentFocus = null;
     }
 
-    private void OnKeyUp(KeyboardEventArgs e)
+    private async Task OnKeyUp(KeyboardEventArgs e)
     {
         if(e.Key == "Enter" && string.Equals(CurrentFocus, "PageInput", StringComparison.OrdinalIgnoreCase))
         {
-            turnToCertainPage();
+            await turnToCertainPage();
         }
     }
 
-    private void DataTypeChanged(ChangeEventArgs e)
+    private async Task DataTypeChanged(ChangeEventArgs e)
     {
         selectedDataType = e.Value?.ToString();
         Console.WriteLine($"selectedDataType = {selectedDataType}");
+
+        isTableSelectorOpen = false;
+        dataTableLoadError = null;
+
+        await LoadDataLogTablesAsync();
+
+        if (filteredDataLogTables.Count > 0)
+        {
+            isTableSelectorOpen = true;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task LoadDataLogTablesAsync()
+    {
+        if (!string.Equals(selectedLogType, "data", StringComparison.OrdinalIgnoreCase))
+        {
+            filteredDataLogTables.Clear();
+            selectedDataTableName = null;
+            dataTableLoadError = null;
+            return;
+        }
+
+        if (string.IsNullOrEmpty(selectedDataType))
+        {
+            filteredDataLogTables.Clear();
+            selectedDataTableName = null;
+            dataTableLoadError = null;
+            await InvokeAsync(StateHasChanged);
+            return;
+        }
+
+        if (isLoadingDataTables)
+        {
+            return;
+        }
+
+        isLoadingDataTables = true;
+        dataTableLoadError = null;
+        await InvokeAsync(StateHasChanged);
+
+        try
+        {
+            var tableNames = await _sqlProcessor.GetAllTableNames();
+            if (tableNames is null)
+            {
+                filteredDataLogTables.Clear();
+                selectedDataTableName = null;
+                dataTableLoadError = "無法取得資料表列表";
+                return;
+            }
+
+            filteredDataLogTables = tableNames
+                .Where(t => t.Contains("datalog", StringComparison.OrdinalIgnoreCase) &&
+                            t.Contains(selectedDataType, StringComparison.OrdinalIgnoreCase))
+                .OrderBy(t => t, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            if (filteredDataLogTables.Count == 0)
+            {
+                selectedDataTableName = null;
+                dataTableLoadError = $"找不到符合 {selectedDataType} 的資料表";
+            }
+            else
+            {
+                var matched = filteredDataLogTables.FirstOrDefault(t => string.Equals(t, selectedDataTableName, StringComparison.OrdinalIgnoreCase));
+                selectedDataTableName = matched ?? filteredDataLogTables.First();
+            }
+        }
+        catch (Exception ex)
+        {
+            filteredDataLogTables.Clear();
+            selectedDataTableName = null;
+            dataTableLoadError = "載入資料表發生錯誤";
+            AppLogger.Log_To_File_log(_category, $"[Log][LoadDataLogTablesAsync] Error : {ex}", AppLogLevel.Trace);
+        }
+        finally
+        {
+            isLoadingDataTables = false;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task OpenTableSelector()
+    {
+        if (isLoadingDataTables)
+        {
+            isTableSelectorOpen = true;
+            await InvokeAsync(StateHasChanged);
+            return;
+        }
+
+        if (string.IsNullOrEmpty(selectedDataType))
+        {
+            dataTableLoadError = "請先選擇資料類型";
+            await InvokeAsync(StateHasChanged);
+            return;
+        }
+
+        if (!isLoadingDataTables && filteredDataLogTables.Count == 0)
+        {
+            await LoadDataLogTablesAsync();
+        }
+
+        if (filteredDataLogTables.Count == 0)
+        {
+            return;
+        }
+
+        isTableSelectorOpen = true;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task CloseTableSelector()
+    {
+        isTableSelectorOpen = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task SelectDataTable(string tableName)
+    {
+        selectedDataTableName = tableName;
+        isTableSelectorOpen = false;
+        await InvokeAsync(StateHasChanged);
     }
 
     #endregion //Appearance_Control
@@ -450,8 +651,8 @@
         dataLog_allColumns.Clear();
 
         //2. 載入當前資料表 所有Column
-        eventLog_allColumns = await _sqlProcessor.GetTableColumn("event_log");
-        dataLog_allColumns  = await _sqlProcessor.GetTableColumn("datalog_NTN-5K_CAN");
+    eventLog_allColumns = await _sqlProcessor.GetTableColumn("event_log") ?? new List<string>();
+    dataLog_allColumns  = await _sqlProcessor.GetTableColumn("datalog_NTN-5K_CAN") ?? new List<string>();
 
         var Json_Str = JsonSerializer.Serialize(eventLog_allColumns, new JsonSerializerOptions{
             WriteIndented = true
@@ -632,6 +833,11 @@
 
             //3. 根據時間 查資料總共筆數
             var rangeInfo = await _sqlProcessor.GetTable_Range_AfterWHERE(TCB.TableName, startTime_Formatted, endTime_Formatted);
+            if (rangeInfo is null)
+            {
+                AppLogger.Log_To_File_log(_category, "[Log][QueryFromDB_InitTCB] step3 : rangeInfo is null", AppLogLevel.Trace);
+                return;
+            }
             getRangeInfo(rangeInfo);
 
             AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step3 : nowQueryRecordsNum = {TCB.nowQueryRecordsNum}, nowTotalPages = {TCB.nowTotalPages}", AppLogLevel.Trace);
@@ -735,9 +941,9 @@
             var firstRow    = tableData.FirstOrDefault();
             var lastRow     = tableData.LastOrDefault();
             if(firstRow != null && firstRow.ContainsKey("time") && firstRow["time"] is DateTime lastedTime) TCB.lastedTime_InTable      = lastedTime; 
-            if(lastRow != null && firstRow.ContainsKey("time") && lastRow["time"] is DateTime earliestTime) TCB.earliestTime_InTable    = earliestTime;
+            if(lastRow != null && lastRow.ContainsKey("time") && lastRow["time"] is DateTime earliestTime)  TCB.earliestTime_InTable    = earliestTime;
             if(firstRow != null && firstRow.ContainsKey("id") && firstRow["id"] is int lastedId)            TCB.lastedId_InTable        = lastedId;
-            if(lastRow != null && firstRow.ContainsKey("id") && lastRow["id"] is int earliestId)            TCB.earliestId_InTable      = earliestId;
+            if(lastRow != null && lastRow.ContainsKey("id") && lastRow["id"] is int earliestId)             TCB.earliestId_InTable      = earliestId;
 
             AppLogger.Log_To_File_log(_category, $"[Log][eventLog_Query] step3: earliestTime_InTable = {TCB.earliestTime_InTable}, lastedTime_InTable = {TCB.lastedTime_InTable}", AppLogLevel.Trace);
             AppLogger.Log_To_File_log(_category, $"[Log][eventLog_Query] step3: earliestId_InTable = {TCB.earliestId_InTable}, lastedId_InTable = {TCB.lastedId_InTable}", AppLogLevel.Trace);
@@ -788,7 +994,7 @@
             var firstRow    = tableData.FirstOrDefault();
             var lastRow     = tableData.LastOrDefault();
             if(firstRow != null && firstRow.ContainsKey("timestamp") && firstRow["timestamp"] is DateTime lastedTime)   TCB.lastedTime_InTable      = lastedTime;
-            if(lastRow != null && firstRow.ContainsKey("timestamp") && lastRow["timestamp"] is DateTime earliestTime)   TCB.earliestTime_InTable    = earliestTime;
+            if(lastRow != null && lastRow.ContainsKey("timestamp") && lastRow["timestamp"] is DateTime earliestTime)    TCB.earliestTime_InTable    = earliestTime;
             if(firstRow != null && firstRow.ContainsKey("id") && firstRow["id"] is long lastedId)                       TCB.lastedId_InTable        = lastedId;
             if(lastRow != null && lastRow.ContainsKey("id") && lastRow["id"] is long earliestId)                        TCB.earliestId_InTable      = earliestId;
 
@@ -923,6 +1129,12 @@
         }
         else 
         {//Data 翻頁
+            if (string.IsNullOrEmpty(TCB.TableName))
+            {
+                AppLogger.Log_To_File_log(_category, "[Log][turnToNextPage] DataLog tableName is null", AppLogLevel.Trace);
+                return;
+            }
+
             IsSucc = await dataLog_TurnPage(TCB.TableName, "right", TCB.earliestId_InTable, TCB.startId);
             AppLogger.Log_To_File_log(_category, $"[Log][turnToNextPage] DataLog", AppLogLevel.Trace);
         }
@@ -963,6 +1175,12 @@
         else 
         {//Data 翻頁
             AppLogger.Log_To_File_log(_category, $"[Log][turnToNextPage] DataLog", AppLogLevel.Trace);
+            if (string.IsNullOrEmpty(TCB.TableName))
+            {
+                AppLogger.Log_To_File_log(_category, "[Log][turnToPreviousPage] DataLog tableName is null", AppLogLevel.Trace);
+                return;
+            }
+
             IsSucc = await dataLog_TurnPage(TCB.TableName, "left", TCB.lastedId_InTable, TCB.endId);
         }
         if(!IsSucc)
@@ -1012,6 +1230,12 @@
         else
         {
             AppLogger.Log_To_File_log(_category, $"[Log][turnToCertainPage] DataLog", AppLogLevel.Trace);
+            if (string.IsNullOrEmpty(TCB.TableName))
+            {
+                AppLogger.Log_To_File_log(_category, "[Log][turnToCertainPage] DataLog tableName is null", AppLogLevel.Trace);
+                return;
+            }
+
             IsSucc = await dataLog_TurnPage(TCB.TableName, "right", tmp_lastedId_InTable, TCB.startId);
         }
         if(!IsSucc)
@@ -1086,5 +1310,5 @@
         TCB.nowTotalPages = 1;
         await InvokeAsync(StateHasChanged);
     }
-    #endregion //Logic
+    #endregion Logic_Control
 }

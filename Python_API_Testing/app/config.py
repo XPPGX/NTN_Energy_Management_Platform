@@ -15,7 +15,6 @@ READ_CMD_FORMAT_DIR = API_MEMORY_DIR / "read_CmdFormat" / "data"
 
 INV_DATA_FILE = READ_MEMORY_DATA_DIR / "INV_DATA.json"
 INV_DATA_V1_1_FILE = READ_REAL_DATA_DIR / "INV_DATA_V1-1.json"
-REAL_READ_TEMPLATE_FILE = READ_REAL_DATA_DIR / "REAL_ReadMemory_JsonFormat.json"
 LINK_STATUS_FILE = LINK_STATUS_DATA_DIR / "link_status.json"
 DEFAULT_MEMORY_FILE = WRITE_MEMORY_DATA_DIR / "WriteMemory_JsonFormat.json"
 DEFAULT_REAL_WRITE_FILE = WRITE_MEMORY_DATA_DIR / "REAL_WriteMemory_JsonFormat.json"
@@ -69,4 +68,26 @@ INV_STATUS_DECODE_BY_PORT = {
     "MOD2": {
         "AC_OK": True,
     },
+}
+
+INV_STATUS_PHASE_BY_PORT_ADDR = {
+    "CAN1": {
+        "0": "Phase 0°",
+        "1": "Phase 180°",
+        "2": "Phase 120°",
+        "7": "Phase 0",
+        "10": "Phase 240°",
+    },
+}
+
+READ_REAL_VALUE_OVERRIDES = {
+    "READ_VIN": {
+        "CAN1": {
+            "0": 109.8,
+            "1": 110.1,
+            "2": 110.0,
+            "7": 200,
+            "10" : 200
+        }
+    }
 }

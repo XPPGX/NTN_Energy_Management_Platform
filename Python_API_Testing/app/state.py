@@ -14,13 +14,14 @@ from .config import (
     INV_DATA_FILE,
     INV_DATA_V1_1_FILE,
     INV_STATUS_DECODE_BY_PORT,
+    INV_STATUS_PHASE_BY_PORT_ADDR,
+    READ_REAL_VALUE_OVERRIDES,
     READ_CMD_FORMAT_FILE,
     LINK_STATUS_FILE,
     LINK_STATUS_REFRESH_INTERVAL,
     MFR_MODEL_ASCII,
     MFR_MODEL_BY_PORT,
     PARTITION_STATUS_FILE,
-    REAL_READ_TEMPLATE_FILE,
     TZ_TAIPEI,
     USE_RANDOM_DATA,
     V1_1_FIXED_CONFIG,
@@ -71,7 +72,6 @@ class AppState:
         ]
         self._template_lengths = [len(item.get("data", [])) for item in self._base_data]
 
-        self._real_inv_template = self._load_json(REAL_READ_TEMPLATE_FILE)
         self._inv_data_v1_1_template = self._load_json(INV_DATA_V1_1_FILE)
 
         self._link_status_cache = LinkStatusCache(
@@ -186,13 +186,18 @@ class AppState:
         for key, item in resp.get("values", {}).items():
             value_type = item.get("type")
 
+            override_value = self._get_read_real_override(key, port, addr)
+            if override_value is not None:
+                item["value"] = override_value
+                continue
+
             if key == "MFR_MODEL":
                 model_value = MFR_MODEL_BY_PORT.get(port.upper(), item.get("value"))
                 item["value"] = model_value
                 continue
 
             if key == "INV_STATUS":
-                self._apply_inv_status_decode(item, port)
+                self._apply_inv_status_decode(item, port, addr)
                 continue
 
             if V1_1_FIXED_CONFIG.get(key):
@@ -677,10 +682,34 @@ class AppState:
             return 0
 
         working_copy = json.loads(json.dumps(template_item))
-        self._apply_inv_status_decode(working_copy, port)
+        self._apply_inv_status_decode(working_copy, port, None)
         return int(working_copy.get("value", 0))
 
-    def _apply_inv_status_decode(self, item: MutableMapping[str, Any], port: str) -> None:
+    def _get_read_real_override(self, command: str, port: str, addr: int) -> Optional[Any]:
+        command_overrides = READ_REAL_VALUE_OVERRIDES.get(command)
+        if not command_overrides:
+            return None
+
+        port_upper = (port or "").upper()
+        port_overrides = (
+            command_overrides.get(port_upper)
+            or command_overrides.get(port)
+        )
+        if not port_overrides:
+            return None
+
+        addr_str = str(addr)
+        if addr_str in port_overrides:
+            return port_overrides[addr_str]
+
+        return port_overrides.get("*")
+
+    def _apply_inv_status_decode(
+        self,
+        item: MutableMapping[str, Any],
+        port: str,
+        addr: Optional[int],
+    ) -> None:
         rules = item.get("rule") or []
         existing_decode = {
             entry.get("name"): entry.get("value")
@@ -688,7 +717,19 @@ class AppState:
             if isinstance(entry, dict) and "name" in entry
         }
 
-        overrides = INV_STATUS_DECODE_BY_PORT.get((port or "").upper(), {})
+        port_upper = (port or "").upper()
+        port_overrides = INV_STATUS_DECODE_BY_PORT.get(port_upper) or {}
+        overrides = dict(port_overrides)
+
+        if addr is not None:
+            phase_overrides = INV_STATUS_PHASE_BY_PORT_ADDR.get(port_upper)
+            if phase_overrides:
+                addr_key = str(addr)
+                phase_value = phase_overrides.get(addr_key)
+                if phase_value is None:
+                    phase_value = phase_overrides.get("*")
+                if phase_value is not None:
+                    overrides["PHASE"] = phase_value
         bit_value = 0
         updated_decode = []
 

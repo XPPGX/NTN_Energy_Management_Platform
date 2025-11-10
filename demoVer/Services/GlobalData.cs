@@ -432,18 +432,17 @@ namespace demoVer.Services
         private void ComputeOverallValues()
         {
 
-            // //1. 取得快照
+            // 1. 取得快照
             var allSubSystems = _subSystemManager.GetAllSubSystems_Ref_In_List(); //各子系統快照
             var LinkingAddrs = _linkAddrManager.SnapshotAsHashSet(); //連線中的addr快照
 
-            // //2. 在每個子系統裡面計算系統變數
+            // 2. 在每個子系統裡面計算系統變數
             foreach (var subSys in allSubSystems)
             {
                 
                 AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] SubSystem Port = {subSys.Port}, Protocol = {subSys.Protocol}, AddrSet Count = {subSys.AddrSet.Count}", AppLogLevel.Trace);
                 //3. 使用各子系統的AddrSet中的addr搭配Link，取得目前在線上的device data進行計算
                 List<Real_SingleDeviceData_JsonFormat> onlineDevices_DeviceDatas = new();
-                List<uint> debug_Addrs = new();
                 foreach (var read_addr in subSys.AddrSet)
                 {
                     uint nowStoringAddr = Custom.getAddrOffsetByPort(subSys.Port) + read_addr;
@@ -451,9 +450,6 @@ namespace demoVer.Services
                     //如果 在子系統中的Addr，目前沒有連線，則直接跳過計算
                     if (!LinkingAddrs.Contains(nowStoringAddr)) continue;
                     
-                    debug_Addrs.Add(nowStoringAddr);
-
-
                     var deviceData = Real_Devices_ReadData.Get_oneDevice_DataSnapshot(nowStoringAddr);
                     if (deviceData != null)
                     {
@@ -461,10 +457,8 @@ namespace demoVer.Services
                     }
                 }
 
-                // Console.WriteLine($"[GlobalData][ComputeOverallValues] Port = {subSys.Port}, protocol = {subSys.Protocol}, onlineDevices count = {onlineDevices_DeviceDatas.Count}, addrs: {string.Join(",", debug_Addrs)}");
                 //4. 使用onlineDevices_DeviceDatas進行系統變數計算
                 subSys.ComputeOverallValues_in_SubSystem(onlineDevices_DeviceDatas);
-                // Console.WriteLine($"[GlobalData][ComputeOverallValues] Port = {subSys.Port}, protocol = {subSys.Protocol}, nowMode = {subSys.nowMode}");
             }
 
             #region Old Code

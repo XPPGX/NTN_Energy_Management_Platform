@@ -373,7 +373,7 @@
             return "mode-disconnected";
         }
 
-        return activeSubSystem.nowMode switch
+        return activeSubSystem.ComputedVals.nowMode switch
         {
             ConstDefinition.SYS_Mode_Options.INVERTER => "mode-inverter",
             ConstDefinition.SYS_Mode_Options.SAVING => "mode-saving",

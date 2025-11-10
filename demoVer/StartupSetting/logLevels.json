@@ -11,7 +11,7 @@
     "demoVer.Models.allDevice_Data"             : 2,
     "demoVer.Models.oneDevice_Data"             : 2,
     "demoVer.Models.WriteAPI_Datas"             : 2,
-    "demoVer.Models.SubSystem"                  : 2,
+    "demoVer.Models.SubSystem"                  : 0,
     "demoVer.Models.SubAppSystem_WriteMemory"   : 2,
     "demoVer.Services.DataChangeEventManager"   : 2,
     "demoVer.Services.WriteDataChangeEventManager" : 2,

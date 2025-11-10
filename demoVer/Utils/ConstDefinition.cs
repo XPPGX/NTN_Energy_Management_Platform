@@ -43,5 +43,27 @@ namespace demoVer.Utils
             SHUTDOWN = 12,
         }
         #endregion INV_Mode_Status
+
+        #region INV_Phase_Status
+        public const string PHASE_0_str = "Phase 0°";
+        public const string PHASE_180_str = "Phase 180°";
+        public const string PHASE_120_str = "Phase 120°";
+        public const string PHASE_240_str = "Phase 240°";
+        public enum INV_Phase_Options
+        {
+            PHASE_0 = 0,
+            PHASE_180 = 1,
+            PHASE_120 = 2,
+            PHASE_240 = 3,
+        }
+        public enum INV_Phase_SubSys
+        {
+            INV_SINGLE_PHASE = 1,
+            INV_TWO_PHASE = 3,
+            INV_THREE_PHASE = 7,
+        }
+        #endregion INV_Phase_Status
+
+
     }
 }

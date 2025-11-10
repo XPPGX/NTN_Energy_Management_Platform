@@ -14,7 +14,7 @@ namespace demoVer.Services
 
         //資料庫指定連線：帳號、密碼、目標資料庫
         private readonly string _connectionString = "Host=localhost;Username=linaro;Password=meanwell;Database=cmu3_main";
-        
+        // private readonly string _connectionString = "Host=192.168.102.201:5432;Username=cmu3_admin;Password=NTNcmu3@2024;Database=cmu3_main";
         //5個semaphore lock
         private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(5);
         //等待取鎖時間，最多3秒
@@ -110,6 +110,51 @@ namespace demoVer.Services
             catch(Exception e)
             {
                 AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetTableColumn] Failed to Get Columns in the Table {targetTable}", AppLogLevel.Trace);
+                return null;
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
+        }
+
+        public async Task<List<string>?> GetAllTableNames(CancellationToken ct = default)
+        {
+            if (!await _semaphore.WaitAsync(maxWaitLock_Time, ct))
+            {
+                AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetAllTableNames] 等待超過 {maxWaitLock_Time}ms，無法取得Semaphore Lock", AppLogLevel.Trace);
+                return null;
+            }
+
+            try
+            {
+                List<string> tableNames = new();
+
+                await using var conn = new NpgsqlConnection(_connectionString);
+                await conn.OpenAsync(ct);
+                AppLogger.Log_To_File_log(_category, "[SqlProcessor][GetAllTableNames] SQL link success", AppLogLevel.Trace);
+
+                const string sql = @"SELECT table_name
+                                      FROM information_schema.tables
+                                      WHERE table_type = 'BASE TABLE'
+                                        AND table_schema NOT IN ('pg_catalog', 'information_schema')
+                                      ORDER BY table_schema, table_name";
+
+                await using var cmd = new NpgsqlCommand(sql, conn);
+                await using var reader = await cmd.ExecuteReaderAsync(ct);
+                AppLogger.Log_To_File_log(_category, "[SqlProcessor][GetAllTableNames] SQL Query success", AppLogLevel.Trace);
+
+                while (await reader.ReadAsync(ct))
+                {
+                    tableNames.Add(reader.GetString(0));
+                }
+
+                AppLogger.Log_To_File_log(_category, "[SqlProcessor][GetAllTableNames] Table list composition success", AppLogLevel.Trace);
+                return tableNames;
+            }
+            catch (Exception e)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetAllTableNames] Error : {e}", AppLogLevel.Trace);
                 return null;
             }
             finally

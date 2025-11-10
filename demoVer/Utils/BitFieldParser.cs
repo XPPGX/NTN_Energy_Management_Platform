@@ -60,6 +60,11 @@ namespace demoVer.Utils
             return string.Join(",", faultList);
         }
 
+        /// <summary>
+        /// 解析INV_STATUS的BitField，回傳目前的 Mode 字串
+        /// </summary>
+        /// <param name="decodeList"></param>
+        /// <returns> Mode_str </returns>
         public static string Parse_INV_STATUS(List<decodeContent> decodeList)
         {
             Dictionary<string, string> statusDict = new Dictionary<string, string>();
@@ -117,7 +122,25 @@ namespace demoVer.Utils
             return (tmp_AC_StandBy, tmp_AC_Charger_Enable, modeEnum);
         }
 
-        
+        public static ConstDefinition.INV_Phase_Options Parse_INV_STATUS_Phase_Enum(List<decodeContent> decodeList)
+        {
+            var phaseObj = decodeList.Find(item => item.name == "PHASE");
+            if (phaseObj is not null)
+            {
+                string phaseStr = phaseObj.value ?? "";
+                switch (phaseStr)
+                {
+                    case ConstDefinition.PHASE_0_str: return ConstDefinition.INV_Phase_Options.PHASE_0;
+                    case ConstDefinition.PHASE_180_str: return ConstDefinition.INV_Phase_Options.PHASE_180;
+                    case ConstDefinition.PHASE_120_str: return ConstDefinition.INV_Phase_Options.PHASE_120;
+                    case ConstDefinition.PHASE_240_str: return ConstDefinition.INV_Phase_Options.PHASE_240;
+                    default:
+                        Console.WriteLine($"[BitFieldParser][Parse_INV_STATUS_Phase] 非法的 PHASE 字串: {phaseStr}");
+                        return ConstDefinition.INV_Phase_Options.PHASE_0;
+                }
+            }
+            return ConstDefinition.INV_Phase_Options.PHASE_0;
+        }
 
         public static bool strToBool(string booleanStr)
         {

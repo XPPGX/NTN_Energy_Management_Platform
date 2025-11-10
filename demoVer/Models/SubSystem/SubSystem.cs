@@ -3,6 +3,8 @@ using demoVer.Utils;
 using System.Collections.Concurrent;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 namespace demoVer.Models
 {
     /// <summary>
@@ -51,7 +53,7 @@ namespace demoVer.Models
         /***************************************************************************
          *                   SubSystem物件的 FireAndForget Lock
          **************************************************************************/
-         /// <summary>給 SubSystemManager 使用的 FireAndForget 鎖，確保同一時間，一個子系統只有一個 FireAndForget 流程在進行</summary>
+        /// <summary>給 SubSystemManager 使用的 FireAndForget 鎖，確保同一時間，一個子系統只有一個 FireAndForget 流程在進行</summary>
         public readonly SemaphoreSlim SubSystem_FireAndForget_Lock = new(1, 1);
 
         /***************************************************************************
@@ -107,7 +109,7 @@ namespace demoVer.Models
         public Dictionary<string, GET_RealSingleRawSettingCMD_JsonFormat> InfosForWriteCmd { get; set; } = new();
         /// <summary>設定頁面實際上會用到的值(從InfosForWriteCmd解析出來)</summary>
         public PageUsableVars nowConfigurableVars { get; set; } = new();
-        public readonly SemaphoreSlim _SettingRange_Lock_WriteCmdInfo = new(1, 1); 
+        public readonly SemaphoreSlim _SettingRange_Lock_WriteCmdInfo = new(1, 1);
         public event Action? OnChanged; //這個Action在設定Apply的時候也要觸發
         public async Task UpdateInfosForWriteCmd_From(List<GET_RealSingleRawSettingCMD_JsonFormat> newInfos)
         {
@@ -157,14 +159,14 @@ namespace demoVer.Models
          *                  Write Process Flow 相關資料結構與方法
          **************************************************************************/
         /// <summary>給SubSystemManager使用的寫入流程鎖，確保同一時間，一個子系統只有一個寫入流程在進行</summary>
-        
+
         public readonly SemaphoreSlim BAT_WriteProcessFlowLock = new(1, 1);
         public readonly SemaphoreSlim INV_WriteProcessFlowLock = new(1, 1);
-        
+
         //這個或許可以用Dictionary去做
         public SemaphoreSlim? Get_WriteProcessFlowLock_By_PageSelection(int PageSelection)
         {
-            switch(PageSelection)
+            switch (PageSelection)
             {
                 case 0: //Battery
                     return BAT_WriteProcessFlowLock;
@@ -180,7 +182,7 @@ namespace demoVer.Models
         //這個或許可以用Dictionary去做
         public void Update_WriteFailedCmdsList_By_PageSelection(int PageSelection, List<Post_RealSingleRawSettingCMD_JsonFormat> writeFailedCmds_List)
         {
-            switch(PageSelection)
+            switch (PageSelection)
             {
                 case 0: //Battery
                     BatterySetting_WriteFailedCmds_List = writeFailedCmds_List;
@@ -274,7 +276,7 @@ namespace demoVer.Models
                 _ReadCmd_Unit_Lock.Release();
             }
         }
-            
+
         public Dictionary<string, string> GetReadCmd_Unit_Dict()
         {
             return ReadCmd_Unit_ConDict.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
@@ -285,27 +287,64 @@ namespace demoVer.Models
         public bool SubSystemSettingExist { get; set; } = false;
         public bool isAnyDeviceOnline { get; set; } = false;
         public ulong newSettingAddrBitMap { get; set; } = 0x0000000000000000UL;
-        public ConstDefinition.SYS_Mode_Options nowMode { get; set; } = ConstDefinition.SYS_Mode_Options.DISCON;
+
+        public ComputedValues_In_SubSystem ComputedVals = new ComputedValues_In_SubSystem();
 
         public bool AC_StandBy { get; set; } = false;
         public bool AC_Charger_Enable { get; set; } = false;
-        public uint INV_MODE_Count { get; set; } = 0;
-        public uint SAVING_MODE_Count { get; set; } = 0;
-        public uint BYPASS_MODE_Count { get; set; } = 0;
-        public uint CHARGING_MODE_Count { get; set; } = 0;
-        public uint STANDBY_MODE_Count { get; set; } = 0;
-        private void setMode(ConstDefinition.SYS_Mode_Options mode) => nowMode = mode;
         public ArrowDirections ArrowDirections { get; private set; } = ArrowDirections.Hidden;
-        public string DisplayModeName => nowMode.ToDisplayName();
+        public string DisplayModeName => ComputedVals.nowMode.ToDisplayName();
 
+        //目前這裡計算用的命令都是用Protocol的原始命令名稱去取值，如果之後要支援不同命令名稱，可能要用Mapping cmdCode的方式去取值
         public void ComputeOverallValues_in_SubSystem(List<Real_SingleDeviceData_JsonFormat> onlineDevicesDatas)
         {
+            //是否有在線設備
             isAnyDeviceOnline = onlineDevicesDatas.Count > 0;
+
+            //取得連線數
+            ComputeOnline_INV_Num(onlineDevicesDatas);
+
             //取得 Mode
             ComputeMode(onlineDevicesDatas);
 
+            //取得 Phase
+            ComputePhase(onlineDevicesDatas);
+            // AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeOverallValues_in_SubSystem] ({this.Port}, {this.Protocol}) Phase computed : {ComputedVals.nowPhase.ToString()}", AppLogLevel.Debug);
+
+            //更新 INV_IP_V 所有數值
+            Compute_INV_IP_V(onlineDevicesDatas);
+            // AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeOverallValues_in_SubSystem] ({this.Port}, {this.Protocol}) INV_IP_V, Phase_0 : {ComputedVals.INV_IP_V.Phase_0}, Phase_180 : {ComputedVals.INV_IP_V.Phase_180}, Phase_120 : {ComputedVals.INV_IP_V.Phase_120}, Phase_240 : {ComputedVals.INV_IP_V.Phase_240}", AppLogLevel.Debug);
+
+            //更新 INV_IP_F 所有數值
+            Compute_INV_IP_F(onlineDevicesDatas);
+            // AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeOverallValues_in_SubSystem] ({this.Port}, {this.Protocol}) INV_IP_F, Phase_0 : {ComputedVals.INV_IP_F.Phase_0}, Phase_180 : {ComputedVals.INV_IP_F.Phase_180}, Phase_120 : {ComputedVals.INV_IP_F.Phase_120}, Phase_240 : {ComputedVals.INV_IP_F.Phase_240}", AppLogLevel.Debug);
+
+            //更新 INV_OP_V 所有數值
+            Compute_INV_OP_V(onlineDevicesDatas);
+            // AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeOverallValues_in_SubSystem] ({this.Port}, {this.Protocol}) INV_OP_V, Phase_0 : {ComputedVals.INV_OP_V.Phase_0}, Phase_180 : {ComputedVals.INV_OP_V.Phase_180}, Phase_120 : {ComputedVals.INV_OP_V.Phase_120}, Phase_240 : {ComputedVals.INV_OP_V.Phase_240}", AppLogLevel.Debug);
+
+            //更新 INV_OP_F 所有數值
+            Compute_INV_OP_F(onlineDevicesDatas);
+            // AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeOverallValues_in_SubSystem] ({this.Port}, {this.Protocol}) INV_OP_F, Phase_0 : {ComputedVals.INV_OP_F.Phase_0}, Phase_180 : {ComputedVals.INV_OP_F.Phase_180}, Phase_120 : {ComputedVals.INV_OP_F.Phase_120}, Phase_240 : {ComputedVals.INV_OP_F.Phase_240}", AppLogLevel.Debug);
+
+            //更新 INV_OP_A 所有數值
+            Compute_INV_OP_A(onlineDevicesDatas);
+            // AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeOverallValues_in_SubSystem] ({this.Port}, {this.Protocol}) INV_OP_A, Phase_0 : {ComputedVals.INV_OP_A.Phase_0}, Phase_180 : {ComputedVals.INV_OP_A.Phase_180}, Phase_120 : {ComputedVals.INV_OP_A.Phase_120}, Phase_240 : {ComputedVals.INV_OP_A.Phase_240}", AppLogLevel.Debug);
+
+            //更新 INV_OP_Load
+            Compute_INV_OP_Load(onlineDevicesDatas);
+            // AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeOverallValues_in_SubSystem] ({this.Port}, {this.Protocol}) INV_OP_Load : {ComputedVals.INV_OP_Load}", AppLogLevel.Debug);
+
+            //更新 INV_OP_VA
+            Compute_INV_OP_VA(onlineDevicesDatas);
+            // AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeOverallValues_in_SubSystem] ({this.Port}, {this.Protocol}) INV_OP_VA : {ComputedVals.INV_OP_VA}", AppLogLevel.Debug);
+
+            //取得 ArrowDirections
+            ArrowDirections = ArrowDirectionHelper.Resolve(ComputedVals.nowMode, AC_Charger_Enable, AC_StandBy);
+
+
             //其他系統變數計算，未來擴充
-            ArrowDirections = ArrowDirectionHelper.Resolve(nowMode, AC_Charger_Enable, AC_StandBy);
+
         }
 
         /// <summary>
@@ -320,7 +359,11 @@ namespace demoVer.Models
             //0. 初始化
             AC_StandBy = false;
             AC_Charger_Enable = false;
-            INV_MODE_Count = SAVING_MODE_Count = BYPASS_MODE_Count = CHARGING_MODE_Count = STANDBY_MODE_Count = 0;
+            uint INV_MODE_Count = 0;
+            uint SAVING_MODE_Count = 0;
+            uint BYPASS_MODE_Count = 0;
+            uint CHARGING_MODE_Count = 0;
+            uint STANDBY_MODE_Count = 0;
 
             foreach (var oneDevice_Data in onlineDevicesDatas)
             {
@@ -334,11 +377,11 @@ namespace demoVer.Models
                 string? INV_FAULT_str = BitFieldParser.Parse_INV_FAULT(INV_FAULT_DecodeList);
                 if (!string.IsNullOrEmpty(INV_FAULT_str))
                 {
-                    setMode(ConstDefinition.SYS_Mode_Options.ERROR);
+                    ComputedVals.setMode(ConstDefinition.SYS_Mode_Options.ERROR);
                     AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeMode] Device Addr {oneDevice_Data.addr} has INV_FAULT : {INV_FAULT_str}, set SubSystem mode to Error", AppLogLevel.Debug);
                 }
 
-                //2. 取得 INV_STATUS 命令中，會影響 Mode 的 資料
+                //2. 取得 INV_STATUS 命令中會影響 Mode 的 資料
                 var INV_STATUS_DecodeList = (List<decodeContent>?)oneDevice_Data.parseCmdData("INV_STATUS");
                 if (INV_STATUS_DecodeList == null)
                 {
@@ -381,15 +424,661 @@ namespace demoVer.Models
             }
 
             //3. 根據統計結果，設定SubSystem的nowMode
-            if (INV_MODE_Count > 0) { setMode(ConstDefinition.SYS_Mode_Options.INVERTER); }
-            else if (SAVING_MODE_Count > 0) { setMode(ConstDefinition.SYS_Mode_Options.SAVING); }
-            else if (BYPASS_MODE_Count > 0) { setMode(ConstDefinition.SYS_Mode_Options.BY_PASS); }
-            else if (CHARGING_MODE_Count > 0) { setMode(ConstDefinition.SYS_Mode_Options.CHARGER); }
-            else if (STANDBY_MODE_Count > 0) { setMode(ConstDefinition.SYS_Mode_Options.STANDBY); }
-            else { setMode(ConstDefinition.SYS_Mode_Options.DISCON); }
+            if (INV_MODE_Count > 0) { ComputedVals.setMode(ConstDefinition.SYS_Mode_Options.INVERTER); }
+            else if (SAVING_MODE_Count > 0) { ComputedVals.setMode(ConstDefinition.SYS_Mode_Options.SAVING); }
+            else if (BYPASS_MODE_Count > 0) { ComputedVals.setMode(ConstDefinition.SYS_Mode_Options.BY_PASS); }
+            else if (CHARGING_MODE_Count > 0) { ComputedVals.setMode(ConstDefinition.SYS_Mode_Options.CHARGER); }
+            else if (STANDBY_MODE_Count > 0) { ComputedVals.setMode(ConstDefinition.SYS_Mode_Options.STANDBY); }
+            else { ComputedVals.setMode(ConstDefinition.SYS_Mode_Options.DISCON); }
 
-            AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeMode] ({this.Port}, {this.Protocol}) SubSystem Mode Computed : {nowMode.ToDisplayName()} (INV:{INV_MODE_Count}, SAVING:{SAVING_MODE_Count}, BYPASS:{BYPASS_MODE_Count}, CHARGING:{CHARGING_MODE_Count}, STANDBY:{STANDBY_MODE_Count})", AppLogLevel.Trace);
+            AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeMode] ({this.Port}, {this.Protocol}) SubSystem Mode Computed : {ComputedVals.nowMode.ToDisplayName()} (INV:{INV_MODE_Count}, SAVING:{SAVING_MODE_Count}, BYPASS:{BYPASS_MODE_Count}, CHARGING:{CHARGING_MODE_Count}, STANDBY:{STANDBY_MODE_Count})", AppLogLevel.Trace);
         }
+
+        /// <summary>
+        /// 根據子系統內所有在線設備的資料，計算子系統的在線Inverter數量
+        /// </summary>
+        /// <param name="onlineDevicesDatas"></param>
+        public void ComputeOnline_INV_Num(List<Real_SingleDeviceData_JsonFormat> onlineDevicesDatas)
+        {
+            //計算在線的 Inverter 數量
+            ComputedVals.ComputeOnline_INV_Num = (uint)onlineDevicesDatas.Count;
+        }
+
+        /// <summary>
+        /// 根據子系統內所有在線設備的資料，計算子系統的相位模式(nowPhase)
+        /// </summary>
+        /// <param name="onlineDevicesDatas"></param>
+        public void ComputePhase(List<Real_SingleDeviceData_JsonFormat> onlineDevicesDatas)
+        {
+            ConstDefinition.INV_Phase_SubSys tmpPhase = ConstDefinition.INV_Phase_SubSys.INV_SINGLE_PHASE;
+
+            foreach (var oneDevice_Data in onlineDevicesDatas)
+            {
+                //1. 取得 INV_STATUS 命令中會影響 Phase 的 資料
+                var INV_STATUS_DecodeList = (List<decodeContent>?)oneDevice_Data.parseCmdData("INV_STATUS");
+                if (INV_STATUS_DecodeList is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputePhase] INV_STATUS DecodeList is null, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+                var oneDevice_Phase = BitFieldParser.Parse_INV_STATUS_Phase_Enum(INV_STATUS_DecodeList);
+
+                switch (oneDevice_Phase)
+                {
+                    case ConstDefinition.INV_Phase_Options.PHASE_0:
+                        if (tmpPhase <= ConstDefinition.INV_Phase_SubSys.INV_SINGLE_PHASE)
+                        {
+                            tmpPhase = ConstDefinition.INV_Phase_SubSys.INV_SINGLE_PHASE;
+                        }
+                        break;
+
+                    case ConstDefinition.INV_Phase_Options.PHASE_180:
+                        if (tmpPhase <= ConstDefinition.INV_Phase_SubSys.INV_TWO_PHASE)
+                        {
+                            tmpPhase = ConstDefinition.INV_Phase_SubSys.INV_TWO_PHASE;
+                        }
+                        break;
+
+                    case ConstDefinition.INV_Phase_Options.PHASE_120:
+                    case ConstDefinition.INV_Phase_Options.PHASE_240:
+                        if (tmpPhase <= ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE)
+                        {
+                            tmpPhase = ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            Console.WriteLine($"[SubSystem][ComputePhase] ({this.Port}, {this.Protocol}) Phase computed : {tmpPhase.ToString()}");
+            ComputedVals.setPhase(tmpPhase);
+        }
+
+        public void Compute_INV_IP_V(List<Real_SingleDeviceData_JsonFormat> onlineDevicesDatas)
+        {
+            double tmp_phase_0 = 0.0;
+            double tmp_phase_180 = 0.0;
+            double tmp_phase_120 = 0.0;
+            double tmp_phase_240 = 0.0;
+
+
+            foreach (var oneDevice_Data in onlineDevicesDatas)
+            {
+                //1. 取單台的Phase
+                var decodeList = (List<decodeContent>?)oneDevice_Data.parseCmdData("INV_STATUS");
+                if (decodeList is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_IP_V] INV_STATUS DecodeList is null, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+                var oneDevice_Phase = BitFieldParser.Parse_INV_STATUS_Phase_Enum(decodeList);
+                //2. 取單台的 READ_VIN
+                var oneDevice_READ_VIN_val = ((double?)oneDevice_Data.parseCmdData("READ_VIN")) ?? 0.0;
+
+                switch (oneDevice_Phase)
+                {
+                    case ConstDefinition.INV_Phase_Options.PHASE_0:
+                        tmp_phase_0 = (oneDevice_READ_VIN_val > tmp_phase_0) ? oneDevice_READ_VIN_val : tmp_phase_0;
+                        // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_IP_V] Device Addr {oneDevice_Data.addr} Phase 0 READ_VIN : {oneDevice_READ_VIN_val}, tmp_phase_0 updated to {tmp_phase_0}", AppLogLevel.Debug);
+                        break;
+                    case ConstDefinition.INV_Phase_Options.PHASE_180:
+                        if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_TWO_PHASE)
+                        {
+                            tmp_phase_180 = (oneDevice_READ_VIN_val > tmp_phase_180) ? oneDevice_READ_VIN_val : tmp_phase_180;
+                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_IP_V] Device Addr {oneDevice_Data.addr} Phase 180 READ_VIN : {oneDevice_READ_VIN_val}, tmp_phase_180 updated to {tmp_phase_180}", AppLogLevel.Debug);
+                        }
+                        break;
+
+                    case ConstDefinition.INV_Phase_Options.PHASE_120:
+                        if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE)
+                        {
+                            tmp_phase_120 = (oneDevice_READ_VIN_val > tmp_phase_120) ? oneDevice_READ_VIN_val : tmp_phase_120;
+                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_IP_V] Device Addr {oneDevice_Data.addr} Phase 120 READ_VIN : {oneDevice_READ_VIN_val}, tmp_phase_120 updated to {tmp_phase_120}", AppLogLevel.Debug);
+                        }
+                        break;
+
+                    case ConstDefinition.INV_Phase_Options.PHASE_240:
+                        if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE)
+                        {
+                            tmp_phase_240 = (oneDevice_READ_VIN_val > tmp_phase_240) ? oneDevice_READ_VIN_val : tmp_phase_240;
+                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_IP_V] Device Addr {oneDevice_Data.addr} Phase 240 READ_VIN : {oneDevice_READ_VIN_val}, tmp_phase_240 updated to {tmp_phase_240}", AppLogLevel.Debug);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            switch (ComputedVals.nowPhase)
+            {
+                case ConstDefinition.INV_Phase_SubSys.INV_SINGLE_PHASE:
+                    //只計算 Phase 0，其他相位設為0
+                    ComputedVals.INV_IP_V.Phase_0 = tmp_phase_0;
+                    ComputedVals.INV_IP_V.Phase_180 = 0.0;
+                    ComputedVals.INV_IP_V.Phase_120 = 0.0;
+                    ComputedVals.INV_IP_V.Phase_240 = 0.0;
+                    break;
+                case ConstDefinition.INV_Phase_SubSys.INV_TWO_PHASE:
+                    //計算 Phase 0 和 Phase 180，其他相位設為0
+                    ComputedVals.INV_IP_V.Phase_0 = tmp_phase_0;
+                    ComputedVals.INV_IP_V.Phase_180 = tmp_phase_180;
+                    ComputedVals.INV_IP_V.Phase_120 = 0.0;
+                    ComputedVals.INV_IP_V.Phase_240 = 0.0;
+                    break;
+                case ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE:
+                    //計算 Phase 0 和 Phase 120 和 Phase 240，Phase 180設為0
+                    ComputedVals.INV_IP_V.Phase_0 = tmp_phase_0;
+                    ComputedVals.INV_IP_V.Phase_180 = 0.0;
+                    ComputedVals.INV_IP_V.Phase_120 = tmp_phase_120;
+                    ComputedVals.INV_IP_V.Phase_240 = tmp_phase_240;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void Compute_INV_IP_F(List<Real_SingleDeviceData_JsonFormat> onlineDevicesDatas)
+        {
+            double tmp_phase_0 = 0.0;
+            double tmp_phase_180 = 0.0;
+            double tmp_phase_120 = 0.0;
+            double tmp_phase_240 = 0.0;
+            double count_R = 0.0;
+            double count_S = 0.0;
+            double count_T_120 = 0.0;
+            double count_T_240 = 0.0;
+
+            foreach (var oneDevice_Data in onlineDevicesDatas)
+            {
+                //1. 取單台的Phase
+                var decodeList = (List<decodeContent>?)oneDevice_Data.parseCmdData("INV_STATUS");
+                if (decodeList is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_IP_F] INV_STATUS DecodeList is null, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+                var oneDevice_Phase = BitFieldParser.Parse_INV_STATUS_Phase_Enum(decodeList);
+
+                //2. 取單台的 READ_FREQ
+                var oneDevice_READ_FREQ_val = ((double?)oneDevice_Data.parseCmdData("READ_FREQ")) ?? 0.0;
+                //排除 READ_FREQ 為 0.0 的設備
+                if (oneDevice_READ_FREQ_val == 0.0)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_IP_F] Device Addr {oneDevice_Data.addr} READ_FREQ is 0.0, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+
+                switch (oneDevice_Phase)
+                {
+                    case ConstDefinition.INV_Phase_Options.PHASE_0:
+                        tmp_phase_0 += oneDevice_READ_FREQ_val;
+                        count_R += 1.0;
+                        // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_IP_F] Device Addr {oneDevice_Data.addr} Phase 0 READ_FREQ : {oneDevice_READ_FREQ_val}, tmp_phase_0 accumulated to {tmp_phase_0}", AppLogLevel.Debug);
+                        break;
+                    case ConstDefinition.INV_Phase_Options.PHASE_180:
+                        if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_TWO_PHASE)
+                        {
+                            tmp_phase_180 += oneDevice_READ_FREQ_val;
+                            count_S += 1.0;
+                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_IP_F] Device Addr {oneDevice_Data.addr} Phase 180 READ_FREQ : {oneDevice_READ_FREQ_val}, tmp_phase_180 accumulated to {tmp_phase_180}", AppLogLevel.Debug);
+                        }
+                        break;
+
+                    case ConstDefinition.INV_Phase_Options.PHASE_120:
+                        if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE)
+                        {
+                            tmp_phase_120 += oneDevice_READ_FREQ_val;
+                            count_T_120 += 1.0;
+                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_IP_F] Device Addr {oneDevice_Data.addr} Phase 120 READ_FREQ : {oneDevice_READ_FREQ_val}, tmp_phase_120 accumulated to {tmp_phase_120}", AppLogLevel.Debug);
+                        }
+                        break;
+
+                    case ConstDefinition.INV_Phase_Options.PHASE_240:
+                        if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE)
+                        {
+                            tmp_phase_240 += oneDevice_READ_FREQ_val;
+                            count_T_240 += 1.0;
+                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_IP_F] Device Addr {oneDevice_Data.addr} Phase 240 READ_FREQ : {oneDevice_READ_FREQ_val}, tmp_phase_240 accumulated to {tmp_phase_240}", AppLogLevel.Debug);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            switch (ComputedVals.nowPhase)
+            {
+                case ConstDefinition.INV_Phase_SubSys.INV_SINGLE_PHASE:
+                    //只計算 Phase 0，其他相位設為0
+                    ComputedVals.INV_IP_F.Phase_0 = tmp_phase_0 / ((count_R == 0.0) ? 1.0 : count_R);
+                    ComputedVals.INV_IP_F.Phase_180 = 0.0;
+                    ComputedVals.INV_IP_F.Phase_120 = 0.0;
+                    ComputedVals.INV_IP_F.Phase_240 = 0.0;
+                    break;
+                case ConstDefinition.INV_Phase_SubSys.INV_TWO_PHASE:
+                    //計算 Phase 0 和 Phase 180，其他相位設為0
+                    ComputedVals.INV_IP_F.Phase_0 = tmp_phase_0 / ((count_R == 0.0) ? 1.0 : count_R);
+                    ComputedVals.INV_IP_F.Phase_180 = tmp_phase_180 / ((count_S == 0.0) ? 1.0 : count_S);
+                    ComputedVals.INV_IP_F.Phase_120 = 0.0;
+                    ComputedVals.INV_IP_F.Phase_240 = 0.0;
+                    break;
+                case ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE:
+                    //計算 Phase 0 和 Phase 120 和 Phase 240，Phase 180設為0
+                    ComputedVals.INV_IP_F.Phase_0 = tmp_phase_0 / ((count_R == 0.0) ? 1.0 : count_R);
+                    ComputedVals.INV_IP_F.Phase_180 = 0.0;
+                    ComputedVals.INV_IP_F.Phase_120 = tmp_phase_120 / ((count_T_120 == 0.0) ? 1.0 : count_T_120);
+                    ComputedVals.INV_IP_F.Phase_240 = tmp_phase_240 / ((count_T_240 == 0.0) ? 1.0 : count_T_240);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void Compute_INV_OP_V(List<Real_SingleDeviceData_JsonFormat> onlineDevicesDatas)
+        {
+            double tmp_phase_0 = 0.0;
+            double tmp_phase_180 = 0.0;
+            double tmp_phase_120 = 0.0;
+            double tmp_phase_240 = 0.0;
+
+
+            foreach (var oneDevice_Data in onlineDevicesDatas)
+            {
+                //1. 取單台的Phase
+                var decodeList = (List<decodeContent>?)oneDevice_Data.parseCmdData("INV_STATUS");
+                if (decodeList is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_V] INV_STATUS DecodeList is null, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+                var oneDevice_Phase = BitFieldParser.Parse_INV_STATUS_Phase_Enum(decodeList);
+                //2. 取單台的 READ_AC_VOUT
+                var oneDevice_READ_AC_VOUT_val = ((double?)oneDevice_Data.parseCmdData("READ_AC_VOUT")) ?? 0.0;
+
+                switch (oneDevice_Phase)
+                {
+                    case ConstDefinition.INV_Phase_Options.PHASE_0:
+                        tmp_phase_0 = (oneDevice_READ_AC_VOUT_val > tmp_phase_0) ? oneDevice_READ_AC_VOUT_val : tmp_phase_0;
+                        // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_V] Device Addr {oneDevice_Data.addr} Phase 0 READ_AC_VOUT : {oneDevice_READ_AC_VOUT_val}, tmp_phase_0 updated to {tmp_phase_0}", AppLogLevel.Debug);
+                        break;
+                    case ConstDefinition.INV_Phase_Options.PHASE_180:
+                        if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_TWO_PHASE)
+                        {
+                            tmp_phase_180 = (oneDevice_READ_AC_VOUT_val > tmp_phase_180) ? oneDevice_READ_AC_VOUT_val : tmp_phase_180;
+                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_V] Device Addr {oneDevice_Data.addr} Phase 180 READ_AC_VOUT : {oneDevice_READ_AC_VOUT_val}, tmp_phase_180 updated to {tmp_phase_180}", AppLogLevel.Debug);
+                        }
+                        break;
+
+                    case ConstDefinition.INV_Phase_Options.PHASE_120:
+                        if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE)
+                        {
+                            tmp_phase_120 = (oneDevice_READ_AC_VOUT_val > tmp_phase_120) ? oneDevice_READ_AC_VOUT_val : tmp_phase_120;
+                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_V] Device Addr {oneDevice_Data.addr} Phase 120 READ_AC_VOUT : {oneDevice_READ_AC_VOUT_val}, tmp_phase_120 updated to {tmp_phase_120}", AppLogLevel.Debug);
+                        }
+                        break;
+
+                    case ConstDefinition.INV_Phase_Options.PHASE_240:
+                        if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE)
+                        {
+                            tmp_phase_240 = (oneDevice_READ_AC_VOUT_val > tmp_phase_240) ? oneDevice_READ_AC_VOUT_val : tmp_phase_240;
+                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_V] Device Addr {oneDevice_Data.addr} Phase 240 READ_AC_VOUT : {oneDevice_READ_AC_VOUT_val}, tmp_phase_240 updated to {tmp_phase_240}", AppLogLevel.Debug);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            switch (ComputedVals.nowPhase)
+            {
+                case ConstDefinition.INV_Phase_SubSys.INV_SINGLE_PHASE:
+                    //只計算 Phase 0，其他相位設為0
+                    ComputedVals.INV_OP_V.Phase_0 = tmp_phase_0;
+                    ComputedVals.INV_OP_V.Phase_180 = 0.0;
+                    ComputedVals.INV_OP_V.Phase_120 = 0.0;
+                    ComputedVals.INV_OP_V.Phase_240 = 0.0;
+                    break;
+                case ConstDefinition.INV_Phase_SubSys.INV_TWO_PHASE:
+                    //計算 Phase 0 和 Phase 180，其他相位設為0
+                    ComputedVals.INV_OP_V.Phase_0 = tmp_phase_0;
+                    ComputedVals.INV_OP_V.Phase_180 = tmp_phase_180;
+                    ComputedVals.INV_OP_V.Phase_120 = 0.0;
+                    ComputedVals.INV_OP_V.Phase_240 = 0.0;
+                    break;
+                case ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE:
+                    //計算 Phase 0 和 Phase 120 和 Phase 240，Phase 180設為0
+                    ComputedVals.INV_OP_V.Phase_0 = tmp_phase_0;
+                    ComputedVals.INV_OP_V.Phase_180 = 0.0;
+                    ComputedVals.INV_OP_V.Phase_120 = tmp_phase_120;
+                    ComputedVals.INV_OP_V.Phase_240 = tmp_phase_240;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void Compute_INV_OP_F(List<Real_SingleDeviceData_JsonFormat> onlineDevicesDatas)
+        {
+            double tmp_phase_0 = 0.0;
+            double tmp_phase_180 = 0.0;
+            double tmp_phase_120 = 0.0;
+            double tmp_phase_240 = 0.0;
+            double count_R = 0.0;
+            double count_S = 0.0;
+            double count_T_120 = 0.0;
+            double count_T_240 = 0.0;
+
+            foreach (var oneDevice_Data in onlineDevicesDatas)
+            {
+                //1. 取單台的Phase
+                var decodeList = (List<decodeContent>?)oneDevice_Data.parseCmdData("INV_STATUS");
+                if (decodeList is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_F] INV_STATUS DecodeList is null, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+                var oneDevice_Phase = BitFieldParser.Parse_INV_STATUS_Phase_Enum(decodeList);
+
+                //2. 取單台的 READ_AC_FOUT
+                var oneDevice_READ_AC_FOUT_val = ((double?)oneDevice_Data.parseCmdData("READ_AC_FOUT")) ?? 0.0;
+                //排除 READ_AC_FOUT 為 0.0 的設備
+                if (oneDevice_READ_AC_FOUT_val == 0.0)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_F] Device Addr {oneDevice_Data.addr} READ_AC_FOUT is 0.0, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+
+                switch (oneDevice_Phase)
+                {
+                    case ConstDefinition.INV_Phase_Options.PHASE_0:
+                        tmp_phase_0 += oneDevice_READ_AC_FOUT_val;
+                        count_R += 1.0;
+                        // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_F] Device Addr {oneDevice_Data.addr} Phase 0 READ_AC_FOUT : {oneDevice_READ_AC_FOUT_val}, tmp_phase_0 accumulated to {tmp_phase_0}", AppLogLevel.Debug);
+                        break;
+                    case ConstDefinition.INV_Phase_Options.PHASE_180:
+                        if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_TWO_PHASE)
+                        {
+                            tmp_phase_180 += oneDevice_READ_AC_FOUT_val;
+                            count_S += 1.0;
+                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_F] Device Addr {oneDevice_Data.addr} Phase 180 READ_AC_FOUT : {oneDevice_READ_AC_FOUT_val}, tmp_phase_180 accumulated to {tmp_phase_180}", AppLogLevel.Debug);
+                        }
+                        break;
+
+                    case ConstDefinition.INV_Phase_Options.PHASE_120:
+                        if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE)
+                        {
+                            tmp_phase_120 += oneDevice_READ_AC_FOUT_val;
+                            count_T_120 += 1.0;
+                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_F] Device Addr {oneDevice_Data.addr} Phase 120 READ_AC_FOUT : {oneDevice_READ_AC_FOUT_val}, tmp_phase_120 accumulated to {tmp_phase_120}", AppLogLevel.Debug);
+                        }
+                        break;
+
+                    case ConstDefinition.INV_Phase_Options.PHASE_240:
+                        if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE)
+                        {
+                            tmp_phase_240 += oneDevice_READ_AC_FOUT_val;
+                            count_T_240 += 1.0;
+                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_F] Device Addr {oneDevice_Data.addr} Phase 240 READ_AC_FOUT : {oneDevice_READ_AC_FOUT_val}, tmp_phase_240 accumulated to {tmp_phase_240}", AppLogLevel.Debug);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            switch (ComputedVals.nowPhase)
+            {
+                case ConstDefinition.INV_Phase_SubSys.INV_SINGLE_PHASE:
+                    //只計算 Phase 0，其他相位設為0
+                    ComputedVals.INV_OP_F.Phase_0 = tmp_phase_0 / ((count_R == 0.0) ? 1.0 : count_R);
+                    ComputedVals.INV_OP_F.Phase_180 = 0.0;
+                    ComputedVals.INV_OP_F.Phase_120 = 0.0;
+                    ComputedVals.INV_OP_F.Phase_240 = 0.0;
+                    break;
+                case ConstDefinition.INV_Phase_SubSys.INV_TWO_PHASE:
+                    //計算 Phase 0 和 Phase 180，其他相位設為0
+                    ComputedVals.INV_OP_F.Phase_0 = tmp_phase_0 / ((count_R == 0.0) ? 1.0 : count_R);
+                    ComputedVals.INV_OP_F.Phase_180 = tmp_phase_180 / ((count_S == 0.0) ? 1.0 : count_S);
+                    ComputedVals.INV_OP_F.Phase_120 = 0.0;
+                    ComputedVals.INV_OP_F.Phase_240 = 0.0;
+                    break;
+                case ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE:
+                    //計算 Phase 0 和 Phase 120 和 Phase 240，Phase 180設為0
+                    ComputedVals.INV_OP_F.Phase_0 = tmp_phase_0 / ((count_R == 0.0) ? 1.0 : count_R);
+                    ComputedVals.INV_OP_F.Phase_180 = 0.0;
+                    ComputedVals.INV_OP_F.Phase_120 = tmp_phase_120 / ((count_T_120 == 0.0) ? 1.0 : count_T_120);
+                    ComputedVals.INV_OP_F.Phase_240 = tmp_phase_240 / ((count_T_240 == 0.0) ? 1.0 : count_T_240);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void Compute_INV_OP_A(List<Real_SingleDeviceData_JsonFormat> onlineDevicesDatas)
+        {
+            double tmp_phase_0 = 0.0;
+            double tmp_phase_180 = 0.0;
+            double tmp_phase_120 = 0.0;
+            double tmp_phase_240 = 0.0;
+
+            foreach (var oneDevice_Data in onlineDevicesDatas)
+            {
+                //1. 取單台的Phase
+                var decodeList = (List<decodeContent>?)oneDevice_Data.parseCmdData("INV_STATUS");
+                if (decodeList is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_A] INV_STATUS DecodeList is null, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+                var oneDevice_Phase = BitFieldParser.Parse_INV_STATUS_Phase_Enum(decodeList);
+
+                //2. 取單台的 READ_AC_VOUT
+                var oneDevice_READ_AC_VOUT_val = ((double?)oneDevice_Data.parseCmdData("READ_AC_VOUT")) ?? 0.0;
+                //排除 READ_AC_VOUT 為 0.0 的設備
+                if (oneDevice_READ_AC_VOUT_val == 0.0)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_A] Device Addr {oneDevice_Data.addr} READ_AC_VOUT is 0.0, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+
+                //3. 取單台的 OP_VA
+                var oneDevice_OP_VA_val = ((double?)oneDevice_Data.parseCmdData("OP_VA")) ?? 0.0;
+
+                //4. 計算單台的 INV_Current
+                double oneDevice_INV_Current_val = oneDevice_OP_VA_val / ((oneDevice_READ_AC_VOUT_val == 0.0) ? 1.0 : oneDevice_READ_AC_VOUT_val);
+                oneDevice_INV_Current_val = (oneDevice_INV_Current_val < 0.5) ? 0.0 : oneDevice_INV_Current_val; //過濾過小的電流值
+
+                switch (oneDevice_Phase)
+                {
+                    case ConstDefinition.INV_Phase_Options.PHASE_0:
+                        tmp_phase_0 += oneDevice_INV_Current_val;
+                        // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_A] Device Addr {oneDevice_Data.addr} Phase 0 INV_OP_A : {oneDevice_READ_AC_VOUT_val}, OP_VA : {oneDevice_OP_VA_val}, tmp_phase_0 accumulated to {tmp_phase_0}", AppLogLevel.Debug);
+                        break;
+                    case ConstDefinition.INV_Phase_Options.PHASE_180:
+                        if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_TWO_PHASE)
+                        {
+                            tmp_phase_180 += oneDevice_INV_Current_val;
+                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_A] Device Addr {oneDevice_Data.addr} Phase 180 INV_OP_A : {oneDevice_READ_AC_VOUT_val}, OP_VA : {oneDevice_OP_VA_val}, tmp_phase_180 accumulated to {tmp_phase_180}", AppLogLevel.Debug);
+                        }
+                        break;
+                    case ConstDefinition.INV_Phase_Options.PHASE_120:
+                        if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE)
+                        {
+                            tmp_phase_120 += oneDevice_INV_Current_val;
+                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_A] Device Addr {oneDevice_Data.addr} Phase 120 INV_OP_A : {oneDevice_READ_AC_VOUT_val}, OP_VA : {oneDevice_OP_VA_val}, tmp_phase_120 accumulated to {tmp_phase_120}", AppLogLevel.Debug);
+                        }
+                        break;
+                    case ConstDefinition.INV_Phase_Options.PHASE_240:
+                        if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE)
+                        {
+                            tmp_phase_240 += oneDevice_INV_Current_val;
+                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_A] Device Addr {oneDevice_Data.addr} Phase 240 INV_OP_A : {oneDevice_READ_AC_VOUT_val}, OP_VA : {oneDevice_OP_VA_val}, tmp_phase_240 accumulated to {tmp_phase_240}", AppLogLevel.Debug);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            switch (ComputedVals.nowPhase)
+            {
+                case ConstDefinition.INV_Phase_SubSys.INV_SINGLE_PHASE:
+                    //只計算 Phase 0，其他相位設為0
+                    ComputedVals.INV_OP_A.Phase_0 = tmp_phase_0;
+                    ComputedVals.INV_OP_A.Phase_180 = 0.0;
+                    ComputedVals.INV_OP_A.Phase_120 = 0.0;
+                    ComputedVals.INV_OP_A.Phase_240 = 0.0;
+                    break;
+                case ConstDefinition.INV_Phase_SubSys.INV_TWO_PHASE:
+                    //計算 Phase 0 和 Phase 180，其他相位設為0
+                    ComputedVals.INV_OP_A.Phase_0 = tmp_phase_0;
+                    ComputedVals.INV_OP_A.Phase_180 = tmp_phase_180;
+                    ComputedVals.INV_OP_A.Phase_120 = 0.0;
+                    ComputedVals.INV_OP_A.Phase_240 = 0.0;
+                    break;
+                case ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE:
+                    //計算 Phase 0 和 Phase 120 和 Phase 240，Phase 180設為0
+                    ComputedVals.INV_OP_A.Phase_0 = tmp_phase_0;
+                    ComputedVals.INV_OP_A.Phase_180 = 0.0;
+                    ComputedVals.INV_OP_A.Phase_120 = tmp_phase_120;
+                    ComputedVals.INV_OP_A.Phase_240 = tmp_phase_240;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void Compute_INV_OP_Load(List<Real_SingleDeviceData_JsonFormat> onlineDevicesDatas)
+        {
+            double total_LOAD = 0.0;
+            double counter = 0.0;
+            foreach (var oneDevice_Data in onlineDevicesDatas)
+            {
+                //1. 取單台的 OP_LD_PCNT
+                var oneDevice_OP_LOAD_val = ((double?)oneDevice_Data.parseCmdData("READ_OP_LD_PCNT")) ?? 0.0;
+                total_LOAD += oneDevice_OP_LOAD_val;
+                counter += 1.0;
+            }
+
+            counter = (counter == 0.0) ? 1.0 : counter;
+            total_LOAD = total_LOAD / counter;
+
+            ComputedVals.INV_OP_Load = total_LOAD;
+        }
+
+        public void Compute_INV_OP_VA(List<Real_SingleDeviceData_JsonFormat> onlineDevicesDatas)
+        {
+            double tmp_phase_0 = 0.0;
+            double tmp_phase_180 = 0.0;
+            double tmp_phase_120 = 0.0;
+            double tmp_phase_240 = 0.0;
+        
+            foreach (var oneDevice_Data in onlineDevicesDatas)
+            {
+                //1. 取單台的Phase
+                var decodeList = (List<decodeContent>?)oneDevice_Data.parseCmdData("INV_STATUS");
+                if (decodeList is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_VA] INV_STATUS DecodeList is null, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+                var oneDevice_Phase = BitFieldParser.Parse_INV_STATUS_Phase_Enum(decodeList);
+
+                //2. 取單台的 READ_OP_VA
+                var oneDevice_OP_VA_val = ((double?)oneDevice_Data.parseCmdData("READ_OP_VA")) ?? 0.0;
+                switch(oneDevice_Phase)
+                {
+                    case ConstDefinition.INV_Phase_Options.PHASE_0:
+                        tmp_phase_0 += oneDevice_OP_VA_val;
+                        // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_VA] Device Addr {oneDevice_Data.addr} Phase 0 READ_OP_VA : {oneDevice_OP_VA_val}, tmp_phase_0 accumulated to {tmp_phase_0}", AppLogLevel.Debug);
+                        break;
+                    case ConstDefinition.INV_Phase_Options.PHASE_180:
+                        if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_TWO_PHASE)
+                        {
+                            tmp_phase_180 += oneDevice_OP_VA_val;
+                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_VA] Device Addr {oneDevice_Data.addr} Phase 180 READ_OP_VA : {oneDevice_OP_VA_val}, tmp_phase_180 accumulated to {tmp_phase_180}", AppLogLevel.Debug);
+                        }
+                        break;
+                    case ConstDefinition.INV_Phase_Options.PHASE_120:
+                        if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE)
+                        {
+                            tmp_phase_120 += oneDevice_OP_VA_val;
+                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_VA] Device Addr {oneDevice_Data.addr} Phase 120 READ_OP_VA : {oneDevice_OP_VA_val}, tmp_phase_120 accumulated to {tmp_phase_120}", AppLogLevel.Debug);
+                        }
+                        break;
+                    case ConstDefinition.INV_Phase_Options.PHASE_240:
+                        if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE)
+                        {
+                            tmp_phase_240 += oneDevice_OP_VA_val;
+                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_VA] Device Addr {oneDevice_Data.addr} Phase 240 READ_OP_VA : {oneDevice_OP_VA_val}, tmp_phase_240 accumulated to {tmp_phase_240}", AppLogLevel.Debug);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            tmp_phase_0 = (tmp_phase_0 < 500.0) ? 0.0 : tmp_phase_0;
+            tmp_phase_180 = (tmp_phase_180 < 500.0) ? 0.0 : tmp_phase_180;
+            tmp_phase_120 = (tmp_phase_120 < 500.0) ? 0.0 : tmp_phase_120;
+            tmp_phase_240 = (tmp_phase_240 < 500.0) ? 0.0 : tmp_phase_240;
+
+            switch(ComputedVals.nowPhase)
+            {
+                case ConstDefinition.INV_Phase_SubSys.INV_SINGLE_PHASE:
+                    //只計算 Phase 0，其他相位設為0
+                    ComputedVals.INV_OP_VA.Phase_0 = tmp_phase_0;
+                    ComputedVals.INV_OP_VA.Phase_180 = 0.0;
+                    ComputedVals.INV_OP_VA.Phase_120 = 0.0;
+                    ComputedVals.INV_OP_VA.Phase_240 = 0.0;
+                    break;
+                case ConstDefinition.INV_Phase_SubSys.INV_TWO_PHASE:
+                    //計算 Phase 0 和 Phase 180，其他相位設為0
+                    ComputedVals.INV_OP_VA.Phase_0 = tmp_phase_0;
+                    ComputedVals.INV_OP_VA.Phase_180 = tmp_phase_180;
+                    ComputedVals.INV_OP_VA.Phase_120 = 0.0;
+                    ComputedVals.INV_OP_VA.Phase_240 = 0.0;
+                    break;
+                case ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE:
+                    //計算 Phase 0 和 Phase 120 和 Phase 240，Phase 180設為0
+                    ComputedVals.INV_OP_VA.Phase_0 = tmp_phase_0;
+                    ComputedVals.INV_OP_VA.Phase_180 = 0.0;
+                    ComputedVals.INV_OP_VA.Phase_120 = tmp_phase_120;
+                    ComputedVals.INV_OP_VA.Phase_240 = tmp_phase_240;
+                    break;
+                default:
+                    break;
+            }
+        }
+
         #endregion Computed In SubSystem
+    }
+
+    public class ComputedValues_In_SubSystem
+    {
+        public ConstDefinition.SYS_Mode_Options nowMode { get; set; } = ConstDefinition.SYS_Mode_Options.DISCON;
+        public uint ComputeOnline_INV_Num { get; set; } = 0;
+        public ConstDefinition.INV_Phase_SubSys nowPhase { get; set; } = ConstDefinition.INV_Phase_SubSys.INV_SINGLE_PHASE;
+
+        public PhasesVar INV_IP_V { get; set; } = new PhasesVar();
+        public PhasesVar INV_IP_F { get; set; } = new PhasesVar();
+        public PhasesVar INV_OP_V { get; set; } = new PhasesVar();
+        public PhasesVar INV_OP_F { get; set; } = new PhasesVar();
+        public PhasesVar INV_OP_A { get; set; } = new PhasesVar();
+        public PhasesVar INV_OP_VA { get; set; } = new PhasesVar();
+        public double INV_OP_Load { get; set; } = 0.0;
+
+        public void setMode(ConstDefinition.SYS_Mode_Options mode) => this.nowMode = mode;
+        public void setPhase(ConstDefinition.INV_Phase_SubSys phase) => this.nowPhase = phase;
+
+    }
+
+    public class PhasesVar
+    {
+        public double Phase_0 { get; set; } = 0.0;
+        public double Phase_180 { get; set; } = 0.0;
+        public double Phase_120 { get; set; } = 0.0;
+        public double Phase_240 { get; set; } = 0.0;
     }
 }
