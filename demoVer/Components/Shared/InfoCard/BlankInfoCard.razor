@@ -52,6 +52,7 @@
 
     //後續要將這個持續檢查groups存在與否的機制寫進DataChangeEventManager
     private List<(uint, string)> noExistence_addrCmdPair_list = new List<(uint, string)>();
+    private bool _hasSystemInfoItems;
     
     protected override void OnInitialized()
     {
@@ -63,8 +64,12 @@
 
     public async Task TickTask()
     {
-        @* checkSubscribeCommandExist(); *@
-        @* var tmp = globalVar.Get_INV_Phase(4); *@
+        checkSubscribeCommandExist();
+
+        if (_hasSystemInfoItems)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
     private void checkSubscribeCommandExist()
@@ -95,6 +100,7 @@
             });
             _subs.Add(sub);
             noExistence_addrCmdPair_list.RemoveAt(index);
+            index--;
         }
     }
 
@@ -173,6 +179,7 @@
         _subs.Clear();
         _latest.Clear();
         noExistence_addrCmdPair_list.Clear();
+        _hasSystemInfoItems = false;
         
         if (currentCard?.Info_DataItems == null) return;
         AppLogger.Log_To_File_log(_category, $"[BlankInfoCard][ResubscribeAll] Info_DataItems != null", AppLogLevel.Trace);
@@ -186,6 +193,12 @@
                 
                 if (string.IsNullOrWhiteSpace(df.Cmd)) continue;
                 AppLogger.Log_To_File_log(_category, $"[BlankInfoCard][ResubscribeAll] df.Cmd = {df.Cmd}", AppLogLevel.Trace);
+
+                if (addr == 256)
+                {
+                    _hasSystemInfoItems = true;
+                    continue;
+                }
 
 
                 //如果這批 (addr, cmd) pairs裡面，有某個pair的cmdData目前不存在，就放入List內，待後續心跳持續30秒偵測該pair的group是否存在。
@@ -222,10 +235,16 @@
         foreach (var df in item.INFO_DataFormats)
         {
             string? value = null;
-            if (df.Addr is uint addr && !string.IsNullOrWhiteSpace(df.Cmd) &&
-                _latest.TryGetValue((addr, df.Cmd), out var v) && v is not null)
+            if (df.Addr is uint addr && !string.IsNullOrWhiteSpace(df.Cmd))
             {
-                value = FormatValue(v);
+                if (addr == 256)
+                {
+                    value = GetSystemInfoValue(df);
+                }
+                else if (_latest.TryGetValue((addr, df.Cmd), out var v) && v is not null)
+                {
+                    value = FormatValue(v);
+                }
             }
 
             df.UserSettingName = df.UserSettingName ?? "";
@@ -244,4 +263,28 @@
         IFormattable fmt => fmt.ToString(null, System.Globalization.CultureInfo.InvariantCulture),
         _ => v.ToString() ?? ""
     };
+
+    private string? GetSystemInfoValue(INFO_DataFormat df)
+    {
+        if (df is null)
+        {
+            return null;
+        }
+
+        var port = df.Port;
+        var protocol = df.Protocol;
+
+        if (string.IsNullOrWhiteSpace(port) || string.IsNullOrWhiteSpace(protocol))
+        {
+            AppLogger.Log_To_File_log(_category, $"[BlankInfoCard][GetSystemInfoValue] Port or Protocol missing for MachineName {df.MachineName}", AppLogLevel.Trace);
+            return null;
+        }
+
+        if (string.IsNullOrWhiteSpace(df.Cmd))
+        {
+            return null;
+        }
+
+        return globalVar.Get_Subsystem_Summary_Value(port, protocol, df.Cmd);
+    }
 }

@@ -43,10 +43,11 @@ namespace demoVer.Models
         CLOSE_ALL                       = 0,
         ADD_ROW_STAGE                   = 1,
         SELECT_ICON_STAGE               = 2,
-        SETTING_VALUE_AND_CMD_STAGE     = 3,
-        MACHINE_SELECTION_STAGE         = 4,
-        CMD_SELECTION_STAGE             = 5,
-        UNIT_SELECTION_STAGE            = 6,
+    SETTING_VALUE_AND_CMD_STAGE     = 3,
+    SUBSYSTEM_SELECTION_STAGE       = 4,
+    MACHINE_SELECTION_STAGE         = 5,
+    CMD_SELECTION_STAGE             = 6,
+    UNIT_SELECTION_STAGE            = 7,
     }
     
     public enum STATUS_SETTING_STAGE
@@ -80,16 +81,22 @@ namespace demoVer.Models
         public string? UserSettingName {get; set;}
         public string? Cmd {get; set;}
         public string? ValueName {get; set;}
-        public string? Unit  {get; set;} 
+        public string? Unit  {get; set;}
+        public string? Port {get; set;}
+        public string? Protocol {get; set;}
 
         public INFO_DataFormat DeepClone()
         {
             return new INFO_DataFormat
             {
                 MachineName = this.MachineName,
+                Addr = this.Addr,
+                UserSettingName = this.UserSettingName,
                 Cmd = this.Cmd,
                 ValueName = this.ValueName,
-                Unit = this.Unit
+                Unit = this.Unit,
+                Port = this.Port,
+                Protocol = this.Protocol
             };
         }
     }

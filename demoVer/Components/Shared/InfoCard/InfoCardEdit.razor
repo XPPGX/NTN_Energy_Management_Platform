@@ -163,35 +163,73 @@
 			</div>
 			break;
 
-		case INFO_SETTING_STAGE.MACHINE_SELECTION_STAGE:
-			<div class="card-table machine-selection-panel" style="width: 90%; max-height: 240px; overflow-y: auto;">
-				@foreach(var (port, protocol, realAddr, storingAddr) in port_protocol_realAddr_storingAddr_List)
+		case INFO_SETTING_STAGE.SUBSYSTEM_SELECTION_STAGE:
+			<h3>選擇子系統</h3>
+			<div class="card-table subsystem-selection-panel" style="width: 90%; max-height: 240px; overflow-y: auto;">
+				@if (subsystemOptions.Count == 0)
 				{
-					//addr : 0~255 為單一設備，256 為總覽
-					//realAddr : 真實地址，用於顯示, 0~63 配合 port顯示。
-
-					string displayName = $"[Addr {realAddr,2}]";
-					<div class="card-table-row machine-selection-item" @onclick="() => clickMachineName(port, protocol, storingAddr, displayName)" style="cursor: pointer;">
+					<div class="card-table-row subsystem-selection-item">
 						<div class="card-table-item">
-							<span class="card-table-label">@port</span>
-							<span class="card-table-value">@displayName</span>
+							<span class="card-table-label">尚未取得子系統資料</span>
 						</div>
 					</div>
 				}
-				@* @foreach (var (addr, modelName) in deviceAddr_List)
+				else
 				{
-					//addr : 0~255 為單一設備，256 為總覽
-					//realAddr : 真實地址，用於顯示, 0~63 配合 port顯示。
+					@foreach (var subsystem in subsystemOptions)
+					{
+						var key = BuildSubsystemKey(subsystem.Port, subsystem.Protocol);
+						var display = GetSubsystemDisplayName(subsystem);
+						<div class="card-table-row subsystem-selection-item @(string.Equals(selectedSubsystemKey, key, StringComparison.Ordinal) ? "selected" : string.Empty)"
+							 @onclick="() => OnSubsystemChosen(subsystem)"
+							 style="cursor: pointer;">
+							<div class="card-table-item">
+								<span class="card-table-label">@subsystem.Port</span>
+								<span class="card-table-value">@display</span>
+							</div>
+						</div>
+					}
+				}
+			</div>
+			break;
 
-					(string port, uint realAddr) = globalVar.Get_Port_RealAddr_ByAddr(addr);
-					string displayName = $"[Addr {realAddr,2}]  →  {modelName}";
-					<div class="card-table-row machine-selection-item" @onclick="() => clickMachineName(addr, displayName)" style="cursor: pointer;">
+		case INFO_SETTING_STAGE.MACHINE_SELECTION_STAGE:
+			<h3>選擇設備</h3>
+			<div class="card-table machine-selection-panel" style="width: 90%; max-height: 240px; overflow-y: auto;">
+				@if (port_protocol_realAddr_storingAddr_List.Count == 0)
+				{
+					<div class="card-table-row machine-selection-item">
 						<div class="card-table-item">
-							<span class="card-table-label">@port</span>
-							<span class="card-table-value">@displayName</span>
+							<span class="card-table-label">此子系統內沒有可選擇的設備</span>
 						</div>
 					</div>
-				} *@
+				}
+				else
+				{
+					string tmp_port = string.Empty;
+					string tmp_protocol = string.Empty;
+					(tmp_port, tmp_protocol) = splitSubsystemKey();
+
+					<div class="card-table-row machine-selection-item" @onclick="() => clickMachineName(tmp_port, tmp_protocol, 256, 256)" style="cursor: pointer;">
+						<div class="card-table-item">
+							<span class="card-table-label">@tmp_port</span>
+							<span class="card-table-value">@($"System Info")</span>
+						</div>
+					</div>
+					@foreach(var (port, protocol, realAddr, storingAddr) in port_protocol_realAddr_storingAddr_List)
+					{
+						//addr : 0~255 為單一設備，256 為總覽
+						//realAddr : 真實地址，用於顯示, 0~63 配合 port顯示。
+
+						string displayName = $"[Addr {realAddr:00}]";
+						<div class="card-table-row machine-selection-item" @onclick="() => clickMachineName(port, protocol, storingAddr, realAddr)" style="cursor: pointer;">
+							<div class="card-table-item">
+								<span class="card-table-label">@port</span>
+								<span class="card-table-value">@displayName</span>
+							</div>
+						</div>
+					}
+				}
 			</div>
 			break;
 
@@ -256,6 +294,9 @@
 
 	private List<(uint, string)> deviceAddr_List = new();
 	private List<(string, string, uint, uint)> port_protocol_realAddr_storingAddr_List = new();
+	private List<SubSystem> subsystemOptions = new();
+	private Dictionary<string, List<(string Port, string Protocol, uint RealAddr, uint StoringAddr)>> subsystemDeviceMap = new();
+	private string? selectedSubsystemKey;
 	private List<INFO_DataItem> edit_INFO_DataItems = new();
 	private string imgFolderPath = string.Empty;
 	private List<string> imgRelativePaths = new();
@@ -263,7 +304,16 @@
 
     private bool ItemIsOverFour => (edit_INFO_DataItems.Count >= 4) ? true : false;
 	private Dictionary<string, string> oneDevice_cmd_unit_Dict = new();
-	private Dictionary<string, string> Summary_cmd_unit_Dict = new();
+	private Dictionary<string, string> Summary_cmd_unit_Dict = new Dictionary<string, string>{
+		{"Input_V", "V"},
+		{"Input_F", "Hz"},
+		{"Output_V", "V"},
+		{"Output_F", "F"},
+		{"Output_I", "A"},
+		{"Output_Load", "%"},
+		{"Output_VA", "VA"},
+		{"Battery_V", "V"},
+	};
 	private Dictionary<string, string>? show_cmd_unit_Dict_ref;
 	private JObject? cmdDict;
 	private readonly string Cmd_filePath = "CMD_and_Unit.json";
@@ -307,6 +357,7 @@
 	{
 		if (HeartBeatCounter == 0)
 		{
+			refreshSubsystemOptions();
 			refreshPortAddrList();
 			@* refreshDevicesList(); *@
 		}
@@ -340,17 +391,221 @@
 		}
 	}
 
+	private static string BuildSubsystemKey(string port, string protocol) => $"{port}|{protocol}";
+	private (string, string) splitSubsystemKey()
+	{
+		if (string.IsNullOrEmpty(selectedSubsystemKey))
+		{
+			return (string.Empty, string.Empty);
+		}
+
+		var parts = selectedSubsystemKey.Split('|');
+		if (parts.Length != 2)
+		{
+			return (string.Empty, string.Empty);
+		}
+
+		return (parts[0], parts[1]); //port, protocol
+	}
+	private static string GetSubsystemDisplayName(SubSystem subsystem)
+	{
+		var protocolWithoutSubName = Path.GetFileNameWithoutExtension(subsystem.Protocol);
+		return protocolWithoutSubName;
+	}
+
+	private string ResolveSubsystemDisplayName(string port, string protocol)
+	{
+		var match = subsystemOptions.FirstOrDefault(subsys =>
+			string.Equals(subsys.Port, port, StringComparison.OrdinalIgnoreCase) &&
+			string.Equals(subsys.Protocol, protocol, StringComparison.OrdinalIgnoreCase));
+
+		if (match is not null)
+		{
+			var label = GetSubsystemDisplayName(match);
+			return string.IsNullOrWhiteSpace(match.Port)
+				? label
+				: string.IsNullOrWhiteSpace(label) ? match.Port : $"{match.Port} - {label}";
+		}
+
+		var protocolWithoutSubName = Path.GetFileNameWithoutExtension(protocol);
+		if (string.IsNullOrWhiteSpace(port))
+		{
+			return protocolWithoutSubName;
+		}
+		return string.IsNullOrWhiteSpace(protocolWithoutSubName) ? port : $"{port} - {protocolWithoutSubName}";
+	}
+
+	private string BuildMachineDisplayName(string port, string protocol, uint realAddr)
+	{
+		var subsystemDisplay = ResolveSubsystemDisplayName(port, protocol);
+		if(realAddr == 256)
+		{
+			return $"{subsystemDisplay} / System Info";
+		}
+		else if( realAddr < 256 && realAddr >= 0)
+		{
+			var addrDisplay = $"[Addr {realAddr:00}]";
+			return string.IsNullOrWhiteSpace(subsystemDisplay) ? addrDisplay : $"{subsystemDisplay} / {addrDisplay}";
+		}
+		else
+		{
+			return string.Empty;
+		}
+	}
+
 	private void refreshPortAddrList()
 	{
 		try
 		{
 			var tempPort_realAddr_storingAddr_List = globalVar.GetAllSubSys_PortAddrPair_InList_FromSubSysManager();
-			port_protocol_realAddr_storingAddr_List = tempPort_realAddr_storingAddr_List ?? new List<(string, string, uint, uint)>();
+			subsystemDeviceMap.Clear();
+			foreach (var (port, protocol, realAddr, storingAddr) in tempPort_realAddr_storingAddr_List)
+			{
+				var key = BuildSubsystemKey(port, protocol);
+				if (!subsystemDeviceMap.TryGetValue(key, out var list))
+				{
+					list = new List<(string Port, string Protocol, uint RealAddr, uint StoringAddr)>();
+					subsystemDeviceMap[key] = list;
+				}
+				list.Add((port, protocol, realAddr, storingAddr));
+			}
+
+			if (!string.IsNullOrEmpty(selectedSubsystemKey))
+			{
+				PrepareDevicesForSelectedSubsystem();
+			}
+			else
+			{
+				port_protocol_realAddr_storingAddr_List = new List<(string, string, uint, uint)>();
+			}
 		}
 		catch(Exception e)
 		{
 			AppLogger.Log_To_File_log(_category, $"[InfoCardEdit][refreshPortAddrList] Error : {e}", AppLogLevel.Error);
 		}
+	}
+
+	private void refreshSubsystemOptions()
+	{
+		try
+		{
+			var snapshot = globalVar.GetSubSystemsSnapshot();
+			subsystemOptions = snapshot?.ToList() ?? new List<SubSystem>();
+
+			if (!string.IsNullOrEmpty(selectedSubsystemKey))
+			{
+				bool stillExists = subsystemOptions.Any(subsys => string.Equals(BuildSubsystemKey(subsys.Port, subsys.Protocol), selectedSubsystemKey, StringComparison.Ordinal));
+				if (!stillExists)
+				{
+					selectedSubsystemKey = null;
+					port_protocol_realAddr_storingAddr_List = new List<(string, string, uint, uint)>();
+					currentSelected_Port = string.Empty;
+					currentSelected_Protocol = string.Empty;
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			AppLogger.Log_To_File_log(_category, $"[InfoCardEdit][refreshSubsystemOptions] Error : {e}", AppLogLevel.Error);
+		}
+	}
+
+	private void PrepareDevicesForSelectedSubsystem()
+	{
+		if (string.IsNullOrEmpty(selectedSubsystemKey))
+		{
+			port_protocol_realAddr_storingAddr_List = new List<(string, string, uint, uint)>();
+			return;
+		}
+
+		if (subsystemDeviceMap.TryGetValue(selectedSubsystemKey, out var devices))
+		{
+			port_protocol_realAddr_storingAddr_List = devices
+				.Select(d => (d.Port, d.Protocol, d.RealAddr, d.StoringAddr))
+				.ToList();
+		}
+		else
+		{
+			port_protocol_realAddr_storingAddr_List = new List<(string, string, uint, uint)>();
+		}
+	}
+
+	private void EnsureSubsystemSelectionFromAddr(uint storingAddr)
+	{
+		if (storingAddr == 9999)
+		{
+			return;
+		}
+
+		if (storingAddr == 256)
+		{
+			if (currentEdit_INFO_DataFormat_ref is not null &&
+				!string.IsNullOrWhiteSpace(currentEdit_INFO_DataFormat_ref.Port) &&
+				!string.IsNullOrWhiteSpace(currentEdit_INFO_DataFormat_ref.Protocol))
+			{
+				selectedSubsystemKey = BuildSubsystemKey(currentEdit_INFO_DataFormat_ref.Port!, currentEdit_INFO_DataFormat_ref.Protocol!);
+				currentSelected_Port = currentEdit_INFO_DataFormat_ref.Port!;
+				currentSelected_Protocol = currentEdit_INFO_DataFormat_ref.Protocol!;
+				currentSelected_Addr = 256;
+				PrepareDevicesForSelectedSubsystem();
+				currentEdit_INFO_DataFormat_ref.MachineName = BuildMachineDisplayName(currentSelected_Port, currentSelected_Protocol, 256);
+			}
+			else
+			{
+				currentSelected_Port = string.Empty;
+				currentSelected_Protocol = string.Empty;
+				currentSelected_Addr = 256;
+			}
+			return;
+		}
+
+		foreach (var kvp in subsystemDeviceMap)
+		{
+			foreach (var device in kvp.Value)
+			{
+				if (device.StoringAddr == storingAddr)
+				{
+					selectedSubsystemKey = kvp.Key;
+					currentSelected_Port = device.Port;
+					currentSelected_Protocol = device.Protocol;
+					PrepareDevicesForSelectedSubsystem();
+					if (currentEdit_INFO_DataFormat_ref is not null)
+					{
+						currentEdit_INFO_DataFormat_ref.MachineName = BuildMachineDisplayName(device.Port, device.Protocol, device.RealAddr);
+						currentEdit_INFO_DataFormat_ref.Addr = device.StoringAddr;
+						currentEdit_INFO_DataFormat_ref.Port = device.Port;
+						currentEdit_INFO_DataFormat_ref.Protocol = device.Protocol;
+					}
+					currentSelected_Addr = device.StoringAddr;
+					return;
+				}
+			}
+		}
+
+		currentSelected_Port = string.Empty;
+		currentSelected_Protocol = string.Empty;
+		currentSelected_Addr = 9999;
+	}
+
+	private void OnSubsystemChosen(SubSystem subsystem)
+	{
+		var newKey = BuildSubsystemKey(subsystem.Port, subsystem.Protocol);
+		bool isDifferent = !string.Equals(selectedSubsystemKey, newKey, StringComparison.Ordinal);
+		selectedSubsystemKey = newKey;
+		currentSelected_Port = subsystem.Port;
+		currentSelected_Protocol = subsystem.Protocol;
+		if (isDifferent && currentEdit_INFO_DataFormat_ref is not null)
+		{
+			currentEdit_INFO_DataFormat_ref.MachineName = string.Empty;
+			currentEdit_INFO_DataFormat_ref.Addr = null;
+			currentEdit_INFO_DataFormat_ref.Cmd = string.Empty;
+			currentEdit_INFO_DataFormat_ref.Unit = string.Empty;
+			currentEdit_INFO_DataFormat_ref.Port = null;
+			currentEdit_INFO_DataFormat_ref.Protocol = null;
+			currentSelected_Addr = 9999;
+		}
+		PrepareDevicesForSelectedSubsystem();
+		INFO_setting_stage = INFO_SETTING_STAGE.MACHINE_SELECTION_STAGE;
 	}
 
 	private void getImgFiles()
@@ -377,6 +632,11 @@
 			}
 			else if (currentSelected_Addr < 256)
 			{
+				if (string.IsNullOrEmpty(currentSelected_Port) || string.IsNullOrEmpty(currentSelected_Protocol))
+				{
+					AppLogger.Log_To_File_log(_category, "[InfoCardEdit][getCMDs] currentSelected_Port or Protocol is empty", AppLogLevel.Information);
+					return false;
+				}
 				if (oneDevice_cmd_unit_Dict != null)
 				{
 					oneDevice_cmd_unit_Dict.Clear();
@@ -531,10 +791,17 @@
 
 		try
 		{
-			if (!string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.MachineName) &&
-				TryParseAddr_fromAddrModelName(currentEdit_INFO_DataFormat_ref.MachineName, out var addr))
+			refreshSubsystemOptions();
+			refreshPortAddrList();
+			if (currentEdit_INFO_DataFormat_ref.Addr is uint storedAddr)
 			{
-				currentSelected_Addr = addr;
+				EnsureSubsystemSelectionFromAddr(storedAddr);
+			}
+
+			if (!string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.MachineName) &&
+				TryParseAddr_fromAddrModelName(currentEdit_INFO_DataFormat_ref.MachineName, out var parsedRealAddr))
+			{
+				currentSelected_Addr = currentEdit_INFO_DataFormat_ref.Addr ?? parsedRealAddr;
 				_ = getCMDs();
 			}
 		}
@@ -548,17 +815,20 @@
 
 	private void selectMachine()
 	{
-		@* if (deviceAddr_List.Count == 0)
-		{
-			return;
-		} *@
+		refreshSubsystemOptions();
+		refreshPortAddrList();
 
-		if(port_protocol_realAddr_storingAddr_List.Count == 0)
+		if (currentEdit_INFO_DataFormat_ref?.Addr is uint storedAddr)
+		{
+			EnsureSubsystemSelectionFromAddr(storedAddr);
+		}
+
+		if (subsystemOptions.Count == 0)
 		{
 			return;
 		}
 
-		INFO_setting_stage = INFO_SETTING_STAGE.MACHINE_SELECTION_STAGE;
+		INFO_setting_stage = INFO_SETTING_STAGE.SUBSYSTEM_SELECTION_STAGE;
 	}
 
 	private void selectCMD()
@@ -618,29 +888,44 @@
 			return false;
 		}
 
-		var span = addrModelName.AsSpan(l + 1, r - l - 1).Trim();
-		return uint.TryParse(span, out value);
+		var inner = addrModelName.Substring(l + 1, r - l - 1);
+		var digits = new string(inner.Where(char.IsDigit).ToArray());
+		if (string.IsNullOrEmpty(digits))
+		{
+			return false;
+		}
+		return uint.TryParse(digits, out value);
 	}
 
-	private void clickMachineName(string port, string protocol, uint addr, string selectedDisplay_str)
+	private void clickMachineName(string port, string protocol, uint storingAddr, uint realAddr)
 	{
 		if (currentEdit_INFO_DataFormat_ref == null)
 		{
 			return;
 		}
-		var modelName = selectedDisplay_str;
+		var modelName = BuildMachineDisplayName(port, protocol, realAddr);
 
 		if (!string.Equals(currentEdit_INFO_DataFormat_ref.MachineName, modelName, StringComparison.Ordinal))
 		{
 			currentEdit_INFO_DataFormat_ref.MachineName = modelName;
-			currentEdit_INFO_DataFormat_ref.Addr = addr;
+			currentEdit_INFO_DataFormat_ref.Addr = storingAddr;
 			currentEdit_INFO_DataFormat_ref.Cmd = string.Empty;
 			currentEdit_INFO_DataFormat_ref.Unit = string.Empty;
 		}
 
-		currentSelected_Addr = addr;
+		if (currentEdit_INFO_DataFormat_ref.Port != port)
+		{
+			currentEdit_INFO_DataFormat_ref.Port = port;
+		}
+		if (currentEdit_INFO_DataFormat_ref.Protocol != protocol)
+		{
+			currentEdit_INFO_DataFormat_ref.Protocol = protocol;
+		}
+
+		currentSelected_Addr = storingAddr;
 		currentSelected_Port = port;
 		currentSelected_Protocol = protocol;
+		selectedSubsystemKey = BuildSubsystemKey(port, protocol);
 		INFO_setting_stage = INFO_SETTING_STAGE.SETTING_VALUE_AND_CMD_STAGE;
 	}
 

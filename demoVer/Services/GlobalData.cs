@@ -294,6 +294,26 @@ namespace demoVer.Services
             return _subSystemManager.GetCmd_Unit_Dict_InOneSubSystem(port, protocol);
         }
 
+        public string? Get_Subsystem_Summary_Value(string port, string protocol, string cmdName)
+        {
+            try
+            {
+                var subsys = _subSystemManager.GetOneSubSystem_Ref(port, protocol);
+                if (subsys is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[GlobalData][Get_Subsystem_Summary_Value] SubSystem not found for (port, protocol) = ({port}, {protocol})", AppLogLevel.Trace);
+                    return null;
+                }
+
+                return subsys.GetSummaryValue(cmdName);
+            }
+            catch (Exception e)
+            {
+                AppLogger.Log_To_File_log(_category, $"[GlobalData][Get_Subsystem_Summary_Value] Error : {e}", AppLogLevel.Error);
+                return null;
+            }
+        }
+
         public List<(uint, string)>? Get_addr_and_ModelNames_List()
         {
             try

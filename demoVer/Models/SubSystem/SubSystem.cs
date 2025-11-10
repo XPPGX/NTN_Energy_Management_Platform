@@ -339,6 +339,10 @@ namespace demoVer.Models
             Compute_INV_OP_VA(onlineDevicesDatas);
             // AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeOverallValues_in_SubSystem] ({this.Port}, {this.Protocol}) INV_OP_VA : {ComputedVals.INV_OP_VA}", AppLogLevel.Debug);
 
+            //更新 VBAT
+            Compute_INV_VBAT(onlineDevicesDatas);
+            // AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeOverallValues_in_SubSystem] ({this.Port}, {this.Protocol}) INV_VBAT : {ComputedVals.INV_VBAT}", AppLogLevel.Debug);
+            
             //取得 ArrowDirections
             ArrowDirections = ArrowDirectionHelper.Resolve(ComputedVals.nowMode, AC_Charger_Enable, AC_StandBy);
 
@@ -882,38 +886,38 @@ namespace demoVer.Models
                     continue;
                 }
 
-                //3. 取單台的 OP_VA
-                var oneDevice_OP_VA_val = ((double?)oneDevice_Data.parseCmdData("OP_VA")) ?? 0.0;
+                //3. 取單台的 READ_OP_VA
+                var oneDevice_READ_OP_VA_val = ((double?)oneDevice_Data.parseCmdData("READ_OP_VA")) ?? 0.0;
 
                 //4. 計算單台的 INV_Current
-                double oneDevice_INV_Current_val = oneDevice_OP_VA_val / ((oneDevice_READ_AC_VOUT_val == 0.0) ? 1.0 : oneDevice_READ_AC_VOUT_val);
+                double oneDevice_INV_Current_val = oneDevice_READ_OP_VA_val / ((oneDevice_READ_AC_VOUT_val == 0.0) ? 1.0 : oneDevice_READ_AC_VOUT_val);
                 oneDevice_INV_Current_val = (oneDevice_INV_Current_val < 0.5) ? 0.0 : oneDevice_INV_Current_val; //過濾過小的電流值
 
                 switch (oneDevice_Phase)
                 {
                     case ConstDefinition.INV_Phase_Options.PHASE_0:
                         tmp_phase_0 += oneDevice_INV_Current_val;
-                        // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_A] Device Addr {oneDevice_Data.addr} Phase 0 INV_OP_A : {oneDevice_READ_AC_VOUT_val}, OP_VA : {oneDevice_OP_VA_val}, tmp_phase_0 accumulated to {tmp_phase_0}", AppLogLevel.Debug);
+                        // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_A] Device Addr {oneDevice_Data.addr} Phase 0 INV_AC_VOUT : {oneDevice_READ_AC_VOUT_val}, READ_OP_VA : {oneDevice_READ_OP_VA_val}, tmp_phase_0 accumulated to {tmp_phase_0}", AppLogLevel.Debug);
                         break;
                     case ConstDefinition.INV_Phase_Options.PHASE_180:
                         if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_TWO_PHASE)
                         {
                             tmp_phase_180 += oneDevice_INV_Current_val;
-                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_A] Device Addr {oneDevice_Data.addr} Phase 180 INV_OP_A : {oneDevice_READ_AC_VOUT_val}, OP_VA : {oneDevice_OP_VA_val}, tmp_phase_180 accumulated to {tmp_phase_180}", AppLogLevel.Debug);
+                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_A] Device Addr {oneDevice_Data.addr} Phase 180 INV_AC_VOUT : {oneDevice_READ_AC_VOUT_val}, READ_OP_VA : {oneDevice_READ_OP_VA_val}, tmp_phase_180 accumulated to {tmp_phase_180}", AppLogLevel.Debug);
                         }
                         break;
                     case ConstDefinition.INV_Phase_Options.PHASE_120:
                         if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE)
                         {
                             tmp_phase_120 += oneDevice_INV_Current_val;
-                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_A] Device Addr {oneDevice_Data.addr} Phase 120 INV_OP_A : {oneDevice_READ_AC_VOUT_val}, OP_VA : {oneDevice_OP_VA_val}, tmp_phase_120 accumulated to {tmp_phase_120}", AppLogLevel.Debug);
+                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_A] Device Addr {oneDevice_Data.addr} Phase 120 INV_AC_VOUT : {oneDevice_READ_AC_VOUT_val}, READ_OP_VA : {oneDevice_READ_OP_VA_val}, tmp_phase_120 accumulated to {tmp_phase_120}", AppLogLevel.Debug);
                         }
                         break;
                     case ConstDefinition.INV_Phase_Options.PHASE_240:
                         if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE)
                         {
                             tmp_phase_240 += oneDevice_INV_Current_val;
-                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_A] Device Addr {oneDevice_Data.addr} Phase 240 INV_OP_A : {oneDevice_READ_AC_VOUT_val}, OP_VA : {oneDevice_OP_VA_val}, tmp_phase_240 accumulated to {tmp_phase_240}", AppLogLevel.Debug);
+                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_A] Device Addr {oneDevice_Data.addr} Phase 240 INV_AC_VOUT : {oneDevice_READ_AC_VOUT_val}, READ_OP_VA : {oneDevice_READ_OP_VA_val}, tmp_phase_240 accumulated to {tmp_phase_240}", AppLogLevel.Debug);
                         }
                         break;
                     default:
@@ -973,7 +977,7 @@ namespace demoVer.Models
             double tmp_phase_180 = 0.0;
             double tmp_phase_120 = 0.0;
             double tmp_phase_240 = 0.0;
-        
+
             foreach (var oneDevice_Data in onlineDevicesDatas)
             {
                 //1. 取單台的Phase
@@ -987,31 +991,32 @@ namespace demoVer.Models
 
                 //2. 取單台的 READ_OP_VA
                 var oneDevice_OP_VA_val = ((double?)oneDevice_Data.parseCmdData("READ_OP_VA")) ?? 0.0;
-                switch(oneDevice_Phase)
+
+                switch (oneDevice_Phase)
                 {
                     case ConstDefinition.INV_Phase_Options.PHASE_0:
                         tmp_phase_0 += oneDevice_OP_VA_val;
-                        // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_VA] Device Addr {oneDevice_Data.addr} Phase 0 READ_OP_VA : {oneDevice_OP_VA_val}, tmp_phase_0 accumulated to {tmp_phase_0}", AppLogLevel.Debug);
+                        AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_VA] Device Addr {oneDevice_Data.addr} Phase 0 READ_OP_VA : {oneDevice_OP_VA_val}, tmp_phase_0 accumulated to {tmp_phase_0}", AppLogLevel.Debug);
                         break;
                     case ConstDefinition.INV_Phase_Options.PHASE_180:
                         if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_TWO_PHASE)
                         {
                             tmp_phase_180 += oneDevice_OP_VA_val;
-                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_VA] Device Addr {oneDevice_Data.addr} Phase 180 READ_OP_VA : {oneDevice_OP_VA_val}, tmp_phase_180 accumulated to {tmp_phase_180}", AppLogLevel.Debug);
+                            AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_VA] Device Addr {oneDevice_Data.addr} Phase 180 READ_OP_VA : {oneDevice_OP_VA_val}, tmp_phase_180 accumulated to {tmp_phase_180}", AppLogLevel.Debug);
                         }
                         break;
                     case ConstDefinition.INV_Phase_Options.PHASE_120:
                         if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE)
                         {
                             tmp_phase_120 += oneDevice_OP_VA_val;
-                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_VA] Device Addr {oneDevice_Data.addr} Phase 120 READ_OP_VA : {oneDevice_OP_VA_val}, tmp_phase_120 accumulated to {tmp_phase_120}", AppLogLevel.Debug);
+                            AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_VA] Device Addr {oneDevice_Data.addr} Phase 120 READ_OP_VA : {oneDevice_OP_VA_val}, tmp_phase_120 accumulated to {tmp_phase_120}", AppLogLevel.Debug);
                         }
                         break;
                     case ConstDefinition.INV_Phase_Options.PHASE_240:
                         if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE)
                         {
                             tmp_phase_240 += oneDevice_OP_VA_val;
-                            // AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_VA] Device Addr {oneDevice_Data.addr} Phase 240 READ_OP_VA : {oneDevice_OP_VA_val}, tmp_phase_240 accumulated to {tmp_phase_240}", AppLogLevel.Debug);
+                            AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_VA] Device Addr {oneDevice_Data.addr} Phase 240 READ_OP_VA : {oneDevice_OP_VA_val}, tmp_phase_240 accumulated to {tmp_phase_240}", AppLogLevel.Debug);
                         }
                         break;
                     default:
@@ -1024,7 +1029,7 @@ namespace demoVer.Models
             tmp_phase_120 = (tmp_phase_120 < 500.0) ? 0.0 : tmp_phase_120;
             tmp_phase_240 = (tmp_phase_240 < 500.0) ? 0.0 : tmp_phase_240;
 
-            switch(ComputedVals.nowPhase)
+            switch (ComputedVals.nowPhase)
             {
                 case ConstDefinition.INV_Phase_SubSys.INV_SINGLE_PHASE:
                     //只計算 Phase 0，其他相位設為0
@@ -1052,7 +1057,35 @@ namespace demoVer.Models
             }
         }
 
+        public void Compute_INV_VBAT(List<Real_SingleDeviceData_JsonFormat> onlineDevicesDatas)
+        {
+            double tmp_VBAT = 0.0;
+            foreach (var oneDevice_Data in onlineDevicesDatas)
+            {
+                //1. 取單台的 READ_VBAT
+                var oneDevice_READ_VBAT_val = ((double?)oneDevice_Data.parseCmdData("READ_VBAT")) ?? 0.0;
+                tmp_VBAT = (oneDevice_READ_VBAT_val > tmp_VBAT) ? oneDevice_READ_VBAT_val : tmp_VBAT;
+            }
+
+            ComputedVals.V_BAT = tmp_VBAT;
+        }
         #endregion Computed In SubSystem
+
+        public string? GetSummaryValue(string cmdName)
+        {
+            return cmdName switch
+            {
+                "Input_V" => ComputedVals.getINV_IP_V_str(),
+                "Input_F" => ComputedVals.getINV_IP_F_str(),
+                "Output_V" => ComputedVals.getINV_OP_V_str(),
+                "Output_F" => ComputedVals.getINV_OP_F_str(),
+                "Output_I" => ComputedVals.getINV_OP_I_str(),
+                "Output_Load" => ComputedVals.getINV_OP_Load_str(),
+                "Output_VA" => ComputedVals.getINV_OP_VA_str(),
+                "Battery_V" => ComputedVals.getINV_VBAT_str(),
+                _ => null
+            };
+        }
     }
 
     public class ComputedValues_In_SubSystem
@@ -1068,10 +1101,104 @@ namespace demoVer.Models
         public PhasesVar INV_OP_A { get; set; } = new PhasesVar();
         public PhasesVar INV_OP_VA { get; set; } = new PhasesVar();
         public double INV_OP_Load { get; set; } = 0.0;
+        public double V_BAT { get; set; } = 0.0;
 
         public void setMode(ConstDefinition.SYS_Mode_Options mode) => this.nowMode = mode;
         public void setPhase(ConstDefinition.INV_Phase_SubSys phase) => this.nowPhase = phase;
 
+        public string getINV_IP_V_str()
+        {
+            switch (nowPhase)
+            {
+                case ConstDefinition.INV_Phase_SubSys.INV_SINGLE_PHASE:
+                    return $"R: {INV_IP_V.Phase_0:F2}";
+                case ConstDefinition.INV_Phase_SubSys.INV_TWO_PHASE:
+                    return $"R: {INV_IP_V.Phase_0:F2}, S: {INV_IP_V.Phase_180:F2}";
+                case ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE:
+                    return $"R: {INV_IP_V.Phase_0:F2}, T1: {INV_IP_V.Phase_120:F2}, T2: {INV_IP_V.Phase_240:F2}";
+                default:
+                    return $"N/A";
+            }
+        }
+
+        public string getINV_IP_F_str()
+        {
+            switch (nowPhase)
+            {
+                case ConstDefinition.INV_Phase_SubSys.INV_SINGLE_PHASE:
+                    return $"R: {INV_IP_F.Phase_0:F2}";
+                case ConstDefinition.INV_Phase_SubSys.INV_TWO_PHASE:
+                    return $"R: {INV_IP_F.Phase_0:F2}, S: {INV_IP_F.Phase_180:F2}";
+                case ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE:
+                    return $"R: {INV_IP_F.Phase_0:F2}, T1: {INV_IP_F.Phase_120:F2}, T2: {INV_IP_F.Phase_240:F2}";
+                default:
+                    return $"N/A";
+            }
+        }
+        public string getINV_OP_V_str()
+        {
+            switch (nowPhase)
+            {
+                case ConstDefinition.INV_Phase_SubSys.INV_SINGLE_PHASE:
+                    return $"R: {INV_OP_V.Phase_0:F2}";
+                case ConstDefinition.INV_Phase_SubSys.INV_TWO_PHASE:
+                    return $"R: {INV_OP_V.Phase_0:F2}, S: {INV_OP_V.Phase_180:F2}";
+                case ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE:
+                    return $"R: {INV_OP_V.Phase_0:F2}, T1: {INV_OP_V.Phase_120:F2}, T2: {INV_OP_V.Phase_240:F2}";
+                default:
+                    return $"N/A";
+            }
+        }
+        public string getINV_OP_F_str()
+        {
+            switch (nowPhase)
+            {
+                case ConstDefinition.INV_Phase_SubSys.INV_SINGLE_PHASE:
+                    return $"R: {INV_OP_F.Phase_0:F2}";
+                case ConstDefinition.INV_Phase_SubSys.INV_TWO_PHASE:
+                    return $"R: {INV_OP_F.Phase_0:F2}, S: {INV_OP_F.Phase_180:F2}";
+                case ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE:
+                    return $"R: {INV_OP_F.Phase_0:F2}, T1: {INV_OP_F.Phase_120:F2}, T2: {INV_OP_F.Phase_240:F2}";
+                default:
+                    return $"N/A";
+            }
+        }
+        public string getINV_OP_I_str()
+        {
+            switch (nowPhase)
+            {
+                case ConstDefinition.INV_Phase_SubSys.INV_SINGLE_PHASE:
+                    return $"R: {INV_OP_A.Phase_0:F2}";
+                case ConstDefinition.INV_Phase_SubSys.INV_TWO_PHASE:
+                    return $"R: {INV_OP_A.Phase_0:F2}, S: {INV_OP_A.Phase_180:F2}";
+                case ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE:
+                    return $"R: {INV_OP_A.Phase_0:F2}, T1: {INV_OP_A.Phase_120:F2}, T2: {INV_OP_A.Phase_240:F2}";
+                default:
+                    return $"N/A";
+            }
+        }
+        public string getINV_OP_Load_str()
+        {
+            return $"{INV_OP_Load:F2}";
+        }
+        public string getINV_OP_VA_str()
+        {
+            switch (nowPhase)
+            {
+                case ConstDefinition.INV_Phase_SubSys.INV_SINGLE_PHASE:
+                    return $"R: {INV_OP_VA.Phase_0:F2}";
+                case ConstDefinition.INV_Phase_SubSys.INV_TWO_PHASE:
+                    return $"R: {INV_OP_VA.Phase_0:F2}, S: {INV_OP_VA.Phase_180:F2}";
+                case ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE:
+                    return $"R: {INV_OP_VA.Phase_0:F2}, T1: {INV_OP_VA.Phase_120:F2}, T2: {INV_OP_VA.Phase_240:F2}";
+                default:
+                    return $"N/A";
+            }
+        }
+        public string getINV_VBAT_str()
+        {
+            return $"{V_BAT:F2}";
+        }
     }
 
     public class PhasesVar

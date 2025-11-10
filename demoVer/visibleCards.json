@@ -16,7 +16,9 @@
             "UserSettingName": "DEV1",
             "Cmd": "MFR_MODEL",
             "ValueName": "mdlName",
-            "Unit": ""
+            "Unit": "",
+            "Port": null,
+            "Protocol": null
           }
         ]
       },
@@ -30,7 +32,9 @@
             "UserSettingName": "DEV1",
             "Cmd": "READ_VIN",
             "ValueName": "VIN",
-            "Unit": "V"
+            "Unit": "V",
+            "Port": null,
+            "Protocol": null
           }
         ]
       },
@@ -44,7 +48,9 @@
             "UserSettingName": "DEV1",
             "Cmd": "READ_AC_VOUT",
             "ValueName": "VOUT",
-            "Unit": "V"
+            "Unit": "V",
+            "Port": null,
+            "Protocol": null
           }
         ]
       },
@@ -58,7 +64,9 @@
             "UserSettingName": "DEV1",
             "Cmd": "READ_FAN_SPEED_1",
             "ValueName": "FAN1",
-            "Unit": "RPM"
+            "Unit": "RPM",
+            "Port": null,
+            "Protocol": null
           }
         ]
       }
@@ -92,7 +100,7 @@
         "Label": "Battery"
       }
     ],
-    "SelectedSubsystemKey": "CAN1|NTN-5K_CAN.json",
+    "SelectedSubsystemKey": "CAN2|NTN-5K_CAN.json",
     "Chart_Setting": null
   },
   {
@@ -112,7 +120,9 @@
             "UserSettingName": "DEV1",
             "Cmd": "MFR_MODEL",
             "ValueName": "mdlName",
-            "Unit": ""
+            "Unit": "",
+            "Port": null,
+            "Protocol": null
           }
         ]
       },
@@ -126,7 +136,9 @@
             "UserSettingName": "DEV1",
             "Cmd": "READ_VIN",
             "ValueName": "VIN",
-            "Unit": "V"
+            "Unit": "V",
+            "Port": null,
+            "Protocol": null
           }
         ]
       },
@@ -140,7 +152,9 @@
             "UserSettingName": "DEV1",
             "Cmd": "READ_AC_VOUT",
             "ValueName": "VOUT",
-            "Unit": "V"
+            "Unit": "V",
+            "Port": null,
+            "Protocol": null
           }
         ]
       },
@@ -154,7 +168,9 @@
             "UserSettingName": "DEV1",
             "Cmd": "READ_FAN_SPEED_1",
             "ValueName": "FAN1",
-            "Unit": "RPM"
+            "Unit": "RPM",
+            "Port": null,
+            "Protocol": null
           }
         ]
       }
@@ -180,7 +196,9 @@
             "UserSettingName": "device1",
             "Cmd": "MFR_MODEL",
             "ValueName": "mdlName",
-            "Unit": ""
+            "Unit": "",
+            "Port": null,
+            "Protocol": null
           }
         ]
       },
@@ -194,7 +212,9 @@
             "UserSettingName": "device",
             "Cmd": "READ_VIN",
             "ValueName": "VIN",
-            "Unit": "V"
+            "Unit": "V",
+            "Port": null,
+            "Protocol": null
           }
         ]
       },
@@ -208,7 +228,9 @@
             "UserSettingName": "device1",
             "Cmd": "READ_FAN_SPEED_1",
             "ValueName": "FAN",
-            "Unit": "RPM"
+            "Unit": "RPM",
+            "Port": null,
+            "Protocol": null
           }
         ]
       },
@@ -222,7 +244,9 @@
             "UserSettingName": "device",
             "Cmd": "READ_AC_VOUT",
             "ValueName": "VOUT",
-            "Unit": "V"
+            "Unit": "V",
+            "Port": null,
+            "Protocol": null
           }
         ]
       }
@@ -246,36 +270,36 @@
       "XTitle": "\u6642\u9593",
       "timeGap_selection": 0,
       "Labels": [
-        "13:51:03",
-        "13:51:04",
-        "13:51:05",
-        "13:51:06",
-        "13:51:07",
-        "13:51:08",
-        "09:50:45",
-        "09:50:46",
-        "09:50:47",
-        "09:50:48",
-        "09:50:49",
-        "09:50:50",
-        "09:50:51",
-        "09:50:52",
-        "09:50:53",
-        "09:50:54",
-        "09:50:55",
-        "09:50:56",
-        "09:50:57",
-        "09:50:59",
-        "09:51:00",
-        "09:51:01",
-        "09:51:02",
-        "09:51:03",
-        "09:51:04",
-        "09:51:05",
-        "09:51:06",
-        "09:51:07",
-        "09:51:08",
-        "09:51:09"
+        "14:49:25",
+        "14:49:26",
+        "14:49:27",
+        "14:49:28",
+        "14:49:29",
+        "14:49:30",
+        "14:49:31",
+        "14:49:32",
+        "14:49:33",
+        "14:49:34",
+        "14:49:35",
+        "14:49:36",
+        "14:49:37",
+        "14:49:38",
+        "14:49:39",
+        "14:49:40",
+        "14:49:41",
+        "14:49:43",
+        "14:49:44",
+        "14:49:45",
+        "14:49:46",
+        "14:49:47",
+        "14:49:48",
+        "14:49:49",
+        "14:49:50",
+        "14:49:51",
+        "14:49:52",
+        "14:49:53",
+        "14:49:54",
+        "14:49:55"
       ],
       "Y_left_Title": "IIN",
       "Y_right_Title": "VIN",
@@ -291,36 +315,36 @@
           "Y_axis_selection": false,
           "color": "#12f368",
           "Data": [
-            506.92,
-            835.01,
-            72.28,
-            458.41,
-            458.41,
-            841.97,
-            152.79,
-            152.79,
-            854.84,
-            913.74,
-            913.74,
-            510.79,
-            344.49,
-            344.49,
-            651.25,
-            461.73,
-            461.73,
-            742.84,
-            322.72,
-            322.72,
-            431.1,
-            721.36,
-            721.36,
-            688.09,
-            85.03,
-            85.03,
-            555.11,
-            357.91,
-            357.91,
-            885.79
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8,
+            109.8
           ]
         },
         {
@@ -332,36 +356,36 @@
           "Y_axis_selection": true,
           "color": "#e40707",
           "Data": [
-            898.04,
-            337.35,
-            830.47,
-            748.98,
-            748.98,
-            377.65,
-            184.08,
-            184.08,
-            361.02,
-            871.67,
-            871.67,
-            577.93,
-            252.34,
-            252.34,
-            539.69,
-            678.05,
-            678.05,
-            967.12,
-            689.65,
-            689.65,
-            415.44,
-            184.13,
-            184.13,
-            868.6,
-            383,
-            383,
-            920.93,
-            864.46,
-            864.46,
-            200.66
+            234.53,
+            140.17,
+            140.17,
+            740.9,
+            895.51,
+            569.43,
+            569.43,
+            942.89,
+            439.81,
+            439.81,
+            802.11,
+            964.64,
+            624.92,
+            624.92,
+            222.36,
+            878.17,
+            234.56,
+            234.56,
+            380.72,
+            434.86,
+            434.86,
+            843.81,
+            220.43,
+            220.43,
+            991.12,
+            281.16,
+            942.7,
+            942.7,
+            122.52,
+            742.54
           ]
         }
       ]
@@ -384,7 +408,9 @@
             "UserSettingName": "DEV1",
             "Cmd": "MFR_MODEL",
             "ValueName": "MODEL",
-            "Unit": ""
+            "Unit": "",
+            "Port": null,
+            "Protocol": null
           }
         ]
       },
@@ -398,7 +424,9 @@
             "UserSettingName": "DEV1",
             "Cmd": "READ_VIN",
             "ValueName": "VIN1",
-            "Unit": "V"
+            "Unit": "V",
+            "Port": null,
+            "Protocol": null
           }
         ]
       },
@@ -412,7 +440,9 @@
             "UserSettingName": "DEV1",
             "Cmd": "READ_AC_VOUT",
             "ValueName": "VOUT",
-            "Unit": "V"
+            "Unit": "V",
+            "Port": null,
+            "Protocol": null
           }
         ]
       },
@@ -426,7 +456,85 @@
             "UserSettingName": "DEV1",
             "Cmd": "READ_FAN_SPEED_1",
             "ValueName": "FAN1",
-            "Unit": "RPM"
+            "Unit": "RPM",
+            "Port": null,
+            "Protocol": null
+          }
+        ]
+      }
+    ],
+    "Link_STATUS_Pairs": null,
+    "SelectedSubsystemKey": null,
+    "Chart_Setting": null
+  },
+  {
+    "ID": "c06c70c5d679422bb252c266e714330f",
+    "card_Type": 1,
+    "widthClass": "w25",
+    "showSequence": 6,
+    "cardName": "CAN1 NTN-5K-SubSys",
+    "Info_DataItems": [
+      {
+        "iconPath": null,
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "CAN1 - NTN-5K_CAN / System Info",
+            "Addr": 256,
+            "UserSettingName": "System",
+            "Cmd": "Input_V",
+            "ValueName": "INPUT_V",
+            "Unit": "V",
+            "Port": "CAN1",
+            "Protocol": "NTN-5K_CAN.json"
+          }
+        ]
+      },
+      {
+        "iconPath": null,
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "CAN1 - NTN-5K_CAN / System Info",
+            "Addr": 256,
+            "UserSettingName": "System",
+            "Cmd": "Input_F",
+            "ValueName": "INPUT_F",
+            "Unit": "Hz",
+            "Port": "CAN1",
+            "Protocol": "NTN-5K_CAN.json"
+          }
+        ]
+      },
+      {
+        "iconPath": null,
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "CAN1 - NTN-5K_CAN / System Info",
+            "Addr": 256,
+            "UserSettingName": "System",
+            "Cmd": "Output_VA",
+            "ValueName": "OUPUT_VA",
+            "Unit": "VA",
+            "Port": "CAN1",
+            "Protocol": "NTN-5K_CAN.json"
+          }
+        ]
+      },
+      {
+        "iconPath": null,
+        "status": 3,
+        "INFO_DataFormats": [
+          {
+            "MachineName": "CAN1 - NTN-5K_CAN / System Info",
+            "Addr": 256,
+            "UserSettingName": "System",
+            "Cmd": "Output_I",
+            "ValueName": "OUTPUT_I",
+            "Unit": "A",
+            "Port": "CAN1",
+            "Protocol": "NTN-5K_CAN.json"
           }
         ]
       }

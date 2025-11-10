@@ -78,6 +78,9 @@ INV_STATUS_PHASE_BY_PORT_ADDR = {
         "7": "Phase 0",
         "10": "Phase 240°",
     },
+    "CAN2":{
+        "0": "Phase 0°",
+    }
 }
 
 READ_REAL_VALUE_OVERRIDES = {
@@ -88,6 +91,15 @@ READ_REAL_VALUE_OVERRIDES = {
             "2": 110.0,
             "7": 200,
             "10" : 200
+        }
+    },
+    "READ_OP_VA":{
+        "CAN1":{
+            "0": 600.0,
+            "1": 700.0,
+            "2": 800.0,
+            "7": 500.0,
+            "10": 1000.0
         }
     }
 }
