@@ -5,6 +5,7 @@ using demoVer.Utils;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace demoVer.Services
 {
@@ -109,7 +110,7 @@ namespace demoVer.Services
             }
             catch(Exception e)
             {
-                AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetTableColumn] Failed to Get Columns in the Table {targetTable}", AppLogLevel.Trace);
+                AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetTableColumn] Failed to Get Columns in the Table {targetTable}: {e}", AppLogLevel.Trace);
                 return null;
             }
             finally
@@ -163,7 +164,7 @@ namespace demoVer.Services
             }
         }
 
-        public async Task<TableRangeResult?> GetTable_Range_AfterWHERE(string tableName, DateTime? startTime, DateTime? endTime, CancellationToken ct = default)
+        public async Task<TableRangeResult?> GetTable_Range_AfterWHERE(string tableName, DateTime? startTime, DateTime? endTime, string? port = null, CancellationToken ct = default)
         {
             //輸入參數檢查
             if(startTime == DateTime.MinValue)
@@ -176,10 +177,9 @@ namespace demoVer.Services
                 AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetTable_Range_AfterWHERE] Failed, endTime 無效", AppLogLevel.Trace);
                 return null;
             }
-            if( string.IsNullOrEmpty(tableName) ||
-                !(string.Equals(tableName, "event_log", StringComparison.Ordinal) || string.Equals(tableName, "datalog_NTN-5K_CAN", StringComparison.Ordinal) || string.Equals(tableName, "datalog_NTN-5K_MOD", StringComparison.Ordinal)))
+            if(!IsValidTableName(tableName))
             {
-                AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetTable_Range_AfterWHERE] Failed, tableName is NULL", AppLogLevel.Trace);
+                AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetTable_Range_AfterWHERE] Failed, tableName 無效 ({tableName})", AppLogLevel.Trace);
                 return null;
             }
 
@@ -190,8 +190,10 @@ namespace demoVer.Services
                 return null;
             }
             
-            string targetTable = "\"" + tableName + "\"";
-            string timeColumn = tableName == "event_log" ? "time" : "timestamp";
+            string targetTable = QuoteTableName(tableName);
+            string baseTableName = GetBaseTableName(tableName);
+            string timeColumn = string.Equals(baseTableName, "event_log", StringComparison.OrdinalIgnoreCase) ? "time" : "timestamp";
+            bool applyPortFilter = !string.IsNullOrWhiteSpace(port) && !string.Equals(baseTableName, "event_log", StringComparison.OrdinalIgnoreCase);
 
             try
             {
@@ -204,43 +206,42 @@ namespace demoVer.Services
                 await using var cmd = new NpgsqlCommand();
                 cmd.Connection = conn;
 
-                //2. case判斷
                 if(startTime is null && endTime is null)
                 {   //case 1 : 非法參數
                     AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetTable_Range_AfterWHERE] Failed : startTime 跟 endTime 同時為 NULL");
                     return null;
                 }
-                else if(startTime is null && endTime is not null)
-                {   //case 2 : 從最早到 endTime
-                    sql = $@"SELECT 
+
+                var whereClauses = new List<string>();
+
+                if(startTime.HasValue)
+                {
+                    whereClauses.Add($"\"{timeColumn}\" >= @startTime");
+                    var startUtc = DateTime.SpecifyKind(startTime.Value, DateTimeKind.Utc);
+                    cmd.Parameters.AddWithValue("startTime", startUtc);
+                }
+
+                if(endTime.HasValue)
+                {
+                    whereClauses.Add($"\"{timeColumn}\" <= @endTime");
+                    var endUtc = DateTime.SpecifyKind(endTime.Value, DateTimeKind.Utc);
+                    cmd.Parameters.AddWithValue("endTime", endUtc);
+                }
+
+                if(applyPortFilter)
+                {
+                    whereClauses.Add("\"port\" = @port");
+                    cmd.Parameters.AddWithValue("port", port!);
+                }
+
+                string whereClause = whereClauses.Count > 0 ? $" WHERE {string.Join(" AND ", whereClauses)}" : string.Empty;
+
+                sql = $@"SELECT 
                                 COUNT(*)    AS total_count,
                                 MIN(id)     AS first_id,
                                 MAX(id)     AS last_id
-                            FROM {targetTable} WHERE ""{timeColumn}"" <= @endTime";
-                    cmd.Parameters.AddWithValue("endTime", DateTime.SpecifyKind(endTime.Value, DateTimeKind.Utc));
-                }
-                else if(startTime is not null && endTime is null)
-                {
-                    //case 3 : 從 startTime 到最新
-                    sql = $@"SELECT 
-                                COUNT(*)    AS total_count,
-                                MIN(id)     AS first_id,
-                                MAX(id)     AS last_id
-                            FROM {targetTable} WHERE ""{timeColumn}"" >= @startTime";
-                    cmd.Parameters.AddWithValue("startTime", DateTime.SpecifyKind(startTime.Value, DateTimeKind.Utc));
-                }
-                else
-                {
-                    //case 4 : 區間查詢
-                    sql = $@"SELECT
-                                COUNT(*)    AS total_count,
-                                MIN(id)     AS first_id,
-                                MAX(id)     AS last_id 
-                            FROM {targetTable} WHERE ""{timeColumn}"" BETWEEN @startTime AND @endTime";
-                    cmd.Parameters.AddWithValue("startTime", DateTime.SpecifyKind(startTime.Value, DateTimeKind.Utc));
-                    cmd.Parameters.AddWithValue("endTime", DateTime.SpecifyKind(endTime.Value, DateTimeKind.Utc));
-                }
-                
+                            FROM {targetTable}{whereClause}";
+
                 cmd.CommandText = sql;
 
                 //3. SQL query
@@ -325,20 +326,24 @@ namespace demoVer.Services
                 else if(startTime is null && endTime is not null)
                 {   //case 2 : 從最早到 endTime
                     sql = @"SELECT * FROM ""event_log"" WHERE ""time"" <= @endTime ORDER BY ""time"" DESC LIMIT @recordNum";
-                    cmd.Parameters.AddWithValue("endTime", DateTime.SpecifyKind(endTime.Value, DateTimeKind.Utc));
+                    var endUtc = DateTime.SpecifyKind(endTime!.Value, DateTimeKind.Utc);
+                    cmd.Parameters.AddWithValue("endTime", endUtc);
                 }
                 else if(startTime is not null && endTime is null)
                 {
                     //case 3 : 從 startTime 到最新
                     sql = @"SELECT * FROM ""event_log"" WHERE ""time"" >= @startTime ORDER BY ""time"" DESC LIMIT @recordNum";
-                    cmd.Parameters.AddWithValue("startTime", DateTime.SpecifyKind(startTime.Value, DateTimeKind.Utc));
+                    var startUtc = DateTime.SpecifyKind(startTime!.Value, DateTimeKind.Utc);
+                    cmd.Parameters.AddWithValue("startTime", startUtc);
                 }
                 else
                 {
                     //case 4 : 區間查詢
                     sql = @"SELECT * FROM ""event_log"" WHERE ""time"" BETWEEN @startTime AND @endTime ORDER BY ""time"" DESC LIMIT @recordNum";
-                    cmd.Parameters.AddWithValue("startTime", DateTime.SpecifyKind(startTime.Value, DateTimeKind.Utc));
-                    cmd.Parameters.AddWithValue("endTime", DateTime.SpecifyKind(endTime.Value, DateTimeKind.Utc));
+                    var startUtc = DateTime.SpecifyKind(startTime!.Value, DateTimeKind.Utc);
+                    var endUtc = DateTime.SpecifyKind(endTime!.Value, DateTimeKind.Utc);
+                    cmd.Parameters.AddWithValue("startTime", startUtc);
+                    cmd.Parameters.AddWithValue("endTime", endUtc);
                 }
                 cmd.Parameters.AddWithValue("recordNum", recordNum);
                 cmd.CommandText = sql;
@@ -355,8 +360,7 @@ namespace demoVer.Services
                     for(int i = 0 ; i < reader.FieldCount ; i ++)
                     {
                         string colName = reader.GetName(i);
-                        object colValue = reader.IsDBNull(i) ? null : reader.GetValue(i);
-                        row[colName] = colValue;
+                        row[colName] = reader.IsDBNull(i) ? null! : reader.GetValue(i);
                     }
                     list.Add(row);
                 }
@@ -406,6 +410,12 @@ namespace demoVer.Services
                 }
             }
 
+            if(!startId.HasValue || !endId.HasValue)
+            {
+                AppLogger.Log_To_File_log(_category, "[SqlProcessor][GetEvetLog_WHERE_Id] Invalid Para : startId 或 endId 為 NULL", AppLogLevel.Trace);
+                return null;
+            }
+
             //嘗試取lock
             if(!await _semaphore.WaitAsync(maxWaitLock_Time, ct))
             {
@@ -438,8 +448,8 @@ namespace demoVer.Services
                     sql = @"SELECT * FROM ""event_log"" WHERE ""id"" < @startId AND ""id"" >= @endId ORDER BY id DESC LIMIT @recordNum";
                 }
 
-                cmd.Parameters.AddWithValue("startId", startId);
-                cmd.Parameters.AddWithValue("endId", endId);
+                cmd.Parameters.AddWithValue("startId", startId.Value);
+                cmd.Parameters.AddWithValue("endId", endId.Value);
                 cmd.Parameters.AddWithValue("recordNum", recordNum);
                 cmd.CommandText = sql;
 
@@ -455,8 +465,7 @@ namespace demoVer.Services
                     for(int i = 0 ; i < reader.FieldCount ; i ++)
                     {
                         string colName = reader.GetName(i);
-                        object colValue = reader.IsDBNull(i) ? null : reader.GetValue(i);
-                        row[colName] = colValue;
+                        row[colName] = reader.IsDBNull(i) ? null! : reader.GetValue(i);
                     }
                     list.Add(row);
                 }
@@ -477,7 +486,7 @@ namespace demoVer.Services
         }
 
         //DataLog照篩選過的 時間 降序排列
-        public async Task<List<Dictionary<string, object>>?> GetDataLog_WHERE_Time(string targetTable, DateTime? startTime, DateTime? endTime, int recordNum, CancellationToken ct = default)
+        public async Task<List<Dictionary<string, object>>?> GetDataLog_WHERE_Time(string targetTable, DateTime? startTime, DateTime? endTime, int recordNum, string? port = null, CancellationToken ct = default)
         {
             //輸入參數檢查
             if(startTime == DateTime.MinValue)
@@ -501,6 +510,13 @@ namespace demoVer.Services
                 return null;
             }
 
+            if(startTime is null && endTime is null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetDataLog_WHERE_Time] Failed : startTime 跟 endTime 同時為 NULL");
+                return null;
+            }
+
+            bool applyPortFilter = !string.IsNullOrWhiteSpace(port);
 
             //嘗試取lock
             if(!await _semaphore.WaitAsync(maxWaitLock_Time, ct))
@@ -513,43 +529,42 @@ namespace demoVer.Services
             {
                 var list = new List<Dictionary<string, object>>();
 
-                 //1. SQL 連線
+                //1. SQL 連線
                 await using var conn = new NpgsqlConnection(_connectionString);
                 await conn.OpenAsync(ct);
                 AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetDataLog_WHERE_Time] SQL link success", AppLogLevel.Trace);
 
-                string sql;
+                var whereClauses = new List<string>();
+
                 await using var cmd = new NpgsqlCommand();
                 cmd.Connection = conn;
 
-                //2. case判斷
-                if(startTime is null && endTime is null)
-                {   //case 1 : 非法參數
-                    AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetDataLog_WHERE_Time] Failed : startTime 跟 endTime 同時為 NULL");
-                    return null;
-                }
-                else if(startTime is null && endTime is not null)
-                {   //case 2 : 從最早到 endTime
-                    
-                    sql = $@"SELECT * FROM ""{targetTable}"" WHERE ""timestamp"" <= @endTime ORDER BY ""timestamp"" DESC LIMIT @recordNum";
-                    cmd.Parameters.AddWithValue("endTime", DateTime.SpecifyKind(endTime.Value, DateTimeKind.Utc));
-                }
-                else if(startTime is not null && endTime is null)
+                if(startTime.HasValue)
                 {
-                    //case 3 : 從 startTime 到最新
-                    sql = $@"SELECT * FROM ""{targetTable}"" WHERE ""timestamp"" >= @startTime ORDER BY ""timestamp"" DESC LIMIT @recordNum";
-                    cmd.Parameters.AddWithValue("startTime", DateTime.SpecifyKind(startTime.Value, DateTimeKind.Utc));
+                    whereClauses.Add("\"timestamp\" >= @startTime");
+                    var startUtc = DateTime.SpecifyKind(startTime.Value, DateTimeKind.Utc);
+                    cmd.Parameters.AddWithValue("startTime", startUtc);
                 }
-                else
+
+                if(endTime.HasValue)
                 {
-                    //case 4 : 區間查詢
-                    sql = $@"SELECT * FROM ""{targetTable}"" WHERE ""timestamp"" BETWEEN @startTime AND @endTime ORDER BY ""timestamp"" DESC LIMIT @recordNum";
-                    cmd.Parameters.AddWithValue("startTime", DateTime.SpecifyKind(startTime.Value, DateTimeKind.Utc));
-                    cmd.Parameters.AddWithValue("endTime", DateTime.SpecifyKind(endTime.Value, DateTimeKind.Utc));
+                    whereClauses.Add("\"timestamp\" <= @endTime");
+                    var endUtc = DateTime.SpecifyKind(endTime.Value, DateTimeKind.Utc);
+                    cmd.Parameters.AddWithValue("endTime", endUtc);
                 }
+
+                if(applyPortFilter)
+                {
+                    whereClauses.Add("\"port\" = @port");
+                    cmd.Parameters.AddWithValue("port", port!);
+                }
+
+                string whereClause = whereClauses.Count > 0 ? $" WHERE {string.Join(" AND ", whereClauses)}" : string.Empty;
+                string sql = $@"SELECT * FROM ""{targetTable}""{whereClause} ORDER BY ""timestamp"" DESC LIMIT @recordNum";
+
                 cmd.Parameters.AddWithValue("recordNum", recordNum);
                 cmd.CommandText = sql;
-                
+
                 //3. SQL query
                 await using var reader = await cmd.ExecuteReaderAsync(ct);
                 AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetDataLog_WHERE_Time] SQL Query success", AppLogLevel.Trace);
@@ -562,8 +577,7 @@ namespace demoVer.Services
                     for(int i = 0 ; i < reader.FieldCount ; i ++)
                     {
                         string colName = reader.GetName(i);
-                        object colValue = reader.IsDBNull(i) ? null : reader.GetValue(i);
-                        row[colName] = colValue;
+                        row[colName] = reader.IsDBNull(i) ? null! : reader.GetValue(i);
                     }
                     list.Add(row);
                 }
@@ -582,7 +596,7 @@ namespace demoVer.Services
             }   
         }
         
-        public async Task<List<Dictionary<string, object>>?> GetDataLog_WHERE_Id(string targetTable, string direction, long? startId, long? endId, int recordNum, CancellationToken ct = default)
+        public async Task<List<Dictionary<string, object>>?> GetDataLog_WHERE_Id(string targetTable, string direction, long? startId, long? endId, int recordNum, string? port = null, CancellationToken ct = default)
         {
             //輸入參數檢查
             if(string.IsNullOrEmpty(direction))
@@ -617,6 +631,14 @@ namespace demoVer.Services
                 return null;
             }
 
+            if(!startId.HasValue || !endId.HasValue)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetDataLog_WHERE_Id] Invalid Para : startId 或 endId 為 NULL", AppLogLevel.Trace);
+                return null;
+            }
+
+            bool applyPortFilter = !string.IsNullOrWhiteSpace(port);
+
             //嘗試取lock
             if(!await _semaphore.WaitAsync(maxWaitLock_Time, ct))
             {
@@ -638,22 +660,25 @@ namespace demoVer.Services
                 string sql = string.Empty;
                 await using var cmd = new NpgsqlCommand();
                 cmd.Connection = conn;
+                var portCondition = applyPortFilter ? " AND \"port\" = @port" : string.Empty;
                 
                 //2. case判斷
                 if(string.Equals(direction, "left", StringComparison.OrdinalIgnoreCase))
                 {
-                    sql = $@"SELECT * FROM (SELECT * FROM ""{targetTable}"" WHERE ""id"" > @startId AND ""id"" <= @endId ORDER BY id ASC LIMIT @recordNum) AS t ORDER BY id DESC";
-                    // sql = @"SELECT * FROM (SELECT * FROM ""event_log"" WHERE ""id"" > @startId AND ""id"" <= @endId ORDER BY id ASC LIMIT @recordNum) AS t ORDER BY id DESC";
+                    sql = $@"SELECT * FROM (SELECT * FROM ""{targetTable}"" WHERE ""id"" > @startId AND ""id"" <= @endId{portCondition} ORDER BY id ASC LIMIT @recordNum) AS t ORDER BY id DESC";
                 }
                 else if(string.Equals(direction, "right", StringComparison.OrdinalIgnoreCase))
                 {
-                    sql = $@"SELECT * FROM ""{targetTable}"" WHERE ""id"" < @startId AND ""id"" >= @endId ORDER BY id DESC LIMIT @recordNum";
-                    // sql = @"SELECT * FROM ""event_log"" WHERE ""id"" < @startId AND ""id"" >= @endId ORDER BY id DESC LIMIT @recordNum";
+                    sql = $@"SELECT * FROM ""{targetTable}"" WHERE ""id"" < @startId AND ""id"" >= @endId{portCondition} ORDER BY id DESC LIMIT @recordNum";
                 }
 
-                cmd.Parameters.AddWithValue("startId", startId);
-                cmd.Parameters.AddWithValue("endId", endId);
+                cmd.Parameters.AddWithValue("startId", startId.Value);
+                cmd.Parameters.AddWithValue("endId", endId.Value);
                 cmd.Parameters.AddWithValue("recordNum", recordNum);
+                if(applyPortFilter)
+                {
+                    cmd.Parameters.AddWithValue("port", port!);
+                }
                 cmd.CommandText = sql;
 
                 //3. SQL query
@@ -668,8 +693,7 @@ namespace demoVer.Services
                     for(int i = 0 ; i < reader.FieldCount ; i ++)
                     {
                         string colName = reader.GetName(i);
-                        object colValue = reader.IsDBNull(i) ? null : reader.GetValue(i);
-                        row[colName] = colValue;
+                        row[colName] = reader.IsDBNull(i) ? null! : reader.GetValue(i);
                     }
                     list.Add(row);
                 }
@@ -688,7 +712,7 @@ namespace demoVer.Services
             }
         }
         
-        public async IAsyncEnumerable<(int percent, string? filePath)> ExportBigDataAsync(string targetTable, DateTime? startTime, DateTime? endTime, [EnumeratorCancellation] CancellationToken ct = default)
+        public async IAsyncEnumerable<(int percent, string? filePath)> ExportBigDataAsync(string targetTable, DateTime? startTime, DateTime? endTime, string? port = null, [EnumeratorCancellation] CancellationToken ct = default)
         {
             if (string.IsNullOrEmpty(targetTable))
             {
@@ -709,7 +733,7 @@ namespace demoVer.Services
 
             try
             {
-                int totalRows = await GetRowCount(targetTable, startTime, endTime, ct);
+                int totalRows = await GetRowCount(targetTable, startTime, endTime, port, ct);
                 if (totalRows == 0)
                 {
                     AppLogger.Log_To_File_log(_category, $"[SqlProcessor][ExportBigDataAsync] 查無資料", AppLogLevel.Trace);
@@ -741,10 +765,23 @@ namespace demoVer.Services
                 await using var conn = new NpgsqlConnection(_connectionString);
                 await conn.OpenAsync(ct);
 
-                string timeColumn = targetTable == "event_log" ? "time" : "timestamp";
+                string baseTableName = GetBaseTableName(targetTable);
+                string timeColumn = string.Equals(baseTableName, "event_log", StringComparison.OrdinalIgnoreCase) ? "time" : "timestamp";
+                bool applyPortFilter = !string.IsNullOrWhiteSpace(port) && !string.Equals(baseTableName, "event_log", StringComparison.OrdinalIgnoreCase);
+
+                var whereClauses = new List<string>
+                {
+                    $"\"{timeColumn}\" BETWEEN @startTime AND @endTime"
+                };
+                if(applyPortFilter)
+                {
+                    whereClauses.Add("\"port\" = @port");
+                }
+
+                string whereClause = string.Join(" AND ", whereClauses);
 
                 string sql = $@"SELECT * FROM ""{targetTable}"" 
-                                WHERE ""{timeColumn}"" BETWEEN @startTime AND @endTime
+                                WHERE {whereClause}
                                 ORDER BY id ASC
                                 LIMIT @limit OFFSET @offset";
 
@@ -755,6 +792,10 @@ namespace demoVer.Services
                     await using var cmd = new NpgsqlCommand(sql, conn);
                     cmd.Parameters.AddWithValue("startTime", DateTime.SpecifyKind(startTime ?? DateTime.MinValue, DateTimeKind.Utc));
                     cmd.Parameters.AddWithValue("endTime", DateTime.SpecifyKind(endTime ?? DateTime.MaxValue, DateTimeKind.Utc));
+                    if(applyPortFilter)
+                    {
+                        cmd.Parameters.AddWithValue("port", port!);
+                    }
                     cmd.Parameters.AddWithValue("limit", batchSize);
                     cmd.Parameters.AddWithValue("offset", processed);
 
@@ -816,7 +857,7 @@ namespace demoVer.Services
         }
 
 
-        private async Task<int> GetRowCount(string targetTable, DateTime? startTime, DateTime? endTime, CancellationToken ct)
+        private async Task<int> GetRowCount(string targetTable, DateTime? startTime, DateTime? endTime, string? port, CancellationToken ct)
         {
             if (string.IsNullOrEmpty(targetTable))
             {
@@ -829,20 +870,37 @@ namespace demoVer.Services
                 return 0;
             }
 
-            string timeColumn = targetTable == "event_log" ? "time" : "timestamp";
+            string baseTableName = GetBaseTableName(targetTable);
+            string timeColumn = string.Equals(baseTableName, "event_log", StringComparison.OrdinalIgnoreCase) ? "time" : "timestamp";
+            bool applyPortFilter = !string.IsNullOrWhiteSpace(port) && !string.Equals(baseTableName, "event_log", StringComparison.OrdinalIgnoreCase);
 
             try
             {
                 await using var conn = new NpgsqlConnection(_connectionString);
                 await conn.OpenAsync(ct);
 
+                var whereClauses = new List<string>
+                {
+                    $"\"{timeColumn}\" BETWEEN @startTime AND @endTime"
+                };
+                if(applyPortFilter)
+                {
+                    whereClauses.Add("\"port\" = @port");
+                }
+
+                string whereClause = string.Join(" AND ", whereClauses);
+
                 string sql = $@"SELECT COUNT(*) 
                                 FROM ""{targetTable}"" 
-                                WHERE ""{timeColumn}"" BETWEEN @startTime AND @endTime";
+                                WHERE {whereClause}";
 
                 await using var cmd = new NpgsqlCommand(sql, conn);
                 cmd.Parameters.AddWithValue("startTime", DateTime.SpecifyKind(startTime ?? DateTime.MinValue, DateTimeKind.Utc));
                 cmd.Parameters.AddWithValue("endTime", DateTime.SpecifyKind(endTime ?? DateTime.MaxValue, DateTimeKind.Utc));
+                if(applyPortFilter)
+                {
+                    cmd.Parameters.AddWithValue("port", port!);
+                }
 
                 var result = await cmd.ExecuteScalarAsync(ct);
                 int total = Convert.ToInt32(result);
@@ -855,6 +913,56 @@ namespace demoVer.Services
                 AppLogger.Log_To_File_log(_category, $"[SqlProcessor][GetRowCount] Error : {e}", AppLogLevel.Trace);
                 return 0;
             }
+        }
+
+        private static bool IsValidTableName(string? tableName)
+        {
+            if (string.IsNullOrWhiteSpace(tableName))
+            {
+                return false;
+            }
+
+            var parts = tableName.Split('.', StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length == 0)
+            {
+                return false;
+            }
+
+            foreach (var part in parts)
+            {
+                if (!Regex.IsMatch(part, @"^[A-Za-z0-9_\-]+$"))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static string QuoteTableName(string tableName)
+        {
+            var parts = tableName.Split('.', StringSplitOptions.RemoveEmptyEntries);
+            var builder = new StringBuilder();
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                if (i > 0)
+                {
+                    builder.Append('.');
+                }
+
+                builder.Append('"');
+                builder.Append(parts[i].Replace("\"", "\"\""));
+                builder.Append('"');
+            }
+
+            return builder.ToString();
+        }
+
+        private static string GetBaseTableName(string tableName)
+        {
+            var parts = tableName.Split('.', StringSplitOptions.RemoveEmptyEntries);
+            return parts.Length == 0 ? tableName : parts[parts.Length - 1];
         }
     }
 }

@@ -1,1 +1,1364 @@
-﻿
+﻿[2025-11-10 15:26:53.948] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 15:26:53.955] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 15:26:53.956] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 15:26:53.957] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 15:26:53.957] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 15:26:53.957] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 15:26:53.960] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 15:26:53.961] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 15:26:53.963] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 15:26:58.080] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 15:27:02.166] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 15:34:26.030] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 15:34:26.036] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 15:34:26.038] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 15:34:26.039] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 15:34:26.040] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 15:34:26.042] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 15:34:26.051] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 15:34:26.053] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 15:34:26.058] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 15:34:30.176] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 15:34:34.285] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 15:45:51.629] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 15:45:51.634] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 15:45:51.636] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 15:45:51.638] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 15:45:51.638] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 15:45:51.640] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 15:45:51.644] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 15:45:51.646] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 15:45:51.649] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 15:45:55.765] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 15:45:59.868] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 15:47:43.438] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 15:47:43.443] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 15:47:43.445] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 15:47:43.446] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 15:47:43.447] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 15:47:43.448] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 15:47:43.452] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 15:47:43.453] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 15:47:43.457] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 15:47:47.535] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 15:47:51.635] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 15:50:25.211] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 15:50:25.219] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 15:50:25.220] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 15:50:25.221] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 15:50:25.222] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 15:50:25.222] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 15:50:25.226] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 15:50:25.227] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 15:50:25.231] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 15:50:29.341] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 15:50:33.408] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:03:12.787] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 16:03:12.794] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:03:12.796] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 16:03:12.797] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:03:12.797] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 16:03:12.799] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 16:03:12.802] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 16:03:12.804] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 16:03:12.807] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 16:03:16.927] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:03:21.011] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:04:35.647] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 16:04:35.661] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:04:35.666] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 16:04:35.667] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 16:04:35.667] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:04:35.669] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 16:04:35.674] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 16:04:35.678] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 16:04:35.681] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 16:04:39.780] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:04:43.868] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:10:53.981] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 16:10:53.987] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:10:53.989] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 16:10:53.989] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 16:10:53.990] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:10:53.991] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 16:10:53.995] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 16:10:53.996] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 16:10:53.999] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 16:10:58.127] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:11:02.217] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:11:56.064] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 16:11:56.074] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:11:56.101] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 16:11:56.102] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 16:11:56.103] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:11:56.104] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 16:11:56.109] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 16:11:56.111] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 16:11:56.115] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 16:12:00.168] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:12:04.273] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:14:02.713] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 16:14:02.719] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:14:02.722] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 16:14:02.723] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 16:14:02.723] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:14:02.725] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 16:14:02.730] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 16:14:02.734] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 16:14:02.738] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 16:14:06.836] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:14:10.925] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:14:50.280] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 16:14:50.286] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:14:50.288] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 16:14:50.289] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:14:50.289] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 16:14:50.307] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 16:14:50.309] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 16:14:50.311] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 16:14:50.315] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 16:14:54.428] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:14:58.523] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:18:48.637] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:18:52.740] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:20:50.758] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 16:20:50.769] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:20:50.778] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 16:20:50.779] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 16:20:50.779] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:20:50.781] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 16:20:50.786] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 16:20:50.789] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 16:20:50.791] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 16:20:54.891] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:20:57.409] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:20:58.978] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:21:01.484] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:21:46.448] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 16:21:46.454] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:21:46.455] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 16:21:46.456] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 16:21:46.456] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:21:46.458] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 16:21:46.461] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 16:21:46.463] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 16:21:46.467] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 16:21:50.563] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:21:54.652] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:24:06.331] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:24:10.435] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:24:24.827] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:24:28.932] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:25:59.914] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 16:25:59.919] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:25:59.921] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 16:25:59.922] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 16:25:59.922] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:25:59.924] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 16:25:59.929] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 16:25:59.931] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 16:25:59.934] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 16:26:04.021] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:26:08.099] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:26:31.639] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:26:35.727] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:27:18.618] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 16:27:18.624] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:27:18.626] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 16:27:18.627] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:27:18.628] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 16:27:18.632] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 16:27:18.634] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 16:27:18.639] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 16:27:18.642] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 16:27:22.726] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:27:26.829] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:27:38.871] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:27:42.976] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:30:51.888] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 16:30:51.893] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:30:51.895] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 16:30:51.896] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 16:30:51.896] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:30:51.898] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 16:30:51.903] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 16:30:51.905] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 16:30:51.909] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 16:30:56.024] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:31:00.104] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:31:02.701] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:31:06.505] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:31:06.783] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:31:10.597] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:31:41.439] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 16:31:41.447] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:31:41.449] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 16:31:41.450] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:31:41.451] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 16:31:41.454] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 16:31:41.456] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 16:31:41.459] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 16:31:41.463] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 16:31:45.548] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:31:49.637] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:32:40.923] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 16:32:40.928] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:32:40.930] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 16:32:40.931] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:32:40.932] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 16:32:40.936] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 16:32:40.940] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 16:32:40.942] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 16:32:40.944] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 16:32:45.017] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:32:48.525] [SqlProcessor][GetAllTableNames] Error : Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 134
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 153
+[2025-11-10 16:32:49.111] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:35:16.167] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 16:35:16.172] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:35:16.174] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 16:35:16.176] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:35:16.176] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 16:35:16.180] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 16:35:16.184] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 16:35:16.187] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 16:35:16.190] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 16:35:20.305] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:35:24.393] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:36:02.073] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 16:36:02.078] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:36:02.080] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 16:36:02.081] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 16:36:02.082] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 16:36:02.087] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 16:36:02.089] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 16:36:02.091] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 16:36:02.094] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 16:36:03.413] [Log][searchClick] Error, allColumns is null or empty
+[2025-11-10 16:36:06.212] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:36:10.309] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:36:11.269] [SqlProcessor][GetAllTableNames] Error : Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 134
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 153
+[2025-11-10 16:36:11.790] [Log][searchClick] Error, allColumns is null or empty
+[2025-11-10 16:36:16.512] [Log][searchClick] Error, allColumns is null or empty
+[2025-11-10 16:36:27.634] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:36:31.730] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:38:23.214] [Log][searchClick] Error, allColumns is null or empty
+[2025-11-10 16:38:25.873] [Log][searchClick] Error, allColumns is null or empty
+[2025-11-10 16:38:31.522] [Log][searchClick] Error, allColumns is null or empty
+[2025-11-10 16:38:32.225] [Log][searchClick] Error, allColumns is null or empty
+[2025-11-10 16:38:39.461] [Log][searchClick] Error, allColumns is null or empty
+[2025-11-10 16:38:40.427] [SqlProcessor][GetAllTableNames] Error : Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 134
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 153
+[2025-11-10 16:38:41.669] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:38:43.925] [Log][searchClick] Error, allColumns is null or empty
+[2025-11-10 16:38:45.609] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:38:45.766] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:38:49.688] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:38:51.098] [Log][searchClick] Error, allColumns is null or empty
+[2025-11-10 16:38:51.971] [Log][searchClick] Error, allColumns is null or empty
+[2025-11-10 16:38:52.742] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:38:55.588] [Log][searchClick] Error, allColumns is null or empty
+[2025-11-10 16:38:56.838] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 16:38:57.306] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 16:39:01.390] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 17:06:26.754] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log
+[2025-11-10 17:06:28.312] [SqlProcessor][GetAllTableNames] Error : Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 134
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 153
+[2025-11-10 17:06:30.839] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN
+[2025-11-10 18:27:56.210] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 18:27:56.219] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 18:27:56.223] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 18:27:56.224] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 18:27:56.225] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 18:27:56.229] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 18:27:56.232] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 18:27:56.235] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 18:27:56.238] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 18:28:00.273] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 18:28:04.359] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 18:38:23.374] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 18:38:23.380] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 18:38:23.399] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 18:38:23.400] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 18:38:23.400] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 18:38:23.405] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 18:38:23.408] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 18:38:23.412] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 18:38:23.415] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 18:38:27.492] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 18:38:31.580] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 18:41:33.482] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 18:41:33.493] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 18:41:33.496] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 18:41:33.496] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 18:41:33.497] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 18:41:33.498] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 18:41:33.503] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 18:41:33.506] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 18:41:33.510] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 18:41:37.655] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 18:41:41.767] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 18:48:55.796] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 18:48:55.803] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 18:48:55.805] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 18:48:55.806] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 18:48:55.808] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 18:48:55.814] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 18:48:55.818] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 18:48:55.821] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 18:48:55.824] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 18:48:59.929] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 18:49:04.021] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 18:59:37.080] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 18:59:37.085] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 18:59:37.088] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 18:59:37.089] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 18:59:37.090] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 18:59:37.096] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 18:59:37.099] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 18:59:37.102] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 18:59:37.104] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 18:59:41.231] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 18:59:43.970] [Log][searchClick] Error, allColumns is null or empty
+[2025-11-10 18:59:45.330] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 18:59:57.928] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 19:00:02.025] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 19:00:34.745] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 19:00:34.750] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 19:00:34.753] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 19:00:34.755] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 19:00:34.755] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 19:00:34.759] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 19:00:34.761] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 19:00:34.763] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 19:00:34.767] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 19:00:38.891] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 19:00:43.000] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 19:00:46.328] [SqlProcessor][GetAllTableNames] Error : Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 135
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 154
+[2025-11-10 19:01:42.483] [SqlProcessor][GetAllTableNames] Error : Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 135
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 154
+[2025-11-10 19:09:43.399] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 19:09:43.406] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 19:09:43.409] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 19:09:43.410] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 19:09:43.411] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 19:09:43.415] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 19:09:43.419] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 19:09:43.421] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 19:09:43.426] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 19:09:47.533] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 19:09:51.621] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 19:10:03.906] [SqlProcessor][GetAllTableNames] Error : Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 135
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 154
+[2025-11-10 19:10:08.122] [SqlProcessor][GetAllTableNames] Error : Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 135
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 154
+[2025-11-10 19:10:12.631] [SqlProcessor][GetAllTableNames] Error : Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 135
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 154
+[2025-11-10 19:10:17.587] [SqlProcessor][GetAllTableNames] Error : Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 135
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 154
+[2025-11-10 19:10:22.065] [SqlProcessor][GetAllTableNames] Error : Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 135
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 154
+[2025-11-10 19:10:26.727] [SqlProcessor][GetAllTableNames] Error : Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 135
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 154
+[2025-11-10 19:10:31.125] [SqlProcessor][GetAllTableNames] Error : Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 135
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 154
+[2025-11-10 19:12:45.830] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 19:12:45.837] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 19:12:45.840] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 19:12:45.841] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 19:12:45.842] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 19:12:45.847] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 19:12:45.849] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 19:12:45.852] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 19:12:45.855] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 19:12:49.996] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 19:12:54.096] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 19:12:54.154] [SqlProcessor][GetAllTableNames] Error : Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 135
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 154
+[2025-11-10 19:13:03.266] [SqlProcessor][GetAllTableNames] Error : Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 135
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 154
+[2025-11-10 19:13:08.634] [SqlProcessor][GetAllTableNames] Error : Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 135
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 154
+[2025-11-10 19:13:13.709] [SqlProcessor][GetAllTableNames] Error : Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 135
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 154
+[2025-11-10 19:13:31.193] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 19:13:31.199] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 19:13:31.203] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 19:13:31.203] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 19:13:31.204] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 19:13:31.206] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 19:13:31.213] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 19:13:31.216] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 19:13:31.218] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 19:13:35.316] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 19:13:37.268] [SqlProcessor][GetAllTableNames] Error : Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 135
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 154
+[2025-11-10 19:13:39.420] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 19:13:43.313] [SqlProcessor][GetAllTableNames] Error : Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 135
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 154
+[2025-11-10 19:13:47.795] [SqlProcessor][GetAllTableNames] Error : Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 135
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 154
+[2025-11-10 19:42:05.932] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 19:42:05.939] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 19:42:05.943] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 19:42:05.944] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 19:42:05.945] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 19:42:05.948] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 19:42:05.954] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 19:42:05.956] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 19:42:05.959] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 19:42:10.076] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 19:42:11.733] [SqlProcessor][GetAllTableNames] Error : Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 135
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 154
+[2025-11-10 19:42:14.161] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 20:34:53.378] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 20:34:53.392] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 20:34:53.395] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 20:34:53.396] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 20:34:53.396] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 20:34:53.399] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 20:34:53.405] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 20:34:53.408] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 20:34:53.411] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 20:34:59.949] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 20:35:04.035] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 20:40:44.277] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 20:40:44.285] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 20:40:44.288] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 20:40:44.289] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 20:40:44.289] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 20:40:44.291] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 20:40:44.295] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 20:40:44.298] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 20:40:44.301] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 20:40:48.400] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 20:40:52.487] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 20:41:27.988] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 20:41:27.993] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 20:41:27.995] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 20:41:27.996] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 20:41:27.997] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 20:41:28.001] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 20:41:28.004] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 20:41:28.008] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 20:41:28.012] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 20:41:32.096] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 20:41:36.152] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 20:42:10.627] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 20:42:10.633] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 20:42:10.636] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 20:42:10.637] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 20:42:10.637] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 20:42:10.639] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 20:42:10.644] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 20:42:10.648] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 20:42:10.650] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 20:42:14.763] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 20:42:18.856] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 20:42:52.323] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 20:42:52.329] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 20:42:52.332] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 20:42:52.333] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 20:42:52.333] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 20:42:52.338] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 20:42:52.341] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 20:42:52.345] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 20:42:52.348] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 20:42:56.455] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 20:43:00.536] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 20:43:01.725] [SqlProcessor][GetAllTableNames] Error : Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 135
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 154
+[2025-11-10 20:43:04.482] [Log][searchClick] Error, allColumns is null or empty
+[2025-11-10 20:43:08.421] [Log][searchClick] Error, allColumns is null or empty
+[2025-11-10 20:43:16.861] [Log][searchClick] Error, allColumns is null or empty
+[2025-11-10 20:44:12.801] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 20:44:12.806] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 20:44:12.809] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 20:44:12.811] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 20:44:12.811] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 20:44:12.815] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 20:44:12.818] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 20:44:12.821] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 20:44:12.824] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 20:44:16.953] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 20:44:20.786] [SqlProcessor][GetAllTableNames] Error : Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 135
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 154
+[2025-11-10 20:44:21.047] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 20:44:24.132] [Log][searchClick] Error, allColumns is null or empty
+[2025-11-10 20:44:27.019] [SqlProcessor][GetAllTableNames] Error : Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 135
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 154
+[2025-11-10 20:44:33.683] [SqlProcessor][GetAllTableNames] Error : Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 135
+   at demoVer.Services.SqlProcessor.GetAllTableNames(CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 154
+[2025-11-10 20:54:32.729] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-10 20:54:32.734] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 20:54:32.738] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-10 20:54:32.739] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-10 20:54:32.739] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-10 20:54:32.745] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-10 20:54:32.747] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-10 20:54:32.750] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-10 20:54:32.753] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-10 20:54:36.864] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table event_log: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109
+[2025-11-10 20:54:40.975] [SqlProcessor][GetTableColumn] Failed to Get Columns in the Table datalog_NTN-5K_CAN: Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (10061): 無法連線，因為目標電腦拒絕連線。
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 88
+   at demoVer.Services.SqlProcessor.GetTableColumn(String targetTable, CancellationToken ct) in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\SqlProcessor.cs:line 109

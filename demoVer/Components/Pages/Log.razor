@@ -26,6 +26,37 @@
     </div>
 }
 
+@if (isTableSelectorOpen)
+{
+    <div class="table-selection-overlay" @onclick="() => CloseTableSelector()">
+        <div class="table-selection-dialog" @onclick:stopPropagation="true">
+            <h4 style="color: var(--text-primary);">選擇資料表</h4>
+
+            @if (isLoadingDataTables)
+            {
+                <p>載入中...</p>
+            }
+            else if (!string.IsNullOrEmpty(dataTableLoadError))
+            {
+                <p class="table-error">@dataTableLoadError</p>
+            }
+            else if (filteredDataLogTables.Count == 0)
+            {
+                <p class="table-hint">找不到符合條件的資料表</p>
+            }
+            else
+            {
+                @foreach (var table in filteredDataLogTables)
+                {
+                    <button class="btn table-option" @onclick="() => SelectDataTable(table)">@table</button>
+                }
+            }
+
+            <button class="btn btn-bubble-red" @onclick="CloseTableSelector">關閉</button>
+        </div>
+    </div>
+}
+
 <div id="whole-container" class="content-container">
     <div class="top-panel @(isCollapsed ? "collapsed" : "expanded")" @onclick="TogglePanel" @onclick:stopPropagation="true">
         @if(isCollapsed)
@@ -51,13 +82,20 @@
                         {
                             <div class="radio-group" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
                                 <label class="radio-option">
-                                    <input type="radio" name="DataType" value="CAN" checked="@string.Equals(selectedDataType, "CAN", StringComparison.OrdinalIgnoreCase)" @onchange="DataTypeChanged" />
-                                    <span class="radio-label">CAN Data</span>
+                                    <input type="radio" name="DataType" value="CAN/1" checked="@string.Equals(port, "CAN1", StringComparison.OrdinalIgnoreCase)" @onchange="DataTypeChanged" />
+                                    <span class="radio-label">CAN1</span>
                                 </label>
-
                                 <label class="radio-option">
-                                    <input type="radio" name="DataType" value="MOD" checked="@string.Equals(selectedDataType, "MOD", StringComparison.OrdinalIgnoreCase)" @onchange="DataTypeChanged" />
-                                    <span class="radio-label">MOD Data</span>
+                                    <input type="radio" name="DataType" value="CAN/2" checked="@string.Equals(port, "CAN2", StringComparison.OrdinalIgnoreCase)" @onchange="DataTypeChanged" />
+                                    <span class="radio-label">CAN2</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="DataType" value="MOD/1" checked="@string.Equals(port, "MOD1", StringComparison.OrdinalIgnoreCase)" @onchange="DataTypeChanged" />
+                                    <span class="radio-label">MOD1</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="DataType" value="MOD/2" checked="@string.Equals(port, "MOD2", StringComparison.OrdinalIgnoreCase)" @onchange="DataTypeChanged" />
+                                    <span class="radio-label">MOD2</span>
                                 </label>
                             </div>
 
@@ -106,6 +144,26 @@
                                     <input type="time" id="endTime" @bind="selectedEndTime" placeholder="點擊選擇時間" @onclick:stopPropagation="true" @onchange:stopPropagation="true" />
                                 </div>
                             </div>
+                            <div class="radio-group" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
+                                <div class="time-selection-row">
+                                    <label class="radio-option">
+                                        <input type="radio" name="TimePreset" value="0.5yr" checked="@string.Equals(selectedTimeRangePreset, "0.5yr", StringComparison.OrdinalIgnoreCase)" @onchange="OnTimePresetChanged" />
+                                        <span class="radio-label">0.5 yr</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="TimePreset" value="1month" checked="@string.Equals(selectedTimeRangePreset, "1month", StringComparison.OrdinalIgnoreCase)" @onchange="OnTimePresetChanged" />
+                                        <span class="radio-label">1 month</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="TimePreset" value="1week" checked="@string.Equals(selectedTimeRangePreset, "1week", StringComparison.OrdinalIgnoreCase)" @onchange="OnTimePresetChanged" />
+                                        <span class="radio-label">1 week</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="TimePreset" value="1day" checked="@string.Equals(selectedTimeRangePreset, "1day", StringComparison.OrdinalIgnoreCase)" @onchange="OnTimePresetChanged" />
+                                        <span class="radio-label">1 day</span>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -120,6 +178,7 @@
             </div>
         }
     </div>
+
     <div id="log-table-container" class="bottom-panel">
         <div class="table-header">
             <div>
@@ -169,36 +228,7 @@
             </div>
         }
 
-        @if (isTableSelectorOpen)
-        {
-            <div class="table-select-modal" @onclick="CloseTableSelector">
-                <div class="modal-content" @onclick:stopPropagation="true">
-                    <h4>選擇資料表</h4>
-
-                    @if (isLoadingDataTables)
-                    {
-                        <p>載入中...</p>
-                    }
-                    else if (!string.IsNullOrEmpty(dataTableLoadError))
-                    {
-                        <p class="table-error">@dataTableLoadError</p>
-                    }
-                    else if (filteredDataLogTables.Count == 0)
-                    {
-                        <p class="table-hint">找不到符合條件的資料表</p>
-                    }
-                    else
-                    {
-                        @foreach (var table in filteredDataLogTables)
-                        {
-                            <button class="btn table-option" @onclick="() => SelectDataTable(table)">@table</button>
-                        }
-                    }
-
-                    <button class="btn btn-bubble-red" @onclick="CloseTableSelector">關閉</button>
-                </div>
-            </div>
-        }
+        @{ var orderedColumns = GetOrderedVisibleColumns(); }
 
         <!-- 📊 桌機表格 -->
         @if (!IsMobile)
@@ -206,7 +236,7 @@
             <table class="custom-table">
                 <thead>
                     <tr>
-                        @foreach (var col in allColumns.Where(c => visibleColumns.Contains(c)))
+                        @foreach (var col in orderedColumns)
                         {
                             <th>@col</th>
                         }
@@ -216,9 +246,9 @@
                     @foreach (var row in tableData)
                     {
                         <tr>
-                            @foreach (var col in allColumns.Where(c => visibleColumns.Contains(c)))
+                            @foreach (var col in orderedColumns)
                             {
-                                <td>@row[col]</td>
+                                <td>@GetCellValue(row, col)</td>
                             }
                         </tr>
                     }
@@ -240,11 +270,11 @@
                 @foreach (var row in tableData)
                 {
                     <div class="card-table-row">
-                        @foreach (var col in allColumns.Where(c => visibleColumns.Contains(c)))
+                        @foreach (var col in orderedColumns)
                         {
                             <div class="card-table-item">
                                 <span class="card-table-label">@col</span>
-                                <span class="card-table-value">@row[col]</span>
+                                <span class="card-table-value">@GetCellValue(row, col)</span>
                             </div>
                         }
                     </div>
@@ -267,20 +297,22 @@
     [CascadingParameter(Name = "MainLayout")] public MainLayout? MainLayout { get; set; }
 
     private string _category    = "";
-    
+
     private const int LogType   = 1;
     private const int Date      = 2;
     private const int Btn       = 3;
-    
+
     private int currentStep     = 1;
     private string? selectedLogType = string.Empty;
     private string? selectedDataType = string.Empty;
+    private string port = string.Empty;
+    private string? selectedTimeRangePreset = string.Empty;
     private bool isCollapsed = false;
     private bool IsMobile = false;
 
     private bool isColumnChooserOpen            = false;
     private List<string> allColumns             = new();
-    private HashSet<string> visibleColumns      = new();
+    private List<string> visibleColumns         = new();
     private List<string> eventLog_allColumns    = new();
     private List<string> dataLog_allColumns     = new();
     private List<string> filteredDataLogTables  = new();
@@ -304,6 +336,11 @@
     private CancellationTokenSource? exportCts;
     private bool topRowCallbacksRegistered = false;
 
+    private static object? GetCellValue(Dictionary<string, object> row, string column)
+    {
+        return row.TryGetValue(column, out var value) ? value : string.Empty;
+    }
+
     protected override void OnInitialized()
     {
         _category = GetType().FullName!;
@@ -324,14 +361,14 @@
         {
             IsMobile = await JS.InvokeAsync<bool>("checkIsMobile");
             await InvokeAsync(StateHasChanged);
-            
+
             await InitColumn();
-            
+
             // 添加假資料用於測試
-            await AddTestData();
+            // await AddTestData();
         }
     }
-    
+
     #region Appearance_Control
     private async Task GoStep(int step)
     {
@@ -379,6 +416,7 @@
 
     private void CollapsePanel()
     {
+        // isCollapsed = true;
         if(IsMobileView())
         {
             isCollapsed = true;
@@ -396,6 +434,9 @@
 
         if (!string.Equals(selectedLogType, "data", StringComparison.OrdinalIgnoreCase))
         {
+            selectedDataType = string.Empty;
+            port = string.Empty;
+            TCB.Port = string.Empty;
             isTableSelectorOpen = false;
             isLoadingDataTables = false;
             dataTableLoadError = null;
@@ -439,9 +480,37 @@
         bool isChecked = e.Value?.ToString()?.ToLower() == "true";
 
         if (isChecked)
-            visibleColumns.Add(col);
+        {
+            if (!visibleColumns.Contains(col))
+            {
+                visibleColumns.Add(col);
+            }
+        }
         else
+        {
             visibleColumns.Remove(col);
+        }
+    }
+
+    private IReadOnlyList<string> GetOrderedVisibleColumns()
+    {
+        if (visibleColumns.Count == 0 || allColumns.Count == 0)
+        {
+            return Array.Empty<string>();
+        }
+
+        var ordered = new List<string>(visibleColumns.Count);
+        var columnSet = new HashSet<string>(allColumns);
+
+        foreach (var column in visibleColumns)
+        {
+            if (columnSet.Contains(column))
+            {
+                ordered.Add(column);
+            }
+        }
+
+        return ordered;
     }
 
     private async Task searchClick()
@@ -458,12 +527,7 @@
             tableHeader = "Event Log";
             //2. 更換Column選擇
             allColumns = eventLog_allColumns;
-            //3. 讓Visible顯示前5個col
-            visibleColumns.Clear();
-            for(int i = 0 ; i < 5 ; i ++)
-            {
-                visibleColumns.Add(allColumns[i]);
-            }
+            TCB.Port = string.Empty;
         }
         else if(string.Equals(selectedLogType, "data", StringComparison.OrdinalIgnoreCase))
         {
@@ -471,17 +535,36 @@
             tableHeader = "Data Log";
             //2. 更換Column選擇
             allColumns = dataLog_allColumns;
-            //3. 讓visible顯示前5個col
-            visibleColumns.Clear();
-            for(int i = 0 ; i < 5 ; i ++)
+            if (string.IsNullOrWhiteSpace(port))
             {
-                visibleColumns.Add(allColumns[i]);
+                dataTableLoadError = "請先選擇通訊埠";
+                await InvokeAsync(StateHasChanged);
+                return;
             }
+
+            TCB.Port = port;
+        }
+        else
+        {
+            TCB.Port = string.Empty;
+        }
+
+        if(allColumns is null || allColumns.Count == 0)
+        {
+            AppLogger.Log_To_File_log(_category, $"[Log][searchClick] Error, allColumns is null or empty", AppLogLevel.Trace);
+            return;
+        }
+        //讓visible顯示前5個col
+        visibleColumns.Clear();
+        for(int i = 0 ; i < allColumns.Count && i < 5 ; i ++)
+        {
+            visibleColumns.Add(allColumns[i]);
         }
 
         //撈資料，顯示在Table上
         await QueryFromDB_InitTCB();
         UI_PageNum = 1;
+        await InvokeAsync(StateHasChanged);
         await JS.InvokeVoidAsync("scrollToElement", "log-table-container"); //這還要再調整，捲到的位置有點怪
     }
 
@@ -511,8 +594,15 @@
 
     private async Task DataTypeChanged(ChangeEventArgs e)
     {
-        selectedDataType = e.Value?.ToString();
-        Console.WriteLine($"selectedDataType = {selectedDataType}");
+        var received = e.Value?.ToString() ?? string.Empty;
+        var segments = received.Split('/', StringSplitOptions.RemoveEmptyEntries);
+
+        selectedDataType = segments.Length > 0 ? segments[0] : string.Empty;
+        var portSuffix = segments.Length > 1 ? segments[1] : string.Empty;
+        port = string.IsNullOrEmpty(selectedDataType) ? string.Empty : string.Concat(selectedDataType, portSuffix);
+        TCB.Port = port;
+
+        Console.WriteLine($"selectedDataType = {selectedDataType}, port = {port}");
 
         isTableSelectorOpen = false;
         dataTableLoadError = null;
@@ -524,6 +614,38 @@
             isTableSelectorOpen = true;
             await InvokeAsync(StateHasChanged);
         }
+    }
+
+    private void OnTimePresetChanged(ChangeEventArgs e)
+    {
+        selectedTimeRangePreset = e.Value?.ToString();
+
+        if (string.IsNullOrWhiteSpace(selectedTimeRangePreset))
+        {
+            return;
+        }
+
+        ApplyTimePreset(selectedTimeRangePreset);
+    }
+
+    private void ApplyTimePreset(string preset)
+    {
+        var now = DateTime.Now;
+        var start = preset switch
+        {
+            "0.5yr" => now.AddDays(-182),
+            "1month" => now.AddDays(-30),
+            "1week" => now.AddDays(-7),
+            "1day" => now.AddDays(-1),
+            _ => now
+        };
+
+        selectedEndDate = now.Date;
+        selectedEndTime = TimeOnly.FromDateTime(now);
+        selectedStartDate = start.Date;
+        selectedStartTime = TimeOnly.FromDateTime(start);
+
+        _ = InvokeAsync(StateHasChanged);
     }
 
     private async Task LoadDataLogTablesAsync()
@@ -556,6 +678,7 @@
 
         try
         {
+            //[Release] 
             var tableNames = await _sqlProcessor.GetAllTableNames();
             if (tableNames is null)
             {
@@ -569,8 +692,24 @@
                 .Where(t => t.Contains("datalog", StringComparison.OrdinalIgnoreCase) &&
                             t.Contains(selectedDataType, StringComparison.OrdinalIgnoreCase))
                 .OrderBy(t => t, StringComparer.OrdinalIgnoreCase)
-                .ToList();
+                .ToList(); 
 
+            //[Debug]
+            // filteredDataLogTables = new List<string>
+            // { 
+            //     "datalog_NTN-5K_CAN",
+            //     "datalog_NTG-2K2_CAN",
+            //     "datalog_NTN-5K_CAN",
+            //     "datalog_NTN-5K_CAN",
+            //     "datalog_NTN-5K_CAN",
+            //     "datalog_NTN-5K_CAN",
+            //     "datalog_NTN-5K_CAN",
+            //     "datalog_NTN-5K_CAN",
+            //     "datalog_NTN-5K_CAN",
+            //     "datalog_NTN-5K_CAN",
+            //     "datalog_NTN-5K_CAN",
+            //     "datalog_NTN-5K_CAN",
+            // };
             if (filteredDataLogTables.Count == 0)
             {
                 selectedDataTableName = null;
@@ -710,17 +849,25 @@
         if(string.Equals(selectedLogType, "event", StringComparison.OrdinalIgnoreCase))
         {
             TCB.TableName = "event_log";
+            TCB.Port = string.Empty;
         }
         else if(string.Equals(selectedLogType, "data", StringComparison.OrdinalIgnoreCase))
         {
-            switch(selectedDataType)
+            // switch(selectedDataType)
+            // {
+            //     case "CAN": TCB.TableName = "datalog_NTN-5K_CAN"; break;
+            //     case "MOD": TCB.TableName = "datalog_NTN-5K_MOD"; break;
+            //     default: 
+            //         AppLogger.Log_To_File_log(_category, $"[Log][exportTask] Error, LogType = data, selectedDataType = None", AppLogLevel.Trace);
+            //         return;
+            // }
+            if (string.IsNullOrWhiteSpace(port))
             {
-                case "CAN": TCB.TableName = "datalog_NTN-5K_CAN"; break;
-                case "MOD": TCB.TableName = "datalog_NTN-5K_MOD"; break;
-                default: 
-                    AppLogger.Log_To_File_log(_category, $"[Log][exportTask] Error, LogType = data, selectedDataType = None", AppLogLevel.Trace);
-                    return;
+                AppLogger.Log_To_File_log(_category, "[Log][exportTask] Error, port is empty while exporting data log", AppLogLevel.Trace);
+                return;
             }
+            TCB.TableName = selectedDataTableName ?? string.Empty;
+            TCB.Port = port;
         }
         else
         {
@@ -747,8 +894,10 @@
             }
 
             // 2. 開始Export動作(查詢、寫檔、更新進度)
+            var portFilter = string.IsNullOrWhiteSpace(TCB.Port) ? null : TCB.Port;
+
             await foreach (var (percent, fileUrl) in 
-                _sqlProcessor.ExportBigDataAsync(TCB.TableName, startTime_Formatted, endTime_Formatted, exportCts.Token))
+                _sqlProcessor.ExportBigDataAsync(TCB.TableName, startTime_Formatted, endTime_Formatted, portFilter, exportCts.Token))
             {
                 exportProgress = percent;
                 await InvokeAsync(StateHasChanged);
@@ -815,13 +964,20 @@
             }
             else if(string.Equals(selectedLogType, "data", StringComparison.OrdinalIgnoreCase))
             {
-                switch(selectedDataType)
+                // switch(selectedDataType)
+                // {
+                //     case "CAN": TCB.TableName = "datalog_NTN-5K_CAN"; break;
+                //     case "MOD": TCB.TableName = "datalog_NTN-5K_MOD"; break;
+                //     default: 
+                //         AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step2: Error, LogType = data, selectedDataType = None", AppLogLevel.Trace);
+                //         return;
+                // }
+                TCB.TableName = selectedDataTableName ?? string.Empty;
+                if (string.IsNullOrWhiteSpace(TCB.Port))
                 {
-                    case "CAN": TCB.TableName = "datalog_NTN-5K_CAN"; break;
-                    case "MOD": TCB.TableName = "datalog_NTN-5K_MOD"; break;
-                    default: 
-                        AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step2: Error, LogType = data, selectedDataType = None", AppLogLevel.Trace);
-                        return;
+                    dataTableLoadError = "請先選擇通訊埠";
+                    AppLogger.Log_To_File_log(_category, "[Log][QueryFromDB_InitTCB] step2: Port is empty for data log query", AppLogLevel.Trace);
+                    return;
                 }
             }
             else
@@ -832,7 +988,7 @@
             AppLogger.Log_To_File_log(_category, $"[Log][QueryFromDB_InitTCB] step2 : TCB.TableName = {TCB.TableName}", AppLogLevel.Trace);
 
             //3. 根據時間 查資料總共筆數
-            var rangeInfo = await _sqlProcessor.GetTable_Range_AfterWHERE(TCB.TableName, startTime_Formatted, endTime_Formatted);
+            var rangeInfo = await _sqlProcessor.GetTable_Range_AfterWHERE(TCB.TableName, startTime_Formatted, endTime_Formatted, TCB.Port);
             if (rangeInfo is null)
             {
                 AppLogger.Log_To_File_log(_category, "[Log][QueryFromDB_InitTCB] step3 : rangeInfo is null", AppLogLevel.Trace);
@@ -855,7 +1011,7 @@
             }
             else
             {
-                bool IsSucc = await dataLog_Query(TCB.TableName, startTime_Formatted, endTime_Formatted);
+                bool IsSucc = await dataLog_Query(TCB.TableName, startTime_Formatted, endTime_Formatted, TCB.Port);
                 if(!IsSucc)
                 {
                     //可以顯示一個 懸浮的FAIL訊息
@@ -957,17 +1113,32 @@
         }
     }
     
-    private async Task<bool> dataLog_Query(string targetTable, DateTime? startTime_Formatted, DateTime? endTime_Formatted)
+    private async Task<bool> dataLog_Query(string targetTable, DateTime? startTime_Formatted, DateTime? endTime_Formatted, string? portFilter)
     {
         try
         {
+            if (string.IsNullOrWhiteSpace(targetTable))
+            {
+                AppLogger.Log_To_File_log(_category, "[Log][dataLog_Query] targetTable is null or empty", AppLogLevel.Trace);
+                dataTableLoadError = "請先選擇資料表";
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(portFilter))
+            {
+                AppLogger.Log_To_File_log(_category, "[Log][dataLog_Query] portFilter is null or empty", AppLogLevel.Trace);
+                dataTableLoadError = "請先選擇通訊埠";
+                return false;
+            }
+
             //1. 根據時間 Query 前10筆 DataLog Table內的資料
-            var dataLog_records = await _sqlProcessor.GetDataLog_WHERE_Time(targetTable, startTime_Formatted, endTime_Formatted, 10);
+            var dataLog_records = await _sqlProcessor.GetDataLog_WHERE_Time(targetTable, startTime_Formatted, endTime_Formatted, 10, portFilter);
             if(dataLog_records is null)
             {
                 AppLogger.Log_To_File_log(_category, $"[Log][dataLog_Query] dataLog_records is null", AppLogLevel.Trace);
                 return false;
             }
+            dataTableLoadError = null;
             AppLogger.Log_To_File_log(_category, $"[Log][dataLog_Query] step1: GetDataLog_WHERE_Time success", AppLogLevel.Trace);
 
             //2.塞進tableData
@@ -1060,17 +1231,39 @@
         }
     }
 
-    private async Task<bool> dataLog_TurnPage(string tableName, string direction, long? startId, long? endId)
+    private async Task<bool> dataLog_TurnPage(string tableName, string direction, long? startId, long? endId, string? portFilter)
     {
         try
         {
+            if (string.IsNullOrWhiteSpace(tableName))
+            {
+                AppLogger.Log_To_File_log(_category, "[Log][dataLog_TurnPage] tableName is null or empty", AppLogLevel.Trace);
+                dataTableLoadError = "請先選擇資料表";
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(portFilter))
+            {
+                AppLogger.Log_To_File_log(_category, "[Log][dataLog_TurnPage] portFilter is null or empty", AppLogLevel.Trace);
+                dataTableLoadError = "請先選擇通訊埠";
+                return false;
+            }
+
+            if(!startId.HasValue || !endId.HasValue)
+            {
+                AppLogger.Log_To_File_log(_category, "[Log][dataLog_TurnPage] startId 或 endId 為 NULL", AppLogLevel.Trace);
+                dataTableLoadError = "查無翻頁資料";
+                return false;
+            }
+
             //1. 根據tableName, Id, 方向 去Query 前10筆 DataLog Table 內的資料
-            var dataLog_records = await _sqlProcessor.GetDataLog_WHERE_Id(tableName, direction, startId, endId, 10);
+            var dataLog_records = await _sqlProcessor.GetDataLog_WHERE_Id(tableName, direction, startId, endId, 10, portFilter);
             if(dataLog_records is null)
             {
                 AppLogger.Log_To_File_log(_category, $"[Log][dataLog_TurnPage] step1 : dataLog_records is null", AppLogLevel.Trace);
                 return false;
             }
+            dataTableLoadError = null;
 
             //2. 塞進 tableData
             tableData.Clear();
@@ -1135,7 +1328,7 @@
                 return;
             }
 
-            IsSucc = await dataLog_TurnPage(TCB.TableName, "right", TCB.earliestId_InTable, TCB.startId);
+            IsSucc = await dataLog_TurnPage(TCB.TableName, "right", TCB.earliestId_InTable, TCB.startId, TCB.Port);
             AppLogger.Log_To_File_log(_category, $"[Log][turnToNextPage] DataLog", AppLogLevel.Trace);
         }
         if(!IsSucc)
@@ -1181,7 +1374,7 @@
                 return;
             }
 
-            IsSucc = await dataLog_TurnPage(TCB.TableName, "left", TCB.lastedId_InTable, TCB.endId);
+            IsSucc = await dataLog_TurnPage(TCB.TableName, "left", TCB.lastedId_InTable, TCB.endId, TCB.Port);
         }
         if(!IsSucc)
         {
@@ -1236,7 +1429,7 @@
                 return;
             }
 
-            IsSucc = await dataLog_TurnPage(TCB.TableName, "right", tmp_lastedId_InTable, TCB.startId);
+            IsSucc = await dataLog_TurnPage(TCB.TableName, "right", tmp_lastedId_InTable, TCB.startId, TCB.Port);
         }
         if(!IsSucc)
         {
@@ -1261,7 +1454,7 @@
         // 設置測試資料
         tableHeader = "Event Log";
         allColumns = new List<string> { "id", "time", "level", "message", "source" };
-        visibleColumns = new HashSet<string> { "id", "time", "level", "message" };
+    visibleColumns = new List<string> { "id", "time", "level", "message" };
         
         tableData = new List<Dictionary<string, object>>
         {

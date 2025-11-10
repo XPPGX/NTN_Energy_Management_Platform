@@ -495,7 +495,7 @@ namespace demoVer.Models
                 }
             }
 
-            Console.WriteLine($"[SubSystem][ComputePhase] ({this.Port}, {this.Protocol}) Phase computed : {tmpPhase.ToString()}");
+            // Console.WriteLine($"[SubSystem][ComputePhase] ({this.Port}, {this.Protocol}) Phase computed : {tmpPhase.ToString()}");
             ComputedVals.setPhase(tmpPhase);
         }
 

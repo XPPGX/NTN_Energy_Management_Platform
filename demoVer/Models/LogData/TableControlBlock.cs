@@ -14,6 +14,7 @@ namespace demoVer.Models
         public long? endId {get; set;}
         public long lastedId_InTable {get; set;}
         public long earliestId_InTable {get; set;}
+        public string? Port {get; set;} = string.Empty;
     }
 
     public record TableRangeResult(int Count, int? FirstId, int? LastId);

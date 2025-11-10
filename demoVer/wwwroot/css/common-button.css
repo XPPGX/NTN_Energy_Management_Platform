@@ -16,13 +16,14 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
     border: 1px solid var(--border-color);
     background: var(--bg-secondary);
-    color: var(--text-primary);
+    color: var(--text-muted);
 }
 
 .btn:hover
 {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    color: var(--text-primary);
 }
 .btn-blue
 {
@@ -166,6 +167,23 @@
     border: 1px solid #cccccc;
     cursor: not-allowed;
 }
+
+.btn-channel {
+    background-color: transparent;
+    border: 1px solid var(--accent-color, #1b6ec2);
+    color: var(--accent-color, #1b6ec2);
+    padding: 0.35rem 0.75rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    font-weight: 600;
+}
+
+.btn-channel:hover,
+.btn-channel:focus {
+    background-color: var(--accent-color, #1b6ec2);
+    color: #fff;
+}
+
 
 /********** Custom Toggle Button **********/
 /*
