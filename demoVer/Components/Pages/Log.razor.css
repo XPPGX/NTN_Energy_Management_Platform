@@ -59,7 +59,7 @@
 .filter-group select,
 .filter-group input[type="date"],
 .filter-group input[type="time"] {
-    width: 100%;
+    width: 80%;
     min-height: 40px;
     border-radius: 6px;
     border: 1px solid var(--border-color);
@@ -93,10 +93,22 @@
 
 .filter-group-dates .dateInputs input {
     min-width: 0;
+    box-sizing: border-box;
+}
+
+.filter-group-dates .dateInputs input[type="date"] {
+    flex: 0 1 60%;
+    width: 60%;
+}
+
+.filter-group-dates .dateInputs input[type="time"] {
+    flex: 0 1 40%;
+    width: 40%;
 }
 
 .filter-actions .button-row {
-    justify-content: flex-start;
+    justify-content: center;
+    align-items: center;
     flex-wrap: wrap;
     gap: 12px;
 }
@@ -295,9 +307,19 @@ progress {
 }
 .time-selection-row
 {
-    display:flex;
+    display: flex;
     flex-direction: row;
     gap: 0.5rem;
+    width: 100%;
+    flex-wrap: nowrap;
+}
+
+.time-selection-row .radio-option {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    min-width: 0;
 }
 /* 📱 手機 RWD */
 @media(max-width: 768px) {
@@ -366,6 +388,7 @@ progress {
 
     .dateRow {
         flex-direction: column; /* 改為上下排列 */
+        padding: 5px;
     }
 
     .dateRow label {
@@ -383,19 +406,85 @@ progress {
     .filter-grid {
         grid-template-columns: 1fr;
         gap: 1.25rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .filter-group {
+        width: 100%;
+        box-sizing: border-box;
+        min-width: 0; /* 防止flex item超出容器 */
     }
 
     .filter-group-dates .dateInputs {
         flex-direction: column;
+        width: 100%;
+        box-sizing: border-box;
+        align-items: center;
+    }
+
+    .filter-group-dates .dateInputs input {
+        width: 100%;
+        box-sizing: border-box;
+        min-width: 0;
+    }
+
+    .filter-group-dates .dateInputs input[type="date"],
+    .filter-group-dates .dateInputs input[type="time"] {
+        flex: 1 1 100%;
+        width: 100%;
+        max-width: 100%;
     }
 
     .filter-actions .button-row {
         flex-direction: column;
         gap: 10px;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .filter-actions .btn {
         width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* 確保所有form元素都能正確適應手機寬度 */
+    .filter-select,
+    .filter-group select{
+        width: 100%;
+        box-sizing: border-box;
+        min-width: 0;
+        max-width: 100%;
+    }
+    
+    .filter-group input[type="date"],
+    .filter-group input[type="time"]{
+        width: 80%!important;
+        min-width: 0!important;
+        max-width: 80%!important;
+    }
+
+    /* 確保radio選項群組也能正確適應 */
+    .radio-group {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .time-selection-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        justify-content: flex-start;
+        gap: 0.25rem;
+        width: 100%;
+    }
+
+    .radio-option {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        min-width: 0;
+        box-sizing: border-box;
     }
 
     .table-selection-dialog{

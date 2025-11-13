@@ -352,6 +352,12 @@ namespace demoVer.Services
             }
         }
         
+        /// <summary>
+        /// 讀取某個(Port, protocolFileName)的所有命令與其單位 : (READ_VIN, V), (READ_IIN, A)...
+        /// </summary>
+        /// <param name="type">port</param>
+        /// <param name="protocolFileName">protocolFileName</param>
+        /// <returns>框架中的某個partition的所有命令與其單位</returns>
         public async Task<ProtocolFormat?> apiRead_CmdFormat(string type, string protocolFileName)
         {
             try

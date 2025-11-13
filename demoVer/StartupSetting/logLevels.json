@@ -3,11 +3,12 @@
     "demoVer.Components.Pages.Link_status"      : 2,
     "demoVer.Components.Pages.Inverter_setting" : 2,
     "demoVer.Components.Pages.Battery_setting"  : 2,
-    "demoVer.Components.Pages.Log"              : 0,
+    "demoVer.Components.Pages.Log"              : 2,
     "demoVer.Shared.BlankInfoCard"              : 2,
     "demoVer.Shared.EditCard"                   : 2,
     "demoVer.Shared.BlankChartCard"             : 2,
     "demoVer.Shared.RunningDiagramCard"         : 2,
+    "demoVer.Shared.InfoCardEdit"               : 0,
     "demoVer.Models.allDevice_Data"             : 2,
     "demoVer.Models.oneDevice_Data"             : 2,
     "demoVer.Models.WriteAPI_Datas"             : 2,
@@ -24,7 +25,7 @@
     "demoVer.Services.ArrowAnimationService"    : 2,
     "demoVer.Services.CommonData"               : 2,
     "demoVer.Services.DataCenter"               : 2,
-    "demoVer.Services.SqlProcessor"             : 0,
+    "demoVer.Services.SqlProcessor"             : 2,
     "demoVer.Services.SubSystemManager"         : 2,
     "demoVer.Utils.GetNowValueHelper"           : 2
 }

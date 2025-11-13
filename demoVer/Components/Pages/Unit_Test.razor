@@ -55,6 +55,13 @@
         </span>
         <span class="btn-glow" aria-hidden="true"></span>
     </button>
+
+    <button class="glow-btn" @onclick="TestCmdFormat">
+        <span class="btn-inner">
+            🚀 apiRead_CmdFormat
+        </span>
+        <span class="btn-glow" aria-hidden="true"></span>
+    </button>
 </div>
 
 @code{
@@ -81,7 +88,11 @@
     
     public async Task testFunc()
     {
-        rcv_LinkStatus = await apiManager.apiRead_LinkStatus();
+        var result = await apiManager.apiRead_LinkStatus();
+        if (result != null)
+        {
+            rcv_LinkStatus = result;
+        }
 
         var rawJsonData_String = JsonSerializer.Serialize(rcv_LinkStatus, new JsonSerializerOptions{
             WriteIndented = true
@@ -137,6 +148,17 @@
     public async Task GetSettingRange()
     {
         var result = await apiManager.apiRead_SettingRange("CAN1", "NTN-5K_CAN.json");
+
+        var rawJsonData_String = JsonSerializer.Serialize(result, new JsonSerializerOptions{
+            WriteIndented = true
+        });
+
+        Console.WriteLine(rawJsonData_String);
+    }
+
+    public async Task TestCmdFormat()
+    {
+        var result = await apiManager.apiRead_CmdFormat("MOD1", "NTN-5K_MOD.json");
 
         var rawJsonData_String = JsonSerializer.Serialize(result, new JsonSerializerOptions{
             WriteIndented = true

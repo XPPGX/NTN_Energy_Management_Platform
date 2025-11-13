@@ -530,7 +530,7 @@ namespace demoVer.Services
                 {
                     if (string.IsNullOrEmpty(line.Cmd))
                     {
-                        AppLogger.Log_To_File_log(_category, $"[ApplyRealDataToChart] line.Cmd is null or empty", AppLogLevel.Warning);
+                        AppLogger.Log_To_File_log(_category, $"[ApplyRealDataToChart] line.Cmd is null or empty", AppLogLevel.Debug);
                         continue;
                     }
 
@@ -539,14 +539,14 @@ namespace demoVer.Services
                     var oneDeviceData = _globalVar.Real_Devices_ReadData.Get_oneDevice_DataSnapshot(line.addr);
                     if (oneDeviceData == null)
                     {
-                        AppLogger.Log_To_File_log(_category, $"[ApplyRealDataToChart] oneDeviceData is null for addr = {line.addr}", AppLogLevel.Warning);
+                        AppLogger.Log_To_File_log(_category, $"[ApplyRealDataToChart] oneDeviceData is null for addr = {line.addr}", AppLogLevel.Debug);
                         AddEmptyData = true;
                     }
 
                     var cmdType = oneDeviceData?.GetCmdType(line.Cmd) ?? string.Empty;
                     if (!string.Equals(cmdType, "Numeric", StringComparison.OrdinalIgnoreCase))
                     {
-                        AppLogger.Log_To_File_log(_category, $"[ApplyRealDataToChart] cmdType is not Numeric for Cmd = {line.Cmd}, cmdType = {cmdType}", AppLogLevel.Warning);
+                        AppLogger.Log_To_File_log(_category, $"[ApplyRealDataToChart] cmdType is not Numeric for Cmd = {line.Cmd}, cmdType = {cmdType}", AppLogLevel.Debug);
                         AddEmptyData = true;
                     }
 

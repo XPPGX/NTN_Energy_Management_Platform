@@ -643,12 +643,9 @@
 				}
 
 				var subsys_protocol_cmdUnit_Dict = globalVar.GetCmdUnit_Dict_FromSubsysManager(currentSelected_Port, currentSelected_Protocol);
-				@* var deviceDict = globalVar.Get_oneDevice_Cmd_unit_Dict(currentSelected_Addr);
-				oneDevice_cmd_unit_Dict = deviceDict ?? new Dictionary<string, string>();
-				show_cmd_unit_Dict_ref = oneDevice_cmd_unit_Dict; *@
 				if(subsys_protocol_cmdUnit_Dict is null || subsys_protocol_cmdUnit_Dict.Count == 0)
 				{
-					AppLogger.Log_To_File_log(_category, $"[InfoCardEdit][getCMDs] Got empty cmd-unit dict for addr : {currentSelected_Addr}", AppLogLevel.Information);
+					AppLogger.Log_To_File_log(_category, $"[InfoCardEdit][getCMDs] Got empty cmd-unit dict for (port, protocol) : ({currentSelected_Port}, {currentSelected_Protocol})", AppLogLevel.Information);
 					return false;
 				}
 				show_cmd_unit_Dict_ref = subsys_protocol_cmdUnit_Dict;
@@ -815,12 +812,16 @@
 
 	private void selectMachine()
 	{
+
 		refreshSubsystemOptions();
+		
 		refreshPortAddrList();
+		
 
 		if (currentEdit_INFO_DataFormat_ref?.Addr is uint storedAddr)
 		{
 			EnsureSubsystemSelectionFromAddr(storedAddr);
+			
 		}
 
 		if (subsystemOptions.Count == 0)
