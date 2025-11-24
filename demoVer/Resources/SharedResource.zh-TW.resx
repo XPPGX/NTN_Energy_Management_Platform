@@ -433,6 +433,12 @@
   <data name="ChartCardEdit-SelectDeviceAndCommand" xml:space="preserve">
     <value>選擇設備與命令</value>
   </data>
+  <data name="ChartCardEdit-Subsystem" xml:space="preserve">
+    <value>子系統</value>
+  </data>
+  <data name="ChartCardEdit-NoSubsystemsAvailable" xml:space="preserve">
+    <value>沒有可用的子系統</value>
+  </data>
   <data name="ChartCardEdit-Machine" xml:space="preserve">
     <value>Machine</value>
   </data>

@@ -12,6 +12,7 @@
 @using System.Linq
 @using System.Text.Json
 @using System.Threading.Tasks
+@using System.IO
 
 @inject IJSRuntime JS
 @inject GlobalVar globalVar
@@ -51,41 +52,76 @@
                 <div class="chartForm">
                     <div class="chart-selector-panel">
                         <div class="chart-selector-grid">
-                            <div class="custom-select-wrapper">
-                                <label for="chartMachineSelect" style="color: var(--text-primary);">@Localizer["ChartCardEdit-Machine"]</label>
-                                <select id="chartMachineSelect"
-                                        class="custom-select"
-                                        @onchange="MachineChanged">
-                                    <option value="9999">@Localizer["ChartCardEdit-PleaseSelectMachine"]</option>
-                                    @foreach (var (port, protocol, realAddr, storingAddr) in port_protocol_realAddr_storingAddr_List)
-                                    {
-                                        string displayName = $"{port, -5} ({realAddr, 3})";
-                                        string optionVal = $"{port}|{protocol}|{storingAddr}";
-                                        <option value="@optionVal">@displayName</option>  
-                                    }
-                                    @* @foreach (var (addr, mdlName) in deviceAddr_List)
-                                    {
-                                        //addr 是存取記憶體時用的，顯示於UI時，是用port + realAddr
-                                        var (port, realAddr) = globalVar.Get_Port_RealAddr_ByAddr(addr);
-                                        string displayName = $"{port, -5} ({realAddr, 3}) → {mdlName}";
-                                        <option value="@addr">@displayName</option>
-                                    } *@
-                                </select>
-                            </div>
+                            @if (string.IsNullOrEmpty(selectedSubsystemKey))
+                            {
+                                <div class="custom-select-wrapper">
+                                    <label style="color: var(--text-primary);">@Localizer["ChartCardEdit-Subsystem"]</label>
+                                    <div class="card-table subsystem-selection-panel" style="width: 100%; max-height: 240px; overflow-y: auto;">
+                                        @if (subsystemOptions.Count == 0)
+                                        {
+                                            <div class="card-table-row subsystem-selection-item">
+                                                <div class="card-table-item">
+                                                    <span class="card-table-label">@Localizer["ChartCardEdit-NoSubsystemsAvailable"]</span>
+                                                </div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            @foreach (var subsystem in subsystemOptions)
+                                            {
+                                                var key = BuildSubsystemKey(subsystem.Port, subsystem.Protocol);
+                                                var display = GetSubsystemDisplayName(subsystem);
+                                                <div class="card-table-row subsystem-selection-item @(string.Equals(selectedSubsystemKey, key, StringComparison.Ordinal) ? "selected" : string.Empty)"
+                                                     @onclick="() => OnSubsystemChosen(subsystem)"
+                                                     style="cursor: pointer;">
+                                                    <div class="card-table-item">
+                                                        <span class="card-table-label">@subsystem.Port</span>
+                                                        <span class="card-table-value">@display</span>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="custom-select-wrapper">
+                                    <label for="chartMachineSelect" style="color: var(--text-primary);">@Localizer["ChartCardEdit-Machine"]</label>
+                                    <select id="chartMachineSelect"
+                                            class="custom-select"
+                                            @onchange="MachineChanged">
+                                        <option value="9999">@Localizer["ChartCardEdit-PleaseSelectMachine"]</option>
+                                        @foreach (var (port, protocol, realAddr, storingAddr) in port_protocol_realAddr_storingAddr_List)
+                                        {
+                                            string displayName = $"{port, -5} ({realAddr, 3})";
+                                            string optionVal = $"{port}|{protocol}|{storingAddr}";
+                                            <option value="@optionVal">@displayName</option>  
+                                        }
+                                        @* @foreach (var (addr, mdlName) in deviceAddr_List)
+                                        {
+                                            //addr 是存取記憶體時用的，顯示於UI時，是用port + realAddr
+                                            var (port, realAddr) = globalVar.Get_Port_RealAddr_ByAddr(addr);
+                                            string displayName = $"{port, -5} ({realAddr, 3}) → {mdlName}";
+                                            <option value="@addr">@displayName</option>
+                                        } *@
+                                    </select>
+                                </div>
 
-                            <div class="custom-select-wrapper">
-                                <label for="chartCmdSelect" style="color: var(--text-primary);">@Localizer["ChartCardEdit-CMD"]</label>
-                                <select id="chartCmdSelect"
-                                        class="custom-select"
-                                        @onchange="ChartCmdChanged"
-                                        disabled="@(show_cmd_unit_Dict_ref?.Any() != true)">
-                                    <option value="">@Localizer["ChartCardEdit-PleaseSelectCommand"]</option>
-                                    @foreach (var (cmd, unit) in show_cmd_unit_Dict_ref ?? Enumerable.Empty<KeyValuePair<string, string>>())
-                                    {
-                                        <option value="@cmd">@cmd</option>
-                                    }
-                                </select>
-                            </div>
+                                <div class="custom-select-wrapper">
+                                    <label for="chartCmdSelect" style="color: var(--text-primary);">@Localizer["ChartCardEdit-CMD"]</label>
+                                    <select id="chartCmdSelect"
+                                            class="custom-select"
+                                            @onchange="ChartCmdChanged"
+                                            disabled="@(show_cmd_unit_Dict_ref?.Any() != true)">
+                                        <option value="">@Localizer["ChartCardEdit-PleaseSelectCommand"]</option>
+                                        @foreach (var (cmd, unit) in show_cmd_unit_Dict_ref ?? Enumerable.Empty<KeyValuePair<string, string>>())
+                                        {
+                                            <option value="@cmd">@cmd</option>
+                                        }
+                                    </select>
+                                </div>
+                            }
                         </div>
 
                         @if (!string.IsNullOrEmpty(chartMachineCmdError))
@@ -302,6 +338,10 @@
     private Dictionary<string, string>? show_cmd_unit_Dict_ref;
     private List<string> UnitLists = new();
 
+    private List<SubSystem> subsystemOptions = new();
+    private Dictionary<string, List<(string Port, string Protocol, uint RealAddr, uint StoringAddr)>> subsystemDeviceMap = new();
+    private string? selectedSubsystemKey;
+
     private static readonly Dictionary<string, ChartCardDraftState> _draftStore = new(StringComparer.Ordinal);
     private ChartCardDraftState? _pendingDraft;
 
@@ -329,6 +369,7 @@
         AppLogger.Log_To_File_log(_category, "[ChartCardEdit][OnInitialized] Enter OnInitialized", AppLogLevel.Trace);
         Heartbeat.OnTick += OnHeartbeatTick;
         InitSummaryCMDs();
+        refreshSubsystemOptions();
         refreshDevicesList();
     }
 
@@ -360,6 +401,7 @@
     {
         if (HeartBeatCounter == 0)
         {
+            refreshSubsystemOptions();
             refreshDevicesList();
         }
 
@@ -381,12 +423,102 @@
             @* var tempDeviceAddr_List = globalVar.Get_addr_and_ModelNames_List();
             deviceAddr_List = tempDeviceAddr_List ?? new List<(uint, string)>(); *@
             var tempList = globalVar.GetAllSubSys_PortAddrPair_InList_FromSubSysManager();
-            port_protocol_realAddr_storingAddr_List = tempList ?? new List<(string, string, uint, uint)>();
+            subsystemDeviceMap.Clear();
+            foreach (var (port, protocol, realAddr, storingAddr) in tempList ?? new List<(string, string, uint, uint)>())
+            {
+                var key = BuildSubsystemKey(port, protocol);
+                if (!subsystemDeviceMap.TryGetValue(key, out var list))
+                {
+                    list = new List<(string Port, string Protocol, uint RealAddr, uint StoringAddr)>();
+                    subsystemDeviceMap[key] = list;
+                }
+                list.Add((port, protocol, realAddr, storingAddr));
+            }
+
+            if (!string.IsNullOrEmpty(selectedSubsystemKey))
+            {
+                PrepareDevicesForSelectedSubsystem();
+            }
+            else
+            {
+                port_protocol_realAddr_storingAddr_List = new List<(string, string, uint, uint)>();
+            }
         }
         catch (Exception e)
         {
             AppLogger.Log_To_File_log(_category, $"[ChartCardEdit][refreshDevicesList] Error : {e}", AppLogLevel.Error);
         }
+    }
+
+    private void refreshSubsystemOptions()
+    {
+        try
+        {
+            var snapshot = globalVar.GetSubSystemsSnapshot();
+            subsystemOptions = snapshot?.ToList() ?? new List<SubSystem>();
+
+            if (!string.IsNullOrEmpty(selectedSubsystemKey))
+            {
+                bool stillExists = subsystemOptions.Any(subsys => string.Equals(BuildSubsystemKey(subsys.Port, subsys.Protocol), selectedSubsystemKey, StringComparison.Ordinal));
+                if (!stillExists)
+                {
+                    selectedSubsystemKey = null;
+                    port_protocol_realAddr_storingAddr_List = new List<(string, string, uint, uint)>();
+                    currentSelected_Port = string.Empty;
+                    currentSelected_Protocol = string.Empty;
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            AppLogger.Log_To_File_log(_category, $"[ChartCardEdit][refreshSubsystemOptions] Error : {e}", AppLogLevel.Error);
+        }
+    }
+
+    private static string BuildSubsystemKey(string port, string protocol) => $"{port}|{protocol}";
+
+    private static string GetSubsystemDisplayName(SubSystem subsystem)
+    {
+        var protocolWithoutSubName = Path.GetFileNameWithoutExtension(subsystem.Protocol);
+        return protocolWithoutSubName;
+    }
+
+    private void PrepareDevicesForSelectedSubsystem()
+    {
+        if (string.IsNullOrEmpty(selectedSubsystemKey))
+        {
+            port_protocol_realAddr_storingAddr_List = new List<(string, string, uint, uint)>();
+            return;
+        }
+
+        if (subsystemDeviceMap.TryGetValue(selectedSubsystemKey, out var devices))
+        {
+            port_protocol_realAddr_storingAddr_List = devices
+                .Select(d => (d.Port, d.Protocol, d.RealAddr, d.StoringAddr))
+                .ToList();
+        }
+        else
+        {
+            port_protocol_realAddr_storingAddr_List = new List<(string, string, uint, uint)>();
+        }
+    }
+
+    private void OnSubsystemChosen(SubSystem subsystem)
+    {
+        var newKey = BuildSubsystemKey(subsystem.Port, subsystem.Protocol);
+        bool isDifferent = !string.Equals(selectedSubsystemKey, newKey, StringComparison.Ordinal);
+        selectedSubsystemKey = newKey;
+        currentSelected_Port = subsystem.Port;
+        currentSelected_Protocol = subsystem.Protocol;
+        if (isDifferent)
+        {
+            blank_singleDataLine.addr = 9999;
+            blank_singleDataLine.Cmd = string.Empty;
+            blank_singleDataLine.Unit = string.Empty;
+            currentSelected_Addr = 9999;
+        }
+        PrepareDevicesForSelectedSubsystem();
+        CHART_setting_stage = CHART_SETTING_STAGE.SELECT_MACHINE_CMD;
     }
 
     private void CloseMenu()
