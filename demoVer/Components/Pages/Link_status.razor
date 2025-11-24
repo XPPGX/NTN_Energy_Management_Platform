@@ -264,14 +264,14 @@
         linkAddrManager.linkChanged += OnLinksChanged;
 
         // Initialize localized labels
-        labels = new string[] { Localizer["LinkStatus-Error"], Localizer["LinkStatus-Saving"], Localizer["LinkStatus-Inverter"], Localizer["LinkStatus-Bypass"], Localizer["LinkStatus-Charger"], Localizer["LinkStatus-Standby"] };
+        labels = new string[] { Localizer["LinkStatus-ErrorGroup"], Localizer["LinkStatus-Saving"], Localizer["LinkStatus-Inverter"], Localizer["LinkStatus-Bypass"], Localizer["LinkStatus-Charger"], Localizer["LinkStatus-Standby"] };
         mapLabelsToData = new Dictionary<string, int>{
-            {Localizer["LinkStatus-Error"],       0},
-            {Localizer["LinkStatus-Saving"],      1},
-            {Localizer["LinkStatus-Inverter"],    2},
-            {Localizer["LinkStatus-Bypass"],      3},
-            {Localizer["LinkStatus-Charger"],     4},
-            {Localizer["LinkStatus-Standby"],     5},
+            {"Error",       0},
+            {"Saving",      1},
+            {"Inverter",    2},
+            {"Bypass",      3},
+            {"Charger",     4},
+            {"Standby",     5},
         };
 
         getINVsLink();
