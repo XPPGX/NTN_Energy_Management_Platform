@@ -1,0 +1,703 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Common-Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="Common-Confirm" xml:space="preserve">
+    <value>确定</value>
+  </data>
+  <data name="NTNHome-CardManagement" xml:space="preserve">
+    <value>卡片管理</value>
+  </data>
+  <data name="NTNHome-DeleteCard" xml:space="preserve">
+    <value>删除卡片</value>
+  </data>
+  <data name="NTNHome-DeleteWarning" xml:space="preserve">
+    <value>警告：删除后无法复原</value>
+  </data>
+  <data name="NTNHome-EditCard" xml:space="preserve">
+    <value>编辑卡片</value>
+  </data>
+  <data name="NTNHome-PageTitle" xml:space="preserve">
+    <value>NTN 模组</value>
+  </data>
+  <data name="NTNHome-SavePrompt" xml:space="preserve">
+    <value>是否确定要保存？</value>
+  </data>
+  <data name="NTNHome-SelectCard" xml:space="preserve">
+    <value>选择卡片</value>
+  </data>
+  <data name="BatterySetting-PageTitle" xml:space="preserve">
+    <value>电池设置</value>
+  </data>
+  <data name="BatterySetting-Subsystem" xml:space="preserve">
+    <value>子系统</value>
+  </data>
+  <data name="BatterySetting-PleaseSelectSubsystem" xml:space="preserve">
+    <value>请选择子系统</value>
+  </data>
+  <data name="BatterySetting-SaveSettings" xml:space="preserve">
+    <value>保存设置</value>
+  </data>
+  <data name="BatterySetting-2Stage" xml:space="preserve">
+    <value>2阶段</value>
+  </data>
+  <data name="BatterySetting-3Stage" xml:space="preserve">
+    <value>3阶段</value>
+  </data>
+  <data name="BatterySetting-CCTimeout" xml:space="preserve">
+    <value>CC timeout</value>
+  </data>
+  <data name="BatterySetting-CCT" xml:space="preserve">
+    <value>CCT</value>
+  </data>
+  <data name="BatterySetting-CVTimeout" xml:space="preserve">
+    <value>CV timeout</value>
+  </data>
+  <data name="BatterySetting-CVT" xml:space="preserve">
+    <value>CVT</value>
+  </data>
+  <data name="BatterySetting-FVTimeout" xml:space="preserve">
+    <value>FV timeout</value>
+  </data>
+  <data name="BatterySetting-FVT" xml:space="preserve">
+    <value>FVT</value>
+  </data>
+  <data name="BatterySetting-Minutes" xml:space="preserve">
+    <value>分</value>
+  </data>
+  <data name="BatterySetting-ConfirmSave" xml:space="preserve">
+    <value>是否确定要保存？</value>
+  </data>
+  <data name="BatterySetting-ConfirmRestoreDefault" xml:space="preserve">
+    <value>确定要还原默认？</value>
+  </data>
+  <data name="BatterySetting-Unknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="BatterySetting-NA" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="BatterySetting-MinutesUnit" xml:space="preserve">
+    <value>分</value>
+  </data>
+  <data name="InverterSetting-PageTitle" xml:space="preserve">
+    <value>逆变器设置</value>
+  </data>
+  <data name="InverterSetting-Subsystem" xml:space="preserve">
+    <value>子系统</value>
+  </data>
+  <data name="InverterSetting-PleaseSelectSubsystem" xml:space="preserve">
+    <value>请选择子系统</value>
+  </data>
+  <data name="InverterSetting-SaveSettings" xml:space="preserve">
+    <value>保存设置</value>
+  </data>
+  <data name="InverterSetting-ACModeCharger" xml:space="preserve">
+    <value>AC模式充电器</value>
+  </data>
+  <data name="InverterSetting-GridTiedPowerFeeding" xml:space="preserve">
+    <value>并网供电</value>
+  </data>
+  <data name="InverterSetting-OutputPriority" xml:space="preserve">
+    <value>输出优先级</value>
+  </data>
+  <data name="InverterSetting-ChargingPriority" xml:space="preserve">
+    <value>充电优先级</value>
+  </data>
+  <data name="InverterSetting-BatteryAlarm" xml:space="preserve">
+    <value>Battery alarm</value>
+  </data>
+  <data name="InverterSetting-BatteryShutdown" xml:space="preserve">
+    <value>Battery shutdown</value>
+  </data>
+  <data name="InverterSetting-BatteryRecharge" xml:space="preserve">
+    <value>Battery recharge</value>
+  </data>
+  <data name="InverterSetting-BatteryOVAlarm" xml:space="preserve">
+    <value>Battery OV alarm</value>
+  </data>
+  <data name="InverterSetting-ConfirmSave" xml:space="preserve">
+    <value>是否确定要保存？</value>
+  </data>
+  <data name="InverterSetting-Unknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="InverterSetting-NA" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="InverterSetting-AngleDegrees" xml:space="preserve">
+    <value>角度 (°)</value>
+  </data>
+  <data name="InverterSetting-OutputVoltageV" xml:space="preserve">
+    <value>输出电压(V)</value>
+  </data>
+  <data name="Log-PageTitle" xml:space="preserve">
+    <value>日志</value>
+  </data>
+  <data name="Log-Exporting" xml:space="preserve">
+    <value>导出中...</value>
+  </data>
+  <data name="Log-Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="Log-SelectTable" xml:space="preserve">
+    <value>选择数据表</value>
+  </data>
+  <data name="Log-Loading" xml:space="preserve">
+    <value>加载中...</value>
+  </data>
+  <data name="Log-NoMatchingTables" xml:space="preserve">
+    <value>找不到符合条件的数据库</value>
+  </data>
+  <data name="Log-Close" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="Log-ConditionSettings" xml:space="preserve">
+    <value>条件设置</value>
+  </data>
+  <data name="Log-LogType" xml:space="preserve">
+    <value>日志类型</value>
+  </data>
+  <data name="Log-SelectOption" xml:space="preserve">
+    <value>-- 选择 --</value>
+  </data>
+  <data name="Log-EventLog" xml:space="preserve">
+    <value>事件日志</value>
+  </data>
+  <data name="Log-DataLog" xml:space="preserve">
+    <value>数据日志</value>
+  </data>
+  <data name="Log-CAN1" xml:space="preserve">
+    <value>CAN1</value>
+  </data>
+  <data name="Log-CAN2" xml:space="preserve">
+    <value>CAN2</value>
+  </data>
+  <data name="Log-MOD1" xml:space="preserve">
+    <value>MOD1</value>
+  </data>
+  <data name="Log-MOD2" xml:space="preserve">
+    <value>MOD2</value>
+  </data>
+  <data name="Log-SwitchTable" xml:space="preserve">
+    <value>切换数据表</value>
+  </data>
+  <data name="Log-Current" xml:space="preserve">
+    <value>目前</value>
+  </data>
+  <data name="Log-SelectDataTypeFirst" xml:space="preserve">
+    <value>请先选择数据类型</value>
+  </data>
+  <data name="Log-DateRange" xml:space="preserve">
+    <value>日期范围</value>
+  </data>
+  <data name="Log-StartDate" xml:space="preserve">
+    <value>开始日期</value>
+  </data>
+  <data name="Log-EndDate" xml:space="preserve">
+    <value>结束日期</value>
+  </data>
+  <data name="Log-ClickToSelectDate" xml:space="preserve">
+    <value>点击选择日期</value>
+  </data>
+  <data name="Log-ClickToSelectTime" xml:space="preserve">
+    <value>点击选择时间</value>
+  </data>
+  <data name="Log-0_5Year" xml:space="preserve">
+    <value>0.5 年</value>
+  </data>
+  <data name="Log-1Month" xml:space="preserve">
+    <value>1 个月</value>
+  </data>
+  <data name="Log-1Week" xml:space="preserve">
+    <value>1 周</value>
+  </data>
+  <data name="Log-1Day" xml:space="preserve">
+    <value>1 天</value>
+  </data>
+  <data name="Log-Actions" xml:space="preserve">
+    <value>操作</value>
+  </data>
+  <data name="Log-Search" xml:space="preserve">
+    <value>查询</value>
+  </data>
+  <data name="Log-Export" xml:space="preserve">
+    <value>导出</value>
+  </data>
+  <data name="Log-LogTable" xml:space="preserve">
+    <value>日志表格</value>
+  </data>
+  <data name="Log-TotalPages" xml:space="preserve">
+    <value>总页数</value>
+  </data>
+  <data name="Log-ShowColumns" xml:space="preserve">
+    <value>⚙ 显示字段</value>
+  </data>
+  <data name="Log-SelectColumnsToShow" xml:space="preserve">
+    <value>选择要显示的字段</value>
+  </data>
+  <data name="Log-PreviousPage" xml:space="preserve">
+    <value>⟨ 上一页</value>
+  </data>
+  <data name="Log-Page" xml:space="preserve">
+    <value>第</value>
+  </data>
+  <data name="Log-PageUnit" xml:space="preserve">
+    <value>页</value>
+  </data>
+  <data name="Log-NextPage" xml:space="preserve">
+    <value>下一页 ⟩</value>
+  </data>
+  <data name="Log-SelectPortFirst" xml:space="preserve">
+    <value>请先选择通讯端口</value>
+  </data>
+  <data name="Log-CannotGetTableList" xml:space="preserve">
+    <value>无法获取数据表列表</value>
+  </data>
+  <data name="Log-NoTablesFor" xml:space="preserve">
+    <value>找不到符合</value>
+  </data>
+  <data name="Log-TableLoadError" xml:space="preserve">
+    <value>加载数据表发生错误</value>
+  </data>
+  <data name="Log-SelectTableFirst" xml:space="preserve">
+    <value>请先选择数据表</value>
+  </data>
+  <data name="Log-NoPageData" xml:space="preserve">
+    <value>查无翻页数据</value>
+  </data>
+  <data name="LinkStatus-PageTitle" xml:space="preserve">
+    <value>连接状态</value>
+  </data>
+  <data name="LinkStatus-Total" xml:space="preserve">
+    <value>总计</value>
+  </data>
+  <data name="LinkStatus-Address" xml:space="preserve">
+    <value>地址</value>
+  </data>
+  <data name="LinkStatus-ModelName" xml:space="preserve">
+    <value>型号名称</value>
+  </data>
+  <data name="LinkStatus-LinkStatus" xml:space="preserve">
+    <value>连接状态</value>
+  </data>
+  <data name="LinkStatus-RunningState" xml:space="preserve">
+    <value>运行状态</value>
+  </data>
+  <data name="LinkStatus-NoDeviceData" xml:space="preserve">
+    <value>目前没有设备数据</value>
+  </data>
+  <data name="LinkStatus-Page" xml:space="preserve">
+    <value>第</value>
+  </data>
+  <data name="LinkStatus-Of" xml:space="preserve">
+    <value>页 /</value>
+  </data>
+  <data name="LinkStatus-ModelNameLabel" xml:space="preserve">
+    <value>型号名称</value>
+  </data>
+  <data name="LinkStatus-Revision" xml:space="preserve">
+    <value>版本：</value>
+  </data>
+  <data name="LinkStatus-Status" xml:space="preserve">
+    <value>状态：</value>
+  </data>
+  <data name="LinkStatus-Error" xml:space="preserve">
+    <value>错误：</value>
+  </data>
+  <data name="LinkStatus-LoadCurrent" xml:space="preserve">
+    <value>负载电流：</value>
+  </data>
+  <data name="LinkStatus-LoadPower" xml:space="preserve">
+    <value>负载功率：</value>
+  </data>
+  <data name="LinkStatus-DCCurrent" xml:space="preserve">
+    <value>直流电流：</value>
+  </data>
+  <data name="LinkStatus-BatteryVoltage" xml:space="preserve">
+    <value>电池电压：</value>
+  </data>
+  <data name="LinkStatus-Temperature" xml:space="preserve">
+    <value>温度：</value>
+  </data>
+  <data name="LinkStatus-FanSpeed1" xml:space="preserve">
+    <value>风扇转速 1：</value>
+  </data>
+  <data name="LinkStatus-FanSpeed2" xml:space="preserve">
+    <value>风扇转速 2：</value>
+  </data>
+  <data name="LinkStatus-Running" xml:space="preserve">
+    <value>运行中</value>
+  </data>
+  <data name="LinkStatus-ErrorGroup" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="LinkStatus-ErrorLabel" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="LinkStatus-Saving" xml:space="preserve">
+    <value>节能</value>
+  </data>
+  <data name="LinkStatus-Inverter" xml:space="preserve">
+    <value>逆变器</value>
+  </data>
+  <data name="LinkStatus-Bypass" xml:space="preserve">
+    <value>旁路</value>
+  </data>
+  <data name="LinkStatus-Charger" xml:space="preserve">
+    <value>充电器</value>
+  </data>
+  <data name="LinkStatus-Standby" xml:space="preserve">
+    <value>待机</value>
+  </data>
+  <data name="LinkStatus-Linked" xml:space="preserve">
+    <value>已连接</value>
+  </data>
+  <data name="LinkStatus-NA" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="LinkStatus-DeviceStatus" xml:space="preserve">
+    <value>设备 {0} : {1}</value>
+  </data>
+  <data name="LinkStatus-DeviceError" xml:space="preserve">
+    <value>设备 {0} 错误</value>
+  </data>
+  <data name="ChartCardEdit-Edit" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="ChartCardEdit-Delete" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="ChartCardEdit-ConfirmDelete" xml:space="preserve">
+    <value>确定要删除?</value>
+  </data>
+  <data name="ChartCardEdit-SelectDeviceAndCommand" xml:space="preserve">
+    <value>选择设备与命令</value>
+  </data>
+  <data name="ChartCardEdit-Machine" xml:space="preserve">
+    <value>Machine</value>
+  </data>
+  <data name="ChartCardEdit-PleaseSelectMachine" xml:space="preserve">
+    <value>请选择一个机器</value>
+  </data>
+  <data name="ChartCardEdit-CMD" xml:space="preserve">
+    <value>CMD</value>
+  </data>
+  <data name="ChartCardEdit-PleaseSelectCommand" xml:space="preserve">
+    <value>请选择一个命令</value>
+  </data>
+  <data name="ChartCardEdit-Next" xml:space="preserve">
+    <value>下一步</value>
+  </data>
+  <data name="ChartCardEdit-EditChart" xml:space="preserve">
+    <value>编辑 : 图表</value>
+  </data>
+  <data name="ChartCardEdit-ChartTitle" xml:space="preserve">
+    <value>图表标题</value>
+  </data>
+  <data name="ChartCardEdit-EnterChartTitle" xml:space="preserve">
+    <value>输入图表标题</value>
+  </data>
+  <data name="ChartCardEdit-Line" xml:space="preserve">
+    <value>Line</value>
+  </data>
+  <data name="ChartCardEdit-Device" xml:space="preserve">
+    <value>设备 :</value>
+  </data>
+  <data name="ChartCardEdit-NotSet" xml:space="preserve">
+    <value>未设置</value>
+  </data>
+  <data name="ChartCardEdit-Command" xml:space="preserve">
+    <value>命令 :</value>
+  </data>
+  <data name="ChartCardEdit-PleaseClickCard" xml:space="preserve">
+    <value>请点击卡片</value>
+  </data>
+  <data name="ChartCardEdit-IncompletePleaseClickCard" xml:space="preserve">
+    <value>未完成:请点击卡片</value>
+  </data>
+  <data name="ChartCardEdit-YAxisTitle" xml:space="preserve">
+    <value>Y轴标题:</value>
+  </data>
+  <data name="ChartCardEdit-ReferenceAxis" xml:space="preserve">
+    <value>参照轴:</value>
+  </data>
+  <data name="ChartCardEdit-Left" xml:space="preserve">
+    <value>左</value>
+  </data>
+  <data name="ChartCardEdit-Right" xml:space="preserve">
+    <value>右</value>
+  </data>
+  <data name="ChartCardEdit-Color" xml:space="preserve">
+    <value>颜色:</value>
+  </data>
+  <data name="ChartCardEdit-Add" xml:space="preserve">
+    <value>新增</value>
+  </data>
+  <data name="ChartCardEdit-DisplaySettings" xml:space="preserve">
+    <value>显示设置</value>
+  </data>
+  <data name="ChartCardEdit-YTitle" xml:space="preserve">
+    <value>Y-Title</value>
+  </data>
+  <data name="ChartCardEdit-YAxis" xml:space="preserve">
+    <value>Y-axis</value>
+  </data>
+  <data name="ChartCardEdit-LeftAxis" xml:space="preserve">
+    <value>Left-axis</value>
+  </data>
+  <data name="ChartCardEdit-RightAxis" xml:space="preserve">
+    <value>Right-axis</value>
+  </data>
+  <data name="ChartCardEdit-DataColor" xml:space="preserve">
+    <value>Data-Color</value>
+  </data>
+  <data name="ChartCardEdit-NoAvailableCommands" xml:space="preserve">
+    <value>此设备没有可用命令</value>
+  </data>
+  <data name="ChartCardEdit-CommandInfoNotFound" xml:space="preserve">
+    <value>找不到对应的命令信息</value>
+  </data>
+  <data name="ChartCardEdit-PleaseSelectMachineFirst" xml:space="preserve">
+    <value>请先选择机器</value>
+  </data>
+  <data name="ChartCardEdit-NoSelectableCommands" xml:space="preserve">
+    <value>此设备没有可选命令</value>
+  </data>
+  <data name="ChartCardEdit-PleaseSelectCommandFirst" xml:space="preserve">
+    <value>请先选择命令</value>
+  </data>
+  <data name="ChartCardEdit-YTitleRequired" xml:space="preserve">
+    <value>Y-Title 为必填!</value>
+  </data>
+  <data name="ChartCardEdit-YAxisRequired" xml:space="preserve">
+    <value>Y-axis 为必填!</value>
+  </data>
+  <data name="ChartCardEdit-DataColorRequired" xml:space="preserve">
+    <value>Data-Color 为必填!</value>
+  </data>
+  <data name="ChartCardEdit-DataCannotBeOnSameSide" xml:space="preserve">
+    <value>两组数据不可位于同一侧</value>
+  </data>
+  <data name="OverviewCard-Overview" xml:space="preserve">
+    <value>总览</value>
+  </data>
+  <data name="OverviewCard-InputVoltage" xml:space="preserve">
+    <value>输入电压：</value>
+  </data>
+  <data name="OverviewCard-InputFrequency" xml:space="preserve">
+    <value>输入频率：</value>
+  </data>
+  <data name="OverviewCard-OutputVoltage" xml:space="preserve">
+    <value>输出电压：</value>
+  </data>
+  <data name="OverviewCard-OutputFrequency" xml:space="preserve">
+    <value>输出频率：</value>
+  </data>
+  <data name="OverviewCard-BatteryLevel" xml:space="preserve">
+    <value>电池电量：</value>
+  </data>
+  <data name="OverviewCard-LoadPower" xml:space="preserve">
+    <value>负载功率：</value>
+  </data>
+  <data name="StatisticsCard-Statistics" xml:space="preserve">
+    <value>统计</value>
+  </data>
+  <data name="StatisticsCard-CurrentStrategy" xml:space="preserve">
+    <value>当前用电策略</value>
+  </data>
+  <data name="StatisticsCard-None" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="StatisticsCard-DailyCharging" xml:space="preserve">
+    <value>当日充电量：</value>
+  </data>
+  <data name="StatisticsCard-TotalCharging" xml:space="preserve">
+    <value>累计充电量：</value>
+  </data>
+  <data name="StatisticsCard-DailyDischarging" xml:space="preserve">
+    <value>当日放电量：</value>
+  </data>
+  <data name="StatisticsCard-TotalDischarging" xml:space="preserve">
+    <value>累计放电量：</value>
+  </data>
+  <data name="InfoCardEdit-Edit" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="InfoCardEdit-Delete" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="InfoCardEdit-EnterCardName" xml:space="preserve">
+    <value>输入卡片名称</value>
+  </data>
+  <data name="InfoCardEdit-Icon" xml:space="preserve">
+    <value>图标</value>
+  </data>
+  <data name="InfoCardEdit-ContentSettings" xml:space="preserve">
+    <value>内容设置</value>
+  </data>
+  <data name="InfoCardEdit-LongPressToEdit" xml:space="preserve">
+    <value>长按此处编辑</value>
+  </data>
+  <data name="InfoCardEdit-RightClickToEdit" xml:space="preserve">
+    <value>右键编辑</value>
+  </data>
+  <data name="InfoCardEdit-IncompleteLongPressToEdit" xml:space="preserve">
+    <value>未完成:长按此处编辑</value>
+  </data>
+  <data name="InfoCardEdit-IncompleteRightClickToEdit" xml:space="preserve">
+    <value>未完成:右键编辑</value>
+  </data>
+  <data name="InfoCardEdit-SetupCompleted" xml:space="preserve">
+    <value>设置完成</value>
+  </data>
+  <data name="InfoCardEdit-Add" xml:space="preserve">
+    <value>新增</value>
+  </data>
+  <data name="InfoCardEdit-ValueAndCommandSettings" xml:space="preserve">
+    <value>数值与命令设置</value>
+  </data>
+  <data name="InfoCardEdit-DeviceSelection" xml:space="preserve">
+    <value>设备选择</value>
+  </data>
+  <data name="InfoCardEdit-Set" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="InfoCardEdit-DeviceName" xml:space="preserve">
+    <value>设备名称</value>
+  </data>
+  <data name="InfoCardEdit-CommandSelection" xml:space="preserve">
+    <value>命令选择</value>
+  </data>
+  <data name="InfoCardEdit-ValueName" xml:space="preserve">
+    <value>数值名称</value>
+  </data>
+  <data name="InfoCardEdit-Unit" xml:space="preserve">
+    <value>单位</value>
+  </data>
+  <data name="InfoCardEdit-PleaseSelectCMD" xml:space="preserve">
+    <value>请选择命令</value>
+  </data>
+  <data name="InfoCardEdit-SelectSubsystem" xml:space="preserve">
+    <value>选择子系统</value>
+  </data>
+  <data name="InfoCardEdit-SubsystemDataNotRetrieved" xml:space="preserve">
+    <value>尚未取得子系统资料</value>
+  </data>
+  <data name="InfoCardEdit-SelectDevice" xml:space="preserve">
+    <value>选择设备</value>
+  </data>
+  <data name="InfoCardEdit-NoSelectableDevicesInSubsystem" xml:space="preserve">
+    <value>此子系统内没有可选择的设备</value>
+  </data>
+  <data name="InfoCardEdit-SystemInfo" xml:space="preserve">
+    <value>系统信息</value>
+  </data>
+  <data name="InfoCardEdit-ConfirmDeletion" xml:space="preserve">
+    <value>确定要删除?</value>
+  </data>
+  <data name="InfoCardEdit-SomeValuesNotSet" xml:space="preserve">
+    <value>有数值没有设置</value>
+  </data>
+  <data name="RunningDiagramCard-RunningMode" xml:space="preserve">
+    <value>运行模式：</value>
+  </data>
+  <data name="RunningDiagramCard-NoAvailableSubsystem" xml:space="preserve">
+    <value>无可用子系统</value>
+  </data>
+  <data name="RunningDiagramCard-SubsystemStatusNotObtained" xml:space="preserve">
+    <value>尚未取得子系统状态</value>
+  </data>
+  <data name="RunningDiagramCard-RunningStatusUpdating" xml:space="preserve">
+    <value>运行状态更新中</value>
+  </data>
+  <data name="RunningDiagramCard-CurrentMode" xml:space="preserve">
+    <value>目前模式：</value>
+  </data>
+  <data name="RunningDiagramCardEdit-EditConnectionStatus" xml:space="preserve">
+    <value>编辑 : 连接状态</value>
+  </data>
+  <data name="RunningDiagramCardEdit-Subsystem" xml:space="preserve">
+    <value>子系统：</value>
+  </data>
+  <data name="RunningDiagramCardEdit-NoAvailableSubsystem" xml:space="preserve">
+    <value>无可用子系统</value>
+  </data>
+  <data name="RunningDiagramCardEdit-No" xml:space="preserve">
+    <value>No.</value>
+  </data>
+  <data name="RunningDiagramCardEdit-Icon" xml:space="preserve">
+    <value>图示</value>
+  </data>
+  <data name="RunningDiagramCardEdit-Text" xml:space="preserve">
+    <value>文字</value>
+  </data>
+  <data name="RunningDiagramCardEdit-Confirm" xml:space="preserve">
+    <value>确定</value>
+  </data>
+  <data name="BlankInfoCard-PleaseEditCard" xml:space="preserve">
+    <value>请编辑卡片</value>
+  </data>
+  <data name="LinkStatusTimeline-NoStatusUpdates" xml:space="preserve">
+    <value>目前没有状态更新</value>
+  </data>
+</root>

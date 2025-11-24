@@ -14,9 +14,10 @@
 @inject HeartbeatService Heartbeat
 @using demoVer.Interfaces
 @inject IGroupsDataDecoder Decoder
+@inject IStringLocalizer<SharedResource> Localizer
 @using Microsoft.AspNetCore.Components.Web
 <MudPopoverProvider/>
-<PageTitle>Link Status</PageTitle>
+<PageTitle>@Localizer["LinkStatus-PageTitle"]</PageTitle>
 
 <div class="content-container">
     <div class="card-grid">
@@ -24,7 +25,7 @@
             <div class="card-container card-container-base">
                 <MudChart ChartType="ChartType.Donut" Width="250px" Height="250px" LegendPosition="Position.Left" InputData="@data" InputLabels="@labels">
                     <CustomGraphics>
-                        <text class="donut-inner-text" x="50%" y="35%" dominant-baseline="middle" text-anchor="middle" fill="var(--text-primary)" font-family="Helvetica" font-size="20">Total</text>
+                        <text class="donut-inner-text" x="50%" y="35%" dominant-baseline="middle" text-anchor="middle" fill="var(--text-primary)" font-family="Helvetica" font-size="20">@Localizer["LinkStatus-Total"]</text>
                         <text class="donut-inner-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="var(--text-primary)" font-family="Helvetica" font-size="50">@data.Sum().ToString()</text>
                     </CustomGraphics>
                 </MudChart>
@@ -64,10 +65,10 @@
                     <table class="custom-table link-status-table">
                         <thead>
                             <tr>
-                                <th>Address</th>
-                                <th>ModelName</th>
-                                <th>LinkStatus</th>
-                                <th>Mode</th>
+                                <th>@Localizer["LinkStatus-Address"]</th>
+                                <th>@Localizer["LinkStatus-ModelName"]</th>
+                                <th>@Localizer["LinkStatus-LinkStatus"]</th>
+                                <th>@Localizer["LinkStatus-RunningState"]</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -88,7 +89,7 @@
                             else
                             {
                                 <tr class="link-status-empty-row">
-                                    <td colspan="4">目前沒有裝置資料</td>
+                                    <td colspan="4">@Localizer["LinkStatus-NoDeviceData"]</td>
                                 </tr>
                             }
                         </tbody>
@@ -103,21 +104,21 @@
                             {
                                 <div class="card-table-row link-status-card-row @(selectedAddr == element.Address ? "selected" : string.Empty)" @onclick="() => OnRowClick(element)">
                                     <div class="card-table-item">
-                                        <span class="card-table-label">Address</span>
+                                        <span class="card-table-label">@Localizer["LinkStatus-Address"]</span>
                                         <span class="card-table-value">@FormatAddress(element.Address)</span>
                                     </div>
                                     <div class="card-table-item">
-                                        <span class="card-table-label">ModelName</span>
+                                        <span class="card-table-label">@Localizer["LinkStatus-ModelName"]</span>
                                         <span class="card-table-value">@element.ModelName</span>
                                     </div>
                                     <div class="card-table-item">
-                                        <span class="card-table-label">LinkStatus</span>
+                                        <span class="card-table-label">@Localizer["LinkStatus-LinkStatus"]</span>
                                         <span class="card-table-value">
                                             <span class="status-pill @GetStatusClass(element.LinkStatus)">@element.LinkStatus</span>
                                         </span>
                                     </div>
                                     <div class="card-table-item">
-                                        <span class="card-table-label">RunningState</span>
+                                        <span class="card-table-label">@Localizer["LinkStatus-RunningState"]</span>
                                         <span class="card-table-value">@element.RunningState</span>
                                     </div>
                                 </div>
@@ -125,7 +126,7 @@
                         }
                         else
                         {
-                            <div class="link-status-card-empty">目前沒有裝置資料</div>
+                            <div class="link-status-card-empty">@Localizer["LinkStatus-NoDeviceData"]</div>
                         }
                     </div>
                 }
@@ -133,7 +134,7 @@
                 <div class="link-status-pagination">
                     <button type="button" class="link-status-page-btn" @onclick="PreviousPage" disabled="@(!CanGoPrevious)">⟨</button>
                     <div class="link-status-page-info">
-                        <div class="page_info_div">第</div>
+                        <div class="page_info_div">@Localizer["LinkStatus-Page"]</div>
                         <input type="number"
                                min="1"
                                max="@TotalPages"
@@ -142,7 +143,7 @@
                                @bind:event="oninput"
                                @onkeydown="OnPageInputKeyDown"
                                @onblur="ResetPageInput" />
-                        <div class="page_info_div">頁 / @TotalPages</div>
+                        <div class="page_info_div">@Localizer["LinkStatus-Of"] @TotalPages</div>
                     </div>
                     <button type="button" class="link-status-page-btn" @onclick="NextPage" disabled="@(!CanGoNext)">⟩</button>
                 </div>
@@ -158,47 +159,47 @@
                     <div class="card-title" id="Address"></div>
                     <div class="card-body">
                         <div class="info-item">
-                            <span class="label">ModelName</span>
+                            <span class="label">@Localizer["LinkStatus-ModelNameLabel"]</span>
                             <span class="value" id="modelname-display"></span>
                         </div>
                         <div class="info-item">
-                            <span class="label">Revision:</span>
+                            <span class="label">@Localizer["LinkStatus-Revision"]</span>
                             <span class="value" id="Revision-display"></span>
                         </div>
                         <div class="info-item">
-                            <span class="label">Status:</span>
+                            <span class="label">@Localizer["LinkStatus-Status"]</span>
                             <span class="value" id="InvSetting-display"></span>
                         </div>
                         <div class="info-item">
-                            <span class="label">Error:</span>
+                            <span class="label">@Localizer["LinkStatus-Error"]</span>
                             <span class="value" id="ErrorMessage"></span>
                         </div>
                         <div class="info-item">
-                            <span class="label">Load Current:</span>
+                            <span class="label">@Localizer["LinkStatus-LoadCurrent"]</span>
                             <span class="value" id="Load_Current"></span>
                         </div>
                         <div class="info-item">
-                            <span class="label">Load Power:</span>
+                            <span class="label">@Localizer["LinkStatus-LoadPower"]</span>
                             <span class="value" id="Load_Power"></span>
                         </div>
                         <div class="info-item">
-                            <span class="label">DC current:</span>
+                            <span class="label">@Localizer["LinkStatus-DCCurrent"]</span>
                             <span class="value" id="DC_Current"></span>
                         </div>
                         <div class="info-item">
-                            <span class="label">Battery Voltage:</span>
+                            <span class="label">@Localizer["LinkStatus-BatteryVoltage"]</span>
                             <span class="value" id="V_BAT"></span>
                         </div>
                         <div class="info-item">
-                            <span class="label">Temperature:</span>
+                            <span class="label">@Localizer["LinkStatus-Temperature"]</span>
                             <span class="value" id="Temperature_display"></span>
                         </div>
                         <div class="info-item">
-                            <span class="label">FAN SPEED 1:</span>
+                            <span class="label">@Localizer["LinkStatus-FanSpeed1"]</span>
                             <span class="value" id="FAN_SPEED_1"></span>
                         </div>
                         <div class="info-item">
-                            <span class="label">FAN SPEED 2</span>
+                            <span class="label">@Localizer["LinkStatus-FanSpeed2"]</span>
                             <span class="value" id="FAN_SPEED_2"></span>
                         </div>
                     </div>
@@ -261,6 +262,17 @@
 
         @* globalVar.LinkedDevices.linkChanged += OnLinksChanged; *@
         linkAddrManager.linkChanged += OnLinksChanged;
+
+        // Initialize localized labels
+        labels = new string[] { Localizer["LinkStatus-Error"], Localizer["LinkStatus-Saving"], Localizer["LinkStatus-Inverter"], Localizer["LinkStatus-Bypass"], Localizer["LinkStatus-Charger"], Localizer["LinkStatus-Standby"] };
+        mapLabelsToData = new Dictionary<string, int>{
+            {Localizer["LinkStatus-Error"],       0},
+            {Localizer["LinkStatus-Saving"],      1},
+            {Localizer["LinkStatus-Inverter"],    2},
+            {Localizer["LinkStatus-Bypass"],      3},
+            {Localizer["LinkStatus-Charger"],     4},
+            {Localizer["LinkStatus-Standby"],     5},
+        };
 
         getINVsLink();
         UpdateDonutChart();
@@ -497,15 +509,8 @@
     };
     
     public double[] data = {};
-    public string[] labels = { "Error", "Saving", "Inverter", "Bypass", "Charger", "Standby" }; 
-    public Dictionary<string, int> mapLabelsToData = new Dictionary<string, int>{
-        {"Error",       0},
-        {"Saving",      1},
-        {"Inverter",    2},
-        {"Bypass",      3},
-        {"Charger",     4},
-        {"Standby",     5},
-    };
+    public string[] labels = new string[6];
+    public Dictionary<string, int> mapLabelsToData = new Dictionary<string, int>();
 
     private List<RunningStateTimelineGroup> TimelineGroups = new()
     {
@@ -715,15 +720,16 @@
             temp_TimelineItem_list_running.Add(new RunningStateTimelineItem()
             {
                 Address = tempItem.Item1,
-                Message = $"device {tempItem.Item1} : {ShortenStatus(tempItem.Item2)}",
+                Message = Localizer["LinkStatus-DeviceStatus", tempItem.Item1, ShortenStatus(tempItem.Item2)],
                 Timestamp = tempItem.Item3,
                 Severity = Severity.Info,
                 Color = Color.Primary,
             });
         }
-        var group_run = TimelineGroups.FirstOrDefault(g => g.StateName == "Running");
+        var group_run = TimelineGroups.FirstOrDefault(g => g.StateName == Localizer["LinkStatus-Running"] || g.StateName == "Running");
         if(group_run != null)
         {
+            group_run.StateName = Localizer["LinkStatus-Running"];
             group_run.Items = temp_TimelineItem_list_running;
         }
 
@@ -732,7 +738,7 @@
             temp_TimelineItem_list_error.Add(new RunningStateTimelineItem()
             {
                 Address = tempItem.Item1,
-                Message = $"device {tempItem.Item1} Error",
+                Message = Localizer["LinkStatus-DeviceError", tempItem.Item1],
                 Timestamp = tempItem.Item3,
                 Severity = Severity.Info,
                 Color = Color.Default,
@@ -740,9 +746,10 @@
             });
         }
         
-        var group_err = TimelineGroups.FirstOrDefault(g => g.StateName == "Error");
+        var group_err = TimelineGroups.FirstOrDefault(g => g.StateName == Localizer["LinkStatus-ErrorGroup"] || g.StateName == "Error");
         if(group_err != null)
         {
+            group_err.StateName = Localizer["LinkStatus-ErrorGroup"];
             group_err.Items = temp_TimelineItem_list_error;
         }
     }

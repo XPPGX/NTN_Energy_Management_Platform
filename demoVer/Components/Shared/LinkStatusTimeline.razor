@@ -2,6 +2,7 @@
 @using MudBlazor
 @using demoVer.Models
 @using System.Linq
+@inject IStringLocalizer<SharedResource> Localizer
 
 @if (!deviceCheckCompleted)
 {
@@ -14,7 +15,7 @@ else
     var orderedItems = (Items ?? new List<RunningStateTimelineItem>()).AsEnumerable().Reverse().ToList();
     if (orderedItems.Count == 0)
     {
-        <div class="timeline-empty">目前沒有狀態更新</div>
+        <div class="timeline-empty">@Localizer["LinkStatusTimeline-NoStatusUpdates"]</div>
     }
     else
     {

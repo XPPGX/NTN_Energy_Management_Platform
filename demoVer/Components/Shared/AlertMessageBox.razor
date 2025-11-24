@@ -1,6 +1,7 @@
 @namespace demoVer.Shared
 @inherits LayoutComponentBase
 @using demoVer.Models
+@inject IStringLocalizer<SharedResource> Localizer
 
 <div class="custom-alert">
     <div class="custom-alert-row">
@@ -26,8 +27,20 @@
 @code
 {
     [Parameter] public string Message {get; set;}
-    [Parameter] public string ConfirmBtn_Text {get; set;} = "確定";
-    [Parameter] public string CancelBtn_Text {get; set;} = "取消";
+    [Parameter] public string ConfirmBtn_Text {get; set;}
+    [Parameter] public string CancelBtn_Text {get; set;}
     [Parameter] public EventCallback ConfirmBtn_Func {get; set;}
     [Parameter] public EventCallback CancelBtn_Func {get; set;}
+
+    protected override void OnInitialized()
+    {
+        if (string.IsNullOrEmpty(ConfirmBtn_Text))
+        {
+            ConfirmBtn_Text = Localizer["Common-Confirm"];
+        }
+        if (string.IsNullOrEmpty(CancelBtn_Text))
+        {
+            CancelBtn_Text = Localizer["Common-Cancel"];
+        }
+    }
 }

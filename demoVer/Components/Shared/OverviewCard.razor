@@ -1,8 +1,9 @@
 @namespace demoVer.Shared
 @inherits LayoutComponentBase
+@inject IStringLocalizer<SharedResource> Localizer
 <div class="card-rough-container @CssClass" @attributes="AdditionalAttributes">
     <div class="card-rough-container top">
-        <h4>總覽</h4>
+        <h4>@Localizer["OverviewCard-Overview"]</h4>
         @if(showEditButton)
         {
             <button class="top-right-button" @onclick="openEditMenu">⋯</button>
@@ -15,11 +16,11 @@
             </div>
             <div class="overview-inner-card rightPart">
                 <div class="overview-inner-card valueBlock">
-                    <div>輸入電壓：</div>
+                    <div>@Localizer["OverviewCard-InputVoltage"]</div>
                     <div id="input_volt">220V</div>
                 </div>
                 <div class="overview-inner-card valueBlock">
-                    <div>輸入頻率：</div>
+                    <div>@Localizer["OverviewCard-InputFrequency"]</div>
                     <div id="input_freq">60Hz</div>
                 </div>
             </div>
@@ -30,11 +31,11 @@
             </div>
             <div class="overview-inner-card rightPart">
                 <div class="overview-inner-card valueBlock">
-                    <div>輸出電壓：</div>
+                    <div>@Localizer["OverviewCard-OutputVoltage"]</div>
                     <div id="output_volt">48</div>
                 </div>
                 <div class="overview-inner-card valueBlock">
-                    <div>輸出頻率：</div>
+                    <div>@Localizer["OverviewCard-OutputFrequency"]</div>
                     <div id="output_freq">0Hz</div>
                 </div>
             </div>
@@ -45,7 +46,7 @@
             </div>
             <div class="overview-inner-card rightPart">
                 <div class="overview-inner-card valueBlock">
-                    <div>電池電量：</div>
+                    <div>@Localizer["OverviewCard-BatteryLevel"]</div>
                     <div id="battery_level">30%</div>
                 </div>
             </div>
@@ -56,7 +57,7 @@
             </div>
             <div class="overview-inner-card rightPart">
                 <div class="overview-inner-card valueBlock">
-                    <div>負載功率：</div>
+                    <div>@Localizer["OverviewCard-LoadPower"]</div>
                     <div id="Load_Watt">622KW</div>
                 </div>
             </div>

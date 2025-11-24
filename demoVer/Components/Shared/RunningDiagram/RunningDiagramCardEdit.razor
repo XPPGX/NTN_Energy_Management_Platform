@@ -13,13 +13,14 @@
 
 @inject IWebHostEnvironment WebHostEnvironment
 @inject GlobalVar globalVar
+@inject IStringLocalizer<SharedResource> Localizer
 
 <div class="status-editor">
 	@if (STATUS_setting_stage == STATUS_SETTING_STAGE.OVERVIEW)
 	{
-		<h3>編輯 : 連接狀態</h3>
+		<h3>@Localizer["RunningDiagramCardEdit-EditConnectionStatus"]</h3>
 		<div class="subsystem-editor">
-			<label class="subsystem-select-label" for="subsystem-select-editor">子系統：</label>
+			<label class="subsystem-select-label" for="subsystem-select-editor">@Localizer["RunningDiagramCardEdit-Subsystem"]</label>
 			@if (subsystemOptions.Count > 0)
 			{
 				<select id="subsystem-select-editor"
@@ -36,7 +37,7 @@
 			else
 			{
 				<select id="subsystem-select-editor" class="subsystem-select" disabled>
-					<option value="">無可用子系統</option>
+					<option value="">@Localizer["RunningDiagramCardEdit-NoAvailableSubsystem"]</option>
 				</select>
 			}
 		</div>
@@ -48,9 +49,9 @@
 			</colgroup>
 			<thead>
 				<tr>
-					<th>No.</th>
-					<th>圖示</th>
-					<th>文字</th>
+					<th>@Localizer["RunningDiagramCardEdit-No"]</th>
+					<th>@Localizer["RunningDiagramCardEdit-Icon"]</th>
+					<th>@Localizer["RunningDiagramCardEdit-Text"]</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -79,7 +80,7 @@
 				   Variant="Variant.Filled"
 				   Color="Color.Success"
 				   Style="width: 120px;">
-			確定
+			@Localizer["RunningDiagramCardEdit-Confirm"]
 		</MudButton>
 	}
 	else if (STATUS_setting_stage == STATUS_SETTING_STAGE.SELECT_ICON_STAGE)

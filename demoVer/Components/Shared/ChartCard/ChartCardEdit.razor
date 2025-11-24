@@ -16,13 +16,14 @@
 @inject IJSRuntime JS
 @inject GlobalVar globalVar
 @inject HeartbeatService Heartbeat
+@inject IStringLocalizer<SharedResource> Localizer
 
 <div id="edit-container" @onclick="CloseMenu">
     @if (showMenu)
     {
         <div class="custom-menu" style="top:@($"{menuY}px"); left:@($"{menuX}px");" @onclick:stopPropagation="true">
-            <div class="custom-menu-item" @onclick="Edit_inCorrespondingStage">編輯</div>
-            <div class="custom-menu-item" @onclick="Delete_inCorrespondingStage">刪除</div>
+            <div class="custom-menu-item" @onclick="Edit_inCorrespondingStage">@Localizer["ChartCardEdit-Edit"]</div>
+            <div class="custom-menu-item" @onclick="Delete_inCorrespondingStage">@Localizer["ChartCardEdit-Delete"]</div>
         </div>
     }
 
@@ -35,8 +36,8 @@
                     <p id="dialogMessage" class="dialog-message">@AlertMessage</p>
                 </div>
                 <div class="custom-dialog-actions">
-                    <button class="btn btn-neutral" @onclick="Cancel">取消</button>
-                    <button class="btn btn-green" @onclick="Confirm">確定</button>
+                    <button class="btn btn-neutral" @onclick="Cancel">@Localizer["Common-Cancel"]</button>
+                    <button class="btn btn-green" @onclick="Confirm">@Localizer["Common-Confirm"]</button>
                 </div>
             </div>
         </div>
@@ -46,16 +47,16 @@
     {
         case CHART_SETTING_STAGE.SELECT_MACHINE_CMD:
             <div class="chart-machine-cmd-setting">
-                <h3>選擇設備與命令</h3>
+                <h3>@Localizer["ChartCardEdit-SelectDeviceAndCommand"]</h3>
                 <div class="chartForm">
                     <div class="chart-selector-panel">
                         <div class="chart-selector-grid">
                             <div class="custom-select-wrapper">
-                                <label for="chartMachineSelect" style="color: var(--text-primary);">Machine</label>
+                                <label for="chartMachineSelect" style="color: var(--text-primary);">@Localizer["ChartCardEdit-Machine"]</label>
                                 <select id="chartMachineSelect"
                                         class="custom-select"
                                         @onchange="MachineChanged">
-                                    <option value="9999">請選擇一個機器</option>
+                                    <option value="9999">@Localizer["ChartCardEdit-PleaseSelectMachine"]</option>
                                     @foreach (var (port, protocol, realAddr, storingAddr) in port_protocol_realAddr_storingAddr_List)
                                     {
                                         string displayName = $"{port, -5} ({realAddr, 3})";
@@ -73,12 +74,12 @@
                             </div>
 
                             <div class="custom-select-wrapper">
-                                <label for="chartCmdSelect" style="color: var(--text-primary);">CMD</label>
+                                <label for="chartCmdSelect" style="color: var(--text-primary);">@Localizer["ChartCardEdit-CMD"]</label>
                                 <select id="chartCmdSelect"
                                         class="custom-select"
                                         @onchange="ChartCmdChanged"
                                         disabled="@(show_cmd_unit_Dict_ref?.Any() != true)">
-                                    <option value="">請選擇一個命令</option>
+                                    <option value="">@Localizer["ChartCardEdit-PleaseSelectCommand"]</option>
                                     @foreach (var (cmd, unit) in show_cmd_unit_Dict_ref ?? Enumerable.Empty<KeyValuePair<string, string>>())
                                     {
                                         <option value="@cmd">@cmd</option>
@@ -96,7 +97,7 @@
                             <button class="btn btn-add no-flex"
                                     type="button"
                                     @onclick="ProceedToDisplaySetting">
-                                下一步
+                                @Localizer["ChartCardEdit-Next"]
                             </button>
                         </div>
                     </div>
@@ -105,10 +106,10 @@
             break;
 
         case CHART_SETTING_STAGE.OVERVIEW:
-            <h5>編輯 : 圖表</h5>
+            <h5>@Localizer["ChartCardEdit-EditChart"]</h5>
             <div class="input-container">
-                <label for="tempChartTitle" class="input-label">圖表標題</label>
-                <input id="tempChartTitle" type="text" class="input" @bind="temp_chartTitle" required placeholder="輸入圖表標題" />
+                <label for="tempChartTitle" class="input-label">@Localizer["ChartCardEdit-ChartTitle"]</label>
+                <input id="tempChartTitle" type="text" class="input" @bind="temp_chartTitle" required placeholder="@Localizer["ChartCardEdit-EnterChartTitle"]" />
             </div>
 
             @for (int i = 0; i < edit_ChartSetting_Clone.chart_single_data_lines.Count; i++)
@@ -121,45 +122,45 @@
                 var addr_mdlName_str = displayName;
                 var hint_cmd = temp.status switch
                 {
-                    SettingStatus.YET => "請點擊卡片",
-                    SettingStatus.PROGRESS => "未完成:請點擊卡片",
+                    SettingStatus.YET => Localizer["ChartCardEdit-PleaseClickCard"],
+                    SettingStatus.PROGRESS => Localizer["ChartCardEdit-IncompletePleaseClickCard"],
                     SettingStatus.DONE => $"{temp.Cmd}({temp.Unit})",
                     _ => string.Empty
                 };
                 var hint = temp.Y_axis_selection == true
                     ? edit_ChartSetting_Clone.Y_left_Title
                     : edit_ChartSetting_Clone.Y_right_Title;
-                var hint_axis = temp.Y_axis_selection == true ? "左" : "右";
+                var hint_axis = temp.Y_axis_selection == true ? Localizer["ChartCardEdit-Left"] : Localizer["ChartCardEdit-Right"];
                 var hint_color = string.IsNullOrEmpty(temp.color) ? "#000000" : temp.color;
                 <div class="detail-card" @onclick="() => OnLineClick(index, temp)">
                     <div class="detail-card-header">
-                        <span class="detail-card-title">Line @(index + 1)</span>
+                        <span class="detail-card-title">@Localizer["ChartCardEdit-Line"] @(index + 1)</span>
                         <button type="button"
                                 class="detail-card-action"
                                 @onclick="() => DeleteCurve(temp)"
                                 @onclick:stopPropagation="true">
-                            刪除
+                            @Localizer["ChartCardEdit-Delete"]
                         </button>
                     </div>
                     <div class="detail-card-body">
                         <div class="detail-card-row">
-                            <span class="detail-card-label">設備 :</span>
-                            <span class="detail-card-value">@(string.IsNullOrEmpty(addr_mdlName_str) ? "未設定" : addr_mdlName_str)</span>
+                            <span class="detail-card-label">@Localizer["ChartCardEdit-Device"]:</span>
+                            <span class="detail-card-value">@(string.IsNullOrEmpty(addr_mdlName_str) ? Localizer["ChartCardEdit-NotSet"] : addr_mdlName_str)</span>
                         </div>
                         <div class="detail-card-row">
-                            <span class="detail-card-label">命令 :</span>
+                            <span class="detail-card-label">@Localizer["ChartCardEdit-Command"]:</span>
                             <span class="detail-card-value">@hint_cmd</span>
                         </div>
                         <div class="detail-card-row">
-                            <span class="detail-card-label">Y軸標題:</span>
+                            <span class="detail-card-label">@Localizer["ChartCardEdit-YAxisTitle"]:</span>
                             <span class="detail-card-value">@hint</span>
                         </div>
                         <div class="detail-card-row">
-                            <span class="detail-card-label">參照軸:</span>
+                            <span class="detail-card-label">@Localizer["ChartCardEdit-ReferenceAxis"]:</span>
                             <span class="detail-card-value">@hint_axis</span>
                         </div>
                         <div class="detail-card-row detail-card-row-color">
-                            <span class="detail-card-label">顏色:</span>
+                            <span class="detail-card-label">@Localizer["ChartCardEdit-Color"]:</span>
                             <span class="detail-card-value">
                                 <span class="detail-card-color" style="background-color:@hint_color;"></span>
                             </span>
@@ -172,25 +173,25 @@
                 <button class="btn btn-add no-flex" style="width: 120px;"
                         type="button"
                         @onclick="Add_Curve">
-                    新增
+                    @Localizer["ChartCardEdit-Add"]
                 </button>
                 <button class="btn btn-green no-flex" style="width: 120px;"
                         type="button"
                         @onclick="Confirm_CurveSetting">
-                    確定
+                    @Localizer["Common-Confirm"]
                 </button>
             </div>
             break;
 
         case CHART_SETTING_STAGE.DISPLAY_SETTING:
             <div class="chart-display-setting">
-                <h3>顯示設定</h3>
+                <h3>@Localizer["ChartCardEdit-DisplaySettings"]</h3>
                 <div class="chartForm">
                     @{ string paper_style = isMobile ? string.Empty : "width: 400px; max-height: 400px;"; }
                     <div class="chart-display-card" style="@paper_style">
                         <form class="custom-form">
                             <div class="form-group">
-                                <label for="yTitleInput" class="form-label">Y-Title</label>
+                                <label for="yTitleInput" class="form-label">@Localizer["ChartCardEdit-YTitle"]</label>
                                 <input type="text" id="yTitleInput" class="form-input" @bind="temp_Y_singleTitle" required />
                                 @if (!string.IsNullOrEmpty(yTitleError))
                                 {
@@ -198,7 +199,7 @@
                                 }
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Y-axis</label>
+                                <label class="form-label">@Localizer["ChartCardEdit-YAxis"]</label>
                                 <div class="radio-group" @onchange:stopPropagation="true" @onclick:stopPropagation="true">
                                     <label class="radio-option">
                                         <input type="radio"
@@ -206,7 +207,7 @@
                                                value="true"
                                                @onchange="YAxisChanged"
                                                checked="@(blank_singleDataLine.Y_axis_selection == true)" />
-                                        <span class="radio-label">Left-axis</span>
+                                        <span class="radio-label">@Localizer["ChartCardEdit-LeftAxis"]</span>
                                     </label>
                                     <label class="radio-option">
                                         <input type="radio"
@@ -214,7 +215,7 @@
                                                value="false"
                                                @onchange="YAxisChanged"
                                                checked="@(blank_singleDataLine.Y_axis_selection == false)" />
-                                        <span class="radio-label">Right-axis</span>
+                                        <span class="radio-label">@Localizer["ChartCardEdit-RightAxis"]</span>
                                     </label>
                                 </div>
                                 @if (!string.IsNullOrEmpty(yAxisError))
@@ -223,14 +224,14 @@
                                 }
                             </div>
                             <div class="form-group">
-                                <label for="colorPicker" class="form-label">Data-Color</label>
+                                <label for="colorPicker" class="form-label">@Localizer["ChartCardEdit-DataColor"]</label>
                                 <input type="color" id="colorPicker" class="form-input color-input" @bind="blank_singleDataLine.color" style="@($"color: {blank_singleDataLine.color};")" required />
                                 @if (!string.IsNullOrEmpty(colorError))
                                 {
                                     <div class="error-text">@colorError</div>
                                 }
                             </div>
-                            <button type="button" class="btn btn-add ml-auto" @onclick="Confirm_SingleDataLine_setting">確定</button>
+                            <button type="button" class="btn btn-add ml-auto" @onclick="Confirm_SingleDataLine_setting">@Localizer["Common-Confirm"]</button>
                         </form>
                     </div>
                 </div>
@@ -422,7 +423,7 @@
     private void Delete_inCorrespondingStage()
     {
         showMenu = false;
-        ShowDialog("確定要刪除?", DeleteAction_In_CHART_OVERVIEW_STAGE);
+        ShowDialog(Localizer["ChartCardEdit-ConfirmDelete"], DeleteAction_In_CHART_OVERVIEW_STAGE);
     }
 
     private void ShowDialog(string message, Action confirmAction)
@@ -501,7 +502,7 @@
         {
             if (!getCMDs())
             {
-                chartMachineCmdError = "此設備沒有可用命令";
+                chartMachineCmdError = Localizer["ChartCardEdit-NoAvailableCommands"];
             }
         }
         else
@@ -619,7 +620,7 @@
             Console.WriteLine($"[ChartCardEdit][MachineChanged] Try to get CMDs");
             if (!getCMDs())
             {
-                chartMachineCmdError = "此設備沒有可用命令";
+                chartMachineCmdError = Localizer["ChartCardEdit-NoAvailableCommands"];
             }
         }
         else if (blank_singleDataLine.addr == 256)
@@ -627,7 +628,7 @@
             currentSelected_Addr = blank_singleDataLine.addr;
             if (!getCMDs())
             {
-                chartMachineCmdError = "此設備沒有可用命令";
+                chartMachineCmdError = Localizer["ChartCardEdit-NoAvailableCommands"];
             }
         }
         else
@@ -666,7 +667,7 @@
         }
         else
         {
-            chartMachineCmdError = "找不到對應的命令資訊";
+            chartMachineCmdError = Localizer["ChartCardEdit-CommandInfoNotFound"];
         }
     }
 
@@ -676,7 +677,7 @@
 
         if (blank_singleDataLine.addr == 9999)
         {
-            chartMachineCmdError = "請先選擇機器";
+            chartMachineCmdError = Localizer["ChartCardEdit-PleaseSelectMachineFirst"];
             return;
         }
 
@@ -684,19 +685,19 @@
 
         if (show_cmd_unit_Dict_ref is null || show_cmd_unit_Dict_ref.Count == 0)
         {
-            chartMachineCmdError = "此設備沒有可選命令";
+            chartMachineCmdError = Localizer["ChartCardEdit-NoSelectableCommands"];
             return;
         }
 
         if (string.IsNullOrWhiteSpace(blank_singleDataLine.Cmd))
         {
-            chartMachineCmdError = "請先選擇命令";
+            chartMachineCmdError = Localizer["ChartCardEdit-PleaseSelectCommandFirst"];
             return;
         }
 
         if (!show_cmd_unit_Dict_ref.TryGetValue(blank_singleDataLine.Cmd, out var unit))
         {
-            chartMachineCmdError = "找不到對應的命令資訊";
+            chartMachineCmdError = Localizer["ChartCardEdit-CommandInfoNotFound"];
             return;
         }
 
@@ -811,9 +812,9 @@
 
     private async Task Confirm_SingleDataLine_setting()
     {
-        yTitleError = string.IsNullOrEmpty(temp_Y_singleTitle) ? "Y-Title is required!" : string.Empty;
-        yAxisError = blank_singleDataLine.Y_axis_selection == null ? "Y-axis is required!" : string.Empty;
-        colorError = string.IsNullOrEmpty(blank_singleDataLine.color) ? "Data-Color is required!" : string.Empty;
+        yTitleError = string.IsNullOrEmpty(temp_Y_singleTitle) ? Localizer["ChartCardEdit-YTitleRequired"] : string.Empty;
+        yAxisError = blank_singleDataLine.Y_axis_selection == null ? Localizer["ChartCardEdit-YAxisRequired"] : string.Empty;
+        colorError = string.IsNullOrEmpty(blank_singleDataLine.color) ? Localizer["ChartCardEdit-DataColorRequired"] : string.Empty;
 
         var target_DataLine = edit_ChartSetting_Clone.chart_single_data_lines[SingleLine_index];
         bool sameAxis_Flag = false;
@@ -840,7 +841,7 @@
             }
             else if (sameAxis_Flag)
             {
-                chartForm_errorMessage = "兩組資料不可位於同一側";
+                chartForm_errorMessage = Localizer["ChartCardEdit-DataCannotBeOnSameSide"];
             }
             return;
         }

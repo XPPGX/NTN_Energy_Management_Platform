@@ -8,9 +8,10 @@
 @inject GlobalVar globalVar
 @implements IDisposable
 @inject HeartbeatService heartbeat
+@inject IStringLocalizer<SharedResource> Localizer
 <div class="infoCard-container @CssClass" @attributes="AdditionalAttributes">
     <div class="infoCard-container top">
-        <h4>@(string.IsNullOrEmpty(currentCard.cardName) ? "請編輯卡片" : currentCard.cardName)</h4>
+        <h4>@(string.IsNullOrEmpty(currentCard.cardName) ? @Localizer["BlankInfoCard-PleaseEditCard"] : currentCard.cardName)</h4>
         @if(showEditButton)
         {
             <button class="btn top-right-button" 

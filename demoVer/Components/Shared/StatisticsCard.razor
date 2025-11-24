@@ -1,22 +1,23 @@
 @namespace demoVer.Shared
 @inherits LayoutComponentBase
+@inject IStringLocalizer<SharedResource> Localizer
 <div class="Statistics-container @CssClass" @attributes="AdditionalAttributes">
     <div class="Statistics-container top">
-        <span>統計</span>
+        <span>@Localizer["StatisticsCard-Statistics"]</span>
         @if(showEditButton)
         {
             <button class="top-right-button" @onclick="openEditMenu">⋯</button>
         }
     </div>
     <div class="Statistics-container top">
-        <span id="current_strategy">當前用電策略: 無</span>
+        <span id="current_strategy">@Localizer["StatisticsCard-CurrentStrategy"]: @Localizer["StatisticsCard-None"]</span>
     </div>
     <div class="Statistics-container bottom">
         <div class="Statistics-inner-card">
             <div class="smallIcon">
                 <img src="images/plug.png" alt="plug" style="width:48px; height:48px" />
             </div>
-            <div>當日充電量：</div>
+            <div>@Localizer["StatisticsCard-DailyCharging"]</div>
             <div id="charging_capcity_today">116.38</div>
             <div>KWH</div>
         </div>
@@ -24,7 +25,7 @@
             <div class="smallIcon">
                 <img src="images/plug.png" alt="plug" style="width:48px; height:48px" />
             </div>
-            <div>累積充電量：</div>
+            <div>@Localizer["StatisticsCard-TotalCharging"]</div>
             <div id="charging_capcity_total">3366.73</div>
             <div>KWH</div>
         </div>
@@ -32,7 +33,7 @@
             <div class="smallIcon">
                 <img src="images/lighting.png" alt="lighting" style="width:48px; height:48px" />
             </div>
-            <div>當日放電量：</div>
+            <div>@Localizer["StatisticsCard-DailyDischarging"]</div>
             <div id="discharging_capcity_today">615.59</div>
             <div>KWH</div>
         </div>
@@ -40,7 +41,7 @@
             <div class="smallIcon">
                 <img src="images/lighting.png" alt="lighting" style="width:48px; height:48px" />
             </div>
-            <div>累積放電量：</div>
+            <div>@Localizer["StatisticsCard-TotalDischarging"]</div>
             <div id="discharging_capcity_total">1676.91</div>
             <div>KWH</div>
         </div>

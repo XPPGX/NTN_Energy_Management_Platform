@@ -9,13 +9,14 @@
 @using System.Linq
 @using System.Threading.Tasks
 @inject GlobalVar globalVar
+@inject IStringLocalizer<SharedResource> Localizer
 <div class="running-diagram-container @CssClass" @attributes="AdditionalAttributes">
     <div class="running-diagram-container top">
         <div class="leftPart">
             <span class="subsystem-badge @GetSubsystemModeClass()" title="@GetSubsystemBadgeTooltip()">
                 @GetActiveSubsystemLabel()
             </span>
-            <div class="adaptive">運行模式：</div>
+            <div class="adaptive">@Localizer["RunningDiagramCard-RunningMode"]</div>
             <div id="running_mode">@local_INV_MODE_str</div>
         </div>
         @* <div class="rightPart">
@@ -363,7 +364,7 @@
     {
         return activeSubSystem is not null
             ? GetSubsystemDisplayName(activeSubSystem)
-            : "無可用子系統";
+            : Localizer["RunningDiagramCard-NoAvailableSubsystem"];
     }
 
     private string GetSubsystemModeClass()
@@ -393,12 +394,12 @@
     {
         if (activeSubSystem is null)
         {
-            return "尚未取得子系統狀態";
+            return Localizer["RunningDiagramCard-SubsystemStatusNotObtained"];
         }
 
         return string.IsNullOrWhiteSpace(local_INV_MODE_str)
-            ? "運行狀態更新中"
-            : $"目前模式：{local_INV_MODE_str}";
+            ? Localizer["RunningDiagramCard-RunningStatusUpdating"]
+            : $"{Localizer["RunningDiagramCard-CurrentMode"]}{local_INV_MODE_str}";
     }
 
     public async ValueTask DisposeAsync()

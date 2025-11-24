@@ -14,9 +14,10 @@
 @inject HeartbeatService Heartbeat
 @inject GlobalVar GlobalVar
 @inject SubSystemManager SubSystemManager
+@inject IStringLocalizer<SharedResource> Localizer
 <MudPopoverProvider/>
 @*Web Content*@
-<PageTitle>Battery Setting</PageTitle>
+<PageTitle>@Localizer["BatterySetting-PageTitle"]</PageTitle>
 
 
 
@@ -40,11 +41,11 @@
     <div class="top">
         <div class="leftPart">
             <div class="subsystem-select-group">
-                <label for="subsystem-select" class="local-label" style="margin-bottom: 0px!important;">子系統</label>
+                <label for="subsystem-select" class="local-label" style="margin-bottom: 0px!important;">@Localizer["BatterySetting-Subsystem"]</label>
                 <select id="subsystem-select" class="subsystem-select" value="@SelectedSubSystemKey" @onchange="Local_OnSubSystemChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
                     @if(_subSystemOptions.Count == 0)
                     {
-                        <option value="">請選擇子系統</option>
+                        <option value="">@Localizer["BatterySetting-PleaseSelectSubsystem"]</option>
                         @* <option value="" disabled>無可用子系統</option> *@
                     }
                     else
@@ -58,7 +59,7 @@
             </div>
         </div>
         <div class="rightPart">
-            <button type="button" class="btn btn-primary no-flex" @onclick="OnSaveButtonClick">保存設定</button>
+            <button type="button" class="btn btn-primary no-flex" @onclick="OnSaveButtonClick">@Localizer["BatterySetting-SaveSettings"]</button>
         </div>
     </div>
     <div class="content-container">
@@ -100,8 +101,8 @@
                     <canvas id="stageChart" class="stage-chart"></canvas>
                     <div class="stage-controls">
                         <select value="@selectedStage.ToString().ToLower()" @onchange="OnStageSelectChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
-                            <option value="false">2階段</option>
-                            <option value="true">3階段</option>
+                            <option value="false">@Localizer["BatterySetting-2Stage"]</option>
+                            <option value="true">@Localizer["BatterySetting-3Stage"]</option>
                         </select>
                     </div>
                 </div>
@@ -112,7 +113,7 @@
                             <input type="checkbox" @bind="CCT_Enable" />
                             <span class="toggle-slider"></span>
                         </label>
-                        <span style="display: inline-block;">@(!isMobile ? "CC timeout" : "CCT")</span>
+                        <span style="display: inline-block;">@(!isMobile ? Localizer["BatterySetting-CCTimeout"] : Localizer["BatterySetting-CCT"])</span>
                         <div class="inputField">
                             <input type="number" @bind-value="CC_Timeout_value" @bind-value:after="OnCCTimeoutValueChanged" placeholder="CCT" min="0" />
                             @if(!isMobile)
@@ -122,7 +123,7 @@
                             else
                             {
                                 @* <div class="dateTime">@FormatToHourMin(CC_Timeout_value)</div> *@
-                                <div class="dateTime">分</div>
+                                <div class="dateTime">@Localizer["BatterySetting-Minutes"]</div>
                             }
                         </div>
                         @if(!isMobile)
@@ -137,7 +138,7 @@
                             <input type="checkbox" @bind="CVT_Enable" />
                             <span class="toggle-slider"></span>
                         </label>
-                        <span style="display: inline-block;">@(!isMobile ? "CV timeout" : "CVT")</span>
+                        <span style="display: inline-block;">@(!isMobile ? Localizer["BatterySetting-CVTimeout"] : Localizer["BatterySetting-CVT"])</span>
                         <div class="inputField">
                             <input type="number" @bind-value="CV_Timeout_value" @bind-value:after="OnCVTimeoutValueChanged" placeholder="CVT" min="0" />
                             @if(!isMobile)
@@ -147,7 +148,7 @@
                             else
                             {
                                 @* <div class="dateTime">@FormatToHourMin(CV_Timeout_value)</div> *@
-                                <div class="dateTime">分</div>
+                                <div class="dateTime">@Localizer["BatterySetting-Minutes"]</div>
                             }
                         </div>
                         @if(!isMobile)
@@ -162,7 +163,7 @@
                             <input type="checkbox" @bind="FVT_Enable" />
                             <span class="toggle-slider"></span>
                         </label>
-                        <span style="display: inline-block;">@(!isMobile ? "FV timeout" : "FVT")</span>
+                        <span style="display: inline-block;">@(!isMobile ? Localizer["BatterySetting-FVTimeout"] : Localizer["BatterySetting-FVT"])</span>
                         <div class="inputField">
                             <input type="number" @bind-value="FV_Timeout_value" @bind-value:after="OnFVTimeoutValueChanged" placeholder="FVT" min="0"/>
                             @if(!isMobile)
@@ -172,7 +173,7 @@
                             else
                             {
                                 @* <div class="dateTime">@FormatToHourMin(FV_Timeout_value)</div> *@
-                                <div class="dateTime">分</div>
+                                <div class="dateTime">@Localizer["BatterySetting-Minutes"]</div>
                             }
                         </div>
                         @if(!isMobile)
@@ -333,10 +334,7 @@
 
     private string FormatToHourMin(double totalMin)
     {
-        @* int hours = (int)(totalMin / 60); *@
-        @* int minutes = (int)(totalMin % 60); *@
-        @* return $"{hours} 小時 {minutes} 分"; *@
-        return $"{totalMin} 分";
+        return $"{totalMin} {Localizer["BatterySetting-MinutesUnit"]}";
     }
 
     private async Task OnStageSelectChanged(ChangeEventArgs e)
@@ -409,8 +407,8 @@
 
     private string GetSubSystemDisplay(SubSystem subSystem)
     {
-        var port = string.IsNullOrWhiteSpace(subSystem.Port) ? "Unknown" : subSystem.Port;
-        var protocol = string.IsNullOrWhiteSpace(subSystem.Protocol) ? "N/A" : subSystem.Protocol;
+        var port = string.IsNullOrWhiteSpace(subSystem.Port) ? Localizer["BatterySetting-Unknown"] : subSystem.Port;
+        var protocol = string.IsNullOrWhiteSpace(subSystem.Protocol) ? Localizer["BatterySetting-NA"] : subSystem.Protocol;
         return $"{port} - {protocol}";
     }
 
@@ -619,16 +617,16 @@
         switch(_alertMessage_FromOtherFunc)
         {
             case "Save":
-                AlertMessage_parent     = "是否確定要保存？";
-                ConfirmBtn_Text_parent  = "確定";
-                CancelBtn_Text_parent   = "取消";
+                AlertMessage_parent     = Localizer["BatterySetting-ConfirmSave"];
+                ConfirmBtn_Text_parent  = Localizer["Common-Confirm"];
+                CancelBtn_Text_parent   = Localizer["Common-Cancel"];
                 ConfirmBtn_Func_parent  = EventCallback.Factory.Create(this, ConfirmSave);
                 CancelBtn_Func_parent   = EventCallback.Factory.Create(this, CancelSave);
                 break;
             case "DefaultVal":
-                AlertMessage_parent     = "確定要還原預設？";
-                ConfirmBtn_Text_parent  = "確定";
-                CancelBtn_Text_parent   = "取消";
+                AlertMessage_parent     = Localizer["BatterySetting-ConfirmRestoreDefault"];
+                ConfirmBtn_Text_parent  = Localizer["Common-Confirm"];
+                CancelBtn_Text_parent   = Localizer["Common-Cancel"];
                 ConfirmBtn_Func_parent  = EventCallback.Factory.Create(this, ConfirmDefault);
                 CancelBtn_Func_parent   = EventCallback.Factory.Create(this, CancelDefault);
                 break;

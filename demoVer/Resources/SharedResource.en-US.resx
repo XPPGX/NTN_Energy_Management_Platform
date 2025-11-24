@@ -1,0 +1,703 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Common-Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Common-Confirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="NTNHome-CardManagement" xml:space="preserve">
+    <value>Card Management</value>
+  </data>
+  <data name="NTNHome-DeleteCard" xml:space="preserve">
+    <value>Delete Card</value>
+  </data>
+  <data name="NTNHome-DeleteWarning" xml:space="preserve">
+    <value>Warning: This action cannot be undone.</value>
+  </data>
+  <data name="NTNHome-EditCard" xml:space="preserve">
+    <value>Edit Card</value>
+  </data>
+  <data name="NTNHome-PageTitle" xml:space="preserve">
+    <value>NTN Module</value>
+  </data>
+  <data name="NTNHome-SavePrompt" xml:space="preserve">
+    <value>Save changes?</value>
+  </data>
+  <data name="NTNHome-SelectCard" xml:space="preserve">
+    <value>Select Card</value>
+  </data>
+  <data name="BatterySetting-PageTitle" xml:space="preserve">
+    <value>Battery Setting</value>
+  </data>
+  <data name="BatterySetting-Subsystem" xml:space="preserve">
+    <value>Subsystem</value>
+  </data>
+  <data name="BatterySetting-PleaseSelectSubsystem" xml:space="preserve">
+    <value>Please select subsystem</value>
+  </data>
+  <data name="BatterySetting-SaveSettings" xml:space="preserve">
+    <value>Save Settings</value>
+  </data>
+  <data name="BatterySetting-2Stage" xml:space="preserve">
+    <value>2 Stage</value>
+  </data>
+  <data name="BatterySetting-3Stage" xml:space="preserve">
+    <value>3 Stage</value>
+  </data>
+  <data name="BatterySetting-CCTimeout" xml:space="preserve">
+    <value>CC Timeout</value>
+  </data>
+  <data name="BatterySetting-CCT" xml:space="preserve">
+    <value>CCT</value>
+  </data>
+  <data name="BatterySetting-CVTimeout" xml:space="preserve">
+    <value>CV Timeout</value>
+  </data>
+  <data name="BatterySetting-CVT" xml:space="preserve">
+    <value>CVT</value>
+  </data>
+  <data name="BatterySetting-FVTimeout" xml:space="preserve">
+    <value>FV Timeout</value>
+  </data>
+  <data name="BatterySetting-FVT" xml:space="preserve">
+    <value>FVT</value>
+  </data>
+  <data name="BatterySetting-Minutes" xml:space="preserve">
+    <value>min</value>
+  </data>
+  <data name="BatterySetting-ConfirmSave" xml:space="preserve">
+    <value>Are you sure to save?</value>
+  </data>
+  <data name="BatterySetting-ConfirmRestoreDefault" xml:space="preserve">
+    <value>Sure to restore default?</value>
+  </data>
+  <data name="BatterySetting-Unknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="BatterySetting-NA" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="BatterySetting-MinutesUnit" xml:space="preserve">
+    <value>min</value>
+  </data>
+  <data name="InverterSetting-PageTitle" xml:space="preserve">
+    <value>Inverter Setting</value>
+  </data>
+  <data name="InverterSetting-Subsystem" xml:space="preserve">
+    <value>Subsystem</value>
+  </data>
+  <data name="InverterSetting-PleaseSelectSubsystem" xml:space="preserve">
+    <value>Please select subsystem</value>
+  </data>
+  <data name="InverterSetting-SaveSettings" xml:space="preserve">
+    <value>Save Settings</value>
+  </data>
+  <data name="InverterSetting-ACModeCharger" xml:space="preserve">
+    <value>AC Mode Charger</value>
+  </data>
+  <data name="InverterSetting-GridTiedPowerFeeding" xml:space="preserve">
+    <value>Grid Tied Power Feeding</value>
+  </data>
+  <data name="InverterSetting-OutputPriority" xml:space="preserve">
+    <value>Output Priority</value>
+  </data>
+  <data name="InverterSetting-ChargingPriority" xml:space="preserve">
+    <value>Charging Priority</value>
+  </data>
+  <data name="InverterSetting-BatteryAlarm" xml:space="preserve">
+    <value>Battery Alarm</value>
+  </data>
+  <data name="InverterSetting-BatteryShutdown" xml:space="preserve">
+    <value>Battery Shutdown</value>
+  </data>
+  <data name="InverterSetting-BatteryRecharge" xml:space="preserve">
+    <value>Battery Recharge</value>
+  </data>
+  <data name="InverterSetting-BatteryOVAlarm" xml:space="preserve">
+    <value>Battery OV Alarm</value>
+  </data>
+  <data name="InverterSetting-ConfirmSave" xml:space="preserve">
+    <value>Are you sure to save?</value>
+  </data>
+  <data name="InverterSetting-Unknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="InverterSetting-NA" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="InverterSetting-AngleDegrees" xml:space="preserve">
+    <value>Angle (°)</value>
+  </data>
+  <data name="InverterSetting-OutputVoltageV" xml:space="preserve">
+    <value>Output Voltage (V)</value>
+  </data>
+  <data name="Log-PageTitle" xml:space="preserve">
+    <value>Log</value>
+  </data>
+  <data name="Log-Exporting" xml:space="preserve">
+    <value>Exporting...</value>
+  </data>
+  <data name="Log-Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Log-SelectTable" xml:space="preserve">
+    <value>Select Table</value>
+  </data>
+  <data name="Log-Loading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="Log-NoMatchingTables" xml:space="preserve">
+    <value>No matching tables found</value>
+  </data>
+  <data name="Log-Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="Log-ConditionSettings" xml:space="preserve">
+    <value>Condition Settings</value>
+  </data>
+  <data name="Log-LogType" xml:space="preserve">
+    <value>Log Type</value>
+  </data>
+  <data name="Log-SelectOption" xml:space="preserve">
+    <value>-- Select --</value>
+  </data>
+  <data name="Log-EventLog" xml:space="preserve">
+    <value>Event Log</value>
+  </data>
+  <data name="Log-DataLog" xml:space="preserve">
+    <value>Data Log</value>
+  </data>
+  <data name="Log-CAN1" xml:space="preserve">
+    <value>CAN1</value>
+  </data>
+  <data name="Log-CAN2" xml:space="preserve">
+    <value>CAN2</value>
+  </data>
+  <data name="Log-MOD1" xml:space="preserve">
+    <value>MOD1</value>
+  </data>
+  <data name="Log-MOD2" xml:space="preserve">
+    <value>MOD2</value>
+  </data>
+  <data name="Log-SwitchTable" xml:space="preserve">
+    <value>Switch Table</value>
+  </data>
+  <data name="Log-Current" xml:space="preserve">
+    <value>Current</value>
+  </data>
+  <data name="Log-SelectDataTypeFirst" xml:space="preserve">
+    <value>Please select data type first</value>
+  </data>
+  <data name="Log-DateRange" xml:space="preserve">
+    <value>Date Range</value>
+  </data>
+  <data name="Log-StartDate" xml:space="preserve">
+    <value>Start Date</value>
+  </data>
+  <data name="Log-EndDate" xml:space="preserve">
+    <value>End Date</value>
+  </data>
+  <data name="Log-ClickToSelectDate" xml:space="preserve">
+    <value>Click to select date</value>
+  </data>
+  <data name="Log-ClickToSelectTime" xml:space="preserve">
+    <value>Click to select time</value>
+  </data>
+  <data name="Log-0_5Year" xml:space="preserve">
+    <value>0.5 yr</value>
+  </data>
+  <data name="Log-1Month" xml:space="preserve">
+    <value>1 month</value>
+  </data>
+  <data name="Log-1Week" xml:space="preserve">
+    <value>1 week</value>
+  </data>
+  <data name="Log-1Day" xml:space="preserve">
+    <value>1 day</value>
+  </data>
+  <data name="Log-Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="Log-Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Log-Export" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="Log-LogTable" xml:space="preserve">
+    <value>Log Table</value>
+  </data>
+  <data name="Log-TotalPages" xml:space="preserve">
+    <value>Total Pages</value>
+  </data>
+  <data name="Log-ShowColumns" xml:space="preserve">
+    <value>⚙ Show Columns</value>
+  </data>
+  <data name="Log-SelectColumnsToShow" xml:space="preserve">
+    <value>Select columns to show</value>
+  </data>
+  <data name="Log-PreviousPage" xml:space="preserve">
+    <value>⟨ Previous Page</value>
+  </data>
+  <data name="Log-Page" xml:space="preserve">
+    <value>Page</value>
+  </data>
+  <data name="Log-PageUnit" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Log-NextPage" xml:space="preserve">
+    <value>Next Page ⟩</value>
+  </data>
+  <data name="Log-SelectPortFirst" xml:space="preserve">
+    <value>Please select port first</value>
+  </data>
+  <data name="Log-CannotGetTableList" xml:space="preserve">
+    <value>Unable to retrieve table list</value>
+  </data>
+  <data name="Log-NoTablesFor" xml:space="preserve">
+    <value>No tables found for</value>
+  </data>
+  <data name="Log-TableLoadError" xml:space="preserve">
+    <value>Error loading tables</value>
+  </data>
+  <data name="Log-SelectTableFirst" xml:space="preserve">
+    <value>Please select table first</value>
+  </data>
+  <data name="Log-NoPageData" xml:space="preserve">
+    <value>No page data found</value>
+  </data>
+  <data name="LinkStatus-PageTitle" xml:space="preserve">
+    <value>Link Status</value>
+  </data>
+  <data name="LinkStatus-Total" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="LinkStatus-Address" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="LinkStatus-ModelName" xml:space="preserve">
+    <value>ModelName</value>
+  </data>
+  <data name="LinkStatus-LinkStatus" xml:space="preserve">
+    <value>LinkStatus</value>
+  </data>
+  <data name="LinkStatus-RunningState" xml:space="preserve">
+    <value>RunningState</value>
+  </data>
+  <data name="LinkStatus-NoDeviceData" xml:space="preserve">
+    <value>No device data available</value>
+  </data>
+  <data name="LinkStatus-Page" xml:space="preserve">
+    <value>Page</value>
+  </data>
+  <data name="LinkStatus-Of" xml:space="preserve">
+    <value>of</value>
+  </data>
+  <data name="LinkStatus-ModelNameLabel" xml:space="preserve">
+    <value>ModelName</value>
+  </data>
+  <data name="LinkStatus-Revision" xml:space="preserve">
+    <value>Revision:</value>
+  </data>
+  <data name="LinkStatus-Status" xml:space="preserve">
+    <value>Status:</value>
+  </data>
+  <data name="LinkStatus-Error" xml:space="preserve">
+    <value>Error:</value>
+  </data>
+  <data name="LinkStatus-LoadCurrent" xml:space="preserve">
+    <value>Load Current:</value>
+  </data>
+  <data name="LinkStatus-LoadPower" xml:space="preserve">
+    <value>Load Power:</value>
+  </data>
+  <data name="LinkStatus-DCCurrent" xml:space="preserve">
+    <value>DC current:</value>
+  </data>
+  <data name="LinkStatus-BatteryVoltage" xml:space="preserve">
+    <value>Battery Voltage:</value>
+  </data>
+  <data name="LinkStatus-Temperature" xml:space="preserve">
+    <value>Temperature:</value>
+  </data>
+  <data name="LinkStatus-FanSpeed1" xml:space="preserve">
+    <value>FAN SPEED 1:</value>
+  </data>
+  <data name="LinkStatus-FanSpeed2" xml:space="preserve">
+    <value>FAN SPEED 2:</value>
+  </data>
+  <data name="LinkStatus-Running" xml:space="preserve">
+    <value>Running</value>
+  </data>
+  <data name="LinkStatus-ErrorGroup" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="LinkStatus-ErrorLabel" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="LinkStatus-Saving" xml:space="preserve">
+    <value>Saving</value>
+  </data>
+  <data name="LinkStatus-Inverter" xml:space="preserve">
+    <value>Inverter</value>
+  </data>
+  <data name="LinkStatus-Bypass" xml:space="preserve">
+    <value>Bypass</value>
+  </data>
+  <data name="LinkStatus-Charger" xml:space="preserve">
+    <value>Charger</value>
+  </data>
+  <data name="LinkStatus-Standby" xml:space="preserve">
+    <value>Standby</value>
+  </data>
+  <data name="LinkStatus-Linked" xml:space="preserve">
+    <value>Linked</value>
+  </data>
+  <data name="LinkStatus-NA" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="LinkStatus-DeviceStatus" xml:space="preserve">
+    <value>device {0} : {1}</value>
+  </data>
+  <data name="LinkStatus-DeviceError" xml:space="preserve">
+    <value>device {0} Error</value>
+  </data>
+  <data name="ChartCardEdit-Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="ChartCardEdit-Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="ChartCardEdit-ConfirmDelete" xml:space="preserve">
+    <value>Are you sure to delete?</value>
+  </data>
+  <data name="ChartCardEdit-SelectDeviceAndCommand" xml:space="preserve">
+    <value>Select Device and Command</value>
+  </data>
+  <data name="ChartCardEdit-Machine" xml:space="preserve">
+    <value>Machine</value>
+  </data>
+  <data name="ChartCardEdit-PleaseSelectMachine" xml:space="preserve">
+    <value>Please select a machine</value>
+  </data>
+  <data name="ChartCardEdit-CMD" xml:space="preserve">
+    <value>CMD</value>
+  </data>
+  <data name="ChartCardEdit-PleaseSelectCommand" xml:space="preserve">
+    <value>Please select a command</value>
+  </data>
+  <data name="ChartCardEdit-Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="ChartCardEdit-EditChart" xml:space="preserve">
+    <value>Edit: Chart</value>
+  </data>
+  <data name="ChartCardEdit-ChartTitle" xml:space="preserve">
+    <value>Chart Title</value>
+  </data>
+  <data name="ChartCardEdit-EnterChartTitle" xml:space="preserve">
+    <value>Enter chart title</value>
+  </data>
+  <data name="ChartCardEdit-Line" xml:space="preserve">
+    <value>Line</value>
+  </data>
+  <data name="ChartCardEdit-Device" xml:space="preserve">
+    <value>Device:</value>
+  </data>
+  <data name="ChartCardEdit-NotSet" xml:space="preserve">
+    <value>Not set</value>
+  </data>
+  <data name="ChartCardEdit-Command" xml:space="preserve">
+    <value>Command:</value>
+  </data>
+  <data name="ChartCardEdit-PleaseClickCard" xml:space="preserve">
+    <value>Please click the card</value>
+  </data>
+  <data name="ChartCardEdit-IncompletePleaseClickCard" xml:space="preserve">
+    <value>Incomplete: Please click the card</value>
+  </data>
+  <data name="ChartCardEdit-YAxisTitle" xml:space="preserve">
+    <value>Y-axis title:</value>
+  </data>
+  <data name="ChartCardEdit-ReferenceAxis" xml:space="preserve">
+    <value>Reference axis:</value>
+  </data>
+  <data name="ChartCardEdit-Left" xml:space="preserve">
+    <value>Left</value>
+  </data>
+  <data name="ChartCardEdit-Right" xml:space="preserve">
+    <value>Right</value>
+  </data>
+  <data name="ChartCardEdit-Color" xml:space="preserve">
+    <value>Color:</value>
+  </data>
+  <data name="ChartCardEdit-Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="ChartCardEdit-DisplaySettings" xml:space="preserve">
+    <value>Display Settings</value>
+  </data>
+  <data name="ChartCardEdit-YTitle" xml:space="preserve">
+    <value>Y-Title</value>
+  </data>
+  <data name="ChartCardEdit-YAxis" xml:space="preserve">
+    <value>Y-axis</value>
+  </data>
+  <data name="ChartCardEdit-LeftAxis" xml:space="preserve">
+    <value>Left-axis</value>
+  </data>
+  <data name="ChartCardEdit-RightAxis" xml:space="preserve">
+    <value>Right-axis</value>
+  </data>
+  <data name="ChartCardEdit-DataColor" xml:space="preserve">
+    <value>Data-Color</value>
+  </data>
+  <data name="ChartCardEdit-NoAvailableCommands" xml:space="preserve">
+    <value>This device has no available commands</value>
+  </data>
+  <data name="ChartCardEdit-CommandInfoNotFound" xml:space="preserve">
+    <value>Command information not found</value>
+  </data>
+  <data name="ChartCardEdit-PleaseSelectMachineFirst" xml:space="preserve">
+    <value>Please select machine first</value>
+  </data>
+  <data name="ChartCardEdit-NoSelectableCommands" xml:space="preserve">
+    <value>This device has no selectable commands</value>
+  </data>
+  <data name="ChartCardEdit-PleaseSelectCommandFirst" xml:space="preserve">
+    <value>Please select command first</value>
+  </data>
+  <data name="ChartCardEdit-YTitleRequired" xml:space="preserve">
+    <value>Y-Title is required!</value>
+  </data>
+  <data name="ChartCardEdit-YAxisRequired" xml:space="preserve">
+    <value>Y-axis is required!</value>
+  </data>
+  <data name="ChartCardEdit-DataColorRequired" xml:space="preserve">
+    <value>Data-Color is required!</value>
+  </data>
+  <data name="ChartCardEdit-DataCannotBeOnSameSide" xml:space="preserve">
+    <value>Two sets of data cannot be on the same side</value>
+  </data>
+  <data name="OverviewCard-Overview" xml:space="preserve">
+    <value>Overview</value>
+  </data>
+  <data name="OverviewCard-InputVoltage" xml:space="preserve">
+    <value>Input Voltage:</value>
+  </data>
+  <data name="OverviewCard-InputFrequency" xml:space="preserve">
+    <value>Input Frequency:</value>
+  </data>
+  <data name="OverviewCard-OutputVoltage" xml:space="preserve">
+    <value>Output Voltage:</value>
+  </data>
+  <data name="OverviewCard-OutputFrequency" xml:space="preserve">
+    <value>Output Frequency:</value>
+  </data>
+  <data name="OverviewCard-BatteryLevel" xml:space="preserve">
+    <value>Battery Level:</value>
+  </data>
+  <data name="OverviewCard-LoadPower" xml:space="preserve">
+    <value>Load Power:</value>
+  </data>
+  <data name="StatisticsCard-Statistics" xml:space="preserve">
+    <value>Statistics</value>
+  </data>
+  <data name="StatisticsCard-CurrentStrategy" xml:space="preserve">
+    <value>Current Power Strategy</value>
+  </data>
+  <data name="StatisticsCard-None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="StatisticsCard-DailyCharging" xml:space="preserve">
+    <value>Daily Charging:</value>
+  </data>
+  <data name="StatisticsCard-TotalCharging" xml:space="preserve">
+    <value>Total Charging:</value>
+  </data>
+  <data name="StatisticsCard-DailyDischarging" xml:space="preserve">
+    <value>Daily Discharging:</value>
+  </data>
+  <data name="StatisticsCard-TotalDischarging" xml:space="preserve">
+    <value>Total Discharging:</value>
+  </data>
+  <data name="InfoCardEdit-Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="InfoCardEdit-Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="InfoCardEdit-EnterCardName" xml:space="preserve">
+    <value>Enter card name</value>
+  </data>
+  <data name="InfoCardEdit-Icon" xml:space="preserve">
+    <value>Icon</value>
+  </data>
+  <data name="InfoCardEdit-ContentSettings" xml:space="preserve">
+    <value>Content Settings</value>
+  </data>
+  <data name="InfoCardEdit-LongPressToEdit" xml:space="preserve">
+    <value>Long press here to edit</value>
+  </data>
+  <data name="InfoCardEdit-RightClickToEdit" xml:space="preserve">
+    <value>Right-click to edit</value>
+  </data>
+  <data name="InfoCardEdit-IncompleteLongPressToEdit" xml:space="preserve">
+    <value>Incomplete: Long press here to edit</value>
+  </data>
+  <data name="InfoCardEdit-IncompleteRightClickToEdit" xml:space="preserve">
+    <value>Incomplete: Right-click to edit</value>
+  </data>
+  <data name="InfoCardEdit-SetupCompleted" xml:space="preserve">
+    <value>Setup completed</value>
+  </data>
+  <data name="InfoCardEdit-Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="InfoCardEdit-ValueAndCommandSettings" xml:space="preserve">
+    <value>Value and Command Settings</value>
+  </data>
+  <data name="InfoCardEdit-DeviceSelection" xml:space="preserve">
+    <value>Device Selection</value>
+  </data>
+  <data name="InfoCardEdit-Set" xml:space="preserve">
+    <value>Set</value>
+  </data>
+  <data name="InfoCardEdit-DeviceName" xml:space="preserve">
+    <value>Device Name</value>
+  </data>
+  <data name="InfoCardEdit-CommandSelection" xml:space="preserve">
+    <value>Command Selection</value>
+  </data>
+  <data name="InfoCardEdit-ValueName" xml:space="preserve">
+    <value>Value Name</value>
+  </data>
+  <data name="InfoCardEdit-Unit" xml:space="preserve">
+    <value>Unit</value>
+  </data>
+  <data name="InfoCardEdit-PleaseSelectCMD" xml:space="preserve">
+    <value>Please select a CMD</value>
+  </data>
+  <data name="InfoCardEdit-SelectSubsystem" xml:space="preserve">
+    <value>Select Subsystem</value>
+  </data>
+  <data name="InfoCardEdit-SubsystemDataNotRetrieved" xml:space="preserve">
+    <value>Subsystem data not yet retrieved</value>
+  </data>
+  <data name="InfoCardEdit-SelectDevice" xml:space="preserve">
+    <value>Select Device</value>
+  </data>
+  <data name="InfoCardEdit-NoSelectableDevicesInSubsystem" xml:space="preserve">
+    <value>No selectable devices in this subsystem</value>
+  </data>
+  <data name="InfoCardEdit-SystemInfo" xml:space="preserve">
+    <value>System Info</value>
+  </data>
+  <data name="InfoCardEdit-ConfirmDeletion" xml:space="preserve">
+    <value>Confirm deletion?</value>
+  </data>
+  <data name="InfoCardEdit-SomeValuesNotSet" xml:space="preserve">
+    <value>Some values are not set</value>
+  </data>
+  <data name="RunningDiagramCard-RunningMode" xml:space="preserve">
+    <value>Running Mode:</value>
+  </data>
+  <data name="RunningDiagramCard-NoAvailableSubsystem" xml:space="preserve">
+    <value>No available subsystem</value>
+  </data>
+  <data name="RunningDiagramCard-SubsystemStatusNotObtained" xml:space="preserve">
+    <value>Subsystem status not obtained yet</value>
+  </data>
+  <data name="RunningDiagramCard-RunningStatusUpdating" xml:space="preserve">
+    <value>Running status updating</value>
+  </data>
+  <data name="RunningDiagramCard-CurrentMode" xml:space="preserve">
+    <value>Current mode: </value>
+  </data>
+  <data name="RunningDiagramCardEdit-EditConnectionStatus" xml:space="preserve">
+    <value>Edit: Connection Status</value>
+  </data>
+  <data name="RunningDiagramCardEdit-Subsystem" xml:space="preserve">
+    <value>Subsystem:</value>
+  </data>
+  <data name="RunningDiagramCardEdit-NoAvailableSubsystem" xml:space="preserve">
+    <value>No available subsystem</value>
+  </data>
+  <data name="RunningDiagramCardEdit-No" xml:space="preserve">
+    <value>No.</value>
+  </data>
+  <data name="RunningDiagramCardEdit-Icon" xml:space="preserve">
+    <value>Icon</value>
+  </data>
+  <data name="RunningDiagramCardEdit-Text" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="RunningDiagramCardEdit-Confirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="BlankInfoCard-PleaseEditCard" xml:space="preserve">
+    <value>Please edit card</value>
+  </data>
+  <data name="LinkStatusTimeline-NoStatusUpdates" xml:space="preserve">
+    <value>No status updates currently</value>
+  </data>
+</root>

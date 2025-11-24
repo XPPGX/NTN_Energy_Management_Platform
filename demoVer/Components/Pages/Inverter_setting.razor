@@ -15,10 +15,11 @@
 @inject CommonData commonData
 @inject HeartbeatService Heartbeat
 @inject SubSystemManager SubSystemManager
+@inject IStringLocalizer<SharedResource> Localizer
 
 <MudPopoverProvider/>
 @*Web Content*@
-<PageTitle>Inverter Setting</PageTitle>
+<PageTitle>@Localizer["InverterSetting-PageTitle"]</PageTitle>
 
 @if(modal_IsOpen)
 {
@@ -40,11 +41,11 @@
     <div class="top-bar">
         <div class="leftPart">
             <div class="subsystem-select-group">
-                <label for="subsystem-select" class="local-label">子系統</label>
+                <label for="subsystem-select" class="local-label">@Localizer["InverterSetting-Subsystem"]</label>
                 <select id="subsystem-select" class="subsystem-select" value="@SelectedSubSystemKey" @onchange="Local_OnSubSystemChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
                     @if (_subSystemOptions.Count == 0)
                     {
-                        <option value="">請選擇子系統</option>
+                        <option value="">@Localizer["InverterSetting-PleaseSelectSubsystem"]</option>
                     }
                     else
                     {
@@ -57,7 +58,7 @@
             </div>
         </div>
         <div class="rightPart">
-            <button type="button" class="btn btn-primary no-flex" @onclick="OnSaveButtonClick">保存設定</button>
+            <button type="button" class="btn btn-primary no-flex" @onclick="OnSaveButtonClick">@Localizer["InverterSetting-SaveSettings"]</button>
         </div>
     </div>
 
@@ -101,7 +102,7 @@
                     <div class="small-row">
                         <div class="cell">
                             @* <h3 class="desktop-only">AC模式充電器</h3> *@
-                            <div class="alarm-label" style="font-size: 1.2rem; font-weight: bold;">AC模式充電器</div>
+                            <div class="alarm-label" style="font-size: 1.2rem; font-weight: bold;">@Localizer["InverterSetting-ACModeCharger"]</div>
                         </div>
                         <div class="cell">
                             <div class="toggle-with-text">
@@ -116,7 +117,7 @@
                     <div class="small-row">
                         <div class="cell">
                             @* <h3 class="desktop-only">並網供電</h3> *@
-                            <div class="alarm-label" style="font-size: 1.2rem; font-weight: bold;">並網供電</div>
+                            <div class="alarm-label" style="font-size: 1.2rem; font-weight: bold;">@Localizer["InverterSetting-GridTiedPowerFeeding"]</div>
                         </div>
                         <div class="cell">
                             <div class="toggle-with-text">
@@ -131,7 +132,7 @@
                     <div class="small-row">
                         <div class="cell">
                             @* <h3 class="desktop-only">輸出優先級</h3> *@
-                            <div class="alarm-label" style="font-size: 1.2rem; font-weight: bold;">輸出優先級</div>
+                            <div class="alarm-label" style="font-size: 1.2rem; font-weight: bold;">@Localizer["InverterSetting-OutputPriority"]</div>
                         </div>
                         <div class="cell">
                             <select value="@selectedOutputPriority.ToString()" @onchange="OnOutputPrioritySelectChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true" disabled="@(!Output_priority_touchable)" class="priority-select">
@@ -144,7 +145,7 @@
                     <div class="small-row">
                         <div class="cell">
                             @* <h3 class="desktop-only">充電優先級</h3> *@
-                            <div class="alarm-label" style="font-size: 1.2rem; font-weight: bold;">充電優先級</div>
+                            <div class="alarm-label" style="font-size: 1.2rem; font-weight: bold;">@Localizer["InverterSetting-ChargingPriority"]</div>
                         </div>
                         <div class="cell">
                             <select value="@selectedChargingPriority.ToString()" @onchange="OnChargingPrioritySelectChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true" disabled="@(!Charge_priority_touchable)" class="priority-select">
@@ -160,7 +161,7 @@
                 <div class="bottom-container card-container-base">
                     <div class="alarms-col">
                         <div class="alarm-row">
-                            <div class="alarm-label">Battery alarm</div>
+                            <div class="alarm-label">@Localizer["InverterSetting-BatteryAlarm"]</div>
                             <div class="alarm-input">
                                 <input type="number" @bind-value="Battery_alarm_value" @bind-value:after="OnBatteryAlarmChanged" placeholder="Battery alarm" min="@Battery_alarm_now_min" max="@Battery_alarm_now_max" step="0.1" />
                             </div>
@@ -170,7 +171,7 @@
                         </div>
 
                         <div class="alarm-row">
-                            <div class="alarm-label">Battery shutdown</div>
+                            <div class="alarm-label">@Localizer["InverterSetting-BatteryShutdown"]</div>
                             <div class="alarm-input">
                                 <input type="number" @bind-value="Battery_shutdown_value" @bind-value:after="OnBatteryShutdownChanged" placeholder="Battery shutdown" min="@(Battery_shdn_now_min)" max="@(Battery_shutdown_dynamic_upperBound)" step="0.1" />
                             </div>
@@ -192,7 +193,7 @@
                                 <input type="range" @bind="Battery_capacity_value" @bind:event="oninput" @bind:after="OnBatteryCapacityChanged"
                                        min="0" max="@(DataCenter.INV.BAT_Capacity_Max)" step="1" class="custom-slider" />
                             </div> *@
-                            <div class="alarm-label">Battery recharge</div>
+                            <div class="alarm-label">@Localizer["InverterSetting-BatteryRecharge"]</div>
                             <div class="alarm-input">
                                 <input type="number" @bind-value="Battery_recharge_value" @bind-value:after="OnBatteryRechargeChanged" placeholder="Battery recharge" min="@(Battery_rchg_now_min)" max="@(Battery_recharge_dynamic_upperBound)" step="0.1" />
                             </div>
@@ -201,7 +202,7 @@
                             </div>
                         </div>
                         <div class="alarm-row">
-                            <div class="alarm-label">Battery OV alarm</div>
+                            <div class="alarm-label">@Localizer["InverterSetting-BatteryOVAlarm"]</div>
                             <div class="alarm-input">
                                 <input type="number" @bind-value="Battery_ov_alarm_value" @bind-value:after="OnBatteryOVAlarmChanged" placeholder="Battery OV alarm"
                                        min="@(Battery_ov_alm_now_min)" max="@(Battery_ov_alm_now_max)" step="0.1" />
@@ -260,7 +261,8 @@
     private string? _selectedSubSystemKey;
     private string SelectedSubSystemKey => _selectedSubSystemKey ?? string.Empty;
     private bool _subsystemHeartbeatSubscribed = false;
-    private bool _isRefreshingSubSystemOptions = false;
+    private string xLabel = string.Empty;
+    private string yLabel = string.Empty;
 
     // private double Battery_alarm_now_min => DataCenter.INV.BAT_Alarm_Min_Display;
     // private double Battery_alarm_now_max => Math.Min(DataCenter.Battery.FV_Display, DataCenter.INV.BAT_Alarm_Max_Display);
@@ -278,12 +280,16 @@
     List<string> Series100VAC_List = new List<string>{"100VAC","110VAC","115VAC","120VAC"};
     List<string> Series200VAC_List = new List<string>{"200VAC","220VAC","230VAC","240VAC"};
     List<string> ShowSeriesSelelction_List = new List<string>();
-    #region System Task
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         //For log
         _category = GetType().FullName!;
         ShowSeriesSelelction_List = Series100VAC_List;
+
+        xLabel = Localizer["InverterSetting-AngleDegrees"];
+        yLabel = Localizer["InverterSetting-OutputVoltageV"];
+
+        await base.OnInitializedAsync();
     }
 
     protected override void OnParametersSet()
@@ -340,7 +346,7 @@
             await JS.InvokeVoidAsync("sliderFill.refresh");
         }
     }
-    #endregion System Task
+
 
     #region SubSystemFuncs
     private static string BuildKey(string? port, string? protocol) => $"{port ?? string.Empty}|{protocol ?? string.Empty}";
@@ -363,8 +369,8 @@
 
     private string GetSubSystemDisplay(SubSystem subSystem)
     {
-        var port = string.IsNullOrWhiteSpace(subSystem.Port) ? "Unknown" : subSystem.Port;
-        var protocol = string.IsNullOrWhiteSpace(subSystem.Protocol) ? "N/A" : subSystem.Protocol;
+        var port = string.IsNullOrWhiteSpace(subSystem.Port) ? Localizer["InverterSetting-Unknown"] : subSystem.Port;
+        var protocol = string.IsNullOrWhiteSpace(subSystem.Protocol) ? Localizer["InverterSetting-NA"] : subSystem.Protocol;
         return $"{port} - {protocol}";
     }
 
@@ -625,8 +631,8 @@
             peak = peak,
             period = period,
             chartType = "line",
-            xLabel = "角度 (°)",
-            yLabel = "輸出電壓(V)",
+            xLabel = xLabel,
+            yLabel = yLabel,
             yMin = -250,
             yMax = 250,
             totalDegrees = 720
@@ -657,7 +663,7 @@
         switch(_alertMessage_FromOtherFunc)
         {
             case "Save":
-                AlertMessage_parent     = "是否確定要保存？";
+                AlertMessage_parent     = Localizer["InverterSetting-ConfirmSave"];
                 ConfirmBtn_Text_parent  = "確定";
                 CancelBtn_Text_parent   = "取消";
                 ConfirmBtn_Func_parent  = EventCallback.Factory.Create(this, ConfirmSave);

@@ -1,1 +1,66 @@
-﻿
+﻿[2025-11-24 10:31:55.096] [Inverter_setting][GetAC_InputType_By_mdlName] 無法取得 SubSystem 參考，port = , protocol = 
+[2025-11-24 10:33:25.495] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-24 10:33:25.497] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-24 10:33:25.499] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-24 10:33:25.500] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-24 10:33:25.501] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-24 10:33:25.502] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-24 10:33:25.505] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-24 10:33:25.506] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-24 10:33:25.508] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-24 10:35:31.716] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-24 10:35:31.723] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-24 10:35:31.725] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-24 10:35:31.725] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-24 10:35:31.726] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-24 10:35:31.728] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-24 10:35:31.729] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-24 10:35:31.731] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-24 10:35:31.732] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-24 10:37:41.033] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-24 10:37:41.038] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-24 10:37:41.041] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-24 10:37:41.042] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-24 10:37:41.042] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-24 10:37:41.043] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-24 10:37:41.046] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-24 10:37:41.048] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-24 10:37:41.050] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-24 10:47:45.655] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-24 10:47:45.662] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-24 10:47:45.664] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-24 10:47:45.665] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-24 10:47:45.666] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-24 10:47:45.670] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-24 10:47:45.673] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-24 10:47:45.675] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-24 10:47:45.677] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-24 10:53:43.775] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-24 10:53:43.784] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-24 10:53:43.787] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-24 10:53:43.789] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-24 10:53:43.790] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-24 10:53:43.798] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-24 10:53:43.801] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-24 10:53:43.803] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-24 10:53:43.806] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-24 11:05:33.872] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-24 11:05:33.877] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-24 11:05:33.881] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-24 11:05:33.882] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-24 11:05:33.882] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-24 11:05:33.887] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-24 11:05:33.893] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-24 11:05:33.896] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-24 11:05:33.899] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-24 11:13:07.265] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-11-24 11:13:07.275] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-24 11:13:07.276] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-11-24 11:13:07.277] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2025-11-24 11:13:07.278] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-11-24 11:13:07.284] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2025-11-24 11:13:07.289] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2025-11-24 11:13:07.293] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2025-11-24 11:13:07.296] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2025-11-24 11:21:50.231] [Inverter_setting][GetAC_InputType_By_mdlName] 無法取得 SubSystem 參考，port = , protocol = 
+[2025-11-24 11:25:14.821] [Inverter_setting][GetAC_InputType_By_mdlName] 無法取得 SubSystem 參考，port = , protocol = 

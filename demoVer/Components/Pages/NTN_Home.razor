@@ -18,9 +18,10 @@
 @inject HeartbeatService heartbeat
 @inject DataCenter dataCenter
 @inject ICardDefinitionRegistry CardDefinitionRegistry
+@inject IStringLocalizer<SharedResource> Localizer
 
 
-<PageTitle>NTN module</PageTitle>
+<PageTitle>@Localizer["NTNHome-PageTitle"]</PageTitle>
 
 @* <TopRow OnSendToParent="ReceiveFrom_TopRow"
         InformParentTo_OpenAddCard="ReceiveFrom_TopRow_OpenAddCard"
@@ -46,18 +47,18 @@
         {
             <div class="custom-dialog" @onclick:stopPropagation>
                 <MudStack Spacing="2" AlignItems="AlignItems.Center" Class="p-4">
-                    <MudText Typo="Typo.h5" Class="mb-4">卡片管理</MudText>
+                    <MudText Typo="Typo.h5" Class="mb-4">@Localizer["NTNHome-CardManagement"]</MudText>
 
                     <MudButton Color="Color.Primary" Variant="Variant.Filled"
                             OnClick="OpenEditCard"
                             StartIcon="@Icons.Material.Filled.Edit" Style="width: 100%;">
-                        編輯卡片
+                        @Localizer["NTNHome-EditCard"]
                     </MudButton>
 
                     <MudButton Color="Color.Error" Variant="Variant.Filled"
                             OnClick="DeleteCard"
                             StartIcon="@Icons.Material.Filled.Delete" Style="width: 100%;">
-                        刪除卡片
+                        @Localizer["NTNHome-DeleteCard"]
                     </MudButton>
                 </MudStack>
             </div>
@@ -65,7 +66,7 @@
         @if(addSelection_IsOpen)
         {
             <div class="modal-content" @onclick:stopPropagation>
-                <h3>選擇卡片</h3>
+                <h3>@Localizer["NTNHome-SelectCard"]</h3>
                 <div class="selection-group">
                     @foreach (var definition in CardDefinitionRegistry.Definitions.OrderBy(d => d.CardType))
                     {
@@ -460,16 +461,16 @@
         switch(_alertMessage_FromOtherFunc)
         {
             case "delete":
-                AlertMessage_parent     = "警告 : 刪除後無法復原";
-                ConfirmBtn_Text_parent  = "確定";
-                CancelBtn_Text_parent   = "取消";
+                AlertMessage_parent     = Localizer["NTNHome-DeleteWarning"];
+                ConfirmBtn_Text_parent  = Localizer["Common-Confirm"];
+                CancelBtn_Text_parent   = Localizer["Common-Cancel"];
                 ConfirmBtn_Func_parent  = EventCallback.Factory.Create(this, ConfirmDelete);
                 CancelBtn_Func_parent   = EventCallback.Factory.Create(this, CancelDelete);
                 break;
             case "save":
-                AlertMessage_parent     = "是否確定要保存？";
-                ConfirmBtn_Text_parent  = "確定";
-                CancelBtn_Text_parent   = "取消";
+                AlertMessage_parent     = Localizer["NTNHome-SavePrompt"];
+                ConfirmBtn_Text_parent  = Localizer["Common-Confirm"];
+                CancelBtn_Text_parent   = Localizer["Common-Cancel"];
                 ConfirmBtn_Func_parent  = EventCallback.Factory.Create(this, ConfirmSave_InfoData);
                 CancelBtn_Func_parent   = EventCallback.Factory.Create(this, CancelSave_InfoData);
                 break;

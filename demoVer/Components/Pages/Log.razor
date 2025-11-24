@@ -7,21 +7,22 @@
 @using demoVer.Utils
 @using demoVer.Services
 @inject SqlProcessor _sqlProcessor
+@inject IStringLocalizer<SharedResource> Localizer
 @using System.Text.Json
 
 <MudPopoverProvider/>
 
 @*Web Content*@
-<PageTitle>Log</PageTitle>
+<PageTitle>@Localizer["Log-PageTitle"]</PageTitle>
 
 @if(showExportDialog)
 {
     <div class="export-overlay">
         <div class="export-dialog">
-            <h3>匯出中...</h3>
+            <h3>@Localizer["Log-Exporting"]</h3>
             <progress value="@exportProgress" max="100"></progress>
             <div>@exportProgress %</div>
-            <button class="btn" @onclick="CancelExport">取消</button>
+            <button class="btn" @onclick="CancelExport">@Localizer["Log-Cancel"]</button>
         </div>
     </div>
 }
@@ -30,11 +31,11 @@
 {
     <div class="table-selection-overlay" @onclick="() => CloseTableSelector()">
         <div class="table-selection-dialog" @onclick:stopPropagation="true">
-            <h4 style="color: var(--text-primary);">選擇資料表</h4>
+            <h4 style="color: var(--text-primary);">@Localizer["Log-SelectTable"]</h4>
 
             @if (isLoadingDataTables)
             {
-                <p>載入中...</p>
+                <p>@Localizer["Log-Loading"]</p>
             }
             else if (!string.IsNullOrEmpty(dataTableLoadError))
             {
@@ -42,7 +43,7 @@
             }
             else if (filteredDataLogTables.Count == 0)
             {
-                <p class="table-hint">找不到符合條件的資料表</p>
+                <p class="table-hint">@Localizer["Log-NoMatchingTables"]</p>
             }
             else
             {
@@ -52,7 +53,7 @@
                 }
             }
 
-            <button class="btn btn-bubble-red" @onclick="CloseTableSelector">關閉</button>
+            <button class="btn btn-bubble-red" @onclick="CloseTableSelector">@Localizer["Log-Close"]</button>
         </div>
     </div>
 }
@@ -62,7 +63,7 @@
         @if(isCollapsed)
         {
             <div class="collapsed-label-only">
-                條件設置
+                @Localizer["Log-ConditionSettings"]
             </div>
         }
         else
@@ -70,12 +71,12 @@
             <div class="filter-card card-container-base" @onclick:stopPropagation="true">
                 <div class="filter-grid">
                     <div class="filter-group">
-                        <label class="filter-label" for="logType" style="margin-bottom: 0px;">Log Type</label>
+                        <label class="filter-label" for="logType" style="margin-bottom: 0px;">@Localizer["Log-LogType"]</label>
                         
                         <select id="logType" class="filter-select" value="@selectedLogType" @onchange="OnLogTypeChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
-                            <option value="">-- Select --</option>
-                            <option value="event">Event Log</option>
-                            <option value="data">Data Log</option>
+                            <option value="">@Localizer["Log-SelectOption"]</option>
+                            <option value="event">@Localizer["Log-EventLog"]</option>
+                            <option value="data">@Localizer["Log-DataLog"]</option>
                         </select>
 
                         @if (string.Equals(selectedLogType, "data", StringComparison.OrdinalIgnoreCase))
@@ -83,28 +84,28 @@
                             <div class="radio-group" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
                                 <label class="radio-option">
                                     <input type="radio" name="DataType" value="CAN/1" checked="@string.Equals(port, "CAN1", StringComparison.OrdinalIgnoreCase)" @onchange="DataTypeChanged" />
-                                    <span class="radio-label">CAN1</span>
+                                    <span class="radio-label">@Localizer["Log-CAN1"]</span>
                                 </label>
                                 <label class="radio-option">
                                     <input type="radio" name="DataType" value="CAN/2" checked="@string.Equals(port, "CAN2", StringComparison.OrdinalIgnoreCase)" @onchange="DataTypeChanged" />
-                                    <span class="radio-label">CAN2</span>
+                                    <span class="radio-label">@Localizer["Log-CAN2"]</span>
                                 </label>
                                 <label class="radio-option">
                                     <input type="radio" name="DataType" value="MOD/1" checked="@string.Equals(port, "MOD1", StringComparison.OrdinalIgnoreCase)" @onchange="DataTypeChanged" />
-                                    <span class="radio-label">MOD1</span>
+                                    <span class="radio-label">@Localizer["Log-MOD1"]</span>
                                 </label>
                                 <label class="radio-option">
                                     <input type="radio" name="DataType" value="MOD/2" checked="@string.Equals(port, "MOD2", StringComparison.OrdinalIgnoreCase)" @onchange="DataTypeChanged" />
-                                    <span class="radio-label">MOD2</span>
+                                    <span class="radio-label">@Localizer["Log-MOD2"]</span>
                                 </label>
                             </div>
 
                             <div class="table-select-controls" @onclick:stopPropagation="true">
-                                <button class="btn btn-blue" @onclick="OpenTableSelector">@(string.IsNullOrEmpty(selectedDataTableName) ? "選擇資料表" : "切換資料表")</button>
+                                <button class="btn btn-blue" @onclick="OpenTableSelector">@(string.IsNullOrEmpty(selectedDataTableName) ? @Localizer["Log-SelectTable"] : @Localizer["Log-SwitchTable"])</button>
 
                                 @if (isLoadingDataTables)
                                 {
-                                    <span class="table-loading">載入中...</span>
+                                    <span class="table-loading">@Localizer["Log-Loading"]</span>
                                 }
                                 else if (!string.IsNullOrEmpty(dataTableLoadError))
                                 {
@@ -112,55 +113,55 @@
                                 }
                                 else if (!string.IsNullOrEmpty(selectedDataTableName))
                                 {
-                                    <span class="selected-table-label">目前：@selectedDataTableName</span>
+                                    <span class="selected-table-label">@Localizer["Log-Current"]: @selectedDataTableName</span>
                                 }
                                 else if (!string.IsNullOrEmpty(selectedDataType))
                                 {
-                                    <span class="table-error">找不到符合 @selectedDataType 的資料表</span>
+                                    <span class="table-error">@Localizer["Log-NoTablesFor"] @selectedDataType</span>
                                 }
                                 else
                                 {
-                                    <span class="table-hint">請先選擇資料類型</span>
+                                    <span class="table-hint">@Localizer["Log-SelectDataTypeFirst"]</span>
                                 }
                             </div>
                         }
                     </div>
 
                     <div class="filter-group filter-group-dates">
-                        <span class="filter-label">Date Range</span>
+                        <span class="filter-label">@Localizer["Log-DateRange"]</span>
                         <div class="dateCol">
                             <div class="dateRow">
-                                <label for="startDate">Start Date</label>
+                                <label for="startDate">@Localizer["Log-StartDate"]</label>
                                 <div class="dateInputs">
-                                    <input type="date" id="startDate" @bind="selectedStartDate" placeholder="點擊選擇日期" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
-                                    <input type="time" id="startTime" @bind="selectedStartTime" placeholder="點擊選擇時間" @onclick:stopPropagation="true" @onchange:stopPropagation="true" />
+                                    <input type="date" id="startDate" @bind="selectedStartDate" placeholder="@Localizer["Log-ClickToSelectDate"]" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
+                                    <input type="time" id="startTime" @bind="selectedStartTime" placeholder="@Localizer["Log-ClickToSelectTime"]" @onclick:stopPropagation="true" @onchange:stopPropagation="true" />
                                 </div>
                             </div>
 
                             <div class="dateRow">
-                                <label for="endDate">End Date</label>
+                                <label for="endDate">@Localizer["Log-EndDate"]</label>
                                 <div class="dateInputs">
-                                    <input type="date" id="endDate" @bind="selectedEndDate" placeholder="點擊選擇日期" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
-                                    <input type="time" id="endTime" @bind="selectedEndTime" placeholder="點擊選擇時間" @onclick:stopPropagation="true" @onchange:stopPropagation="true" />
+                                    <input type="date" id="endDate" @bind="selectedEndDate" placeholder="@Localizer["Log-ClickToSelectDate"]" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
+                                    <input type="time" id="endTime" @bind="selectedEndTime" placeholder="@Localizer["Log-ClickToSelectTime"]" @onclick:stopPropagation="true" @onchange:stopPropagation="true" />
                                 </div>
                             </div>
                             <div class="radio-group" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
                                 <div class="time-selection-row">
                                     <label class="radio-option">
                                         <input type="radio" name="TimePreset" value="0.5yr" checked="@string.Equals(selectedTimeRangePreset, "0.5yr", StringComparison.OrdinalIgnoreCase)" @onchange="OnTimePresetChanged" />
-                                        <span class="radio-label">0.5 yr</span>
+                                        <span class="radio-label">@Localizer["Log-0_5Year"]</span>
                                     </label>
                                     <label class="radio-option">
                                         <input type="radio" name="TimePreset" value="1month" checked="@string.Equals(selectedTimeRangePreset, "1month", StringComparison.OrdinalIgnoreCase)" @onchange="OnTimePresetChanged" />
-                                        <span class="radio-label">1 month</span>
+                                        <span class="radio-label">@Localizer["Log-1Month"]</span>
                                     </label>
                                     <label class="radio-option">
                                         <input type="radio" name="TimePreset" value="1week" checked="@string.Equals(selectedTimeRangePreset, "1week", StringComparison.OrdinalIgnoreCase)" @onchange="OnTimePresetChanged" />
-                                        <span class="radio-label">1 week</span>
+                                        <span class="radio-label">@Localizer["Log-1Week"]</span>
                                     </label>
                                     <label class="radio-option">
                                         <input type="radio" name="TimePreset" value="1day" checked="@string.Equals(selectedTimeRangePreset, "1day", StringComparison.OrdinalIgnoreCase)" @onchange="OnTimePresetChanged" />
-                                        <span class="radio-label">1 day</span>
+                                        <span class="radio-label">@Localizer["Log-1Day"]</span>
                                     </label>
                                 </div>
                             </div>
@@ -168,10 +169,10 @@
                     </div>
 
                     <div class="filter-group filter-actions">
-                        <span class="filter-label">Actions</span>
+                        <span class="filter-label">@Localizer["Log-Actions"]</span>
                         <div class="button-row" @onclick:stopPropagation="true">
-                            <button class="btn btn-blue" @onclick="searchClick" @onclick:stopPropagation="true">查詢</button>
-                            <button class="btn btn-red" @onclick="exportClick" @onclick:stopPropagation="true">匯出</button>
+                            <button class="btn btn-blue" @onclick="searchClick" @onclick:stopPropagation="true">@Localizer["Log-Search"]</button>
+                            <button class="btn btn-red" @onclick="exportClick" @onclick:stopPropagation="true">@Localizer["Log-Export"]</button>
                         </div>
                     </div>
                 </div>
@@ -182,11 +183,11 @@
     <div id="log-table-container" class="bottom-panel">
         <div class="table-header">
             <div>
-                <h3>@(tableHeader?? "Log Table")</h3>
-                <span>@($"總頁數: {TCB.nowTotalPages}")</span>
+                <h3>@(tableHeader?? @Localizer["Log-LogTable"])</h3>
+                <span>@(Localizer["Log-TotalPages"] + ": " + TCB.nowTotalPages)</span>
             </div>
             <div>
-                <button class="btn btn-blue" @onclick="ToggleColumnChooser">⚙ 顯示欄位</button>
+                <button class="btn btn-blue" @onclick="ToggleColumnChooser">@Localizer["Log-ShowColumns"]</button>
             </div>
         </div>
 
@@ -195,7 +196,7 @@
         {
             <div class="column-chooser-modal">
                 <div class="modal-content">
-                    <h4>選擇要顯示的欄位</h4>
+                    <h4>@Localizer["Log-SelectColumnsToShow"]</h4>
                     @foreach (var col in allColumns)
                     {
                         <label class="multi-option">
@@ -206,7 +207,7 @@
                             @col
                         </label>
                     }
-                    <button class="btn btn-bubble-red" @onclick="ToggleColumnChooser">關閉</button>
+                    <button class="btn btn-bubble-red" @onclick="ToggleColumnChooser">@Localizer["Log-Close"]</button>
                 </div>
             </div>
         }
@@ -256,10 +257,10 @@
             </table>
             <!-- 📑 翻頁控制區 -->
             <div class="pagination-container">
-                <button class="btn btn-blue no-flex" @onclick="turnToPreviousPage">⟨ 上一頁</button>
-                <span class="page-info">第 <input type="number" min="1" class="page-input" @bind="UI_PageNum"
-                    @onkeyup="OnKeyUp" @onfocus="() => PageInputFocus()" @onblur="() => PageInputBlur()"/> 頁</span>
-                <button class="btn btn-blue no-flex" @onclick="turnToNextPage">下一頁 ⟩</button>
+                <button class="btn btn-blue no-flex" @onclick="turnToPreviousPage">@Localizer["Log-PreviousPage"]</button>
+                <span class="page-info">@Localizer["Log-Page"] <input type="number" min="1" class="page-input" @bind="UI_PageNum"
+                    @onkeyup="OnKeyUp" @onfocus="() => PageInputFocus()" @onblur="() => PageInputBlur()"/> @Localizer["Log-PageUnit"]</span>
+                <button class="btn btn-blue no-flex" @onclick="turnToNextPage">@Localizer["Log-NextPage"]</button>
             </div>
         }
 
@@ -283,8 +284,8 @@
             <!-- 📑 翻頁控制區  -->
             <div class="pagination-container">
                 <button class="btn btn-blue no-flex" @onclick="turnToPreviousPage">⟨</button>
-                <span class="page-info">第 <input type="number" min="1" class="page-input" @bind="UI_PageNum" 
-                    @onkeyup="OnKeyUp" @onfocus="() => PageInputFocus()" @onblur="() => PageInputBlur()"/> 頁</span>
+                <span class="page-info">@Localizer["Log-Page"] <input type="number" min="1" class="page-input" @bind="UI_PageNum" 
+                    @onkeyup="OnKeyUp" @onfocus="() => PageInputFocus()" @onblur="() => PageInputBlur()"/> @Localizer["Log-PageUnit"]</span>
                 <button class="btn btn-blue no-flex" @onclick="turnToNextPage">⟩</button>
             </div>
         }
@@ -537,7 +538,7 @@
             allColumns = dataLog_allColumns;
             if (string.IsNullOrWhiteSpace(port))
             {
-                dataTableLoadError = "請先選擇通訊埠";
+                dataTableLoadError = Localizer["Log-SelectPortFirst"];
                 await InvokeAsync(StateHasChanged);
                 return;
             }
@@ -684,7 +685,7 @@
             {
                 filteredDataLogTables.Clear();
                 selectedDataTableName = null;
-                dataTableLoadError = "無法取得資料表列表";
+                dataTableLoadError = Localizer["Log-CannotGetTableList"];
                 return;
             }
 
@@ -713,7 +714,7 @@
             if (filteredDataLogTables.Count == 0)
             {
                 selectedDataTableName = null;
-                dataTableLoadError = $"找不到符合 {selectedDataType} 的資料表";
+                dataTableLoadError = Localizer["Log-NoTablesFor"] + selectedDataType;
             }
             else
             {
@@ -725,7 +726,7 @@
         {
             filteredDataLogTables.Clear();
             selectedDataTableName = null;
-            dataTableLoadError = "載入資料表發生錯誤";
+            dataTableLoadError = Localizer["Log-TableLoadError"];
             AppLogger.Log_To_File_log(_category, $"[Log][LoadDataLogTablesAsync] Error : {ex}", AppLogLevel.Trace);
         }
         finally
@@ -746,7 +747,7 @@
 
         if (string.IsNullOrEmpty(selectedDataType))
         {
-            dataTableLoadError = "請先選擇資料類型";
+            dataTableLoadError = Localizer["Log-SelectDataTypeFirst"];
             await InvokeAsync(StateHasChanged);
             return;
         }
@@ -975,7 +976,7 @@
                 TCB.TableName = selectedDataTableName ?? string.Empty;
                 if (string.IsNullOrWhiteSpace(TCB.Port))
                 {
-                    dataTableLoadError = "請先選擇通訊埠";
+                    dataTableLoadError = Localizer["Log-SelectPortFirst"];
                     AppLogger.Log_To_File_log(_category, "[Log][QueryFromDB_InitTCB] step2: Port is empty for data log query", AppLogLevel.Trace);
                     return;
                 }
@@ -1120,14 +1121,14 @@
             if (string.IsNullOrWhiteSpace(targetTable))
             {
                 AppLogger.Log_To_File_log(_category, "[Log][dataLog_Query] targetTable is null or empty", AppLogLevel.Trace);
-                dataTableLoadError = "請先選擇資料表";
+                dataTableLoadError = Localizer["Log-SelectTableFirst"];
                 return false;
             }
 
             if (string.IsNullOrWhiteSpace(portFilter))
             {
                 AppLogger.Log_To_File_log(_category, "[Log][dataLog_Query] portFilter is null or empty", AppLogLevel.Trace);
-                dataTableLoadError = "請先選擇通訊埠";
+                dataTableLoadError = Localizer["Log-SelectPortFirst"];
                 return false;
             }
 
@@ -1238,21 +1239,21 @@
             if (string.IsNullOrWhiteSpace(tableName))
             {
                 AppLogger.Log_To_File_log(_category, "[Log][dataLog_TurnPage] tableName is null or empty", AppLogLevel.Trace);
-                dataTableLoadError = "請先選擇資料表";
+                dataTableLoadError = Localizer["Log-SelectTableFirst"];
                 return false;
             }
 
             if (string.IsNullOrWhiteSpace(portFilter))
             {
                 AppLogger.Log_To_File_log(_category, "[Log][dataLog_TurnPage] portFilter is null or empty", AppLogLevel.Trace);
-                dataTableLoadError = "請先選擇通訊埠";
+                dataTableLoadError = Localizer["Log-SelectPortFirst"];
                 return false;
             }
 
             if(!startId.HasValue || !endId.HasValue)
             {
                 AppLogger.Log_To_File_log(_category, "[Log][dataLog_TurnPage] startId 或 endId 為 NULL", AppLogLevel.Trace);
-                dataTableLoadError = "查無翻頁資料";
+                dataTableLoadError = Localizer["Log-NoPageData"];
                 return false;
             }
 

@@ -21,13 +21,14 @@
 @inject IDialogService DialogService
 @inject GlobalVar globalVar
 @inject HeartbeatService Heartbeat
+@inject IStringLocalizer<SharedResource> Localizer
 
 <div id="edit-container" class="edit-container-style" @onclick="CloseMenu">
 	@if (showMenu)
 	{
 		<div class="custom-menu" style="top:@($"{menuY}px"); left:@($"{menuX}px");" @onclick:stopPropagation="true">
-			<div class="custom-menu-item" @onclick="Edit_inCorrespondingStage">編輯</div>
-			<div class="custom-menu-item" @onclick="Delete_inCorrespondingStage">刪除</div>
+			<div class="custom-menu-item" @onclick="Edit_inCorrespondingStage">@Localizer["InfoCardEdit-Edit"]</div>
+			<div class="custom-menu-item" @onclick="Delete_inCorrespondingStage">@Localizer["InfoCardEdit-Delete"]</div>
 		</div>
 	}
 
@@ -42,8 +43,8 @@
 					<p id="dialogMessage" class="dialog-message">@AlertMessage</p>
 				</div>
 				<div class="custom-dialog-actions">
-					<button class="btn btn-neutral" @onclick="Cancel">取消</button>
-					<button class="btn btn-green" @onclick="Confirm">確定</button>
+					<button class="btn btn-neutral" @onclick="Cancel">@Localizer["Common-Cancel"]</button>
+					<button class="btn btn-green" @onclick="Confirm">@Localizer["Common-Confirm"]</button>
 				</div>
 			</div>
 		</div>
@@ -53,14 +54,14 @@
 	{
 		case INFO_SETTING_STAGE.ADD_ROW_STAGE:
 			<div class="edit-info-top">
-				<input class="input-edit" @bind=edit_CardName placeholder="輸入卡片名稱" style="text-align: center;" />
+				<input class="input-edit" @bind=edit_CardName placeholder="@Localizer["InfoCardEdit-EnterCardName"]" style="text-align: center;" />
 			</div>
 			<br>
 			<table class="custom-table" id="table-settingInfoDataItem">
 				<thead>
 					<tr>
-						<th>圖示</th>
-						<th>內容設定</th>
+						<th>@Localizer["InfoCardEdit-Icon"]</th>
+						<th>@Localizer["InfoCardEdit-ContentSettings"]</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -78,9 +79,9 @@
 								@{
 									var hint = temp.status switch
 									{
-										SettingStatus.YET => isMobile ? "長按此處編輯" : "右鍵編輯",
-										SettingStatus.PROGRESS => isMobile ? "未完成:長按此處編輯" : "未完成:右鍵編輯",
-										SettingStatus.DONE => "設定完成",
+										SettingStatus.YET => isMobile ? Localizer["InfoCardEdit-LongPressToEdit"] : Localizer["InfoCardEdit-RightClickToEdit"],
+										SettingStatus.PROGRESS => isMobile ? Localizer["InfoCardEdit-IncompleteLongPressToEdit"] : Localizer["InfoCardEdit-IncompleteRightClickToEdit"],
+										SettingStatus.DONE => Localizer["InfoCardEdit-SetupCompleted"],
 										_ => string.Empty
 									};
 									@hint
@@ -92,10 +93,10 @@
 			</table>
 			<div class="confirm-cancel-container">
 				<button type="button" class="btn btn-add info-action-button" disabled="@ItemIsOverFour" @onclick="Add_INFO_DataItem">
-					新增
+					@Localizer["InfoCardEdit-Add"]
 				</button>
 				<button type="button" class="btn btn-green info-action-button" @onclick="Confirm_INFO_DataItem">
-					確定
+					@Localizer["Common-Confirm"]
 				</button>
 			</div>
 			break;
@@ -115,40 +116,40 @@
 
 		case INFO_SETTING_STAGE.SETTING_VALUE_AND_CMD_STAGE:
 			<div class="edit-info-top">
-				<h3>數值與命令設定</h3>
+				<h3>@Localizer["InfoCardEdit-ValueAndCommandSettings"]</h3>
 			</div>
 			<table class="custom-table">
 				<tbody>
 					@if (currentEdit_INFO_DataFormat_ref != null)
 					{
 						<tr>
-							<th>設備選擇</th>
+							<th>@Localizer["InfoCardEdit-DeviceSelection"]</th>
 							<td style="cursor:pointer;" @onclick="selectMachine">
-								@(string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.MachineName) ? "設定" : currentEdit_INFO_DataFormat_ref.MachineName)
+								@(string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.MachineName) ? Localizer["InfoCardEdit-Set"] : currentEdit_INFO_DataFormat_ref.MachineName)
 							</td>
 						</tr>
 						<tr>
-							<th>設備名稱</th>
+							<th>@Localizer["InfoCardEdit-DeviceName"]</th>
 							<td>
 								<input @bind="currentEdit_INFO_DataFormat_ref.UserSettingName" style="text-align: center;" />
 							</td>
 						</tr>
 						<tr>
-							<th>命令選擇</th>
+							<th>@Localizer["InfoCardEdit-CommandSelection"]</th>
 							<td style="cursor:pointer;" @onclick="selectCMD">
-								@(string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Cmd) ? "設定" : currentEdit_INFO_DataFormat_ref.Cmd)
+								@(string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Cmd) ? Localizer["InfoCardEdit-Set"] : currentEdit_INFO_DataFormat_ref.Cmd)
 							</td>
 						</tr>
 						<tr>
-							<th>數值名稱</th>
+							<th>@Localizer["InfoCardEdit-ValueName"]</th>
 							<td>
 								<input @bind="currentEdit_INFO_DataFormat_ref.ValueName" style="text-align: center;" />
 							</td>
 						</tr>
 						<tr>
-							<th>單位</th>
+							<th>@Localizer["InfoCardEdit-Unit"]</th>
 							<td style="text-align: center;">
-								@(string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Cmd) ? "Please select a CMD" : currentEdit_INFO_DataFormat_ref.Unit)
+								@(string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.Cmd) ? Localizer["InfoCardEdit-PleaseSelectCMD"] : currentEdit_INFO_DataFormat_ref.Unit)
 							</td>
 						</tr>
 					}
@@ -158,19 +159,19 @@
 				<MudButton OnClick="confirm_INFO_DataFormat_ValueSetting"
 						   Variant="Variant.Filled"
 						   Color="Color.Success">
-					確定
+					@Localizer["Common-Confirm"]
 				</MudButton>
 			</div>
 			break;
 
 		case INFO_SETTING_STAGE.SUBSYSTEM_SELECTION_STAGE:
-			<h3>選擇子系統</h3>
+			<h3>@Localizer["InfoCardEdit-SelectSubsystem"]</h3>
 			<div class="card-table subsystem-selection-panel" style="width: 90%; max-height: 240px; overflow-y: auto;">
 				@if (subsystemOptions.Count == 0)
 				{
 					<div class="card-table-row subsystem-selection-item">
 						<div class="card-table-item">
-							<span class="card-table-label">尚未取得子系統資料</span>
+							<span class="card-table-label">@Localizer["InfoCardEdit-SubsystemDataNotRetrieved"]</span>
 						</div>
 					</div>
 				}
@@ -194,13 +195,13 @@
 			break;
 
 		case INFO_SETTING_STAGE.MACHINE_SELECTION_STAGE:
-			<h3>選擇設備</h3>
+			<h3>@Localizer["InfoCardEdit-SelectDevice"]</h3>
 			<div class="card-table machine-selection-panel" style="width: 90%; max-height: 240px; overflow-y: auto;">
 				@if (port_protocol_realAddr_storingAddr_List.Count == 0)
 				{
 					<div class="card-table-row machine-selection-item">
 						<div class="card-table-item">
-							<span class="card-table-label">此子系統內沒有可選擇的設備</span>
+							<span class="card-table-label">@Localizer["InfoCardEdit-NoSelectableDevicesInSubsystem"]</span>
 						</div>
 					</div>
 				}
@@ -213,7 +214,7 @@
 					<div class="card-table-row machine-selection-item" @onclick="() => clickMachineName(tmp_port, tmp_protocol, 256, 256)" style="cursor: pointer;">
 						<div class="card-table-item">
 							<span class="card-table-label">@tmp_port</span>
-							<span class="card-table-value">@($"System Info")</span>
+							<span class="card-table-value">@Localizer["InfoCardEdit-SystemInfo"]</span>
 						</div>
 					</div>
 					@foreach(var (port, protocol, realAddr, storingAddr) in port_protocol_realAddr_storingAddr_List)
@@ -726,7 +727,7 @@
 		switch (INFO_setting_stage)
 		{
 			case INFO_SETTING_STAGE.ADD_ROW_STAGE:
-				ShowDialog("確定要刪除?", DeleteAction_In_ADD_ROW_STAGE);
+				ShowDialog(Localizer["InfoCardEdit-ConfirmDeletion"], DeleteAction_In_ADD_ROW_STAGE);
 				break;
 			default:
 				break;
@@ -969,7 +970,7 @@
 			string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.ValueName) ||
 			string.IsNullOrEmpty(currentEdit_INFO_DataFormat_ref.UserSettingName))
 		{
-			Console.WriteLine("[InfoCardEdit] 有數值沒有設定");
+			Console.WriteLine(Localizer["InfoCardEdit-SomeValuesNotSet"]);
 			return;
 		}
 

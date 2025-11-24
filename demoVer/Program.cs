@@ -7,6 +7,10 @@ using demoVer.Models;
 using demoVer.Broadcast;
 using demoVer.Interfaces;
 using System.Runtime.InteropServices;
+using Microsoft.AspNetCore.Localization;
+using demoVer.Services.Localization;
+using System.Globalization;
+using System.Linq;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +45,11 @@ builder.Services.AddSingleton<ICardDefinition, InfoCardDefinition>();
 builder.Services.AddSingleton<ICardDefinition, ChartCardDefinition>();
 builder.Services.AddSingleton<ICardDefinition, RunningDiagramCardDefinition>();
 builder.Services.AddSingleton<ICardDefinitionRegistry, CardDefinitionRegistry>();
+builder.Services.AddLocalization();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<LanguageService>();
+builder.Services.AddScoped<Microsoft.AspNetCore.Components.Server.Circuits.CircuitHandler, CultureCircuitHandler>();
+builder.Services.AddScoped<ILanguageProvider, ResourceLanguageProvider>();
 
 builder.Services.AddSingleton<HeartbeatService>();
 builder.Services.AddHostedService(provider => provider.GetRequiredService<HeartbeatService>());
@@ -106,6 +115,22 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+var supportedCultures = new[] { "en-US", "zh-TW", "zh-CN" };
+var localizationOptions = new RequestLocalizationOptions
+{
+    SupportedCultures = supportedCultures.Select(culture => new CultureInfo(culture)).ToList(),
+    SupportedUICultures = supportedCultures.Select(culture => new CultureInfo(culture)).ToList(),
+    ApplyCurrentCultureToResponseHeaders = true,
+    RequestCultureProviders = new List<IRequestCultureProvider>
+    {
+        new QueryStringRequestCultureProvider(),
+        new CookieRequestCultureProvider(),
+        new AcceptLanguageHeaderRequestCultureProvider()
+    }
+};
+
+app.UseRequestLocalization(localizationOptions);
 
 app.UseStaticFiles();
 app.UseAntiforgery();
