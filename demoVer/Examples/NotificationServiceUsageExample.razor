@@ -1,0 +1,81 @@
+@page "/notification-test"
+@using Microsoft.AspNetCore.Components.Web
+@using demoVer.Services
+@rendermode RenderMode.InteractiveServer
+@inject NotificationService NotificationService
+
+<h3>NotificationService 使用範例</h3>
+
+<div style="padding: 20px;">
+    <h4>發送測試通知</h4>
+    
+    <button class="btn btn-info" @onclick="SendInfoNotification">
+        發送資訊通知
+    </button>
+    
+    <button class="btn btn-warning" @onclick="SendWarningNotification">
+        發送警告通知
+    </button>
+    
+    <button class="btn btn-success" @onclick="SendSuccessNotification">
+        發送成功通知
+    </button>
+
+    <hr />
+
+    <h4>使用範例程式碼</h4>
+    <pre><code>
+// 方法 1: 使用快捷方法
+NotificationService.SendInfo("資料同步成功");
+NotificationService.SendWarning("電池電量低於 20%");
+NotificationService.SendSuccess("系統更新完成");
+
+// 方法 2: 使用通用方法
+NotificationService.SendNotification("自訂訊息", "info");
+NotificationService.SendNotification("警告訊息", "warning");
+NotificationService.SendNotification("成功訊息", "success");
+    </code></pre>
+
+    <h4>在其他 Service 中使用</h4>
+    <pre><code>
+public class YourService
+{
+    private readonly NotificationService _notificationService;
+
+    public YourService(NotificationService notificationService)
+    {
+        _notificationService = notificationService;
+    }
+
+    public void DoSomething()
+    {
+        try
+        {
+            // 執行某些操作
+            _notificationService.SendSuccess("操作完成");
+        }
+        catch (Exception ex)
+        {
+            _notificationService.SendWarning($"操作失敗: {ex.Message}");
+        }
+    }
+}
+    </code></pre>
+</div>
+
+@code {
+    private void SendInfoNotification()
+    {
+        NotificationService.SendInfo("這是一則資訊通知訊息");
+    }
+
+    private void SendWarningNotification()
+    {
+        NotificationService.SendWarning("這是一則警告通知訊息");
+    }
+
+    private void SendSuccessNotification()
+    {
+        NotificationService.SendSuccess("這是一則成功通知訊息");
+    }
+}

@@ -117,6 +117,8 @@
                 <img src="images/night-mode.png" class="iconBtn"/>
             </button>
 
+            <BellIcon @ref="bellIconRef" IsDarkTheme="@IsDarkTheme" OnMenuOpened="@CloseMainMenu" />
+
         }
 
         <img src="images/logo.png" alt="logo" class="clickable-logo" @onclick="GoTo_Framework"/>
@@ -143,7 +145,7 @@
     private bool showAddBtn_Flag = false;
 
     private bool IsDarkTheme { get; set; } = true; // 默認暗色主題
-
+    private BellIcon? bellIconRef;
 
     [Parameter] public EventCallback<bool> OnSendToParent {get; set;}
     [Parameter] public EventCallback InformParentTo_OpenAddCard {get; set;}
@@ -238,6 +240,20 @@
     private void toggleMenu()
     {
         menuOpen = !menuOpen;
+        if(menuOpen)
+        {
+            // 關閉通知選單
+            bellIconRef?.CloseNotification();
+        }
+    }
+
+    private void CloseMainMenu()
+    {
+        // 當通知選單開啟時，關閉主選單
+        if(menuOpen)
+        {
+            menuOpen = false;
+        }
     }
     
     private void Toggle_expand_management()

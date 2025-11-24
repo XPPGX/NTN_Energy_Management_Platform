@@ -44,6 +44,7 @@ builder.Services.AddSingleton<ICardDefinitionRegistry, CardDefinitionRegistry>()
 
 builder.Services.AddSingleton<HeartbeatService>();
 builder.Services.AddHostedService(provider => provider.GetRequiredService<HeartbeatService>());
+builder.Services.AddSingleton<NotificationService>();
 builder.Services.AddSingleton<CommonData>(); //預計是整個專案共享一個CommonData
 builder.Services.AddSingleton<SubSystemManager>();
 builder.Services.AddSingleton<LinkAddrManager>();

@@ -348,11 +348,11 @@
 
     [JSInvokable] public void UpdateCardOrderFromJS(List<string> newOrder)
     {
-        Console.WriteLine("New card order received : ");
+        
         byte counter = 0;
         foreach(var id in newOrder)
         {
-            Console.WriteLine(id);
+            @* Console.WriteLine(id); *@
             var targetCard = CardInfos.Find(c => c.ID == id);
             if(targetCard != null)
             {
@@ -361,12 +361,14 @@
             }
             else
             {
-                Console.WriteLine("targetCard == NULL");
+                @* Console.WriteLine("targetCard == NULL"); *@
             }
         }
+        Console.WriteLine("New card order received : ");
+        Console.WriteLine(string.Join(",", newOrder));
 
-        Console.WriteLine("=== [AFTER UPDATE] ===");
-        @* Console.WriteLine("[NTN_HOME] CardInfos: ");
+        @* Console.WriteLine("=== [AFTER UPDATE] ===");
+        Console.WriteLine("[NTN_HOME] CardInfos: ");
         string json = JsonSerializer.Serialize(CardInfos, new JsonSerializerOptions{
             WriteIndented = true
         });
