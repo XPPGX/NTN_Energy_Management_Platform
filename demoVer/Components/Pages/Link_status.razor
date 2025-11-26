@@ -649,6 +649,7 @@
             AppLogger.Log_To_File_log(_category, $"[Link_status][decode_INV_Status] : INV_FAULT_DecodeList is null, addr = {addr}", AppLogLevel.Warning);
             return "N/A";
         }
+        // var INV_FAULT_RuleList = oneDeviceData_SnapShot.GetCmdRule("INV_FAULT");
         string? INV_FAULT_str = BitFieldParser.Parse_INV_FAULT(INV_FAULT_DecodeList);
         if(!string.IsNullOrEmpty(INV_FAULT_str))
         {

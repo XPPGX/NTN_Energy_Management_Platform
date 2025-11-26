@@ -243,7 +243,7 @@ namespace demoVer.Services
         // }
 
         //GET API WRITE_Memory_V1.1 : 讀某個(Port, protocolFileName)所有命令格式、當前值
-        public async Task<Dictionary<string, List<GET_RealSingleRawSettingCMD_JsonFormat>>> apiReadReal_SettingData(string type, string protocolFileName)
+        public async Task<Dictionary<string, List<GET_RealSingleRawSettingCMD_JsonFormat>>?> apiReadReal_SettingData(string type, string protocolFileName)
         {
             try
             {

@@ -64,6 +64,9 @@ builder.Services.AddSingleton<WriteDataChangeEventManager>();
 builder.Services.AddSingleton<IGroupsDataDecoder, GroupsDataDecoder>();
 builder.Services.AddSingleton<CircuitsWatcher>();
 builder.Services.AddSingleton<SqlProcessor>();
+builder.Services.AddSingleton<VersionFileService>();
+builder.Services.AddSingleton<StartupHostedService>();
+builder.Services.AddHostedService(provider => provider.GetRequiredService<StartupHostedService>());
 
 builder.Services.AddServerSideBlazor().AddCircuitOptions(o =>
 {

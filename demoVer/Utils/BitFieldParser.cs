@@ -17,9 +17,9 @@ namespace demoVer.Utils
             switch (cmdName)
             {
                 case "INV_FAULT":
-                    return Parse_INV_FAULT(decodeList);
+                    return Parse_INV_FAULT(decodeList); //這也要改參數
                 case "INV_STATUS":
-                    return Parse_INV_STATUS(decodeList);
+                    return Parse_INV_STATUS(decodeList); //這也要改參數
                 default:
                     return string.Empty;
             }
@@ -58,6 +58,19 @@ namespace demoVer.Utils
             }
 
             return string.Join(",", faultList);
+        }
+
+        public static string Parse_INV_FAULT_By_DecodeRule(List<decodeContent> decodeList, List<ruleContent> ruleList)
+        {
+            if(decodeList is null || ruleList is null)
+            {
+                Console.WriteLine("[BitFieldParser][Parse_INV_FAULT_By_DecodeRule] decodeList or ruleList is null");
+                return string.Empty;
+            }
+
+            List<string> faultList = new List<string>();
+            return string.Empty; //[Pending]
+            
         }
 
         /// <summary>

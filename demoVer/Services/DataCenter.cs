@@ -73,7 +73,6 @@ namespace demoVer.Services
             _globalVar      = globalVar;
             _decoder        = decoder;
             _sqlProcessor   = sqlProcessor;
-            // Device_ReadData = new allDevice_Data();
             
             Battery     = new Battery_DataSetting_Module(_commonData);
             INV         = new INV_DataSetting_Module(_commonData);

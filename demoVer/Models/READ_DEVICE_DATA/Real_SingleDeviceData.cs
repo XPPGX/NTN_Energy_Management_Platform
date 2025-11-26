@@ -5,6 +5,7 @@ using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.SignalR;
 using demoVer.Utils;
+using Newtonsoft.Json;
 namespace demoVer.Models
 {
     public class Real_SingleDeviceData_JsonFormat
@@ -134,7 +135,13 @@ namespace demoVer.Models
                     return null;
             }
         }
-    
+        public Dictionary<string, Dictionary<string, string>>? GetCmdRule(string cmd)
+        {
+            if(!this.values.TryGetValue(cmd, out var cmdData)) return null;
+
+            Dictionary<string, Dictionary<string, string>> ruleDict = new();
+            return ruleDict; //[Pending]
+        }
         public Dictionary<string, string>? Get_Cmd_Unit_Dict()
         {
             try
@@ -179,6 +186,9 @@ namespace demoVer.Models
         }
         [JsonPropertyName("unit")]
         public string? unit { get; set; }
+
+        [JsonPropertyName("rule")]
+        public List<ruleContent>? rule {get; set;} = new();
 
         [JsonPropertyName("decode")]
         public List<decodeContent>? decode { get; set; }
@@ -258,5 +268,17 @@ namespace demoVer.Models
         public string? name { get; set; } = null;
         [JsonPropertyName("value")]
         public string? value { get; set; } = null;
+    }
+
+    public class ruleContent
+    {
+        [JsonPropertyName("name")]
+        public string? name {get; set;} = string.Empty;
+        [JsonPropertyName("bit")]
+        public uint bit {get; set;} = 0;
+        [JsonPropertyName("length")]
+        public uint length {get; set;} = 0;
+        [JsonPropertyName("valueMap")]
+        public Dictionary<string, string>? valueMap {get; set;} = new();
     }
 }

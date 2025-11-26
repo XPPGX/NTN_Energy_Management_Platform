@@ -8,7 +8,7 @@
     "demoVer.Shared.EditCard"                   : 2,
     "demoVer.Shared.BlankChartCard"             : 2,
     "demoVer.Shared.RunningDiagramCard"         : 2,
-    "demoVer.Shared.InfoCardEdit"               : 0,
+    "demoVer.Shared.InfoCardEdit"               : 2,
     "demoVer.Models.allDevice_Data"             : 2,
     "demoVer.Models.oneDevice_Data"             : 2,
     "demoVer.Models.WriteAPI_Datas"             : 2,
@@ -27,5 +27,7 @@
     "demoVer.Services.DataCenter"               : 2,
     "demoVer.Services.SqlProcessor"             : 2,
     "demoVer.Services.SubSystemManager"         : 2,
+    "demoVer.Services.VersionFileService"       : 0,
+    "demoVer.Services.StartupHostedService"     : 0,
     "demoVer.Utils.GetNowValueHelper"           : 2
 }
