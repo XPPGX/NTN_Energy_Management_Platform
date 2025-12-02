@@ -63,7 +63,5 @@ namespace demoVer.Utils
             INV_THREE_PHASE = 7,
         }
         #endregion INV_Phase_Status
-
-
     }
 }

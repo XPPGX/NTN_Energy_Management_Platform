@@ -12,7 +12,6 @@
 @using demoVer.Models
 @using demoVer.Utils
 @using Microsoft.JSInterop
-@inject CommonData commonData
 @inject HeartbeatService Heartbeat
 @inject SubSystemManager SubSystemManager
 @inject IStringLocalizer<SharedResource> Localizer
@@ -83,10 +82,6 @@
                         </div>
                         <div class="single-selection">
                             <select value="@selectedVoltType" @onchange="OnVoltTypeChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
-                                @* @foreach (var pair in DataCenter.INV.ACV_DisplayMap)
-                                {
-                                    <option value="@pair.Value">@pair.Value</option>
-                                } *@
                                 @foreach(var type in ShowSeriesSelelction_List)
                                 {
                                     <option value="@type">@type</option>
@@ -184,15 +179,6 @@
                     </div>
                     <div class="alarms-col">
                         <div class="alarm-row">
-                            @* <div class="alarm-label">Battery capacity</div>
-                            <div class="alarm-input">
-                                <input type="number" @bind-value="Battery_capacity_value" @bind-value:event="oninput" @bind-value:after="OnBatteryCapacityChanged" placeholder="Battery capacity"
-                                       min="0" max="@(DataCenter.INV.BAT_Capacity_Max)" step="1" />
-                            </div>
-                            <div class="alarm-slider">
-                                <input type="range" @bind="Battery_capacity_value" @bind:event="oninput" @bind:after="OnBatteryCapacityChanged"
-                                       min="0" max="@(DataCenter.INV.BAT_Capacity_Max)" step="1" class="custom-slider" />
-                            </div> *@
                             <div class="alarm-label">@Localizer["InverterSetting-BatteryRecharge"]</div>
                             <div class="alarm-input">
                                 <input type="number" @bind-value="Battery_recharge_value" @bind-value:after="OnBatteryRechargeChanged" placeholder="Battery recharge" min="@(Battery_rchg_now_min)" max="@(Battery_recharge_dynamic_upperBound)" step="0.1" />
@@ -264,8 +250,6 @@
     private string xLabel = string.Empty;
     private string yLabel = string.Empty;
 
-    // private double Battery_alarm_now_min => DataCenter.INV.BAT_Alarm_Min_Display;
-    // private double Battery_alarm_now_max => Math.Min(DataCenter.Battery.FV_Display, DataCenter.INV.BAT_Alarm_Max_Display);
     private double Battery_alarm_now_min = 0.0, Battery_alarm_now_max = 0.0;
     private double Battery_shdn_now_min = 0.0, Battery_shdn_now_max = 0.0;
     private double Battery_shutdown_dynamic_upperBound => Math.Min(ScalingComputer.AutoSnapToDecimal_doubleVer(Battery_alarm_value - BAT_ALARM_SHDN_DIFF), Battery_shdn_now_max);
@@ -305,8 +289,6 @@
     }
     public void Dispose()
     {
-        // DataCenter.INV.OnUpdated -= OnINVChanged;
-        // Heartbeat.OnTick -= Check_ScalingFactor_Status;
         if (_subsystemHeartbeatSubscribed)
         {
             Heartbeat.OnTick -= OnHeartbeatTickAsync;

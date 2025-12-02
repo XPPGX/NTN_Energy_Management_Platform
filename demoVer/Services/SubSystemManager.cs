@@ -18,7 +18,7 @@ namespace demoVer.Services
 
         private readonly ApiManager _apiManager;
         public ConcurrentDictionary<string, ConcurrentDictionary<string, SubSystem>> RegistedSubSystems { get; set; } = new(); // 從LinkStatus API讀到的partition資訊判斷，相同port，相同protocol為同一子系統
-
+        public ConcurrentDictionary<string, (string, string)> Mapping_Addr_To_SubSys {get; set;} = new();
         public SubSystemManager(ApiManager apiManager)
         {
             _category = GetType().FullName!;
@@ -153,7 +153,7 @@ namespace demoVer.Services
             }
         }
 
-        public async Task UpdateSubSystem_CmdUnitDict(string port, string protocol)
+        public async Task UpdateSubSystem_CmdFormat(string port, string protocol)
         {
             try
             {
@@ -163,27 +163,27 @@ namespace demoVer.Services
                 //Check response
                 if (response is null)
                 {
-                    AppLogger.Log_To_File_log(_category, $"[SubSystemManager][UpdateSubSystem_CmdUnitDict] response is null for (port, protocol) = ({port}, {protocol})", AppLogLevel.Warning);
+                    AppLogger.Log_To_File_log(_category, $"[SubSystemManager][UpdateSubSystem_CmdFormat] response is null for (port, protocol) = ({port}, {protocol})", AppLogLevel.Warning);
                     return;
                 }
                 if (response.values is null || response.values.Count == 0)
                 {
-                    AppLogger.Log_To_File_log(_category, $"[SubSystemManager][UpdateSubSystem_CmdUnitDict] response.values is null or empty for (port, protocol) = ({port}, {protocol})", AppLogLevel.Warning);
+                    AppLogger.Log_To_File_log(_category, $"[SubSystemManager][UpdateSubSystem_CmdFormat] response.values is null or empty for (port, protocol) = ({port}, {protocol})", AppLogLevel.Warning);
                     return;
                 }
 
                 var subsys = GetOneSubSystem_Ref(port, protocol);
                 if (subsys is null)
                 {
-                    AppLogger.Log_To_File_log(_category, $"[SubSystemManager][UpdateSubSystem_CmdUnitDict] subsys is null for (port, protocol) = ({port}, {protocol})", AppLogLevel.Warning);
+                    AppLogger.Log_To_File_log(_category, $"[SubSystemManager][UpdateSubSystem_CmdFormat] subsys is null for (port, protocol) = ({port}, {protocol})", AppLogLevel.Warning);
                     return;
                 }
 
-                await subsys.Update_ReadCmd_With_Unit(response);
+                await subsys.Update_ReadCmdFormat(response);
             }
             catch (Exception e)
             {
-                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][UpdateSubSystem_CmdUnitDict] Exception: {e.Message}", AppLogLevel.Error);
+                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][UpdateSubSystem_CmdFormat] Exception: {e.Message}", AppLogLevel.Error);
             }
         }
 

@@ -158,7 +158,7 @@
 
     public async Task TestCmdFormat()
     {
-        var result = await apiManager.apiRead_CmdFormat("MOD1", "NTN-5K_MOD.json");
+        var result = await apiManager.apiRead_CmdFormat("CAN2", "NTN-5K_CAN.json");
 
         var rawJsonData_String = JsonSerializer.Serialize(result, new JsonSerializerOptions{
             WriteIndented = true

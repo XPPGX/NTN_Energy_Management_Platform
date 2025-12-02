@@ -150,16 +150,6 @@ namespace demoVer.Services
 
                     AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] polling {nowStoringAddr} is not linked, pass it.", AppLogLevel.Trace);
                 
-                    //======預計廢除========
-                    //移除 link
-                    // _globalVar.LinkedDevices.Unlink(nowStoringAddr);
-                    //移除 Phase字典中的addr
-                    // _globalVar.INVs_Phase.TryRemove(nowPollingAddr, out var removed);
-                    //刪除Device_ReadData裡面，nowStoringAddr的資料
-                    // _globalVar.Device_ReadData.Remove_oneDevice_Data(nowStoringAddr);
-                    //======================
-
-                    //預計保留
                     _linkAddrManager.Unlink(nowStoringAddr);
                     _globalVar.Real_Devices_ReadData.Remove_oneDevice_Data(nowStoringAddr);
 
@@ -182,17 +172,7 @@ namespace demoVer.Services
                     {//此次資料無效，模組視該addr為斷線，移除該addr資料(若存在)
 
                         AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] : response is {res_is_valid}, {nowPollingPort}@{nowPollingAddr} removing begin...", AppLogLevel.Trace);
-                        //======預計廢除========
-                        //移除 link
-                        // _globalVar.LinkedDevices.Unlink(nowStoringAddr);
-                        //移除 Phase字典中的addr
-                        // _globalVar.INVs_Phase.TryRemove(nowPollingAddr, out var removed);
-                        //刪除Device_ReadData裡面，nowStoringAddr的資料
-                        // _globalVar.Device_ReadData.Remove_oneDevice_Data(nowStoringAddr);
-                        //======================
 
-
-                        //預計保留
                         _linkAddrManager.Unlink(nowStoringAddr);
                         _globalVar.Real_Devices_ReadData.Remove_oneDevice_Data(nowStoringAddr);
                         AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] : {nowPollingPort}@{nowPollingAddr} removing done...", AppLogLevel.Trace);
@@ -204,11 +184,6 @@ namespace demoVer.Services
                         {
                             AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] : response is {res_is_valid}, {nowPollingPort}@{nowPollingAddr} saving start...", AppLogLevel.Trace);
                             
-                            //======預計廢除========
-                            _globalVar.LinkedDevices.Link(nowStoringAddr);
-                            //======================
-
-                            //預計保留
                             _linkAddrManager.Link(nowStoringAddr);
                             _globalVar.Real_Devices_ReadData.SaveReal_oneDevice_Data(nowStoringAddr, res);
                             AppLogger.Log_To_File_log(_category, $"[PollingRead][PollOneStepAsync] : {nowPollingPort}@{nowPollingAddr} saving done...", AppLogLevel.Trace);
@@ -441,6 +416,9 @@ namespace demoVer.Services
                     {
                         _subSystemManager.RegistedSubSystems[port][protocol].AddrSet.Add(addr);
                         _subSystemManager.RegistedSubSystems[port][protocol].newSettingAddrBitMap = _subSystemManager.RegistedSubSystems[port][protocol].newSettingAddrBitMap | (1u << (int)addr);
+                        //建立Addr反向查詢子系統
+                        uint addr_with_offset = addr + Custom.getAddrOffsetByPort(port);
+                        _subSystemManager.Mapping_Addr_To_SubSys[addr_with_offset.ToString()] = (port, protocol);
                     }
                     //3. SubSystemSettingExist(用於決定是否刪除沒有在新資料中的SubSystem, true代表有在新資料中所以不刪除)
                     _subSystemManager.RegistedSubSystems[port][protocol].SubSystemSettingExist = true;
@@ -462,6 +440,14 @@ namespace demoVer.Services
                         {
                             _subSystemManager.RegistedSubSystems[port].TryRemove(protocol, out var removedSubsys);
                             AppLogger.Log_To_File_log(_category, $"[PollingRead][savePartAsSubSys] SubSystem removed for (port, protocol) = ({port}, {protocol})", AppLogLevel.Warning);
+                            // 從 Mapping_Addr_To_SubSys 字典中移除該子系統的所有地址條目
+                            if (removedSubsys != null)
+                            {
+                                foreach (var addr in removedSubsys.AddrSet)
+                                {
+                                    _subSystemManager.Mapping_Addr_To_SubSys.TryRemove(addr.ToString(), out _);
+                                }
+                            }
                         }
                         else
                         {
@@ -534,7 +520,7 @@ namespace demoVer.Services
                     await _subSystemManager.UpdateSubSystem_WriteCmdInfo(port, protocol);
                     AppLogger.Log_To_File_log(_category, $"[PollingRead][FireAndForgetTask] ~WriteCmdInfo~ updated for (port, protocol) = ({port}, {protocol})", AppLogLevel.Debug);
                     //3. 取得 Read CMD Info
-                    await _subSystemManager.UpdateSubSystem_CmdUnitDict(port, protocol);
+                    await _subSystemManager.UpdateSubSystem_CmdFormat(port, protocol);
                     AppLogger.Log_To_File_log(_category, $"[PollingRead][FireAndForgetTask] ~ReadCmdUnit~ updated for (port, protocol) = ({port}, {protocol})", AppLogLevel.Debug);
 
                     //更新 epoch，以免重複呼叫 API 取得 SettingRange

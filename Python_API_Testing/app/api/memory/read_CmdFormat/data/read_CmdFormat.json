@@ -5,133 +5,175 @@
     "timestamp": "0001-01-01T00:00:00",
     "values": {
         "READ_VIN": {
-            "unit": "V"
+            "unit": "V",
+            "commandCode": "0x0050"
         },
         "READ_IIN": {
-            "unit": "A"
+            "unit": "A",
+            "commandCode": "0x0053"
         },
         "READ_FREQ": {
-            "unit": "Hz"
+            "unit": "Hz",
+            "commandCode": "0x0056"
         },
         "READ_TEMPERATURE_1": {
-            "unit": "℃"
+            "unit": "℃",
+            "commandCode": "0x0062"
         },
         "READ_FAN_SPEED_1": {
-            "unit": "RPM"
+            "unit": "RPM",
+            "commandCode": "0x0070"
         },
         "READ_FAN_SPEED_2": {
-            "unit": "RPM"
+            "unit": "RPM",
+            "commandCode": "0x0071"
         },
         "MFR_ID": {
-            "unit": ""
+            "unit": "",
+            "commandCode": "0x0080"
         },
         "MFR_MODEL": {
-            "unit": ""
+            "unit": "",
+            "commandCode": "0x0082"
         },
-        "MFR_REVISION": {
-            "unit": ""
+        "MFR_REVISION_B0B5": {
+            "unit": "",
+            "commandCode": "0x0084"
         },
         "MFR_LOCATION": {
-            "unit": ""
+            "unit": "",
+            "commandCode": "0x0085"
         },
         "MFR_DATE": {
-            "unit": ""
+            "unit": "",
+            "commandCode": "0x0086"
         },
         "MFR_SERIAL": {
-            "unit": ""
+            "unit": "",
+            "commandCode": "0x0087"
         },
         "CURVE_CC": {
-            "unit": "A"
+            "unit": "A",
+            "commandCode": "0x00B0"
         },
         "CURVE_CV": {
-            "unit": "V"
+            "unit": "V",
+            "commandCode": "0x00B1"
         },
         "CURVE_FV": {
-            "unit": "V"
+            "unit": "V",
+            "commandCode": "0x00B2"
         },
         "CURVE_TC": {
-            "unit": "A"
+            "unit": "A",
+            "commandCode": "0x00B3"
         },
         "CURVE_CONFIG": {
-            "unit": ""
+            "unit": "",
+            "commandCode": "0x00B4"
         },
         "CURVE_CC_TIMEOUT": {
-            "unit": "Sec"
+            "unit": "Sec",
+            "commandCode": "0x00B5"
         },
         "CURVE_CV_TIMEOUT": {
-            "unit": "Sec"
+            "unit": "Sec",
+            "commandCode": "0x00B6"
         },
         "CURVE_FV_TIMEOUT": {
-            "unit": "Sec"
+            "unit": "Sec",
+            "commandCode": "0x00B7"
         },
         "CHG_STATUS": {
-            "unit": ""
+            "unit": "",
+            "commandCode": "0x00B8"
         },
         "BAT_ALM_VOLT": {
-            "unit": "V"
+            "unit": "V",
+            "commandCode": "0x00B9"
         },
         "BAT_SHDN_VOLT": {
-            "unit": "V"
+            "unit": "V",
+            "commandCode": "0x00BA"
         },
         "BAT_RCHG_VOLT": {
-            "unit": "V"
+            "unit": "V",
+            "commandCode": "0x00BB"
         },
         "BAT_OV_ALM_VOLT": {
             "unit": "V"
         },
         "SCALING_FACTOR": {
-            "unit": ""
+            "unit": "",
+            "commandCode": "0x00C0"
         },
         "SYSTEM_CONFIG": {
-            "unit": ""
+            "unit": "",
+            "commandCode": "0x00C2"
         },
         "INV_OPERATION": {
-            "unit": ""
+            "unit": "",
+            "commandCode": "0x0100"
         },
         "INV_CONFIG": {
-            "unit": ""
+            "unit": "",
+            "commandCode": "0x0101"
         },
         "Output_ACV_Set": {
-            "unit": ""
+            "unit": "",
+            "commandCode": "0x0102"
         },
         "Output_ACF_Set": {
-            "unit": ""
+            "unit": "",
+            "commandCode": "0x0103"
         },
         "READ_AC_FOUT": {
-            "unit": "Hz"
+            "unit": "Hz",
+            "commandCode": "0x0105"
         },
         "READ_AC_VOUT": {
-            "unit": "V"
+            "unit": "V",
+            "commandCode": "0x0108"
         },
         "READ_OP_LD_PCNT": {
-            "unit": ""
+            "unit": "",
+            "commandCode": "0x010B"
         },
         "READ_OP_WATT": {
-            "unit": "W"
+            "unit": "W",
+            "commandCode": "0x010E"
         },
         "READ_OP_VA": {
-            "unit": "VA"
+            "unit": "VA",
+            "commandCode": "0x0114"
         },
         "READ_VBAT": {
-            "unit": "V"
+            "unit": "V",
+            "commandCode": "0x011A"
         },
         "READ_CHG_CURR": {
-            "unit": "A"
+            "unit": "A",
+            "commandCode": "0x011B"
         },
         "INV_STATUS": {
-            "unit": ""
+            "unit": "",
+            "commandCode": "0x011D"
         },
         "INV_FAULT": {
-            "unit": ""
+            "unit": "",
+            "commandCode": "0x011E"
         },
         "READ_BP_WATT": {
-            "unit": "W"
+            "unit": "W",
+            "commandCode": "0x011F"
         },
         "READ_BP_VA": {
-            "unit": "VA"
+            "unit": "VA",
+            "commandCode": "0x0125"
         },
         "READ_AC_IOUT": {
-            "unit": "A"
+            "unit": "A",
+            "commandCode": "0x012B"
         },
         "READ_CC_SETVALUE": {
             "unit": ""

@@ -18,13 +18,15 @@ namespace demoVer.Models
         public DateTime timestamp { get; set; } //不重要
 
         [JsonPropertyName("values")]
-        public Dictionary<string, Unit> values { get; set; } = new(); 
+        public Dictionary<string, Format> values { get; set; } = new(); 
     }
 
-    public class Unit
+    public class Format
     {
         [JsonPropertyName("unit")]
-        public string? unit { get; set; }
+        public string? unit { get; set; } = string.Empty;
         
+        [JsonPropertyName("commandCode")]
+        public string? commandCode {get; set; } = string.Empty;
     }
 }

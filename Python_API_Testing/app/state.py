@@ -26,6 +26,9 @@ from .config import (
     USE_RANDOM_DATA,
     V1_1_FIXED_CONFIG,
     V1_1_FIXED_VALUES,
+    READ_REAL_COMMAND_CODES,
+    READ_REAL_RULES,
+    READ_CMD_FORMAT_CODE_OVERRIDES,
 )
 
 
@@ -73,6 +76,7 @@ class AppState:
         self._template_lengths = [len(item.get("data", [])) for item in self._base_data]
 
         self._inv_data_v1_1_template = self._load_json(INV_DATA_V1_1_FILE)
+        self._read_real_metadata = self._build_read_real_metadata()
 
         self._link_status_cache = LinkStatusCache(
             self.base_dir / LINK_STATUS_FILE,
@@ -183,7 +187,13 @@ class AppState:
         resp["addr"] = addr
         resp["timestamp"] = datetime.now(TZ_TAIPEI).isoformat()
 
+        port_upper = (port or "").upper()
+
         for key, item in resp.get("values", {}).items():
+            self._apply_read_real_metadata(key, item)
+            override_code = self._resolve_command_code_override(key, port_upper)
+            if override_code and isinstance(item, MutableMapping):
+                item["commandCode"] = override_code
             value_type = item.get("type")
 
             override_value = self._get_read_real_override(key, port, addr)
@@ -192,7 +202,7 @@ class AppState:
                 continue
 
             if key == "MFR_MODEL":
-                model_value = MFR_MODEL_BY_PORT.get(port.upper(), item.get("value"))
+                model_value = MFR_MODEL_BY_PORT.get(port_upper, item.get("value"))
                 item["value"] = model_value
                 continue
 
@@ -363,6 +373,7 @@ class AppState:
         payload = json.loads(json.dumps(raw))
         payload["port"] = port
         payload["protocolName"] = protocol
+        self._apply_read_attribute_overrides(payload, port)
         return payload
 
     # ------------------------------------------------------------------
@@ -528,6 +539,56 @@ class AppState:
         # Default fallback assigns fields as-is
         container.update(self._case_insensitive_copy(payload))
 
+    def _build_read_real_metadata(self) -> Dict[str, Dict[str, Any]]:
+        template_values: Dict[str, Any] = {}
+        if isinstance(self._inv_data_v1_1_template, dict):
+            template_values = self._inv_data_v1_1_template.get("values", {})
+
+        metadata: Dict[str, Dict[str, Any]] = {}
+
+        for command, item in template_values.items():
+            if not isinstance(item, dict):
+                continue
+
+            entry: Dict[str, Any] = {}
+            if "commandCode" in item:
+                entry["commandCode"] = item["commandCode"]
+            if "rule" in item:
+                entry["rule"] = json.loads(json.dumps(item["rule"]))
+            if entry:
+                metadata[command] = entry
+
+        for command, command_code in READ_REAL_COMMAND_CODES.items():
+            entry = metadata.setdefault(command, {})
+            entry["commandCode"] = command_code
+
+        for command, rules in READ_REAL_RULES.items():
+            entry = metadata.setdefault(command, {})
+            entry["rule"] = json.loads(json.dumps(rules))
+
+        return metadata
+
+    def _apply_read_real_metadata(
+        self,
+        command: str,
+        item: MutableMapping[str, Any],
+    ) -> None:
+        metadata = self._read_real_metadata.get(command)
+        if not metadata:
+            item.pop("commandCode", None)
+            item.pop("rule", None)
+            return
+
+        if "commandCode" in metadata:
+            item["commandCode"] = metadata["commandCode"]
+        elif "commandCode" in item:
+            item.pop("commandCode", None)
+
+        if "rule" in metadata:
+            item["rule"] = json.loads(json.dumps(metadata["rule"]))
+        elif "rule" in item:
+            item.pop("rule", None)
+
     @staticmethod
     def _resolve_bit_key(bits: Optional[Dict[str, Any]], candidate: str) -> str:
         if not isinstance(candidate, str):
@@ -630,6 +691,48 @@ class AppState:
                 renamed[key] = value
 
         return renamed
+
+    @staticmethod
+    def _port_category(port_upper: str) -> str:
+        if not port_upper:
+            return ""
+        if port_upper.startswith("CAN"):
+            return "CAN"
+        if port_upper.startswith("MOD"):
+            return "MOD"
+        return port_upper
+
+    def _resolve_command_code_override(self, command: str, port_upper: str) -> Optional[str]:
+        override_map = READ_CMD_FORMAT_CODE_OVERRIDES.get(command)
+        if not isinstance(override_map, dict):
+            return None
+
+        candidates: List[str] = []
+        if port_upper:
+            candidates.append(port_upper)
+            category = self._port_category(port_upper)
+            if category and category not in candidates:
+                candidates.append(category)
+        candidates.append("*")
+
+        for key in candidates:
+            if key in override_map:
+                return override_map[key]
+
+        return None
+
+    def _apply_read_attribute_overrides(self, payload: Dict[str, Any], port: str) -> None:
+        values = payload.get("values")
+        if not isinstance(values, dict):
+            return
+        port_upper = (port or "").upper()
+
+        for command, entry in values.items():
+            if not isinstance(entry, dict):
+                continue
+            command_code = self._resolve_command_code_override(command, port_upper)
+            if command_code:
+                entry["commandCode"] = command_code
 
     def _build_mfr_model_data(
         self,

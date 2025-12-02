@@ -414,22 +414,23 @@ window.hubDisconnect = async function()
     }
 }
 
+
 window.DataSocket = async function()
 {
     connection_READ_DATA_Hub = new signalR.HubConnectionBuilder()
         .withUrl("/datahub")
         .build();
         
-    connection_READ_DATA_Hub.on("UpdateDecodedVal", (addr, cmd, rcv_data) =>{
+    connection_READ_DATA_Hub.on("UpdateDecodedVal", (addr, cmdCode, cmd, rcv_data) =>{
         try
         {
             console.log("=================================================");
-            // console.log(`[SignalR] ${cmd}@${addr} :`);
-            console.log(`[SignalR] ${cmd}@${addr} : ` + JSON.stringify(rcv_data, null, 2));
+            console.log(`[SignalR] (${cmdCode},${cmd})@${addr} : ` + JSON.stringify(rcv_data, null, 2));
             document.getElementById("Address").textContent = "Address:" + addr;
             let Translator = window.INV_Info_Translator.Single;
             let temp_str = "";
             
+            //這邊的CmdName是FixedCmdName，非UserDefinedCmdName
             switch(cmd)
             {
                 case "MFR_MODEL" :
@@ -438,8 +439,6 @@ window.DataSocket = async function()
                     break;
                     
                 case "INV_STATUS":
-                    
-
                     console.log("[INV_STATUS] : " + rcv_data);
                     document.getElementById("InvSetting-display").textContent = rcv_data;
                     break;
@@ -457,7 +456,7 @@ window.DataSocket = async function()
                     document.getElementById("ErrorMessage").textContent = Translator.INV_FAULT_str;
                     break;
 
-                case "MFR_REVISION":
+                case "MFR_REVISION_B0B5":
                     console.log("[MFR_REVISION] : " + rcv_data);
                     let parts = rcv_data.split(",");
                     let modified = parts.map(p => p === "25.5" ? "X" : p);
@@ -524,6 +523,7 @@ window.DataSocket = async function()
     })
 
     await connection_READ_DATA_Hub.start();
+    
     console.log("[SignalR] connection started");
     return true;
 }

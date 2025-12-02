@@ -52,12 +52,6 @@ namespace demoVer.Broadcast
                 AppLogger.Log_To_File_log(_category, $"[DataHub][SubscribeCmd] 無法訂閱 {commandName}@{addr}, 資料不存在", AppLogLevel.Warning);
                 return;
             }
-            // var groups = _globalVar.Device_ReadData.GetCommandGroups(addr, commandName);
-            // if(groups is null)
-            // {
-            //     Console.WriteLine($"無法訂閱 {commandName}@{addr}, 資料不存在");
-            //     return;
-            // }
 
             _eventManager.SubscribeCmd(Context.ConnectionId, addr, commandName, cmdData);
             _connectionSubscriptions.AddOrUpdate(Context.ConnectionId,

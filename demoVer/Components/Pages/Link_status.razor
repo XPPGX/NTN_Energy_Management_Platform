@@ -16,6 +16,8 @@
 @inject IGroupsDataDecoder Decoder
 @inject IStringLocalizer<SharedResource> Localizer
 @using Microsoft.AspNetCore.Components.Web
+
+@inject SubSystemManager subsystemManager
 <MudPopoverProvider/>
 <PageTitle>@Localizer["LinkStatus-PageTitle"]</PageTitle>
 
@@ -213,14 +215,6 @@
 @code
 {
     [CascadingParameter(Name = "MainLayout")] public MainLayout? MainLayout { get; set; }
-
-    @* const uint STATUS_INV           = 0x00000001 << 0;
-    const uint STATUS_BYP           = 0x00000001 << 1;
-    const uint STATUS_UTI_OK        = 0x00000001 << 2;
-    const uint STATUS_CHG           = 0x00000001 << 3;
-    const uint STATUS_SOLAR_EN      = 0x00000001 << 4;
-    const uint STATUS_SAVING        = 0x00000001 << 5;
-    const uint STATUS_BAT_LOW_ALM   = 0x00000001 << 6; *@
     
     //for log
     private string _category;
@@ -245,6 +239,9 @@
     private int currentPage = 1;
     private int pageInput = 1;
     private bool topRowCallbacksRegistered = false;
+    private List<string> SubscribeCmdCodes = new List<string>();
+    private List<string> UserDefinedCmdNames = new List<string>();
+    
     public class Element
     {
         public uint Address {get; set;}
@@ -550,9 +547,18 @@
             modal_IsOpen = true;
             InfoCard_isOpen = true;
             NotifyJS = false;
-
-            await JS.InvokeVoidAsync("DataSocket");
-            await JS.InvokeVoidAsync("subscribeGroup_fixedCommands_dynamicAddr", SubscribeCommands, selectedAddr);
+            
+            bool Is_GetMapping_Success = get_UserDefCmdNames_By_Mapping(selectedAddr);
+            if(Is_GetMapping_Success is false)
+            {
+                AppLogger.Log_To_File_log(_category, $"[Link_status][OnRowClick] : get_UserDefCmdNames_By_Mapping failed for addr {selectedAddr}", AppLogLevel.Warning);
+                return;
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("DataSocket");
+                await JS.InvokeVoidAsync("subscribeGroup_fixedCommands_dynamicAddr", UserDefinedCmdNames, selectedAddr);
+            }
         }
         catch(Exception ex)
         {
@@ -560,13 +566,14 @@
         }
     }
     
-
+    //FixedCmdNames
+    //預計用這個 FixedCmdNames => FixedCmdCodes => UserDefined CmdNames
     private readonly string[] SubscribeCommands = new[]
     {
         "MFR_MODEL",
         "INV_STATUS",
         "INV_FAULT",
-        "MFR_REVISION",
+        "MFR_REVISION_B0B5",
         "READ_FAN_SPEED_1",
         "READ_FAN_SPEED_2",
         "READ_AC_VOUT",
@@ -575,6 +582,77 @@
         "READ_VBAT",
         "READ_TEMPERATURE_1",
     };
+
+    private bool get_UserDefCmdNames_By_Mapping(uint addr)
+    {
+        try
+        {
+            //1. 判斷addr屬於哪個 子系統
+            var (port, protocol) = subsystemManager.Mapping_Addr_To_SubSys.GetValueOrDefault(addr.ToString(), ("", ""));
+            if(string.IsNullOrEmpty(port) || string.IsNullOrEmpty(protocol))
+            {
+                AppLogger.Log_To_File_log(_category, $"[Link_status][get_UserDefCmdNames_By_Mapping] : addr {addr} has no SubSystem mapping", AppLogLevel.Warning);
+                return false;
+            }
+            var clearPort = Custom.getPort_ExceptFor_Num(port); //Just "CAN" or "MOD"
+
+            //2. 根據port取出對應的 CmdCodes
+            Console.WriteLine("clearPort = " + clearPort);
+            if(globalVar.HardCodes.TryGetValue(clearPort, out Dictionary<string, string>? cmdCodeDict))
+            {
+                SubscribeCmdCodes.Clear();
+                foreach(var cmdName in SubscribeCommands)
+                {
+                    if(cmdCodeDict.TryGetValue(cmdName, out var cmdCode))
+                    {
+                        SubscribeCmdCodes.Add(cmdCode);
+                    }
+                }
+            }
+            else
+            {
+                AppLogger.Log_To_File_log(_category, $"[Link_status][get_UserDefCmdNames_By_Mapping] : port {clearPort} has no HardCode mapping", AppLogLevel.Warning);
+                return false;
+            }
+            
+            //3. 取出addr所屬的子系統
+            var subSystem = subsystemManager.GetOneSubSystem_Ref(port, protocol);
+            if(subSystem is null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[Link_status][get_UserDefCmdNames_By_Mapping] : addr {addr} has no SubSystem instance", AppLogLevel.Warning);
+                return false;
+            }
+
+            //4. 根據CmdCodes 取出對應子系統中的 UserDefined CmdNames
+            UserDefinedCmdNames.Clear();
+            foreach (var cmdCode in SubscribeCmdCodes)
+            {
+                var cmdName = subSystem.Get_UserDefined_CmdName_By_CmdCode(cmdCode);
+                if(string.IsNullOrEmpty(cmdName))
+                {
+                    //紀錄log並跳過
+                    AppLogger.Log_To_File_log(_category, $"[Link_status][get_UserDefCmdNames_By_Mapping] : cmdCode {cmdCode} has no UserDefined CmdName mapping in SubSystem", AppLogLevel.Warning);
+                }
+                else
+                {
+                    //加入清單
+                    UserDefinedCmdNames.Add(cmdName);
+                }
+            }
+
+            //[Debug]
+            foreach(var cmdName in UserDefinedCmdNames)
+            {
+                AppLogger.Log_To_File_log(_category, $"[Link_status][get_UserDefCmdNames_By_Mapping] : addr {addr}, UserDefCmdName = {cmdName}", AppLogLevel.Debug);
+            }
+            return true;
+        }
+        catch(Exception ex)
+        {
+            AppLogger.Log_To_File_log(_category, $"[Link_status][get_UserDefCmdNames_By_Mapping] : Error, {ex}", AppLogLevel.Error);
+            return false;
+        }
+    }
 
     private void UpdateDonutChart()
     {

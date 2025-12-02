@@ -10,7 +10,6 @@
 @using System.IO
 @using demoVer.Utils
 @inject WriteProcess writeProcess
-@inject CommonData commonData
 @inject HeartbeatService Heartbeat
 @inject GlobalVar GlobalVar
 @inject SubSystemManager SubSystemManager
@@ -247,7 +246,6 @@
     protected override void OnInitialized()
     {
         _category = GetType().FullName!;
-        @* DataCenter.Battery.OnUpdated += OnBatteryChanged; *@
 
         Sliders = new List<SliderItem>
         {
@@ -260,13 +258,10 @@
         ThumbRefs = new List<ElementReference>(new ElementReference[Sliders.Count]);
 
         Init_Flag = true; //控制直向slider顯示
-
-        // _ = RefreshSubSystemOptions();
     }
 
     protected override void OnParametersSet()
     {
-        // _ = RefreshSubSystemOptions();
 
         if (!topRowCallbacksRegistered && MainLayout != null)
         {
@@ -507,22 +502,6 @@
 
         var currentSlider = Sliders[index];
         currentSlider.Value = value;
-
-        switch(currentSlider.Label)
-        {
-            case "CC":
-                var tempSlider_CC = Sliders[index];
-                break;
-            case "TC":
-                break;
-            case "CV":
-                break;
-            case "FV":
-                break;
-            default:
-                break;
-        }
-
         StateHasChanged();
     }
 
@@ -627,8 +606,6 @@
                 AlertMessage_parent     = Localizer["BatterySetting-ConfirmRestoreDefault"];
                 ConfirmBtn_Text_parent  = Localizer["Common-Confirm"];
                 CancelBtn_Text_parent   = Localizer["Common-Cancel"];
-                ConfirmBtn_Func_parent  = EventCallback.Factory.Create(this, ConfirmDefault);
-                CancelBtn_Func_parent   = EventCallback.Factory.Create(this, CancelDefault);
                 break;
             default:
                 break;
@@ -699,10 +676,7 @@
             if(CCT_Enable_BitKey is not null){Bits_tmp[CCT_Enable_BitKey] = CCT_Enable ? 1 : 0;}
             if(CVT_Enable_BitKey is not null){Bits_tmp[CVT_Enable_BitKey] = CVT_Enable ? 1 : 0;}
             if(FVT_Enable_BitKey is not null){Bits_tmp[FVT_Enable_BitKey] = FVT_Enable ? 1 : 0;}
-            @* Bits_tmp["BIT_6"] = selectedStage ? 1 : 0;
-            Bits_tmp["BIT_8"] = CCT_Enable ? 1 : 0;
-            Bits_tmp["BIT_9"] = CVT_Enable ? 1 : 0;
-            Bits_tmp["BIT_10"] = FVT_Enable ? 1 : 0; *@
+
             Console.WriteLine($"[nowUiData_transformTo_apiWriteData] Bits_tmp: {JsonSerializer.Serialize(Bits_tmp)}");
             var curveStage_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "00B4", RealBits: Bits_tmp);
             if (curveStage_cmdData != null) { configurableCmdDatas.Add(curveStage_cmdData); }
@@ -767,37 +741,6 @@
     }
 
     private async Task CancelSave()
-    {
-        CloseAlert();
-        CloseModal();
-    }
-
-    private async Task ConfirmDefault()
-    {
-        BatterySetting DefaultVal = new BatterySetting()
-        {
-            CC_Display = 60,
-            TC_Display = 6,
-            CV_Display = 57.6f,
-            FV_Display = 55.2f,
-            CurveStage = false,
-            CCT_Enable = false,
-            CC_TimeOut_Display = 600,
-            CVT_Enable = false,
-            CV_TimeOut_Display = 600,
-            FVT_Enable = false,
-            FV_TimeOut_Display = 600
-        };
-
-        if(DataCenter.Battery.SaveSettingData(DefaultVal))
-        {
-            await DataCenter.BroadcastBatteryChangeAsync();
-        }
-        CloseAlert();
-        CloseModal();
-    }
-
-    private async Task CancelDefault()
     {
         CloseAlert();
         CloseModal();

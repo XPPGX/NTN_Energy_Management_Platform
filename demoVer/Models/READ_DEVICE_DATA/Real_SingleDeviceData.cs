@@ -57,6 +57,18 @@ namespace demoVer.Models
                                 value = x.value
                             }))
                         : null;
+                    
+                    this.values[cmdName].commandCode = sourceCmdData.commandCode;
+                    this.values[cmdName].rule = (sourceCmdData.rule != null)
+                        ? new List<ruleContent>(sourceCmdData.rule.ConvertAll(x =>
+                            new ruleContent
+                            {
+                                name = x.name,
+                                bit = x.bit,
+                                length = x.length,
+                                valueMap = x.valueMap != null ? new Dictionary<string, string>(x.valueMap) : null
+                            }))
+                        : null;
                 }
                 else
                 {// 新增新的cmd資料
@@ -168,7 +180,6 @@ namespace demoVer.Models
         [JsonPropertyName("type")]
         public string type { get; set; }
 
-
         private object _value;
         [JsonPropertyName("value")]
         public object value // 結構內value，經過json反序列化後存進來會變成JsonElement，要用時必須轉型
@@ -184,8 +195,12 @@ namespace demoVer.Models
                 }
             }
         }
+
         [JsonPropertyName("unit")]
         public string? unit { get; set; }
+
+        [JsonPropertyName("commandCode")]
+        public string? commandCode {get; set;} = string.Empty;
 
         [JsonPropertyName("rule")]
         public List<ruleContent>? rule {get; set;} = new();

@@ -1,0 +1,28 @@
+{
+  "CAN": {
+    "MFR_MODEL": "0x0082",
+    "INV_STATUS": "0x011D",
+    "INV_FAULT": "0x011E",
+    "MFR_REVISION_B0B5": "0x0084",
+    "READ_FAN_SPEED_1": "0x0070",
+    "READ_FAN_SPEED_2": "0x0071",
+    "READ_AC_VOUT": "0x0108",
+    "READ_OP_VA": "0x0114",
+    "READ_CHG_CURR": "0x011B",
+    "READ_VBAT": "0x011A",
+    "READ_TEMPERATURE_1": "0x0062"
+  },
+  "MOD": {
+    "MFR_MODEL": "0x0086",
+    "INV_STATUS": "0x011D",
+    "INV_FAULT": "0x011E",
+    "MFR_REVISION_B0B5": "0x008C",
+    "READ_FAN_SPEED_1": "0x0070",
+    "READ_FAN_SPEED_2": "0x0071",
+    "READ_AC_VOUT": "0x0108",
+    "READ_OP_VA": "0x0114",
+    "READ_CHG_CURR": "0x011B",
+    "READ_VBAT": "0x011A",
+    "READ_TEMPERATURE_1": "0x0062"
+  }
+}

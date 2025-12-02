@@ -116,32 +116,6 @@
 
 
 <div class="column-container" @onclick="HandleGlobalClick">
-    @* <div class="row1-container">
-        <div class="row1-leftPart">
-            <div class="bulk-actions">
-                <button class="action-btn on @(isAllOn ? "active" : null)"
-                        @onclick="AllOn"
-                        aria-pressed="@(isAllOn.ToString().ToLower())">
-                    <span class="dot"></span>
-                    All INV On
-                </button>
-
-                <button class="action-btn off @(!isAllOn ? "active" : null)"
-                        @onclick="AllOff"
-                        aria-pressed="@((!isAllOn).ToString().ToLower())">
-                    <span class="dot"></span>
-                    All INV Off
-                </button>
-            </div>
-        </div>
-
-        <div class="row1-rightPart">
-            Model Name：
-            <div class="highlighted-content">
-                @(globalVar.Sys_ModelName)
-            </div>
-        </div>
-    </div> *@
     
     <div id="sortable-modules" class="module-grid" @ref="ref_module_container">
         @foreach(var card in CardInfos)
@@ -306,7 +280,6 @@
     protected override async Task OnInitializedAsync()
     {
         _category = GetType().FullName!;
-        globalVar.Sys_ModelName_OnChanged += hookTask;
 
         await hookTask();
         await Read_CardInfos_FromJsonFile();
@@ -328,7 +301,6 @@
 
     public void Dispose()
     {
-        globalVar.Sys_ModelName_OnChanged -= hookTask;
         MainLayout?.ClearTopRowCallbacks(this);
         topRowCallbacksRegistered = false;
     }
@@ -566,32 +538,56 @@
     }
 
 
-    private async Task ConfirmSave_InfoData()
+    private static CardInfo CreateCardSnapshotWithoutData(CardInfo source)
     {
-        
-        //清除所有chartCard裡面的Data跟Labels
-        
-
-
-        @* foreach(var card in CardInfos)
+        if (source is null)
         {
-            if(card.Chart_Setting is not null)
+            return new CardInfo
             {
-                card.Chart_Setting.Labels = Array.Empty<string>();
+                Info_DataItems = new List<INFO_DataItem>(),
+                Link_STATUS_Pairs = new List<LINK_STATUS_Pair>()
+            };
+        }
 
-                foreach(var line in card.Chart_Setting.chart_single_data_lines)
+        var chartSettingClone = source.Chart_Setting?.DeepClone();
+
+        var snapshot = new CardInfo
+        {
+            ID = source.ID,
+            card_Type = source.card_Type,
+            widthClass = source.widthClass,
+            showSequence = source.showSequence,
+            cardName = source.cardName,
+            Info_DataItems = source.Info_DataItems?.Select(item => item.DeepClone()).ToList() ?? new List<INFO_DataItem>(),
+            Link_STATUS_Pairs = source.Link_STATUS_Pairs?.Select(pair => pair.DeepClone()).ToList() ?? new List<LINK_STATUS_Pair>(),
+            SelectedSubsystemKey = source.SelectedSubsystemKey,
+            Chart_Setting = chartSettingClone!
+        };
+
+        if (chartSettingClone?.chart_single_data_lines != null)
+        {
+            foreach (var line in chartSettingClone.chart_single_data_lines)
+            {
+                if (line != null)
                 {
                     line.Data = Array.Empty<double?>();
                 }
             }
-        } *@
+        }
 
-        string jsonString = JsonSerializer.Serialize(CardInfos, new JsonSerializerOptions { WriteIndented = true });
-        string cleanedJson = StripLabelsAndData(jsonString);
-        
+        return snapshot;
+    }
+
+
+    private async Task ConfirmSave_InfoData()
+    {
+        var sanitizedCards = CardInfos
+            .Select(card => CreateCardSnapshotWithoutData(card))
+            .ToList();
+
+        string jsonString = JsonSerializer.Serialize(sanitizedCards, new JsonSerializerOptions { WriteIndented = true });
+
         string FilePath = Path.Combine(dataCenter.get_basePath(), "visibleCards.json");
-        // string linuxPath = "/userdata/CMU3/UserSetting/5040/visibleCards.json";
-        // File.WriteAllText(linuxPath, jsonString);
         File.WriteAllText(FilePath, jsonString);
 
         Console.WriteLine("JSON 檔案已寫入完成。");

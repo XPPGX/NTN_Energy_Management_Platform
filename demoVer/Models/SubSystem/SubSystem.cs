@@ -5,6 +5,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Runtime.CompilerServices;
+using System.Threading;
 namespace demoVer.Models
 {
     /// <summary>
@@ -235,45 +237,56 @@ namespace demoVer.Models
         #endregion For Writable Cmd
 
         #region For Read Cmd Format
-
+        private int _isMappingCmdCodeToNameInit = 0;
+        public ConcurrentDictionary<string, string> Mapping_Cmd_CodeToName {get; set;} = new(); //Key: cmdCode, Value: UserDefined CmdName
         public ConcurrentDictionary<string, string> ReadCmd_Unit_ConDict { get; set; } = new(); //Key: cmdName, Value: unit string
-        private readonly SemaphoreSlim _ReadCmd_Unit_Lock = new(1, 1);
+        private readonly SemaphoreSlim _ReadCmd_Format_Lock = new(1, 1);
 
-        public async Task Update_ReadCmd_With_Unit(ProtocolFormat? newReadCmd_with_Unit)
+        public async Task Update_ReadCmdFormat(ProtocolFormat? newReadCmd_with_Format)
         {
-            await _ReadCmd_Unit_Lock.WaitAsync();
+            await _ReadCmd_Format_Lock.WaitAsync();
             try
             {
-                AppLogger.Log_To_File_log(_category, $"[SubSystem][Update_ReadCmd_With_Unit] Start for (port, protocol) = ({this.Port}, {this.Protocol})", AppLogLevel.Debug);
+                AppLogger.Log_To_File_log(_category, $"[SubSystem][Update_ReadCmdFormat] Start for (port, protocol) = ({this.Port}, {this.Protocol})", AppLogLevel.Debug);
                 ReadCmd_Unit_ConDict.Clear();
-                if (newReadCmd_with_Unit is null)
+                if (newReadCmd_with_Format is null)
                 {
-                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Update_ReadCmd_With_Unit] newReadCmd_with_Unit is null, skip updating", AppLogLevel.Warning);
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Update_ReadCmdFormat] newReadCmd_with_Format is null, skip updating", AppLogLevel.Warning);
                     return;
                 }
-                var newValues = newReadCmd_with_Unit.values;
-                foreach (var (cmdName, unitObj) in newValues)
+                var newValues = newReadCmd_with_Format.values;
+                foreach (var (cmdName, FormatObj) in newValues)
                 {
-                    if (unitObj.unit is not null)
+                    if (FormatObj.unit is not null)
                     {
-                        ReadCmd_Unit_ConDict[cmdName] = unitObj.unit;
+                        ReadCmd_Unit_ConDict[cmdName] = FormatObj.unit;
+                    }
+                    
+                    if (FormatObj.commandCode is not null)
+                    {
+                       Mapping_Cmd_CodeToName[FormatObj.commandCode] = cmdName;
                     }
                 }
 
                 //[Debug]印出更新結果
-                foreach (var (cmdCode, unitStr) in ReadCmd_Unit_ConDict)
+                foreach(var kvp in newValues)
                 {
-                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Update_ReadCmd_With_Unit] Updated Read Cmd Unit: CmdCode {cmdCode}, Unit: {unitStr}", AppLogLevel.Debug);
+                    string cmdName = kvp.Key;
+                    string unitStr = kvp.Value.unit ?? "null";
+                    string cmdCodeStr = kvp.Value.commandCode ?? "null";
+                    bool unitStoreSucc = ReadCmd_Unit_ConDict.TryGetValue(cmdName, out string? storedUnit);
+                    bool cmdCodeStoreSucc = Mapping_Cmd_CodeToName.TryGetValue(cmdCodeStr, out string? storedCmdName);
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Update_ReadCmdFormat] ReadCmd Format Updated: CmdName={cmdName}, Unit={unitStr}, StoredUnit={storedUnit}, CmdCode={cmdCodeStr}, StoredCmdName={storedCmdName}", AppLogLevel.Debug);
                 }
-                AppLogger.Log_To_File_log(_category, $"[SubSystem][Update_ReadCmd_With_Unit] done for (port, protocol) = ({this.Port}, {this.Protocol})", AppLogLevel.Debug);
+                AppLogger.Log_To_File_log(_category, $"[SubSystem][Update_ReadCmdFormat] done for (port, protocol) = ({this.Port}, {this.Protocol})", AppLogLevel.Debug);
             }
             catch (Exception e)
             {
-                AppLogger.Log_To_File_log(_category, $"[SubSystem][Update_ReadCmd_With_Unit] Exception: {e.Message}", AppLogLevel.Error);
+                AppLogger.Log_To_File_log(_category, $"[SubSystem][Update_ReadCmdFormat] Exception: {e.Message}", AppLogLevel.Error);
             }
             finally
             {
-                _ReadCmd_Unit_Lock.Release();
+                _ReadCmd_Format_Lock.Release();
             }
         }
 
@@ -281,6 +294,19 @@ namespace demoVer.Models
         {
             return ReadCmd_Unit_ConDict.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
+        
+        public string? Get_UserDefined_CmdName_By_CmdCode(string cmdCode)
+        {
+            if (Mapping_Cmd_CodeToName.TryGetValue(cmdCode, out string? cmdName))
+            {
+                return cmdName;
+            }
+            return null;
+        }
+
+        
+        public string Get_PortWithoutNum() => Custom.getPort_ExceptFor_Num(this.Port);
+
         #endregion For Read Cmd Format
 
         #region Computed In SubSystem
@@ -996,27 +1022,27 @@ namespace demoVer.Models
                 {
                     case ConstDefinition.INV_Phase_Options.PHASE_0:
                         tmp_phase_0 += oneDevice_OP_VA_val;
-                        AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_VA] Device Addr {oneDevice_Data.addr} Phase 0 READ_OP_VA : {oneDevice_OP_VA_val}, tmp_phase_0 accumulated to {tmp_phase_0}", AppLogLevel.Debug);
+                        AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_VA] Device Addr {oneDevice_Data.addr} Phase 0 READ_OP_VA : {oneDevice_OP_VA_val}, tmp_phase_0 accumulated to {tmp_phase_0}", AppLogLevel.Trace);
                         break;
                     case ConstDefinition.INV_Phase_Options.PHASE_180:
                         if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_TWO_PHASE)
                         {
                             tmp_phase_180 += oneDevice_OP_VA_val;
-                            AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_VA] Device Addr {oneDevice_Data.addr} Phase 180 READ_OP_VA : {oneDevice_OP_VA_val}, tmp_phase_180 accumulated to {tmp_phase_180}", AppLogLevel.Debug);
+                            AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_VA] Device Addr {oneDevice_Data.addr} Phase 180 READ_OP_VA : {oneDevice_OP_VA_val}, tmp_phase_180 accumulated to {tmp_phase_180}", AppLogLevel.Trace);
                         }
                         break;
                     case ConstDefinition.INV_Phase_Options.PHASE_120:
                         if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE)
                         {
                             tmp_phase_120 += oneDevice_OP_VA_val;
-                            AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_VA] Device Addr {oneDevice_Data.addr} Phase 120 READ_OP_VA : {oneDevice_OP_VA_val}, tmp_phase_120 accumulated to {tmp_phase_120}", AppLogLevel.Debug);
+                            AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_VA] Device Addr {oneDevice_Data.addr} Phase 120 READ_OP_VA : {oneDevice_OP_VA_val}, tmp_phase_120 accumulated to {tmp_phase_120}", AppLogLevel.Trace);
                         }
                         break;
                     case ConstDefinition.INV_Phase_Options.PHASE_240:
                         if (ComputedVals.nowPhase == ConstDefinition.INV_Phase_SubSys.INV_THREE_PHASE)
                         {
                             tmp_phase_240 += oneDevice_OP_VA_val;
-                            AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_VA] Device Addr {oneDevice_Data.addr} Phase 240 READ_OP_VA : {oneDevice_OP_VA_val}, tmp_phase_240 accumulated to {tmp_phase_240}", AppLogLevel.Debug);
+                            AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_VA] Device Addr {oneDevice_Data.addr} Phase 240 READ_OP_VA : {oneDevice_OP_VA_val}, tmp_phase_240 accumulated to {tmp_phase_240}", AppLogLevel.Trace);
                         }
                         break;
                     default:

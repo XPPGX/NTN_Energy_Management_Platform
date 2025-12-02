@@ -71,7 +71,7 @@
         ]
       }
     ],
-    "Link_STATUS_Pairs": null,
+    "Link_STATUS_Pairs": [],
     "SelectedSubsystemKey": null,
     "Chart_Setting": null
   },
@@ -81,7 +81,7 @@
     "widthClass": "w50",
     "showSequence": 1,
     "cardName": "RunningDiagram",
-    "Info_DataItems": null,
+    "Info_DataItems": [],
     "Link_STATUS_Pairs": [
       {
         "iconPath": "images/user_selections/transmission-tower.png",
@@ -100,7 +100,7 @@
         "Label": "Battery"
       }
     ],
-    "SelectedSubsystemKey": "CAN2|NTN-5K_CAN.json",
+    "SelectedSubsystemKey": "MOD1|NTN-5K_MOD.json",
     "Chart_Setting": null
   },
   {
@@ -175,7 +175,7 @@
         ]
       }
     ],
-    "Link_STATUS_Pairs": null,
+    "Link_STATUS_Pairs": [],
     "SelectedSubsystemKey": null,
     "Chart_Setting": null
   },
@@ -251,7 +251,7 @@
         ]
       }
     ],
-    "Link_STATUS_Pairs": null,
+    "Link_STATUS_Pairs": [],
     "SelectedSubsystemKey": null,
     "Chart_Setting": null
   },
@@ -261,8 +261,8 @@
     "widthClass": "w50",
     "showSequence": 4,
     "cardName": "CAN1 (0) VIN, IIN\u6298\u7DDA\u5716",
-    "Info_DataItems": null,
-    "Link_STATUS_Pairs": null,
+    "Info_DataItems": [],
+    "Link_STATUS_Pairs": [],
     "SelectedSubsystemKey": null,
     "Chart_Setting": {
       "canvasID": "Chart_76d9c423749443d1ae9a26d491b5a9e2",
@@ -270,36 +270,36 @@
       "XTitle": "\u6642\u9593",
       "timeGap_selection": 0,
       "Labels": [
-        "14:49:25",
-        "14:49:26",
-        "14:49:27",
-        "14:49:28",
-        "14:49:29",
-        "14:49:30",
-        "14:49:31",
-        "14:49:32",
-        "14:49:33",
-        "14:49:34",
-        "14:49:35",
-        "14:49:36",
-        "14:49:37",
-        "14:49:38",
-        "14:49:39",
-        "14:49:40",
-        "14:49:41",
-        "14:49:43",
-        "14:49:44",
-        "14:49:45",
-        "14:49:46",
-        "14:49:47",
-        "14:49:48",
-        "14:49:49",
-        "14:49:50",
-        "14:49:51",
-        "14:49:52",
-        "14:49:53",
-        "14:49:54",
-        "14:49:55"
+        "16:56:54",
+        "16:56:55",
+        "16:56:56",
+        "16:56:57",
+        "16:56:58",
+        "16:56:59",
+        "16:57:00",
+        "16:57:01",
+        "16:57:02",
+        "16:57:03",
+        "16:57:04",
+        "16:57:05",
+        "16:57:06",
+        "16:57:07",
+        "16:57:08",
+        "16:57:09",
+        "16:57:10",
+        "16:57:11",
+        "16:57:12",
+        "16:57:13",
+        "16:57:14",
+        "16:57:15",
+        "16:57:16",
+        "16:57:17",
+        "16:57:18",
+        "16:57:19",
+        "16:57:20",
+        "16:57:21",
+        "16:57:22",
+        "16:57:23"
       ],
       "Y_left_Title": "IIN",
       "Y_right_Title": "VIN",
@@ -314,38 +314,7 @@
           "Unit": "V",
           "Y_axis_selection": false,
           "color": "#12f368",
-          "Data": [
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8,
-            109.8
-          ]
+          "Data": []
         },
         {
           "status": 3,
@@ -355,38 +324,7 @@
           "Unit": "A",
           "Y_axis_selection": true,
           "color": "#e40707",
-          "Data": [
-            234.53,
-            140.17,
-            140.17,
-            740.9,
-            895.51,
-            569.43,
-            569.43,
-            942.89,
-            439.81,
-            439.81,
-            802.11,
-            964.64,
-            624.92,
-            624.92,
-            222.36,
-            878.17,
-            234.56,
-            234.56,
-            380.72,
-            434.86,
-            434.86,
-            843.81,
-            220.43,
-            220.43,
-            991.12,
-            281.16,
-            942.7,
-            942.7,
-            122.52,
-            742.54
-          ]
+          "Data": []
         }
       ]
     }
@@ -463,83 +401,7 @@
         ]
       }
     ],
-    "Link_STATUS_Pairs": null,
-    "SelectedSubsystemKey": null,
-    "Chart_Setting": null
-  },
-  {
-    "ID": "c06c70c5d679422bb252c266e714330f",
-    "card_Type": 1,
-    "widthClass": "w25",
-    "showSequence": 6,
-    "cardName": "CAN1 NTN-5K-SubSys",
-    "Info_DataItems": [
-      {
-        "iconPath": null,
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "CAN1 - NTN-5K_CAN / System Info",
-            "Addr": 256,
-            "UserSettingName": "System",
-            "Cmd": "Input_V",
-            "ValueName": "INPUT_V",
-            "Unit": "V",
-            "Port": "CAN1",
-            "Protocol": "NTN-5K_CAN.json"
-          }
-        ]
-      },
-      {
-        "iconPath": null,
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "CAN1 - NTN-5K_CAN / System Info",
-            "Addr": 256,
-            "UserSettingName": "System",
-            "Cmd": "Input_F",
-            "ValueName": "INPUT_F",
-            "Unit": "Hz",
-            "Port": "CAN1",
-            "Protocol": "NTN-5K_CAN.json"
-          }
-        ]
-      },
-      {
-        "iconPath": null,
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "CAN1 - NTN-5K_CAN / System Info",
-            "Addr": 256,
-            "UserSettingName": "System",
-            "Cmd": "Output_VA",
-            "ValueName": "OUPUT_VA",
-            "Unit": "VA",
-            "Port": "CAN1",
-            "Protocol": "NTN-5K_CAN.json"
-          }
-        ]
-      },
-      {
-        "iconPath": null,
-        "status": 3,
-        "INFO_DataFormats": [
-          {
-            "MachineName": "CAN1 - NTN-5K_CAN / System Info",
-            "Addr": 256,
-            "UserSettingName": "System",
-            "Cmd": "Output_I",
-            "ValueName": "OUTPUT_I",
-            "Unit": "A",
-            "Port": "CAN1",
-            "Protocol": "NTN-5K_CAN.json"
-          }
-        ]
-      }
-    ],
-    "Link_STATUS_Pairs": null,
+    "Link_STATUS_Pairs": [],
     "SelectedSubsystemKey": null,
     "Chart_Setting": null
   }

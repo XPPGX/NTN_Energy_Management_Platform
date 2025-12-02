@@ -33,7 +33,7 @@ namespace demoVer.Services
         private readonly IHubContext<DataHub> _hubContext;
         // JS : 每個連線connectionId  → 訂閱了哪些 (addr, cmd)
         private readonly GlobalVar _globalVar;
-
+        private readonly SubSystemManager _subsystemManager;
 
         private readonly ConcurrentDictionary<string, List<CmdLevelSubscription>> _clientSubscriptions = new();
         // JS : 每個 SingleCommandData 資料變動時要通知哪些連線(一個Cmd可被多人訂閱)
@@ -46,10 +46,11 @@ namespace demoVer.Services
         // private readonly ConcurrentDictionary<(uint addr, string cmd), List<Action<CmdDataChangeArgs>>> _groupsSubscribersCs = new();
         private readonly ConcurrentDictionary<(uint addr, string cmd), List<Action<CmdDataChangeArgs>>> _cmdDataCsSubscriptions = new();
 
-        public DataChangeEventManager(IHubContext<DataHub> hubContext, GlobalVar globalVar)
+        public DataChangeEventManager(IHubContext<DataHub> hubContext, GlobalVar globalVar, SubSystemManager subsystemManager)
         {
             _hubContext = hubContext;
             _globalVar = globalVar;
+            _subsystemManager = subsystemManager;
             _category = GetType().FullName!;
         }
 
@@ -73,12 +74,21 @@ namespace demoVer.Services
             var connSet = _cmdsSubscribers.GetOrAdd(key, _ => new HashSet<string>());
             connSet.Add(connectionId);
 
+            //取得 該addr所屬的 SubSystem
+            var(port, protocol) = _subsystemManager.Mapping_Addr_To_SubSys[addr.ToString()]; 
+            var subsys = _subsystemManager.GetOneSubSystem_Ref(port, protocol);
+            if(subsys == null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[DataChangeEventManager][EnsureHook] subsys is null for addr={addr}", AppLogLevel.Trace);
+                return;
+            }
+
             //3. 綁定事件：綁在SingleCommandData.OnChanged，只綁一次，以Cmd判斷
-            EnsureHook(addr, commandName, cmdData);
+            EnsureHook(addr, commandName, subsys, cmdData);
 
             //4. 第一次訂閱，主動推送一次目前值
             AppLogger.Log_To_File_log(_category, $"[DataChangeEventManager][SubscribeCmd] First Push Data", AppLogLevel.Debug);
-            OnCmdDataChanged(addr, commandName, cmdData);
+            OnCmdDataChanged(addr, commandName, subsys, cmdData);
         }
 
         public void UnsubscribeAll(string connectionId)
@@ -124,7 +134,7 @@ namespace demoVer.Services
         /// <param name="addr"></param>
         /// <param name="cmdName"></param>
         /// <param name="cmdData"></param>
-        private void EnsureHook(uint addr, string cmdName, SingleCommandData cmdData)
+        private void EnsureHook(uint addr, string cmdName, SubSystem subsys, SingleCommandData cmdData)
         {
             if (cmdData == null)
             {
@@ -145,7 +155,7 @@ namespace demoVer.Services
                 AppLogger.Log_To_File_log(_category, $"[DataChangeEventManager][EnsureHook][CmdData.OnChanged] {cmdName}@{addr} changed", AppLogLevel.Trace);
                 if (_cmdsSubscribers.TryGetValue(key, out var connIds) && connIds.Count > 0)
                 {
-                    OnCmdDataChanged(addr, cmdName, cmdData);
+                    OnCmdDataChanged(addr, cmdName, subsys, cmdData);
                 }
             };
 
@@ -156,11 +166,14 @@ namespace demoVer.Services
         }
 
 
-        private void OnCmdDataChanged(uint addr, string cmdName, SingleCommandData cmdData)
+        private void OnCmdDataChanged(uint addr, string cmdName, SubSystem subsys, SingleCommandData cmdData)
         {
             var key = (addr, cmdName);
-            AppLogger.Log_To_File_log(_category, $"[OnCmdDataChanged] {cmdName}@{addr}", AppLogLevel.Trace);
+            var cmdCode = cmdData.commandCode ?? string.Empty;
+            
 
+            AppLogger.Log_To_File_log(_category, $"[OnCmdDataChanged] ({cmdCode},{cmdName})@{addr}", AppLogLevel.Trace);
+            
             try
             {
                 // 1. 取資料
@@ -187,11 +200,21 @@ namespace demoVer.Services
                         break;
                 }
 
-                // 2. JS：SignalR 批次送
+
+                //取出 FixedCmdName
+                var clearPort = subsys.Get_PortWithoutNum();
+                string HardCoded_CmdName = string.Empty;
+                if(_globalVar.HardCodesReverse[clearPort].TryGetValue(cmdCode, out var fixedCmdName))
+                {
+                    HardCoded_CmdName = fixedCmdName;
+                }
+
+
+                // 2. JS：SignalR 批次送 (送出命令的時候用，)
                 if (_cmdsSubscribers.TryGetValue(key, out var jsConnIds) && jsConnIds.Count > 0)
                 {
                     _hubContext.Clients.Clients(jsConnIds).SendAsync(
-                        "UpdateDecodedVal", addr, cmdName, sendValue
+                        "UpdateDecodedVal", addr, cmdCode, HardCoded_CmdName, sendValue
                     );
                 }
 
@@ -234,11 +257,17 @@ namespace demoVer.Services
                 list.Add(handler);
             }
 
-            EnsureHook(addr, commandName, cmdData);
+            var (port, protocol) = _subsystemManager.Mapping_Addr_To_SubSys[addr.ToString()];
+            var subsys = _subsystemManager.GetOneSubSystem_Ref(port, protocol);
+            if (subsys == null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[DataChangeEventManager][EnsureHook] subsys is null for addr={addr}", AppLogLevel.Trace);
+                return new Unsubscriber(() => { });
+            }
+            EnsureHook(addr, commandName, subsys, cmdData);
 
             // 首次推播一次
-            OnCmdDataChanged(addr, commandName, cmdData);
-
+            OnCmdDataChanged(addr, commandName, subsys, cmdData);
 
             AppLogger.Log_To_File_log(_category, $"[DataChangeEventManager][SubscribeGroupCs] {commandName}@{addr}", AppLogLevel.Trace);
 
