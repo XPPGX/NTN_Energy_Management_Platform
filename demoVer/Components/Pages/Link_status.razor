@@ -1,23 +1,26 @@
 @page "/Link_status"
 
-@inject IDialogService DialogService
+
 @rendermode InteractiveServer
+@using System.Text.Json
+@using System.Linq
+@using Microsoft.AspNetCore.Components.Web
+@using demoVer.Components.Layout
+@using demoVer.Interfaces
+@using demoVer.Models
+@using demoVer.Utils
+
+@inject IDialogService DialogService
 @inject IJSRuntime JS
 @inject DataCenter DataCenter
 @inject GlobalVar globalVar
 @inject LinkAddrManager linkAddrManager
-@using demoVer.Components.Layout
-@using System.Text.Json
-@using demoVer.Models
-@using demoVer.Utils
-@using System.Linq
 @inject HeartbeatService Heartbeat
-@using demoVer.Interfaces
 @inject IGroupsDataDecoder Decoder
 @inject IStringLocalizer<SharedResource> Localizer
-@using Microsoft.AspNetCore.Components.Web
-
 @inject SubSystemManager subsystemManager
+@inject CodeTranslator codeTranslator
+
 <MudPopoverProvider/>
 <PageTitle>@Localizer["LinkStatus-PageTitle"]</PageTitle>
 
@@ -421,7 +424,6 @@
     {
         if (firstRender)
         {
-            @* await JS.InvokeVoidAsync("startSignalR"); *@
             Heartbeat.OnTick += pageTimer;
             IsMobile = await JS.InvokeAsync<bool>("checkIsMobile");
             checkMobile_complete = true;
@@ -430,7 +432,6 @@
         if(modal_IsOpen && !NotifyJS && jumpWindow.Context != null)
         {
             NotifyJS = true;
-            @* await JS.InvokeVoidAsync("subscribeCommands_fixedCommand_dynamicAddr", SubscribeCommands, selectedAddr); *@
         }
     }
 
@@ -449,24 +450,33 @@
         //取得當前的有連線的addr Set
         AppLogger.Log_To_File_log(_category, $"[Link_status][getINVsLink] Current Linking Model addr :", AppLogLevel.Trace);
         //AppLogger.Log_To_File_log(_category, $"{string.Join(", ", addrs)}", AppLogLevel.Trace);
-
-        //traverse MOD_DATA，取出各Addr對應的當前modelName跟Status
         
         Elements = new List<Element>();
         
         foreach(var addr in addrs)
         {
+            //1. 取 該addr 的 DeviceData快照
             var oneDeviceData_snapShot = globalVar.Real_Devices_ReadData.Get_oneDevice_DataSnapshot(addr);
             if(oneDeviceData_snapShot == null) continue;
-            
-            var modelName = oneDeviceData_snapShot.parseCmdData("MFR_MODEL") ?? "N/A";
-            string runningStatus = string.Empty;
 
+            //2. 取 映射 FixedCmdName => FixedCmdCode => UserDefinedCmdName
+            var UserDefCmdName = codeTranslator.Translate_FixedCmdName_To_UserDefinedName("MFR_MODEL", addr);
+            if(UserDefCmdName is null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[Link_status][getINVsLink] : Translate_FixedCmdName_To_UserDefinedName failed for addr {addr}, FixedCmdName = MFR_MODEL", AppLogLevel.Warning);
+                continue;
+            }
+
+            //3. 取 ModelName的值
+            var modelName = oneDeviceData_snapShot.parseCmdData(UserDefCmdName) ?? "N/A";
+            
             //如果modelName收到空值，直接忽略這個連線
             if(string.IsNullOrEmpty(modelName.ToString()))
             {
                 continue;
             }
+
+            string runningStatus = string.Empty;
             runningStatus = decode_INV_Status(addr);
             
             AppLogger.Log_To_File_log(_category, $"[Link_status][getINVsLink] : Addr = {addr}, ModelName = {modelName}, LinkStatus = Linked, runningStatus = {runningStatus}", AppLogLevel.Trace);
@@ -598,7 +608,7 @@
 
             //2. 根據port取出對應的 CmdCodes
             Console.WriteLine("clearPort = " + clearPort);
-            if(globalVar.HardCodes.TryGetValue(clearPort, out Dictionary<string, string>? cmdCodeDict))
+            if(GlobalVar.HardCodes.TryGetValue(clearPort, out Dictionary<string, string>? cmdCodeDict))
             {
                 SubscribeCmdCodes.Clear();
                 foreach(var cmdName in SubscribeCommands)
@@ -663,10 +673,6 @@
             if(device.RunningState == "N/A"){continue;}
             new_data[mapLabelsToData[device.RunningState]] ++;
         }
-        @* foreach(var val in new_data)
-        {
-            Console.Write(val + ",");
-        } *@
         data = new_data;
     }
 
@@ -721,32 +727,46 @@
             return "N/A";
         }
         
-        //取得addr的INV_FAULT解碼內容
-        var INV_FAULT_DecodeList = (List<decodeContent>?) oneDeviceData_SnapShot.parseCmdData("INV_FAULT");
-        if(INV_FAULT_DecodeList == null) {
-            AppLogger.Log_To_File_log(_category, $"[Link_status][decode_INV_Status] : INV_FAULT_DecodeList is null, addr = {addr}", AppLogLevel.Warning);
+        //取得addr的 FixedCmdName(INV_FAULT) => FixedCmdCode => UserDefinedCmdName
+        var INV_FAULT_UserDefCmdName = codeTranslator.Translate_FixedCmdName_To_UserDefinedName("INV_FAULT", addr);
+        if(INV_FAULT_UserDefCmdName is null)
+        {
+            AppLogger.Log_To_File_log(_category, $"[Link_status][decode_INV_Status] : Translate_FixedCmdName_To_UserDefinedName failed for addr {addr}, FixedCmdName = INV_FAULT", AppLogLevel.Warning);
             return "N/A";
         }
-        // var INV_FAULT_RuleList = oneDeviceData_SnapShot.GetCmdRule("INV_FAULT");
-        string? INV_FAULT_str = BitFieldParser.Parse_INV_FAULT(INV_FAULT_DecodeList);
-        if(!string.IsNullOrEmpty(INV_FAULT_str))
-        {
-            return INV_FAULT_str;
-        }
-
-        //取得addr的INV_STATUS解碼內容
-        var INV_STATUS_DecodeList = (List<decodeContent>?) oneDeviceData_SnapShot.parseCmdData("INV_STATUS");
-        if(INV_STATUS_DecodeList == null) {
-            AppLogger.Log_To_File_log(_category, $"[Link_status][decode_INV_Status] : INV_STATUS_DecodeList is null, addr = {addr}", AppLogLevel.Warning);
+        //取得addr的 INV_FAULT解碼內容
+        var INV_FAULT_rawValue = oneDeviceData_SnapShot.parseCmdData(INV_FAULT_UserDefCmdName);
+        if(INV_FAULT_rawValue == null) {
+            AppLogger.Log_To_File_log(_category, $"[Link_status][decode_INV_Status] : INV_FAULT_rawValue is null, addr = {addr}", AppLogLevel.Warning);
             return "N/A";
         }
-        string? INV_STATUS_str = BitFieldParser.Parse_INV_STATUS(INV_STATUS_DecodeList);
-        if(!string.IsNullOrEmpty(INV_STATUS_str))
+        if(BitFieldParser.Is_Any_INV_FAULT_By_rawValue(INV_FAULT_rawValue))
         {
-            return INV_STATUS_str;
+            return "Error";
         }
-
-        return "Error";
+        
+        //取得addr的 FixedCmdName(INV_STATUS) => FixedCmdCode => UserDefinedCmdName
+        var INV_STATUS_UserDefCmdName = codeTranslator.Translate_FixedCmdName_To_UserDefinedName("INV_STATUS", addr);
+        if(INV_STATUS_UserDefCmdName is null)
+        {
+            AppLogger.Log_To_File_log(_category, $"[Link_status][decode_INV_Status] : Translate_FixedCmdName_To_UserDefinedName failed for addr {addr}, FixedCmdName = INV_STATUS", AppLogLevel.Warning);
+            return "N/A";
+        }
+        //取得addr的 INV_STATUS解碼內容
+        var INV_STATUS_rawValue = oneDeviceData_SnapShot.parseCmdData(INV_STATUS_UserDefCmdName);
+        if(INV_STATUS_rawValue == null)
+        {
+            AppLogger.Log_To_File_log(_category, $"[Link_status][decode_INV_Status] : INV_STATUS_rawValue is null, addr = {addr}", AppLogLevel.Warning);
+            return "N/A";
+        }
+        string INV_STATUS_str = BitFieldParser.parse_INV_STATUS_By_rawValue(INV_STATUS_rawValue);
+        if(string.IsNullOrEmpty(INV_STATUS_str))
+        {
+            AppLogger.Log_To_File_log(_category, $"[Link_status][decode_INV_Status] : INV_STATUS_str is null or empty, addr = {addr}", AppLogLevel.Warning);
+            return "Error";
+        }
+        
+        return INV_STATUS_str;
     }
 
     private void AddStatus(uint addr, string status)

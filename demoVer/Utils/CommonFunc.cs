@@ -176,6 +176,8 @@ namespace demoVer.Utils
     {
         public static string getPort_ExceptFor_Num(string port_with_num)
         {
+            if(port_with_num is null) return string.Empty;
+
             int index = 0;
             while (index < port_with_num.Length && char.IsLetter(port_with_num[index]))
             {
@@ -259,6 +261,55 @@ namespace demoVer.Utils
             }
 
             return 0; //任何類型都轉不出來
+        }
+
+        public static int ConvertToInt32(object obj)
+        {
+            if (obj == null) return 0;
+
+            if (obj is int i) return i;
+            if (obj is uint ui) return (int)ui;
+            if (obj is long l) return (int)Math.Max(int.MinValue, Math.Min(int.MaxValue, l));
+            if (obj is ulong ul) return (int)Math.Min(int.MaxValue, ul); 
+            if (obj is double d) return (int)d;
+            if (obj is float f) return (int)f;
+
+            if (obj is JsonElement je)
+            {
+                if (je.ValueKind == JsonValueKind.Number)
+                {
+                    if (je.TryGetInt32(out int ji))
+                        return ji;
+
+                    if (je.TryGetInt64(out long jl))
+                        return (int)Math.Max(int.MinValue, Math.Min(int.MaxValue, jl));
+
+                    if (je.TryGetDouble(out double jd))
+                        return (int)jd;
+                }
+
+                if (je.ValueKind == JsonValueKind.String && Int32.TryParse(je.GetString(), out int js))
+                {
+                    return js;
+                }
+            }
+
+            // 無法處理的類型 → 回傳 0
+            return 0;
+        }
+
+        public static bool strToBool(string booleanStr)
+        {
+            bool result;
+            if (bool.TryParse(booleanStr, out result))
+            {
+                return result;
+            }
+            else
+            {
+                Console.WriteLine("不是合法的布林值字串");
+            }
+            return false;
         }
     }    
 
@@ -375,76 +426,7 @@ namespace demoVer.Utils
         }
     }
 
-    public static class HardCodedCmdCodeCreator
-    {
-        public static Dictionary<string, Dictionary<string, string>> HardCoded_CmdCode { get; set; } = new Dictionary<string, Dictionary<string, string>>();
-        public static Dictionary<string, Dictionary<string, string>> HardCoded_CmdCode_Reverse { get; set; } = new Dictionary<string, Dictionary<string, string>>();
-
-        public static Dictionary<string, Dictionary<string, string>> BuildReverse(Dictionary<string, Dictionary<string, string>> source)
-        {
-            var reverse = new Dictionary<string, Dictionary<string, string>>();
-
-            foreach (var (port, commandMap) in source)
-            {
-                var reverseMap = new Dictionary<string, string>();
-
-                foreach (var (commandName, commandCode) in commandMap)
-                {
-                    if (string.IsNullOrWhiteSpace(commandCode))
-                    {
-                        continue;
-                    }
-
-                    reverseMap[commandCode] = commandName;
-                }
-
-                reverse[port] = reverseMap;
-            }
-
-            return reverse;
-        }
-
-        public static void CreateBasic_HardCoded_CmdCode()
-        {
-            HardCoded_CmdCode = new Dictionary<string, Dictionary<string, string>>()
-            {// 只用於此App模組，由於User會自行定義CmdName，故需要一個固定的
-            // FixedCmdName => FixedCmdCode => UserDefinedCmdName
-            // 這裡主要負責前段(FixedCmdName => FixedCmdCode)
-                {
-                    "CAN", new Dictionary<string, string>()
-                    {
-                        {"MFR_MODEL", "0x0082"},
-                        {"INV_STATUS", "0x011D"},
-                        {"INV_FAULT", "0x011E"},
-                        {"MFR_REVISION_B0B5", "0x0084"},
-                        {"READ_FAN_SPEED_1", "0x0070"},
-                        {"READ_FAN_SPEED_2", "0x0071"},
-                        {"READ_AC_VOUT", "0x0108"},
-                        {"READ_OP_VA", "0x0114"},
-                        {"READ_CHG_CURR", "0x011B"},
-                        {"READ_VBAT", "0x011A"},
-                        {"READ_TEMPERATURE_1", "0x0062"}
-                    }
-                },
-                {
-                    "MOD", new Dictionary<string, string>()
-                    {
-                        {"MFR_MODEL", "0x0086"},
-                        {"INV_STATUS", "0x011D"},
-                        {"INV_FAULT", "0x011E"},
-                        {"MFR_REVISION_B0B5", "0x008C"},
-                        {"READ_FAN_SPEED_1", "0x0070"},
-                        {"READ_FAN_SPEED_2", "0x0071"},
-                        {"READ_AC_VOUT", "0x0108"},
-                        {"READ_OP_VA", "0x0114"},
-                        {"READ_CHG_CURR", "0x011B"},
-                        {"READ_VBAT", "0x011A"},
-                        {"READ_TEMPERATURE_1", "0x0062"}
-                    }
-                }
-            };
-
-            HardCoded_CmdCode_Reverse = BuildReverse(HardCoded_CmdCode);
-        }
-    }
+    
+    
+    
 }

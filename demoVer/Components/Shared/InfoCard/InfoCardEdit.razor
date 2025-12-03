@@ -360,7 +360,6 @@
 		{
 			refreshSubsystemOptions();
 			refreshPortAddrList();
-			@* refreshDevicesList(); *@
 		}
 
 		HeartBeatCounter = (HeartBeatCounter + 1) % 3;
@@ -377,19 +376,6 @@
 	public void JS_Console(string debugMessage)
 	{
 		Console.WriteLine(debugMessage);
-	}
-
-	private void refreshDevicesList()
-	{
-		try
-		{
-			var tempDeviceAddr_List = globalVar.Get_addr_and_ModelNames_List();
-			deviceAddr_List = tempDeviceAddr_List ?? new List<(uint, string)>();
-		}
-		catch (Exception e)
-		{
-			AppLogger.Log_To_File_log(_category, $"[InfoCardEdit][refreshDevicesList] Error : {e}", AppLogLevel.Error);
-		}
 	}
 
 	private static string BuildSubsystemKey(string port, string protocol) => $"{port}|{protocol}";

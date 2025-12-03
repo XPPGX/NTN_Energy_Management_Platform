@@ -1,0 +1,143 @@
+{
+  "BitDefinitions": {
+    "INV_STATUS": {
+      "Fields": [
+        {
+          "Name": "INV",
+          "StartBit": 0,
+          "Length": 1,
+          "Values": null
+        },
+        {
+          "Name": "BYP",
+          "StartBit": 1,
+          "Length": 1,
+          "Values": null
+        },
+        {
+          "Name": "UTI_OK",
+          "StartBit": 2,
+          "Length": 1,
+          "Values": null
+        },
+        {
+          "Name": "CHG_ON",
+          "StartBit": 3,
+          "Length": 1,
+          "Values": null
+        },
+        {
+          "Name": "SOLAR_EN",
+          "StartBit": 4,
+          "Length": 1,
+          "Values": null
+        },
+        {
+          "Name": "SAVING",
+          "StartBit": 5,
+          "Length": 1,
+          "Values": null
+        },
+        {
+          "Name": "Bat_Low_ALM",
+          "StartBit": 6,
+          "Length": 1,
+          "Values": null
+        },
+        {
+          "Name": "INV_PHASE",
+          "StartBit": 8,
+          "Length": 2,
+          "Values": {
+            "0": "Phase 0\u00B0",
+            "1": "Phase 180\u00B0",
+            "2": "Phase 120\u00B0",
+            "3": "Phase 240\u00B0"
+          }
+        }
+      ]
+    },
+    "INV_FAULT": {
+      "Fields": [
+        {
+          "Name": "OLP_100",
+          "StartBit": 0,
+          "Length": 1,
+          "Values": null
+        },
+        {
+          "Name": "OLP_110",
+          "StartBit": 1,
+          "Length": 1,
+          "Values": null
+        },
+        {
+          "Name": "OLP_150",
+          "StartBit": 2,
+          "Length": 1,
+          "Values": null
+        },
+        {
+          "Name": "OTP",
+          "StartBit": 3,
+          "Length": 1,
+          "Values": null
+        },
+        {
+          "Name": "INV_UVP",
+          "StartBit": 4,
+          "Length": 1,
+          "Values": null
+        },
+        {
+          "Name": "INV_OVP",
+          "StartBit": 5,
+          "Length": 1,
+          "Values": null
+        },
+        {
+          "Name": "SCP",
+          "StartBit": 6,
+          "Length": 1,
+          "Values": null
+        },
+        {
+          "Name": "EEP_Err",
+          "StartBit": 7,
+          "Length": 1,
+          "Values": null
+        },
+        {
+          "Name": "SHDN",
+          "StartBit": 8,
+          "Length": 1,
+          "Values": null
+        },
+        {
+          "Name": "FAN_FAIL",
+          "StartBit": 9,
+          "Length": 1,
+          "Values": null
+        },
+        {
+          "Name": "Bat_UVP",
+          "StartBit": 10,
+          "Length": 1,
+          "Values": null
+        },
+        {
+          "Name": "Bat_OVP",
+          "StartBit": 11,
+          "Length": 1,
+          "Values": null
+        },
+        {
+          "Name": "INV_Fault",
+          "StartBit": 12,
+          "Length": 1,
+          "Values": null
+        }
+      ]
+    }
+  }
+}

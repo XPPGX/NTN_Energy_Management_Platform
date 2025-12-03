@@ -19,6 +19,7 @@ namespace demoVer.Services
         private string _DataFolderPath = string.Empty;
         private string _HardCoded_CmdCodeFileName = "CmdCode.json";
         private string _HardCoded_CmdCodeReverseFileName = "CmdCodeReverse.json";
+        private string _HardCoded_DecodeLogicFileName = "CmdDecodeLogic.json";
         
         public StartupHostedService(VersionFileService versionFileService, GlobalVar globalVar)
         {
@@ -49,6 +50,9 @@ namespace demoVer.Services
                 //2. 載入 FixedCmdName => FixedCmdCode 對照表
                 Load_HardCoded_CmdCode();
 
+                //3. 載入 FixedCmdName => DecodeLogic 對照表
+                Load_HardCoded_DecodeLogic();
+
 
                 AppLogger.Log_To_File_log(_category, "應用啟動初始化完成。", AppLogLevel.Debug);
             }
@@ -69,7 +73,7 @@ namespace demoVer.Services
             return Task.CompletedTask;
         }
 
-
+        #region Helper Methods
         public void SetPath()
         {
             if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
@@ -89,8 +93,8 @@ namespace demoVer.Services
             string cmdCodePath = Path.Combine(_DataFolderPath, _HardCoded_CmdCodeFileName);
             string cmdCodeReversePath = Path.Combine(_DataFolderPath, _HardCoded_CmdCodeReverseFileName);
 
-            var forward = ReadCmdCodeFile(cmdCodePath, "CmdCode");
-            var reverse = ReadCmdCodeFile(cmdCodeReversePath, "CmdCodeReverse");
+            var forward = ReadJsonFile<Dictionary<string, Dictionary<string, string>>>(cmdCodePath, "CmdCode");
+            var reverse = ReadJsonFile<Dictionary<string, Dictionary<string, string>>>(cmdCodeReversePath, "CmdCodeReverse");
 
             if (forward is not null && reverse is not null)
             {
@@ -99,18 +103,37 @@ namespace demoVer.Services
                 return;
             }
 
-            HardCodedCmdCodeCreator.CreateBasic_HardCoded_CmdCode();
-            forward = HardCodedCmdCodeCreator.HardCoded_CmdCode;
-            reverse = HardCodedCmdCodeCreator.HardCoded_CmdCode_Reverse;
+            (forward, reverse) = HardCodedCmdCodeCreator.CreateBasic_HardCoded_CmdCode();
 
-            WriteCmdCodeFile(cmdCodePath, forward);
-            WriteCmdCodeFile(cmdCodeReversePath, reverse);
+            WriteJsonFile(cmdCodePath, forward);
+            WriteJsonFile(cmdCodeReversePath, reverse);
             AssignHardCodes(forward, reverse);
 
             AppLogger.Log_To_File_log(_category, $"CmdCode 對照表載入失敗，已建立預設檔案: {cmdCodePath}, {cmdCodeReversePath}", AppLogLevel.Warning);
         }
 
-        private Dictionary<string, Dictionary<string, string>>? ReadCmdCodeFile(string filePath, string tag)
+        public void Load_HardCoded_DecodeLogic()
+        {
+            string decodeLogicPath = Path.Combine(_DataFolderPath, _HardCoded_DecodeLogicFileName);
+
+            var spec = ReadJsonFile<CommandBitFieldSpec>(decodeLogicPath, "DecodeLogic", s => s.BuildLookups());
+
+            if (spec is not null)
+            {
+                AssignDecodeLogic(spec);
+                AppLogger.Log_To_File_log(_category, $"成功載入 DecodeLogic JSON 文件: {decodeLogicPath}", AppLogLevel.Information);
+                return;
+            }
+
+            spec = HardCoded_DecodeLogicCreator.CreateBasic_DecodeLogic();
+
+            WriteJsonFile(decodeLogicPath, spec);
+            AssignDecodeLogic(spec);
+
+            AppLogger.Log_To_File_log(_category, $"DecodeLogic JSON 載入失敗，已建立預設檔案: {decodeLogicPath}", AppLogLevel.Warning);
+        }
+
+        private T? ReadJsonFile<T>(string filePath, string tag, Action<T>? postProcess = null) where T : class
         {
             try
             {
@@ -120,7 +143,12 @@ namespace demoVer.Services
                 }
 
                 string json = File.ReadAllText(filePath);
-                return JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(json);
+                var data = JsonSerializer.Deserialize<T>(json);
+                if (data is not null)
+                {
+                    postProcess?.Invoke(data);
+                }
+                return data;
             }
             catch (Exception ex)
             {
@@ -129,7 +157,7 @@ namespace demoVer.Services
             }
         }
 
-        private void WriteCmdCodeFile(string filePath, Dictionary<string, Dictionary<string, string>> content)
+        private void WriteJsonFile<T>(string filePath, T content)
         {
             var directory = Path.GetDirectoryName(filePath);
             if (!string.IsNullOrEmpty(directory))
@@ -144,10 +172,15 @@ namespace demoVer.Services
         private void AssignHardCodes(Dictionary<string, Dictionary<string, string>> forward,
                                      Dictionary<string, Dictionary<string, string>> reverse)
         {
-            HardCodedCmdCodeCreator.HardCoded_CmdCode = forward;
-            HardCodedCmdCodeCreator.HardCoded_CmdCode_Reverse = reverse;
-            _globalVar.HardCodes = forward;
-            _globalVar.HardCodesReverse = reverse;
+            GlobalVar.HardCodes = forward;
+            GlobalVar.HardCodesReverse = reverse;
         }
+
+        private void AssignDecodeLogic(CommandBitFieldSpec spec)
+        {
+            spec.BuildLookups();
+            GlobalVar.HardCodedDecodeLogic = spec;
+        }
+        #endregion Helper Methods
     }
 }

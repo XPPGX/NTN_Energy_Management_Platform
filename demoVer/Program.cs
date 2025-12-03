@@ -66,6 +66,7 @@ builder.Services.AddSingleton<CircuitsWatcher>();
 builder.Services.AddSingleton<SqlProcessor>();
 builder.Services.AddSingleton<VersionFileService>();
 builder.Services.AddSingleton<StartupHostedService>();
+builder.Services.AddSingleton<CodeTranslator>();
 builder.Services.AddHostedService(provider => provider.GetRequiredService<StartupHostedService>());
 
 builder.Services.AddServerSideBlazor().AddCircuitOptions(o =>
@@ -80,7 +81,7 @@ builder.Services.AddHostedService(sp => sp.GetRequiredService<PollingRead>());
 builder.Services.AddSingleton<CircuitsWatcher>();
 builder.Services.AddSingleton<CircuitHandler>(sp => sp.GetRequiredService<CircuitsWatcher>());
 
-//根據作業系統自動切換 IP
+//根據作業系統自動切換 API Server IP 與 Port
 builder.Services.AddHttpClient("ApiClient", client =>
 {
     if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))

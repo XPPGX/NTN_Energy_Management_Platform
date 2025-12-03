@@ -10,7 +10,11 @@
     "0x0114": "READ_OP_VA",
     "0x011B": "READ_CHG_CURR",
     "0x011A": "READ_VBAT",
-    "0x0062": "READ_TEMPERATURE_1"
+    "0x0062": "READ_TEMPERATURE_1",
+    "0x0050": "READ_VIN",
+    "0x0056": "READ_FREQ",
+    "0x0105": "READ_AC_FOUT",
+    "0x010B": "READ_OP_LD_PCNT"
   },
   "MOD": {
     "0x0086": "MFR_MODEL",
@@ -23,6 +27,10 @@
     "0x0114": "READ_OP_VA",
     "0x011B": "READ_CHG_CURR",
     "0x011A": "READ_VBAT",
-    "0x0062": "READ_TEMPERATURE_1"
+    "0x0062": "READ_TEMPERATURE_1",
+    "0x0050": "READ_VIN",
+    "0x0056": "READ_FREQ",
+    "0x0105": "READ_AC_FOUT",
+    "0x010B": "READ_OP_LD_PCNT"
   }
 }

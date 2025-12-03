@@ -420,8 +420,6 @@
     {
         try
         {
-            @* var tempDeviceAddr_List = globalVar.Get_addr_and_ModelNames_List();
-            deviceAddr_List = tempDeviceAddr_List ?? new List<(uint, string)>(); *@
             var tempList = globalVar.GetAllSubSys_PortAddrPair_InList_FromSubSysManager();
             subsystemDeviceMap.Clear();
             foreach (var (port, protocol, realAddr, storingAddr) in tempList ?? new List<(string, string, uint, uint)>())

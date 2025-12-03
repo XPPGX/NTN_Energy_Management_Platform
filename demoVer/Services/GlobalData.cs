@@ -28,7 +28,6 @@ namespace demoVer.Services
     public class GlobalVar
     {
         //[inject]
-        private readonly IGroupsDataDecoder _decoder;
         private readonly HeartbeatService _heartbeat;
         private readonly LinkAddrManager _linkAddrManager;
         private readonly SubSystemManager _subSystemManager;
@@ -49,8 +48,18 @@ namespace demoVer.Services
 
         public string? Sys_ModelName = "";
     
-        public Dictionary<string, Dictionary<string, string>> HardCodes { get; set; } = new Dictionary<string, Dictionary<string, string>>();
-        public Dictionary<string, Dictionary<string, string>> HardCodesReverse { get; set; } = new Dictionary<string, Dictionary<string, string>>();
+        /// <summary>
+        /// FixedCmdName => FixedCmdCode 對照表
+        /// </summary>
+        public static Dictionary<string, Dictionary<string, string>> HardCodes { get; set; } = new Dictionary<string, Dictionary<string, string>>(); 
+        /// <summary>
+        /// FixedCmdCode => FixedCmdName 對照表
+        /// </summary>
+        public static Dictionary<string, Dictionary<string, string>> HardCodesReverse { get; set; } = new Dictionary<string, Dictionary<string, string>>();
+        /// <summary>
+        /// FixedCmdName => DecodeLogic 對照表
+        /// </summary>
+        public static CommandBitFieldSpec HardCodedDecodeLogic { get; set; } = new CommandBitFieldSpec();
     
         public Real_allDeviceData Real_Devices_ReadData { get; set; } = new Real_allDeviceData();
         public allDevice_Data Device_ReadData { get; set; } = new allDevice_Data();                  //Polling讀取各Device資料
@@ -69,8 +78,6 @@ namespace demoVer.Services
             //For log
             _category = GetType().FullName!;
 
-            //[inject]
-            _decoder = decoder;
             _heartbeat = heartbeats;
             _linkAddrManager = linkAddrManager;
             _subSystemManager = subSystemManager;
@@ -159,30 +166,6 @@ namespace demoVer.Services
             GC.SuppressFinalize(this);
         }
 
-        public string? Get_ModelName_ByAddr(uint addr)
-        {
-            try
-            {
-
-                var oneDeviceData_Copy = Real_Devices_ReadData.Get_oneDevice_DataSnapshot(addr);
-                if (oneDeviceData_Copy == null) return null;
-
-                var tmp_modelName = oneDeviceData_Copy.parseCmdData("MFR_MODEL");
-                if (tmp_modelName is null) return null;
-
-                // object tmp_modelName = _decoder.Decode(groups_copy, "MFR_MODEL", addr);
-                // if(tmp_modelName == null) return null;
-
-                AppLogger.Log_To_File_log(_category, $"[GlobalData][Get_ModelName_ByAddr] tmp_modelName : {(string)tmp_modelName}", AppLogLevel.Trace);
-                return (string)tmp_modelName;
-            }
-            catch (Exception e)
-            {
-                AppLogger.Log_To_File_log(_category, $"[GlobalData][Get_ModelName_ByAddr] Error : {e}", AppLogLevel.Error);
-                return null;
-            }
-        }
-
         /// <summary>
         /// 取得所有子系統的 (port, protocol, realAddr, storingAddr) 清單
         /// </summary>        
@@ -215,35 +198,6 @@ namespace demoVer.Services
             }
         }
 
-        public List<(uint, string)>? Get_addr_and_ModelNames_List()
-        {
-            try
-            {
-                var addr_ModelName_pairlist = new List<(uint, string)>();
-                for (uint addr = 0; addr < 256; addr++)
-                {
-                    var tmp_modelName = Get_ModelName_ByAddr(addr);
-
-                    if (tmp_modelName == null) continue;
-
-                    var pair = (addr, tmp_modelName);
-                    addr_ModelName_pairlist.Add(pair);
-                }
-
-                if (addr_ModelName_pairlist.Count > 0)
-                {
-                    AppLogger.Log_To_File_log(_category, $"[GlobalData][Get_addr_and_ModelNames_List] addr_ModelName_pairlist.Count : {addr_ModelName_pairlist.Count}", AppLogLevel.Trace);
-                    return addr_ModelName_pairlist;
-                }
-                return null;
-            }
-            catch (Exception e)
-            {
-                AppLogger.Log_To_File_log(_category, $"[GlobalData][Get_addr_and_ModelNames_List] Error : {e}", AppLogLevel.Error);
-                return null;
-            }
-        }
-
         /// <summary>
         /// 計算各子系統的系統變數
         /// </summary>
@@ -253,30 +207,36 @@ namespace demoVer.Services
             // 1. 取得快照
             var allSubSystems = _subSystemManager.GetAllSubSystems_Ref_In_List(); //各子系統快照
             var LinkingAddrs = _linkAddrManager.SnapshotAsHashSet(); //連線中的addr快照
-
+            
             // 2. 在每個子系統裡面計算系統變數
             foreach (var subSys in allSubSystems)
             {
-                
-                AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] SubSystem Port = {subSys.Port}, Protocol = {subSys.Protocol}, AddrSet Count = {subSys.AddrSet.Count}", AppLogLevel.Trace);
-                //3. 使用各子系統的AddrSet中的addr搭配Link，取得目前在線上的device data進行計算
-                List<Real_SingleDeviceData_JsonFormat> onlineDevices_DeviceDatas = new();
-                foreach (var read_addr in subSys.AddrSet)
+                try
                 {
-                    uint nowStoringAddr = Custom.getAddrOffsetByPort(subSys.Port) + read_addr;
-
-                    //如果 在子系統中的Addr，目前沒有連線，則直接跳過計算
-                    if (!LinkingAddrs.Contains(nowStoringAddr)) continue;
-                    
-                    var deviceData = Real_Devices_ReadData.Get_oneDevice_DataSnapshot(nowStoringAddr);
-                    if (deviceData != null)
+                    //3. 使用各子系統的AddrSet中的addr搭配Link，取得目前在線上的device data進行計算
+                    List<Real_SingleDeviceData_JsonFormat> onlineDevices_DeviceDatas = new();
+                    foreach (var read_addr in subSys.AddrSet)
                     {
-                        onlineDevices_DeviceDatas.Add(deviceData);
-                    }
-                }
+                        uint nowStoringAddr = Custom.getAddrOffsetByPort(subSys.Port) + read_addr;
 
-                //4. 使用onlineDevices_DeviceDatas進行系統變數計算
-                subSys.ComputeOverallValues_in_SubSystem(onlineDevices_DeviceDatas);
+                        //如果 在子系統中的Addr，目前沒有連線，則直接跳過計算
+                        if (!LinkingAddrs.Contains(nowStoringAddr)) continue;
+                        
+                        var deviceData = Real_Devices_ReadData.Get_oneDevice_DataSnapshot(nowStoringAddr);
+                        if (deviceData != null)
+                        {
+                            onlineDevices_DeviceDatas.Add(deviceData);
+                        }
+                    }
+
+                    //4. 使用onlineDevices_DeviceDatas進行系統變數計算
+                    subSys.ComputeOverallValues_in_SubSystem(onlineDevices_DeviceDatas);
+                }
+                catch(Exception e)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[GlobalData][ComputeOverallValues] SubSystem Port = {subSys.Port}, Protocol = {subSys.Protocol} Error : {e}", AppLogLevel.Error);
+                    continue;
+                }   
             }
         }
     }

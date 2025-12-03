@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using demoVer.Services;
+using demoVer.Components;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
+
 namespace demoVer.Models
 {
     /// <summary>
@@ -17,7 +21,6 @@ namespace demoVer.Models
     public class SubSystem
     {
         private string _category = "";
-
         public SubSystem()
         {
             _category = GetType().FullName!;
@@ -304,6 +307,16 @@ namespace demoVer.Models
             return null;
         }
 
+        public string? Get_UserDefinedCmdName_By_FixedCmdName(string FixedCmdName)
+        {
+            string portWithoutNum = Custom.getPort_ExceptFor_Num(this.Port);
+            if (string.IsNullOrEmpty(portWithoutNum)) return null;
+
+            if (!GlobalVar.HardCodes.TryGetValue(portWithoutNum, out var cmdDict)) return null; // 取cmdDict ; 若取不到對應的 CmdCode 字典則 return null
+            if (!cmdDict.TryGetValue(FixedCmdName, out var FixedCmdCode)) return null; // 取cmdDict ; 若取不到對應的 CmdCode 則 return null
+
+            return Get_UserDefined_CmdName_By_CmdCode(FixedCmdCode);
+        }
         
         public string Get_PortWithoutNum() => Custom.getPort_ExceptFor_Num(this.Port);
 
@@ -326,7 +339,7 @@ namespace demoVer.Models
         {
             //是否有在線設備
             isAnyDeviceOnline = onlineDevicesDatas.Count > 0;
-
+        
             //取得連線數
             ComputeOnline_INV_Num(onlineDevicesDatas);
 
@@ -357,19 +370,19 @@ namespace demoVer.Models
             Compute_INV_OP_A(onlineDevicesDatas);
             // AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeOverallValues_in_SubSystem] ({this.Port}, {this.Protocol}) INV_OP_A, Phase_0 : {ComputedVals.INV_OP_A.Phase_0}, Phase_180 : {ComputedVals.INV_OP_A.Phase_180}, Phase_120 : {ComputedVals.INV_OP_A.Phase_120}, Phase_240 : {ComputedVals.INV_OP_A.Phase_240}", AppLogLevel.Debug);
 
-            //更新 INV_OP_Load
+            // //更新 INV_OP_Load
             Compute_INV_OP_Load(onlineDevicesDatas);
             // AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeOverallValues_in_SubSystem] ({this.Port}, {this.Protocol}) INV_OP_Load : {ComputedVals.INV_OP_Load}", AppLogLevel.Debug);
 
-            //更新 INV_OP_VA
+            // //更新 INV_OP_VA
             Compute_INV_OP_VA(onlineDevicesDatas);
             // AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeOverallValues_in_SubSystem] ({this.Port}, {this.Protocol}) INV_OP_VA : {ComputedVals.INV_OP_VA}", AppLogLevel.Debug);
 
-            //更新 VBAT
+            // //更新 VBAT
             Compute_INV_VBAT(onlineDevicesDatas);
-            // AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeOverallValues_in_SubSystem] ({this.Port}, {this.Protocol}) INV_VBAT : {ComputedVals.INV_VBAT}", AppLogLevel.Debug);
+            // AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeOverallValues_in_SubSystem] ({this.Port}, {this.Protocol}) INV_VBAT : {ComputedVals.V_BAT}", AppLogLevel.Debug);
             
-            //取得 ArrowDirections
+            // //取得 ArrowDirections
             ArrowDirections = ArrowDirectionHelper.Resolve(ComputedVals.nowMode, AC_Charger_Enable, AC_StandBy);
 
 
@@ -397,31 +410,25 @@ namespace demoVer.Models
 
             foreach (var oneDevice_Data in onlineDevicesDatas)
             {
-                //1. 取得 INV_FAULT 的 decodeList並判斷是否有Error
-                var INV_FAULT_DecodeList = (List<decodeContent>?)oneDevice_Data.parseCmdData("INV_FAULT");
-                if (INV_FAULT_DecodeList == null)
+                //1. 取得 INV_STATUS 的 UserDefined CmdName
+                var userDefinedCmdName_INV_STATUS = this.Get_UserDefinedCmdName_By_FixedCmdName("INV_STATUS");
+                if(userDefinedCmdName_INV_STATUS is null)
                 {
-                    AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeMode] INV_FAULT DecodeList is null, exclude device in computing", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeMode] Cannot find UserDefined CmdName for INV_STATUS, exclude device in computing", AppLogLevel.Debug);
                     continue;
-                }
-                string? INV_FAULT_str = BitFieldParser.Parse_INV_FAULT(INV_FAULT_DecodeList);
-                if (!string.IsNullOrEmpty(INV_FAULT_str))
-                {
-                    ComputedVals.setMode(ConstDefinition.SYS_Mode_Options.ERROR);
-                    AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeMode] Device Addr {oneDevice_Data.addr} has INV_FAULT : {INV_FAULT_str}, set SubSystem mode to Error", AppLogLevel.Debug);
                 }
 
                 //2. 取得 INV_STATUS 命令中會影響 Mode 的 資料
-                var INV_STATUS_DecodeList = (List<decodeContent>?)oneDevice_Data.parseCmdData("INV_STATUS");
-                if (INV_STATUS_DecodeList == null)
+                var INV_STATUS_rawValue = oneDevice_Data.parseCmdData(userDefinedCmdName_INV_STATUS);
+                if(INV_STATUS_rawValue is null)
                 {
-                    AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeMode] INV_STATUS DecodeList is null, exclude device in computing", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputeMode] INV_STATUS rawValue is null, exclude device in computing", AppLogLevel.Debug);
                     continue;
                 }
                 ConstDefinition.SYS_Mode_Options oneDevice_Mode = ConstDefinition.SYS_Mode_Options.DISCON;
                 bool oneDevice_AC_standBy = false;
                 bool oneDevice_AC_Charger_Enable = false;
-                (oneDevice_AC_standBy, oneDevice_AC_Charger_Enable, oneDevice_Mode) = BitFieldParser.Parse_INV_STATUS_GetEnum(INV_STATUS_DecodeList);
+                (oneDevice_AC_standBy, oneDevice_AC_Charger_Enable, oneDevice_Mode) = BitFieldParser.parse_INV_STATUS_GetEnum_By_rawValue(INV_STATUS_rawValue);
 
                 //2.1 根據 INV_STATUS_DecodeList 判斷 AC_StandBy
                 if (oneDevice_AC_standBy is true) { AC_StandBy = true; }
@@ -484,14 +491,23 @@ namespace demoVer.Models
 
             foreach (var oneDevice_Data in onlineDevicesDatas)
             {
-                //1. 取得 INV_STATUS 命令中會影響 Phase 的 資料
-                var INV_STATUS_DecodeList = (List<decodeContent>?)oneDevice_Data.parseCmdData("INV_STATUS");
-                if (INV_STATUS_DecodeList is null)
+
+                //1. 取得 INV_STATUS 的 UserDefined CmdName
+                var userDefinedCmdName_INV_STATUS = this.Get_UserDefinedCmdName_By_FixedCmdName("INV_STATUS");
+                if(userDefinedCmdName_INV_STATUS is null)
                 {
-                    AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputePhase] INV_STATUS DecodeList is null, exclude device in computing", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputePhase] Cannot find UserDefined CmdName for INV_STATUS, exclude device in computing", AppLogLevel.Debug);
                     continue;
                 }
-                var oneDevice_Phase = BitFieldParser.Parse_INV_STATUS_Phase_Enum(INV_STATUS_DecodeList);
+
+                //2. 取得 INV_STATUS 命令中會影響 Phase 的 資料
+                var INV_STATUS_rawValue = oneDevice_Data.parseCmdData(userDefinedCmdName_INV_STATUS);
+                if (INV_STATUS_rawValue is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][ComputePhase] INV_STATUS rawValue is null, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+                var oneDevice_Phase = BitFieldParser.Parse_INV_STATUS_Phase_Enum_By_rawValue(INV_STATUS_rawValue);
 
                 switch (oneDevice_Phase)
                 {
@@ -535,16 +551,29 @@ namespace demoVer.Models
 
             foreach (var oneDevice_Data in onlineDevicesDatas)
             {
-                //1. 取單台的Phase
-                var decodeList = (List<decodeContent>?)oneDevice_Data.parseCmdData("INV_STATUS");
-                if (decodeList is null)
+                // 1. 取單台的Phase
+                var userDefinedCmdName_INV_STATUS = this.Get_UserDefinedCmdName_By_FixedCmdName("INV_STATUS");
+                if(userDefinedCmdName_INV_STATUS is null)
                 {
-                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_IP_V] INV_STATUS DecodeList is null, exclude device in computing", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_IP_V] Cannot find UserDefined CmdName for INV_STATUS, exclude device in computing", AppLogLevel.Debug);
                     continue;
                 }
-                var oneDevice_Phase = BitFieldParser.Parse_INV_STATUS_Phase_Enum(decodeList);
+                var INV_STATUS_rawValue = oneDevice_Data.parseCmdData(userDefinedCmdName_INV_STATUS);
+                if (INV_STATUS_rawValue is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_IP_V] INV_STATUS rawValue is null, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+                var oneDevice_Phase = BitFieldParser.Parse_INV_STATUS_Phase_Enum_By_rawValue(INV_STATUS_rawValue);
+                
                 //2. 取單台的 READ_VIN
-                var oneDevice_READ_VIN_val = ((double?)oneDevice_Data.parseCmdData("READ_VIN")) ?? 0.0;
+                var userDefinedCmdName_READ_VIN = this.Get_UserDefinedCmdName_By_FixedCmdName("READ_VIN");
+                if(userDefinedCmdName_READ_VIN is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_IP_V] Cannot find UserDefined CmdName for READ_VIN, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+                var oneDevice_READ_VIN_val = ((double?)oneDevice_Data.parseCmdData(userDefinedCmdName_READ_VIN)) ?? 0.0;
 
                 switch (oneDevice_Phase)
                 {
@@ -622,16 +651,28 @@ namespace demoVer.Models
             foreach (var oneDevice_Data in onlineDevicesDatas)
             {
                 //1. 取單台的Phase
-                var decodeList = (List<decodeContent>?)oneDevice_Data.parseCmdData("INV_STATUS");
-                if (decodeList is null)
+                var userDefinedCmdName_INV_STATUS = this.Get_UserDefinedCmdName_By_FixedCmdName("INV_STATUS");
+                if(userDefinedCmdName_INV_STATUS is null)
                 {
-                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_IP_F] INV_STATUS DecodeList is null, exclude device in computing", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_IP_F] Cannot find UserDefined CmdName for INV_STATUS, exclude device in computing", AppLogLevel.Debug);
                     continue;
                 }
-                var oneDevice_Phase = BitFieldParser.Parse_INV_STATUS_Phase_Enum(decodeList);
+                var INV_STATUS_rawValue = oneDevice_Data.parseCmdData(userDefinedCmdName_INV_STATUS);
+                if (INV_STATUS_rawValue is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_IP_F] INV_STATUS rawValue is null, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+                var oneDevice_Phase = BitFieldParser.Parse_INV_STATUS_Phase_Enum_By_rawValue(INV_STATUS_rawValue);
 
                 //2. 取單台的 READ_FREQ
-                var oneDevice_READ_FREQ_val = ((double?)oneDevice_Data.parseCmdData("READ_FREQ")) ?? 0.0;
+                var userDefinedCmdName_READ_FREQ = this.Get_UserDefinedCmdName_By_FixedCmdName("READ_FREQ");
+                if(userDefinedCmdName_READ_FREQ is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_IP_F] Cannot find UserDefined CmdName for READ_FREQ, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+                var oneDevice_READ_FREQ_val = ((double?)oneDevice_Data.parseCmdData(userDefinedCmdName_READ_FREQ)) ?? 0.0;
                 //排除 READ_FREQ 為 0.0 的設備
                 if (oneDevice_READ_FREQ_val == 0.0)
                 {
@@ -716,15 +757,28 @@ namespace demoVer.Models
             foreach (var oneDevice_Data in onlineDevicesDatas)
             {
                 //1. 取單台的Phase
-                var decodeList = (List<decodeContent>?)oneDevice_Data.parseCmdData("INV_STATUS");
-                if (decodeList is null)
+                var userDefinedCmdName_INV_STATUS = this.Get_UserDefinedCmdName_By_FixedCmdName("INV_STATUS");
+                if(userDefinedCmdName_INV_STATUS is null)
                 {
-                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_V] INV_STATUS DecodeList is null, exclude device in computing", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_V] Cannot find UserDefined CmdName for INV_STATUS, exclude device in computing", AppLogLevel.Debug);
                     continue;
                 }
-                var oneDevice_Phase = BitFieldParser.Parse_INV_STATUS_Phase_Enum(decodeList);
+                var INV_STATUS_rawValue = oneDevice_Data.parseCmdData(userDefinedCmdName_INV_STATUS);
+                if (INV_STATUS_rawValue is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_V] INV_STATUS rawValue is null, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+                var oneDevice_Phase = BitFieldParser.Parse_INV_STATUS_Phase_Enum_By_rawValue(INV_STATUS_rawValue);
+                
                 //2. 取單台的 READ_AC_VOUT
-                var oneDevice_READ_AC_VOUT_val = ((double?)oneDevice_Data.parseCmdData("READ_AC_VOUT")) ?? 0.0;
+                var userDefinedCmdName_READ_AC_VOUT = this.Get_UserDefinedCmdName_By_FixedCmdName("READ_AC_VOUT");
+                if(userDefinedCmdName_READ_AC_VOUT is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_V] Cannot find UserDefined CmdName for READ_AC_VOUT, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+                var oneDevice_READ_AC_VOUT_val = ((double?)oneDevice_Data.parseCmdData(userDefinedCmdName_READ_AC_VOUT)) ?? 0.0;
 
                 switch (oneDevice_Phase)
                 {
@@ -802,16 +856,28 @@ namespace demoVer.Models
             foreach (var oneDevice_Data in onlineDevicesDatas)
             {
                 //1. 取單台的Phase
-                var decodeList = (List<decodeContent>?)oneDevice_Data.parseCmdData("INV_STATUS");
-                if (decodeList is null)
+                var userDefinedCmdName_INV_STATUS = this.Get_UserDefinedCmdName_By_FixedCmdName("INV_STATUS");
+                if(userDefinedCmdName_INV_STATUS is null)
                 {
-                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_F] INV_STATUS DecodeList is null, exclude device in computing", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_F] Cannot find UserDefined CmdName for INV_STATUS, exclude device in computing", AppLogLevel.Debug);
                     continue;
                 }
-                var oneDevice_Phase = BitFieldParser.Parse_INV_STATUS_Phase_Enum(decodeList);
+                var INV_STATUS_rawValue = oneDevice_Data.parseCmdData(userDefinedCmdName_INV_STATUS);
+                if (INV_STATUS_rawValue is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_F] INV_STATUS rawValue is null, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+                var oneDevice_Phase = BitFieldParser.Parse_INV_STATUS_Phase_Enum_By_rawValue(INV_STATUS_rawValue);
 
                 //2. 取單台的 READ_AC_FOUT
-                var oneDevice_READ_AC_FOUT_val = ((double?)oneDevice_Data.parseCmdData("READ_AC_FOUT")) ?? 0.0;
+                var userDefinedCmdName_READ_AC_FOUT = this.Get_UserDefinedCmdName_By_FixedCmdName("READ_AC_FOUT");
+                if(userDefinedCmdName_READ_AC_FOUT is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_F] Cannot find UserDefined CmdName for READ_AC_FOUT, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+                var oneDevice_READ_AC_FOUT_val = ((double?)oneDevice_Data.parseCmdData(userDefinedCmdName_READ_AC_FOUT)) ?? 0.0;
                 //排除 READ_AC_FOUT 為 0.0 的設備
                 if (oneDevice_READ_AC_FOUT_val == 0.0)
                 {
@@ -895,16 +961,28 @@ namespace demoVer.Models
             foreach (var oneDevice_Data in onlineDevicesDatas)
             {
                 //1. 取單台的Phase
-                var decodeList = (List<decodeContent>?)oneDevice_Data.parseCmdData("INV_STATUS");
-                if (decodeList is null)
+                var userDefinedCmdName_INV_STATUS = this.Get_UserDefinedCmdName_By_FixedCmdName("INV_STATUS");
+                if(userDefinedCmdName_INV_STATUS is null)
                 {
-                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_A] INV_STATUS DecodeList is null, exclude device in computing", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_A] Cannot find UserDefined CmdName for INV_STATUS, exclude device in computing", AppLogLevel.Debug);
                     continue;
                 }
-                var oneDevice_Phase = BitFieldParser.Parse_INV_STATUS_Phase_Enum(decodeList);
+                var INV_STATUS_rawValue = oneDevice_Data.parseCmdData(userDefinedCmdName_INV_STATUS);
+                if (INV_STATUS_rawValue is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_A] INV_STATUS rawValue is null, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+                var oneDevice_Phase = BitFieldParser.Parse_INV_STATUS_Phase_Enum_By_rawValue(INV_STATUS_rawValue);
 
                 //2. 取單台的 READ_AC_VOUT
-                var oneDevice_READ_AC_VOUT_val = ((double?)oneDevice_Data.parseCmdData("READ_AC_VOUT")) ?? 0.0;
+                var userDefinedCmdName_AC_VOUT = this.Get_UserDefinedCmdName_By_FixedCmdName("READ_AC_VOUT");
+                if(userDefinedCmdName_AC_VOUT is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_A] Cannot find UserDefined CmdName for READ_AC_VOUT, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+                var oneDevice_READ_AC_VOUT_val = ((double?)oneDevice_Data.parseCmdData(userDefinedCmdName_AC_VOUT)) ?? 0.0;
                 //排除 READ_AC_VOUT 為 0.0 的設備
                 if (oneDevice_READ_AC_VOUT_val == 0.0)
                 {
@@ -913,7 +991,13 @@ namespace demoVer.Models
                 }
 
                 //3. 取單台的 READ_OP_VA
-                var oneDevice_READ_OP_VA_val = ((double?)oneDevice_Data.parseCmdData("READ_OP_VA")) ?? 0.0;
+                var userDefinedCmdName_READ_OP_VA = this.Get_UserDefinedCmdName_By_FixedCmdName("READ_OP_VA");
+                if(userDefinedCmdName_READ_OP_VA is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_A] Cannot find UserDefined CmdName for READ_OP_VA, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+                var oneDevice_READ_OP_VA_val = ((double?)oneDevice_Data.parseCmdData(userDefinedCmdName_READ_OP_VA)) ?? 0.0;
 
                 //4. 計算單台的 INV_Current
                 double oneDevice_INV_Current_val = oneDevice_READ_OP_VA_val / ((oneDevice_READ_AC_VOUT_val == 0.0) ? 1.0 : oneDevice_READ_AC_VOUT_val);
@@ -986,7 +1070,13 @@ namespace demoVer.Models
             foreach (var oneDevice_Data in onlineDevicesDatas)
             {
                 //1. 取單台的 OP_LD_PCNT
-                var oneDevice_OP_LOAD_val = ((double?)oneDevice_Data.parseCmdData("READ_OP_LD_PCNT")) ?? 0.0;
+                var userDefinedCmdName_OP_LD_PCNT = this.Get_UserDefinedCmdName_By_FixedCmdName("READ_OP_LD_PCNT");
+                if(userDefinedCmdName_OP_LD_PCNT is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_Load] Cannot find UserDefined CmdName for READ_OP_LD_PCNT, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+                var oneDevice_OP_LOAD_val = ((double?)oneDevice_Data.parseCmdData(userDefinedCmdName_OP_LD_PCNT)) ?? 0.0;
                 total_LOAD += oneDevice_OP_LOAD_val;
                 counter += 1.0;
             }
@@ -1007,16 +1097,28 @@ namespace demoVer.Models
             foreach (var oneDevice_Data in onlineDevicesDatas)
             {
                 //1. 取單台的Phase
-                var decodeList = (List<decodeContent>?)oneDevice_Data.parseCmdData("INV_STATUS");
-                if (decodeList is null)
+                var userDefinedCmdName_INV_STATUS = this.Get_UserDefinedCmdName_By_FixedCmdName("INV_STATUS");
+                if(userDefinedCmdName_INV_STATUS is null)
                 {
-                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_VA] INV_STATUS DecodeList is null, exclude device in computing", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_VA] Cannot find UserDefined CmdName for INV_STATUS, exclude device in computing", AppLogLevel.Debug);
                     continue;
                 }
-                var oneDevice_Phase = BitFieldParser.Parse_INV_STATUS_Phase_Enum(decodeList);
+                var INV_STATUS_rawValue = oneDevice_Data.parseCmdData(userDefinedCmdName_INV_STATUS);
+                if (INV_STATUS_rawValue is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_VA] INV_STATUS INV_STATUS_rawValue is null, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+                var oneDevice_Phase = BitFieldParser.Parse_INV_STATUS_Phase_Enum_By_rawValue(INV_STATUS_rawValue);
 
                 //2. 取單台的 READ_OP_VA
-                var oneDevice_OP_VA_val = ((double?)oneDevice_Data.parseCmdData("READ_OP_VA")) ?? 0.0;
+                var userDefinedCmdName_READ_OP_VA = this.Get_UserDefinedCmdName_By_FixedCmdName("READ_OP_VA");
+                if(userDefinedCmdName_READ_OP_VA is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_OP_VA] Cannot find UserDefined CmdName for READ_OP_VA, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+                var oneDevice_OP_VA_val = ((double?)oneDevice_Data.parseCmdData(userDefinedCmdName_READ_OP_VA)) ?? 0.0;
 
                 switch (oneDevice_Phase)
                 {
@@ -1089,7 +1191,13 @@ namespace demoVer.Models
             foreach (var oneDevice_Data in onlineDevicesDatas)
             {
                 //1. 取單台的 READ_VBAT
-                var oneDevice_READ_VBAT_val = ((double?)oneDevice_Data.parseCmdData("READ_VBAT")) ?? 0.0;
+                var userDefinedCmdName_READ_VBAT = this.Get_UserDefinedCmdName_By_FixedCmdName("READ_VBAT");
+                if(userDefinedCmdName_READ_VBAT is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[SubSystem][Compute_INV_VBAT] Cannot find UserDefined CmdName for READ_VBAT, exclude device in computing", AppLogLevel.Debug);
+                    continue;
+                }
+                var oneDevice_READ_VBAT_val = ((double?)oneDevice_Data.parseCmdData(userDefinedCmdName_READ_VBAT)) ?? 0.0;
                 tmp_VBAT = (oneDevice_READ_VBAT_val > tmp_VBAT) ? oneDevice_READ_VBAT_val : tmp_VBAT;
             }
 
@@ -1097,6 +1205,7 @@ namespace demoVer.Models
         }
         #endregion Computed In SubSystem
 
+        
         public string? GetSummaryValue(string cmdName)
         {
             return cmdName switch

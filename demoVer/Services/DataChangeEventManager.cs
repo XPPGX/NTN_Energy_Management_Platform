@@ -204,7 +204,7 @@ namespace demoVer.Services
                 //取出 FixedCmdName
                 var clearPort = subsys.Get_PortWithoutNum();
                 string HardCoded_CmdName = string.Empty;
-                if(_globalVar.HardCodesReverse[clearPort].TryGetValue(cmdCode, out var fixedCmdName))
+                if(GlobalVar.HardCodesReverse[clearPort].TryGetValue(cmdCode, out var fixedCmdName))
                 {
                     HardCoded_CmdName = fixedCmdName;
                 }

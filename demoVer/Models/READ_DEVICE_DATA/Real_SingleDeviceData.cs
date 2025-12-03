@@ -142,7 +142,8 @@ namespace demoVer.Models
                     }
 
                 case "BitField":
-                    return (List<decodeContent>?)cmdData.DeepClone_decode();
+                    // return (List<decodeContent>?)cmdData.DeepClone_decode();
+                    return rawValue;
                 default:
                     return null;
             }
