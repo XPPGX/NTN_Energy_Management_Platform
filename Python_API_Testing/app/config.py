@@ -28,7 +28,6 @@ V1_1_FIXED_CONFIG = {
     "READ_OP_LD_PCNT": False,
     "READ_OP_WATT": False,
     "MFR_MODEL": True,
-    "INV_FAULT": True,
     "READ_VIN": False,
     "READ_IIN": False,
     "READ_FREQ": False,
@@ -36,7 +35,6 @@ V1_1_FIXED_CONFIG = {
 }
 
 V1_1_FIXED_VALUES = {
-    "INV_FAULT": 0,
     "INV_STATUS": 1,
 }
 
@@ -100,6 +98,11 @@ READ_REAL_VALUE_OVERRIDES = {
             "2": 800.0,
             "7": 500.0,
             "10": 1000.0
+        }
+    },
+    "INV_FAULT": {
+        "CAN1": {
+            "1": 0,  # 設定 CAN1 addr 1 的 INV_FAULT 為 BitField 值 123
         }
     }
 }

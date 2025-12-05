@@ -12,7 +12,7 @@
             "shift": null,
             "bitcontrol": null,
             "target": {
-                "number": 24,
+                "number": 56.4,
                 "text": null,
                 "bits": null
             },
@@ -31,7 +31,7 @@
             "shift": null,
             "bitcontrol": null,
             "target": {
-                "number": 30,
+                "number": 28.8,
                 "text": null,
                 "bits": null
             },
@@ -50,7 +50,7 @@
             "shift": null,
             "bitcontrol": null,
             "target": {
-                "number": 30,
+                "number": 28.8,
                 "text": null,
                 "bits": null
             },
@@ -164,8 +164,8 @@
                     "BIT_6": 1,
                     "BIT_7": 0,
                     "BIT_8": 0,
-                    "BIT_9": 0,
-                    "BIT_10": 0
+                    "BIT_9": 1,
+                    "BIT_10": 1
                 }
             },
             "targetDirty": false,
@@ -183,7 +183,7 @@
             "shift": null,
             "bitcontrol": null,
             "target": {
-                "number": 204,
+                "number": 1053,
                 "text": null,
                 "bits": null
             },
@@ -221,7 +221,7 @@
             "shift": null,
             "bitcontrol": null,
             "target": {
-                "number": 2,
+                "number": 4238,
                 "text": null,
                 "bits": null
             },
@@ -240,7 +240,7 @@
             "shift": null,
             "bitcontrol": null,
             "target": {
-                "number": 23.8,
+                "number": 21.5,
                 "text": null,
                 "bits": null
             },
@@ -259,7 +259,7 @@
             "shift": null,
             "bitcontrol": null,
             "target": {
-                "number": 19.5,
+                "number": 21.3,
                 "text": null,
                 "bits": null
             },
@@ -278,7 +278,7 @@
             "shift": null,
             "bitcontrol": null,
             "target": {
-                "number": 19.7,
+                "number": 24,
                 "text": null,
                 "bits": null
             },
@@ -297,7 +297,7 @@
             "shift": null,
             "bitcontrol": null,
             "target": {
-                "number": 30,
+                "number": 31.3,
                 "text": null,
                 "bits": null
             },
@@ -510,7 +510,7 @@
                 "number": null,
                 "text": null,
                 "bits": {
-                    "BIT_0": 0,
+                    "BIT_0": 2,
                     "BIT_2": 0,
                     "BIT_8": 0,
                     "BIT_10": 0
@@ -532,7 +532,7 @@
             "bitcontrol": [
                 {
                     "name": "BIT_0",
-                    "bit": 4,
+                    "bit": 0,
                     "length": 3,
                     "valueMap": {
                         "1": "100/200",
@@ -546,7 +546,7 @@
                 "number": null,
                 "text": null,
                 "bits": {
-                    "BIT_0": 2
+                    "BIT_0": 1
                 }
             },
             "targetDirty": false,

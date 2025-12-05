@@ -724,7 +724,7 @@
             bool isWriteSuccess = await SubSystemManager.WriteCmdsToFramework(port, protocol, apiWriteData, 0);
             if(isWriteSuccess is false)
             {
-                AppLogger.Log_To_File_log(_category, $"[Battery_setting][ConfirmSave] Writing To device failed", AppLogLevel.Trace);
+                AppLogger.Log_To_File_log(_category, $"[Battery_setting][ConfirmSave] Writing To device failed", AppLogLevel.Warning);
                 return;
             }
         }

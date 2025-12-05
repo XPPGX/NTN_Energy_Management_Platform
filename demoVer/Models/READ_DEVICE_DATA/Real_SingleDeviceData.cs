@@ -246,6 +246,7 @@ namespace demoVer.Models
             }
         }
 
+        //[Pend]這裡在Decode內容改動的時候也需要跟著改動
         public List<decodeContent>? DeepClone_decode()
         {
             if (this.decode == null) return null;

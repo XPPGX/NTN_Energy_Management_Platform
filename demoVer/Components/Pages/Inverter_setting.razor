@@ -420,9 +420,10 @@
     {
         //1. 重新訂閱子系統
         await ReSubscribeSubSys();
-        //2. 改變VAC_List
+        //2. 改變VAC_List的Type
         char type = GetVAC_Series_By_mdlName();
 
+        AppLogger.Log_To_File_log(_category, $"[Inverter_setting][subSystemSelectionChangedHandler] type = {type}", AppLogLevel.Debug);
         switch(type)
         {
             case '1': ShowSeriesSelelction_List = Series100VAC_List; break;
@@ -689,9 +690,11 @@
             {
                 switch(selectedFreqType)
                 {
-                    case "50Hz": ACF_Bits_tmp[Output_ACF_BitKey] = 1; break;
-                    case "60Hz": ACF_Bits_tmp[Output_ACF_BitKey] = 2; break;
-                    default:     ACF_Bits_tmp[Output_ACF_BitKey] = 3; break;
+                    //這邊是看命令支援表設定
+                    case "50Hz": ACF_Bits_tmp[Output_ACF_BitKey] = 1; break; //命令支援表中 1 ，代表50Hz
+                    case "60Hz": ACF_Bits_tmp[Output_ACF_BitKey] = 2; break; //命令支援表中 2 ，代表60Hz
+                    //無效值
+                    default:     ACF_Bits_tmp[Output_ACF_BitKey] = 3; break; //命令支援表中 3 ，無效值，用在這裡代表不做任何設定
                 }
 
                 if(ACF_Bits_tmp[Output_ACF_BitKey] != 3)
@@ -704,11 +707,10 @@
                     }
                 }
             }
-
-
         }
         //Output_ACV_Set (0x0102 "BIT_0")
         var Output_ACV_BitKey = SubSystemManager.GetBitKey_FromSubSys(port, protocol, "0102", 0);
+        Console.WriteLine($"[nowUiData_transformTo_apiWriteData] Output_ACV_BitKey = {Output_ACV_BitKey}");
         var ACV_Bits_tmp = SubSystemManager.GetRealBitsFormat(port, protocol, "0102");
         if(ACV_Bits_tmp != null)
         {
@@ -716,15 +718,19 @@
             {
                 switch(selectedVoltType)
                 {
-                    case "100VAC": ACV_Bits_tmp[Output_ACV_BitKey] = 1; break;
-                    case "110VAC": ACV_Bits_tmp[Output_ACV_BitKey] = 2; break;
-                    case "115VAC": ACV_Bits_tmp[Output_ACV_BitKey] = 3; break;
-                    case "120VAC": ACV_Bits_tmp[Output_ACV_BitKey] = 4; break;
-                    case "200VAC": ACV_Bits_tmp[Output_ACV_BitKey] = 1; break;
-                    case "220VAC": ACV_Bits_tmp[Output_ACV_BitKey] = 2; break;
-                    case "230VAC": ACV_Bits_tmp[Output_ACV_BitKey] = 3; break;
-                    case "240VAC": ACV_Bits_tmp[Output_ACV_BitKey] = 4; break;
-                    default:       ACV_Bits_tmp[Output_ACV_BitKey] = 5; break;
+                    //這裡是看命令支援表設定
+                    //100VAC Series
+                    case "100VAC": ACV_Bits_tmp[Output_ACV_BitKey] = 1; break; //命令支援表中 1 ，代表100VAC
+                    case "110VAC": ACV_Bits_tmp[Output_ACV_BitKey] = 2; break; //命令支援表中 2 ，代表110VAC
+                    case "115VAC": ACV_Bits_tmp[Output_ACV_BitKey] = 3; break; //命令支援表中 3 ，代表115VAC
+                    case "120VAC": ACV_Bits_tmp[Output_ACV_BitKey] = 4; break; //命令支援表中 4 ，代表120VAC
+                    //200VAC Series
+                    case "200VAC": ACV_Bits_tmp[Output_ACV_BitKey] = 1; break; //命令支援表中 1 ，代表200VAC
+                    case "220VAC": ACV_Bits_tmp[Output_ACV_BitKey] = 2; break; //命令支援表中 2 ，代表220VAC
+                    case "230VAC": ACV_Bits_tmp[Output_ACV_BitKey] = 3; break; //命令支援表中 3 ，代表230VAC
+                    case "240VAC": ACV_Bits_tmp[Output_ACV_BitKey] = 4; break; //命令支援表中 4 ，代表240VAC
+                    //無效值
+                    default:       ACV_Bits_tmp[Output_ACV_BitKey] = 5; break; //命令支援表中 5 ，無效值，用在這裡代表不做任何設定
                 }
                 Console.WriteLine($"ACV_Bits_tmp[{Output_ACV_BitKey}] = {ACV_Bits_tmp[Output_ACV_BitKey]}");
 
@@ -749,15 +755,16 @@
         {
             foreach(var addrValue in AddrValues_List)
             {
+                //Reference 到 Bits
                 var Bits_tmp = addrValue.Value.Bits;
                 if(Bits_tmp != null)
                 {
-                    if(CHG_BitKey is not null){Bits_tmp[CHG_BitKey] = AC_mode_charging_enable ? 1 : 0;}
-                    if(GRID_BitKey is not null){ Bits_tmp[GRID_BitKey] = Grid_tied_power_feeding_enable ? 1 : 0;}
-                    // Bits_tmp["BIT_2"] = AC_mode_charging_enable ? 1 : 0;
-                    // Bits_tmp["BIT_3"] = Grid_tied_power_feeding_enable ? 1 : 0;
+                    //透過 reference 修改 addrValue.Value.Bits 的值
+                    if(CHG_BitKey is not null) {Bits_tmp[CHG_BitKey] = AC_mode_charging_enable ? 1 : 0;}
+                    if(GRID_BitKey is not null) {Bits_tmp[GRID_BitKey] = Grid_tied_power_feeding_enable ? 1 : 0;}
                 }
             }
+
 
             var INV_OPERATION_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "0100", RealPerAddrValues: AddrValues_List);
             if(INV_OPERATION_cmdData != null)
@@ -774,8 +781,6 @@
         var INV_CONFIG_Bits_tmp = SubSystemManager.GetRealBitsFormat(port, protocol, "0101");
         if(INV_CONFIG_Bits_tmp != null)
         {
-            // INV_CONFIG_Bits_tmp["BIT_0"] = (int)selectedOutputPriority;
-            // INV_CONFIG_Bits_tmp["BIT_2"] = (int)selectedChargingPriority;
             if(OutPutPrio_BitKey is not null){INV_CONFIG_Bits_tmp[OutPutPrio_BitKey] = (int)selectedOutputPriority;}
             if(ChargePrio_BitKey is not null){INV_CONFIG_Bits_tmp[ChargePrio_BitKey] = (int)selectedChargingPriority;}
             var INV_CONFIG_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "0101", RealBits: INV_CONFIG_Bits_tmp);
@@ -834,7 +839,7 @@
             bool isWriteSuccess = await SubSystemManager.WriteCmdsToFramework(port, protocol, apiWriteData, 1);
             if (isWriteSuccess is false)
             {
-                AppLogger.Log_To_File_log(_category, $"[Inverter_setting][ConfirmSave] Writing To device failed", AppLogLevel.Trace);
+                AppLogger.Log_To_File_log(_category, $"[Inverter_setting][ConfirmSave] Writing To device failed", AppLogLevel.Warning);
                 return;
             }
         }
@@ -963,7 +968,8 @@
         }
 
         //4. 根據 ModelName 判斷 AC_InputType
-        char type = mdlName.Length >= 7 ? mdlName[6] : '1'; //從第7個字元判斷，'1'代表100VAC系列，'2'代表200VAC系列，預設或錯誤都是'1'
+        AppLogger.Log_To_File_log(_category, $"[Inverter_setting][GetAC_InputType_By_mdlName] SubSystem ModelName = {mdlName}, ModelName Length = {mdlName.Length}, mdlName[7] = {(mdlName.Length >=8 ? mdlName[7].ToString() : "N/A")}", AppLogLevel.Debug);
+        char type = mdlName.Length >= 8 ? mdlName[7] : '1'; //從第7個字元判斷，'1'代表100VAC系列，'2'代表200VAC系列，預設或錯誤都是'1'
         return type;
     }
     #endregion JS Interop Callbacks

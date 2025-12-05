@@ -222,6 +222,7 @@ namespace demoVer.Models
 
     public enum OUTPUT_PRIORITY : byte
     {
+        //依照命令支援表定義
         Utility = 0,
         Battery = 1,
         Solar   = 2,
@@ -230,6 +231,7 @@ namespace demoVer.Models
 
     public enum CHARGING_PRIORITY : byte
     {
+        //依照命令支援表定義
         Utility = 0,
         Solar   = 1,
         Reserved = 2,

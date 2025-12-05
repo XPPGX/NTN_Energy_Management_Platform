@@ -77,6 +77,7 @@ namespace demoVer.Utils
                     if (val3 == 1) { CVT_Enable = true; }
                     else { CVT_Enable = false; }
                 }
+                
                 //取Bit10 (FVT_Enable)
                 var FVT_Enable_BitKey = cmdSettingData.GetBitKey(10);
                 if (FVT_Enable_BitKey is not null && cmdSettingData.Target.Bits.TryGetValue(FVT_Enable_BitKey, out int val4))

@@ -112,6 +112,7 @@ namespace demoVer.Models
          **************************************************************************/
         /// <summary>存放Write Cmd的資訊，以cmdCode為Key</summary>
         public Dictionary<string, GET_RealSingleRawSettingCMD_JsonFormat> InfosForWriteCmd { get; set; } = new();
+
         /// <summary>設定頁面實際上會用到的值(從InfosForWriteCmd解析出來)</summary>
         public PageUsableVars nowConfigurableVars { get; set; } = new();
         public readonly SemaphoreSlim _SettingRange_Lock_WriteCmdInfo = new(1, 1);
@@ -140,6 +141,11 @@ namespace demoVer.Models
                         this.InfosForWriteCmd.Add(ClearCmdCode, new_singleRawSettingCmd);
                     }
 
+                    // 為每個 Info 建立 Lookup_BitControl 的字典
+                    foreach (var (cmdCode_As_Key, cmdInfo_As_Value) in this.InfosForWriteCmd)
+                    {
+                        cmdInfo_As_Value.Build_Lookup_BitControl();
+                    }
                 }
 
                 //3. 更新 nowConfigurableVars

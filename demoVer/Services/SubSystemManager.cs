@@ -188,7 +188,7 @@ namespace demoVer.Services
         }
 
         /// <summary>
-        /// get cmdName by cmdCode in one SubSystem
+        /// get FixedCmdName by FixedCmdCode in one SubSystem
         /// </summary>
         /// <param name="port"></param>
         /// <param name="protocol"></param>
@@ -279,11 +279,16 @@ namespace demoVer.Services
                             bool AddrValues_AllTheSame = true;
                             //取得目前SubSystem中該CmdCode的AddrValues
                             var nowAddrValues = GetAddrValues_Copy(port, protocol, clearCmdCode);
+                            if(nowAddrValues is null)
+                            {
+                                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][createOneWriteCmdData] nowAddrValues is null for (port, protocol, cmdCode) = ({port}, {protocol}, {clearCmdCode})", AppLogLevel.Warning);
+                                return null;
+                            }
 
                             //!!目前只支援對整個子系統的AddrValues設定相同的值，所以只要
                             //取RealPerAddrValues的某一個Addr的Bits去比對nowAddrValues的其他Addr的Bits是否都相同即可
                             var Real_FirstAddrInSubSystem_Bits = RealPerAddrValues[0].Value.Bits;
-                            foreach (var addrValue in nowAddrValues!)
+                            foreach (var addrValue in nowAddrValues)
                             {
                                 //比對每一個Addr的Bits是否都與Real_FirstAddrInSubSystem_Bits相同
                                 foreach (var key_val_pair in Real_FirstAddrInSubSystem_Bits!)
@@ -302,7 +307,7 @@ namespace demoVer.Services
                                     }
                                 }
 
-                                if (AddrValues_AllTheSame is false) { break; }
+                                if (AddrValues_AllTheSame is false) break;
                             }
                             if (AddrValues_AllTheSame is true)
                             {
@@ -604,7 +609,7 @@ namespace demoVer.Services
                 return false;
             }
 
-            //2. 拿Page對應的寫入鎖，確保同一時間，一個子系統只有一個寫入程序在執行
+            //2. 拿Page對應的寫入鎖，確保同一時間，一個子系統的目標Page只有一個寫入程序在執行
             var pageWriteLock = subsys.Get_WriteProcessFlowLock_By_PageSelection(PageSelection);
             if (pageWriteLock is null)
             {

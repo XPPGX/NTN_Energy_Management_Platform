@@ -98,7 +98,7 @@ namespace demoVer.Models
             }
 
             var new_CURVE_CV_val = GetNowValueHelper.parse_Numeric_Val(infosForWriteCmd, "00B1");
-            if(CURVE_CC_val != new_CURVE_CV_val ) 
+            if(CURVE_CV_val != new_CURVE_CV_val) 
             {
                 CURVE_CV_val = new_CURVE_CV_val;
                 Changed = true;

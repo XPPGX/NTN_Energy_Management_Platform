@@ -46,48 +46,94 @@ namespace demoVer.Models
         [JsonPropertyName("addrValues")]
         public List<AddrValue>? AddrValues { get; set; } = new();
 
+
+        /// <summary>
+        /// 快速查詢用: BitPosition => BitControl,
+        /// Key: BitPosition_int, 
+        /// Value: BitControl_class
+        /// </summary>
+        [JsonIgnore]
+        public Dictionary<int, BitControl> Lookup_BitControl = new(); 
+
+        /// <summary>
+        /// 透過 BitPosition 取得對應的 BitControl 名稱
+        /// (已考慮User可能會用不同的 BitName 的情況)
+        /// </summary>
+        /// <param name="bitPostion"></param>
+        /// <returns></returns>
         public string? GetBitKey(int bitPostion)
         {
-            if (IsPerAddr is true)
+            var BitControl = this.BitControl;
+            if(BitControl is null)
             {
-                if (AddrValues is null)
-                {
-                    Console.WriteLine($"GetBitKey: AddrValues is null");
-                    return null;
-                }
-                var first_addrValue = AddrValues[0].Value;
-                var first_addrBits = first_addrValue.Bits;
-                if (first_addrBits is null)
-                {
-                    Console.WriteLine($"GetBitKey: first_addrBits is null");
-                    return null;
-                }
+                Console.WriteLine($"GetBitKey: BitControl is null");
+                return null;
+            }
 
-                var arbitrary_BitKey = first_addrBits.Keys.First();
-                var parts = arbitrary_BitKey.Split('_');
-
-                string correctKey = parts[0] + "_" + bitPostion.ToString();
-                return correctKey;
+            if(Lookup_BitControl.TryGetValue(bitPostion, out var targetBitControl))
+            {
+                return targetBitControl.Name;
             }
             else
             {
-                if (Target is null)
-                {
-                    Console.WriteLine($"GetBitKey: Target is null");
-                    return null;
-                }
-                var targetBits = Target.Bits;
-                if (targetBits is null)
-                {
-                    Console.WriteLine($"GetBitKey: targetBits is null");
-                    return null;
-                }
+                Console.WriteLine($"GetBitKey: bitPostion {bitPostion} not found in Lookup_BitControl");
+                return null;
+            }
 
-                var arbitrary_BitKey = targetBits.Keys.First();
-                var parts = arbitrary_BitKey.Split('_');
+            // if (IsPerAddr is true)
+            // {
+            //     if (AddrValues is null)
+            //     {
+            //         Console.WriteLine($"GetBitKey: AddrValues is null");
+            //         return null;
+            //     }
+            //     var first_addrValue = AddrValues[0].Value;
+            //     var first_addrBits = first_addrValue.Bits;
+            //     if (first_addrBits is null)
+            //     {
+            //         Console.WriteLine($"GetBitKey: first_addrBits is null");
+            //         return null;
+            //     }
 
-                string correctKey = parts[0] + "_" + bitPostion.ToString();
-                return correctKey;
+            //     var arbitrary_BitKey = first_addrBits.Keys.First();
+            //     var parts = arbitrary_BitKey.Split('_');
+
+            //     string correctKey = parts[0] + "_" + bitPostion.ToString();
+            //     return correctKey;
+            // }
+            // else
+            // {
+            //     if (Target is null)
+            //     {
+            //         Console.WriteLine($"GetBitKey: Target is null");
+            //         return null;
+            //     }
+            //     var targetBits = Target.Bits;
+            //     if (targetBits is null)
+            //     {
+            //         Console.WriteLine($"GetBitKey: targetBits is null");
+            //         return null;
+            //     }
+
+            //     var arbitrary_BitKey = targetBits.Keys.First();
+            //     var parts = arbitrary_BitKey.Split('_');
+
+            //     string correctKey = parts[0] + "_" + bitPostion.ToString();
+            //     return correctKey;
+            // }
+        }
+
+        public void Build_Lookup_BitControl()
+        {
+            if(BitControl is null)
+            {
+                return;                
+            }
+
+            Lookup_BitControl.Clear();
+            foreach (var bitControl in BitControl)
+            {
+                Lookup_BitControl[bitControl.Bit] = bitControl;
             }
         }
     }

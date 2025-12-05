@@ -192,6 +192,7 @@ namespace demoVer.Services
                     case "BitField":
                         // BitField類型的值，需先呼叫BitFieldParser內function去解析
                         var decodeList = cmdData.DeepClone_decode();
+                        //[Pend]等Decode內容改動後，可能不需要Parser了，直接用decode的字串就可以送出就可以了
                         var parsedStr = BitFieldParser.FitParserFunction(cmdName, decodeList ?? new List<decodeContent>());
                         sendValue = parsedStr;
                         break;
