@@ -13,6 +13,9 @@ namespace demoVer.Models
 
         [JsonPropertyName("partitions")]
         public List<SinglePartition> Partitions { get; set; } = new();
+
+        [JsonPropertyName("notifyEpoch")]
+        public long NotifyEpoch {get; set;}
     }
 
     public class portLinkDetail

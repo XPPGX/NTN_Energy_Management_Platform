@@ -139,6 +139,18 @@
   <data name="BatterySetting-MinutesUnit" xml:space="preserve">
     <value>min</value>
   </data>
+  <data name="BellNotification-Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="BellNotification-Empty" xml:space="preserve">
+    <value>No notifications available</value>
+  </data>
+  <data name="BellNotification-Title" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
+  <data name="BellNotification-ViewAll" xml:space="preserve">
+    <value>View All</value>
+  </data>
   <data name="InverterSetting-PageTitle" xml:space="preserve">
     <value>Inverter Setting</value>
   </data>
@@ -705,5 +717,47 @@
   </data>
   <data name="LinkStatusTimeline-NoStatusUpdates" xml:space="preserve">
     <value>No status updates currently</value>
+  </data>
+  <data name="TopRow-Home" xml:space="preserve">
+    <value>NTN Home</value>
+  </data>
+  <data name="TopRow-SystemSettings" xml:space="preserve">
+    <value>System Settings</value>
+  </data>
+  <data name="TopRow-BatterySettings" xml:space="preserve">
+    <value>Battery Settings</value>
+  </data>
+  <data name="TopRow-InvSettings" xml:space="preserve">
+    <value>Inverter Settings</value>
+  </data>
+  <data name="TopRow-ModelManagement" xml:space="preserve">
+    <value>Model Management</value>
+  </data>
+  <data name="TopRow-LinkStatus" xml:space="preserve">
+    <value>Link Status</value>
+  </data>
+  <data name="TopRow-MonitoringReport" xml:space="preserve">
+    <value>Monitoring Report</value>
+  </data>
+  <data name="TopRow-AIApplications" xml:space="preserve">
+    <value>AI Applications</value>
+  </data>
+  <data name="TopRow-EfficiencyAnalysis" xml:space="preserve">
+    <value>Efficiency Analysis</value>
+  </data>
+  <data name="TopRow-SmartPowerUsage" xml:space="preserve">
+    <value>Smart Power Usage</value>
+  </data>
+  <data name="TopRow-FailureAnalysis" xml:space="preserve">
+    <value>Failure Analysis</value>
+  </data>
+  <data name="TopRow-PredictiveMaintenance" xml:space="preserve">
+    <value>Predictive Maintenance</value>
+  </data>
+  <data name="TopRow-SwitchToLight" xml:space="preserve">
+    <value>Switch to Light Mode</value>
+  </data>
+  <data name="TopRow-SwitchToDark" xml:space="preserve">
+    <value>Switch to Dark Mode</value>
   </data>
 </root>

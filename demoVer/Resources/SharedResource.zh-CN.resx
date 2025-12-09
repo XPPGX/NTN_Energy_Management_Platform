@@ -139,6 +139,18 @@
   <data name="BatterySetting-MinutesUnit" xml:space="preserve">
     <value>分</value>
   </data>
+  <data name="BellNotification-Close" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="BellNotification-Empty" xml:space="preserve">
+    <value>目前没有新通知</value>
+  </data>
+  <data name="BellNotification-Title" xml:space="preserve">
+    <value>通知</value>
+  </data>
+  <data name="BellNotification-ViewAll" xml:space="preserve">
+    <value>查看更多</value>
+  </data>
   <data name="InverterSetting-PageTitle" xml:space="preserve">
     <value>逆变器设置</value>
   </data>
@@ -705,5 +717,47 @@
   </data>
   <data name="LinkStatusTimeline-NoStatusUpdates" xml:space="preserve">
     <value>目前没有状态更新</value>
+  </data>
+  <data name="TopRow-Home" xml:space="preserve">
+    <value>NTN首页</value>
+  </data>
+  <data name="TopRow-SystemSettings" xml:space="preserve">
+    <value>系统设置</value>
+  </data>
+  <data name="TopRow-BatterySettings" xml:space="preserve">
+    <value>电池设置</value>
+  </data>
+  <data name="TopRow-InvSettings" xml:space="preserve">
+    <value>INV设置</value>
+  </data>
+  <data name="TopRow-ModelManagement" xml:space="preserve">
+    <value>机型管理</value>
+  </data>
+  <data name="TopRow-LinkStatus" xml:space="preserve">
+    <value>连接状态</value>
+  </data>
+  <data name="TopRow-MonitoringReport" xml:space="preserve">
+    <value>监测报告</value>
+  </data>
+  <data name="TopRow-AIApplications" xml:space="preserve">
+    <value>AI应用</value>
+  </data>
+  <data name="TopRow-EfficiencyAnalysis" xml:space="preserve">
+    <value>效率分析</value>
+  </data>
+  <data name="TopRow-SmartPowerUsage" xml:space="preserve">
+    <value>智慧用电</value>
+  </data>
+  <data name="TopRow-FailureAnalysis" xml:space="preserve">
+    <value>失效分析</value>
+  </data>
+  <data name="TopRow-PredictiveMaintenance" xml:space="preserve">
+    <value>预测维护</value>
+  </data>
+  <data name="TopRow-SwitchToLight" xml:space="preserve">
+    <value>切换到亮色模式</value>
+  </data>
+  <data name="TopRow-SwitchToDark" xml:space="preserve">
+    <value>切换到暗色模式</value>
   </data>
 </root>

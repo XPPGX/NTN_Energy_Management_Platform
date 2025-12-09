@@ -22,6 +22,7 @@ from .config import (
     MFR_MODEL_ASCII,
     MFR_MODEL_BY_PORT,
     PARTITION_STATUS_FILE,
+    EVENTLOG_NOTIFICATION_FILE,
     TZ_TAIPEI,
     USE_RANDOM_DATA,
     V1_1_FIXED_CONFIG,
@@ -82,6 +83,9 @@ class AppState:
             self.base_dir / LINK_STATUS_FILE,
             LINK_STATUS_REFRESH_INTERVAL,
         )
+        self._notify_epoch_value: Optional[int] = None
+        self._notify_epoch_last_update: float = 0.0
+        self._unread_count_override: Optional[int] = None
 
     # ------------------------------------------------------------------
     # Initialization helpers
@@ -225,7 +229,12 @@ class AppState:
         return resp
 
     def get_link_status(self) -> Optional[Dict[str, Any]]:
-        return self._link_status_cache.get()
+        payload = self._link_status_cache.get()
+        if payload is None:
+            return None
+
+        self._refresh_notify_epoch(payload)
+        return payload
 
     def build_read_memory_response(self, port: str, addr: str) -> List[Dict[str, Any]]:
         response: List[Dict[str, Any]] = []
@@ -365,6 +374,28 @@ class AppState:
 
         return payload
 
+    def get_eventlog_notifications(self) -> Dict[str, Any]:
+        payload = self._load_eventlog_notifications_payload()
+        self._ensure_notify_epoch_seeded()
+        if self._notify_epoch_value is not None:
+            payload["epoch"] = self._notify_epoch_value
+
+        self._apply_unread_count(payload)
+        return payload
+
+    def mark_eventlog_notifications_read(self) -> Dict[str, Any]:
+        payload = self._load_eventlog_notifications_payload()
+        self._unread_count_override = 0
+        payload["unreadCount"] = 0
+
+        print(f"[eventlog] _unread_count_override={self._unread_count_override}")
+
+        self._ensure_notify_epoch_seeded()
+        if self._notify_epoch_value is not None:
+            payload["epoch"] = self._notify_epoch_value
+
+        return payload
+
     def get_read_attribute_payload(self, port: str, protocol: str) -> Dict[str, Any]:
         raw = self._load_json(READ_CMD_FORMAT_FILE)
         if not isinstance(raw, dict):
@@ -379,6 +410,93 @@ class AppState:
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
+    def _refresh_notify_epoch(self, payload: Dict[str, Any]) -> None:
+        raw_value = payload.get("notifyEpoch")
+        parsed_value: Optional[int] = None
+
+        if isinstance(raw_value, int):
+            parsed_value = raw_value
+        elif isinstance(raw_value, str):
+            try:
+                parsed_value = int(raw_value, 0)
+            except ValueError:
+                parsed_value = None
+
+        now = time.time()
+
+        if parsed_value is not None:
+            if self._notify_epoch_value is None:
+                self._notify_epoch_value = parsed_value
+                self._notify_epoch_last_update = now
+            elif parsed_value > self._notify_epoch_value:
+                # Underlying data file advanced while we were running; adopt the new baseline.
+                self._notify_epoch_value = parsed_value
+                self._notify_epoch_last_update = now
+
+        if self._notify_epoch_value is None:
+            return
+
+        elapsed = now - self._notify_epoch_last_update
+        if elapsed >= 5.0:
+            steps = int(elapsed // 5.0)
+            if steps > 0:
+                self._notify_epoch_value += steps
+                self._notify_epoch_last_update += steps * 5.0
+
+        payload["notifyEpoch"] = self._notify_epoch_value
+
+    def _ensure_notify_epoch_seeded(self) -> None:
+        if self._notify_epoch_value is not None:
+            return
+
+        cache_payload = self._link_status_cache.get()
+        if isinstance(cache_payload, dict):
+            self._refresh_notify_epoch(cache_payload)
+            return
+
+        try:
+            raw = self._load_json(LINK_STATUS_FILE)
+        except Exception:
+            return
+
+        if isinstance(raw, dict):
+            self._refresh_notify_epoch(raw)
+
+    def _load_eventlog_notifications_payload(self) -> Dict[str, Any]:
+        try:
+            payload = self._load_json(EVENTLOG_NOTIFICATION_FILE)
+        except FileNotFoundError as exc:
+            raise ValueError(
+                f"eventlog notifications source {EVENTLOG_NOTIFICATION_FILE} missing"
+            ) from exc
+        except json.JSONDecodeError as exc:
+            raise ValueError(
+                f"eventlog notifications payload invalid: {exc}"
+            ) from exc
+
+        if not isinstance(payload, dict):
+            raise ValueError("eventlog notifications payload must be a JSON object")
+
+        return payload
+
+    def _apply_unread_count(self, payload: Dict[str, Any]) -> None:
+        raw_count = payload.get("unreadCount")
+        parsed_count: Optional[int] = None
+
+        if isinstance(raw_count, int):
+            parsed_count = raw_count
+        elif isinstance(raw_count, str):
+            try:
+                parsed_count = int(raw_count)
+            except ValueError:
+                parsed_count = None
+
+        if self._unread_count_override is None and parsed_count is not None:
+            self._unread_count_override = parsed_count
+
+        if self._unread_count_override is not None:
+            payload["unreadCount"] = self._unread_count_override
+
     def _load_json(self, filename: Path | str) -> Any:
         path = Path(filename)
         if not path.is_absolute():

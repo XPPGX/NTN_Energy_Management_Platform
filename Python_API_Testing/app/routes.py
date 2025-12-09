@@ -148,6 +148,24 @@ def create_routes(state: AppState) -> Blueprint:
         print(f"[W]/api/memory/write-api : {port}, {file_name} updated")
         return jsonify({"status": "ok", "updated": updated}), 200
 
+    @bp.get("/api/eventlog/notifications")
+    def eventlog_notifications():
+        try:
+            payload = state.get_eventlog_notifications()
+        except ValueError as exc:
+            return jsonify({"error": str(exc)}), 500
+
+        return jsonify(payload), 200
+
+    @bp.put("/api/eventlog/mark-all-read")
+    def eventlog_mark_all_read():
+        try:
+            payload = state.mark_eventlog_notifications_read()
+        except ValueError as exc:
+            return jsonify({"error": str(exc)}), 500
+
+        return jsonify(payload), 200
+
     return bp
 
 

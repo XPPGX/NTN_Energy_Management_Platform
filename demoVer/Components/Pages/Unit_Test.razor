@@ -62,6 +62,13 @@
         </span>
         <span class="btn-glow" aria-hidden="true"></span>
     </button>
+
+    <button class="glow-btn" @onclick="TestEventLogNotify">
+        <span class="btn-inner">
+            🚀 apiRead_eventLog_Notify
+        </span>
+        <span class="btn-glow" aria-hidden="true"></span>
+    </button>
 </div>
 
 @code{
@@ -161,6 +168,24 @@
         var result = await apiManager.apiRead_CmdFormat("CAN2", "NTN-5K_CAN.json");
 
         var rawJsonData_String = JsonSerializer.Serialize(result, new JsonSerializerOptions{
+            WriteIndented = true
+        });
+
+        Console.WriteLine(rawJsonData_String);
+    }
+
+    public async Task TestEventLogNotify()
+    {
+        var result = await apiManager.apiRead_eventLog_Notify();
+
+        if (result == null)
+        {
+            Console.WriteLine("[TestEventLogNotify] apiRead_eventLog_Notify returned null");
+            return;
+        }
+
+        var rawJsonData_String = JsonSerializer.Serialize(result, new JsonSerializerOptions
+        {
             WriteIndented = true
         });
 

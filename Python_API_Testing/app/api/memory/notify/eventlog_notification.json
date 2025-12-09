@@ -1,0 +1,46 @@
+{
+    "eventLogs": [
+        {
+            "time": "10/20 14:24:19",
+            "port": "CAN1",
+            "addr": 2,
+            "commandName": "INV_FAULT",
+            "eventText": "False,False,False,True,False,False,False,False,False,False,T",
+            "isRead": false
+        },
+        {
+            "time": "10/20 14:24:19",
+            "port": "CAN1",
+            "addr": 1,
+            "commandName": "INV_FAULT",
+            "eventText": "False,False,False,True,False,False,False,False,False,False,T",
+            "isRead": false
+        },
+        {
+            "time": "10/20 14:24:19",
+            "port": "CAN1",
+            "addr": 0,
+            "commandName": "INV_FAULT",
+            "eventText": "False,False,False,True,False,False,False,False,False,False,T",
+            "isRead": true
+        },
+        {
+            "time": "8/13 17:09:10",
+            "port": "CAN1",
+            "addr": 0,
+            "commandName": "INV_FAULT",
+            "eventText": "OTP,BAT_UVP",
+            "isRead": true
+        },
+        {
+            "time": "8/13 15:47:56",
+            "port": "CAN1",
+            "addr": 0,
+            "commandName": "INV_FAULT",
+            "eventText": "OTP,BAT_UVP",
+            "isRead": true
+        }
+    ],
+    "unreadCount": 0,
+    "epoch": 639007557391793176
+}

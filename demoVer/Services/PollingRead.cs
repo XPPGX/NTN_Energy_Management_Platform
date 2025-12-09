@@ -42,6 +42,8 @@ namespace demoVer.Services
         private readonly ApiManager _apiManager;
         private readonly LinkAddrManager _linkAddrManager;
         private readonly SubSystemManager _subSystemManager;
+        private readonly NotificationService _notificationService;
+
         //控制PollingRead的啟動時機    
         private volatile bool _enabled;
         private readonly SemaphoreSlim _startGate = new(0, 1);
@@ -71,12 +73,14 @@ namespace demoVer.Services
         public PollingRead(GlobalVar globalVar,
                             ApiManager apiManager,
                             LinkAddrManager linkAddrManager,
-                            SubSystemManager subSystemManager)
+                            SubSystemManager subSystemManager,
+                            NotificationService notificationService)
         {
             _globalVar  = globalVar;
             _apiManager = apiManager;
             _linkAddrManager = linkAddrManager;
             _subSystemManager = subSystemManager;
+            _notificationService = notificationService;
             _category = GetType().FullName!;
             
             initPollingWave();
@@ -254,7 +258,10 @@ namespace demoVer.Services
 
                     //更新 SubSystemManager 中的 SubSystem 資訊
                     var partitions = rcv_linkStatus.Partitions;
-                    UpdatePartitionAsSubSys(partitions);                    
+                    UpdatePartitionAsSubSys(partitions);
+
+                    //查看是否要更新 Notification，若要更新會於 notificationService 內的發出 FireAndForget 的方式進行更新
+                    _notificationService.CheckEpoch(rcv_linkStatus.NotifyEpoch);
                 }
             }
             catch(Exception e)

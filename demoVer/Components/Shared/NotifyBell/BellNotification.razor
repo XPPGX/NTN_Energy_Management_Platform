@@ -1,0 +1,168 @@
+@namespace demoVer.Shared
+@using demoVer.Models
+@using demoVer.Resources
+@using demoVer.Services
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Components
+@using System.Globalization
+@using System.Linq
+@implements IDisposable
+@inject NotificationService NotificationService
+@inject IStringLocalizer<SharedResource> Localizer
+
+<button type="button"
+    class="topRow-btn top-bar__icon-btn bell-btn no-flex @(notificationsOpen ? "is-active" : null)"
+    title="@Localizer["BellNotification-Title"]"
+    aria-label="@Localizer["BellNotification-Title"]"
+        @onclick="ToggleNotifications"
+        @onclick:stopPropagation="true">
+    <svg xmlns="http://www.w3.org/2000/svg"
+         viewBox="0 0 24 24"
+         width="20"
+         height="20"
+         class="iconBtn bell-svg"
+         fill="none"
+         stroke="currentColor"
+         stroke-width="2"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         aria-hidden="true">
+        <path d="M10.268 21a2 2 0 0 0 3.464 0"></path>
+        <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"></path>
+    </svg>
+
+    @if (UnreadCount > 0)
+    {
+        <span class="bell-badge">@UnreadCountLabel</span>
+    }
+</button>
+
+@if (notificationsOpen)
+{
+    <div class="notifications-dropdown" @onclick:stopPropagation="true">
+        <div class="notifications-header">
+            <h6>@Localizer["BellNotification-Title"]</h6>
+            <button type="button" class="btn-close" @onclick="CloseNotifications" aria-label="@Localizer["BellNotification-Close"]"></button>
+        </div>
+        <div class="notifications-body">
+            @if (notifications.Any())
+            {
+                @foreach (var notification in notifications)
+                {
+                    <div class="notification-item @(notification.IsRead ? string.Empty : "unread")"
+                         @onclick="() => MarkAsReadAndClose()">
+                        <div class="notification-message">@notification.CommandName: @notification.EventText</div>
+                        <div class="notification-meta">
+                            <div class="notification-time">@notification.Time</div>
+                            <div class="notification-port">@($"{notification.Port}({notification.Addr})")</div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="notification-empty">@Localizer["BellNotification-Empty"]</div>
+            }
+        </div>
+        <div class="notifications-footer">
+            <button type="button" class="btn btn-outline-primary btn-sm w-100" @onclick="ViewAll">@Localizer["BellNotification-ViewAll"]</button>
+        </div>
+    </div>
+}
+
+@code {
+    private readonly List<NotificationItem> notifications = new();
+    private bool notificationsOpen;
+
+    [Parameter]
+    public EventCallback OnViewAllClicked { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        SyncFromService(NotificationService.LastNotifications);
+        NotificationService.NotificationsUpdated += OnNotificationsUpdated;
+    }
+
+    private int UnreadCount => notifications.Count(n => !n.IsRead);
+
+    private string UnreadCountLabel => UnreadCount > 99 ? "99+" : UnreadCount.ToString(CultureInfo.InvariantCulture);
+
+    private void ToggleNotifications()
+    {
+        notificationsOpen = !notificationsOpen;
+
+        if (notificationsOpen)
+        {
+            foreach (var notification in notifications)
+            {
+                notification.IsRead = true;
+            }
+
+            // 向 框架 發出 告警訊息已讀
+            NotificationService.Mark_AllEventLogs_AsRead();
+        }
+    }
+
+    private void CloseNotifications()
+    {
+        notificationsOpen = false;
+    }
+
+    private void MarkAsReadAndClose()
+    {   
+        CloseNotifications();
+    }
+
+    private async Task ViewAll()
+    {
+        CloseNotifications();
+        if (OnViewAllClicked.HasDelegate)
+        {
+            await OnViewAllClicked.InvokeAsync();
+        }
+    }
+
+    private void OnNotificationsUpdated(object? sender, NotificationsUpdatedEventArgs e)
+    {
+        _ = InvokeAsync(() =>
+        {
+            SyncFromService(e.EventLogs);
+            StateHasChanged();
+        });
+    }
+
+    private void SyncFromService(IEnumerable<NotificationItem>? items)
+    {
+        notifications.Clear();
+
+        if (items == null)
+        {
+            return;
+        }
+
+        foreach (var item in items)
+        {
+            notifications.Add(CloneNotification(item));
+        }
+    }
+
+    private static NotificationItem CloneNotification(NotificationItem source)
+    {
+        return new NotificationItem
+        {
+            CommandName = source.CommandName,
+            EventText = source.EventText,
+            Time = source.Time,
+            Port = source.Port,
+            Addr = source.Addr,
+            IsRead = source.IsRead,
+        };
+    }
+
+    public void Dispose()
+    {
+        NotificationService.NotificationsUpdated -= OnNotificationsUpdated;
+    }
+}

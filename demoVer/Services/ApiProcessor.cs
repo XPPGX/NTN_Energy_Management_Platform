@@ -382,5 +382,58 @@ namespace demoVer.Services
                 return null;
             }
         }
+        
+
+        public async Task<Notifications?> apiRead_eventLog_Notify()
+        {
+            try
+            {
+                string url = $"/api/eventlog/notifications";
+                var result = await _http.GetFromJsonAsync<Notifications>(url);
+                if(result == null)
+                {
+                    throw new Exception($"[apiRead_eventLog_Notify] Read_API_Json == null");
+                }
+                return result;
+            }
+            catch(Exception ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[ApiManager][apiRead_eventLog_Notify] Error : {ex.Message}", AppLogLevel.Error);
+                return null;
+            }
+        }
+    
+        public async Task<bool> apiPut_eventLog_MarkAsRead()
+        {
+            const string url = "/api/eventlog/mark-all-read";
+
+            try
+            {
+                using var request = new HttpRequestMessage(HttpMethod.Put, url);
+                using var response = await _http.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    AppLogger.Log_To_File_log(_category, "[ApiManager][apiPut_eventLog_MarkAsRead] Success", AppLogLevel.Trace);
+                    return true;
+                }
+
+                var detail = await response.Content.ReadAsStringAsync();
+                AppLogger.Log_To_File_log(_category,
+                    $"[ApiManager][apiPut_eventLog_MarkAsRead] Failed: {(int)response.StatusCode}, Detail: {detail}",
+                    AppLogLevel.Trace);
+                return false;
+            }
+            catch (HttpRequestException ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[ApiManager][apiPut_eventLog_MarkAsRead] Http_Error: {ex}", AppLogLevel.Debug);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[ApiManager][apiPut_eventLog_MarkAsRead] Error: {ex.Message}", AppLogLevel.Error);
+                return false;
+            }
+        }
     }
 }

@@ -1,91 +1,174 @@
-namespace demoVer.Services;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using demoVer.Models;
+using demoVer.Utils;
 
-/// <summary>
-/// 通知服務 - 用於在應用程式各處發送通知到通知鈴鐺
-/// </summary>
-public class NotificationService
+namespace demoVer.Services
 {
-    /// <summary>
-    /// 當有新通知時觸發的事件
-    /// </summary>
-    public event Action<NotificationItem>? OnNotificationReceived;
-
-    /// <summary>
-    /// 發送通知
-    /// </summary>
-    /// <param name="message">通知訊息</param>
-    /// <param name="type">通知類型: info, warning, success</param>
-    public void SendNotification(string message, string type = "info")
+    public sealed class NotificationsUpdatedEventArgs : EventArgs
     {
-        var notification = new NotificationItem
+        public NotificationsUpdatedEventArgs(Notifications payload)
         {
-            Id = GenerateId(),
-            Message = message,
-            Time = GetTimeAgo(DateTime.Now),
-            Type = type,
-            IsRead = false,
-            Timestamp = DateTime.Now
-        };
+            Payload = payload;
+        }
 
-        OnNotificationReceived?.Invoke(notification);
+        public Notifications Payload { get; }
+        public IReadOnlyList<NotificationItem> EventLogs => Payload.EventLogs;
+        public int UnreadCount => Payload.UnreadCount;
+        public long Epoch => Payload.Epoch;
     }
 
-    /// <summary>
-    /// 發送資訊通知
-    /// </summary>
-    public void SendInfo(string message)
+    public class NotificationService
     {
-        SendNotification(message, "info");
-    }
+        private readonly string _category = "";
+        private readonly ApiManager _apiManager;
+        private readonly SemaphoreSlim _refreshGate = new SemaphoreSlim(1, 1);
+        private readonly SemaphoreSlim _markReadGate = new SemaphoreSlim(1, 1);
+        private long epoch = 0;
+        private int unreadCount = 0;
 
-    /// <summary>
-    /// 發送警告通知
-    /// </summary>
-    public void SendWarning(string message)
-    {
-        SendNotification(message, "warning");
-    }
 
-    /// <summary>
-    /// 發送成功通知
-    /// </summary>
-    public void SendSuccess(string message)
-    {
-        SendNotification(message, "success");
-    }
-
-    private int _idCounter = 1000;
-    private int GenerateId()
-    {
-        return Interlocked.Increment(ref _idCounter);
-    }
-
-    private string GetTimeAgo(DateTime timestamp)
-    {
-        var timeSpan = DateTime.Now - timestamp;
+        public List<NotificationItem> LastNotifications { get; private set; } = new();
+        public event EventHandler<NotificationsUpdatedEventArgs>? NotificationsUpdated;
         
-        if (timeSpan.TotalMinutes < 1)
-            return "剛剛";
-        if (timeSpan.TotalMinutes < 60)
-            return $"{(int)timeSpan.TotalMinutes} 分鐘前";
-        if (timeSpan.TotalHours < 24)
-            return $"{(int)timeSpan.TotalHours} 小時前";
-        if (timeSpan.TotalDays < 7)
-            return $"{(int)timeSpan.TotalDays} 天前";
-        
-        return timestamp.ToString("yyyy/MM/dd");
-    }
-}
+        public NotificationService(ApiManager apiManager)
+        {
+            _category = GetType().FullName!;
+            _apiManager = apiManager;
+        }
 
-/// <summary>
-/// 通知項目資料模型
-/// </summary>
-public class NotificationItem
-{
-    public int Id { get; set; }
-    public string Message { get; set; } = "";
-    public string Time { get; set; } = "";
-    public string Type { get; set; } = "info"; // info, warning, success
-    public bool IsRead { get; set; } = false;
-    public DateTime Timestamp { get; set; }
+        public void CheckEpoch(long newEpoch)
+        {
+            //比對是否有變更
+            if(newEpoch == epoch) return;
+
+            //有變更，更新epoch並觸發更新
+            epoch = newEpoch;
+            AppLogger.Log_To_File_log(_category, $"Link Status NotifyEpoch changed to {newEpoch}. Start to call eventlog API", AppLogLevel.Debug);
+
+            TriggerEventLogRefresh();
+        }
+
+        private void TriggerEventLogRefresh()
+        {
+            if (!_refreshGate.Wait(0))
+            {
+                AppLogger.Log_To_File_log(_category, "Eventlog refresh already running; skip re-entry.", AppLogLevel.Trace);
+                return;
+            }
+
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    AppLogger.Log_To_File_log(_category, "Begin background fetch of eventlog notifications.", AppLogLevel.Trace);
+                    var notifications = await _apiManager.apiRead_eventLog_Notify().ConfigureAwait(false);
+
+                    if (notifications == null)
+                    {
+                        AppLogger.Log_To_File_log(_category, "Eventlog API returned null notifications.", AppLogLevel.Trace);
+                        return;
+                    }
+
+                    unreadCount = notifications.UnreadCount;
+                    LastNotifications = notifications.EventLogs;
+                    AppLogger.Log_To_File_log(
+                        _category,
+                        $"Eventlog API succeeded. Epoch={notifications.Epoch}, Count={notifications.EventLogs.Count}.",
+                        AppLogLevel.Trace);
+
+                    NotifySubscribers(notifications);
+                }
+                catch (Exception ex)
+                {
+                    AppLogger.Log_To_File_log(_category, $"Background eventlog fetch failed: {ex}", AppLogLevel.Debug);
+                }
+                finally
+                {
+                    _refreshGate.Release();
+                }
+            });
+        }
+
+        private void NotifySubscribers(Notifications payload)
+        {
+            var handlers = NotificationsUpdated;
+            if (handlers == null)
+            {
+                return;
+            }
+
+            var args = new NotificationsUpdatedEventArgs(payload);
+
+            foreach (var del in handlers.GetInvocationList())
+            {
+                if (del is not EventHandler<NotificationsUpdatedEventArgs> handler)
+                {
+                    continue;
+                }
+
+                try
+                {
+                    handler.Invoke(this, args);
+                }
+                catch (Exception ex)
+                {
+                    AppLogger.Log_To_File_log(_category, $"Notification subscriber threw an exception: {ex}", AppLogLevel.Debug);
+                }
+            }
+        }
+
+        public void Mark_AllEventLogs_AsRead()
+        {
+            if(!_markReadGate.Wait(0))
+            {
+                AppLogger.Log_To_File_log(_category, "Eventlog mark-as-read already running; skip re-entry.", AppLogLevel.Trace);
+                return;
+            }
+            
+            _ = Task.Run(async () => 
+            {
+                try
+                {
+                    AppLogger.Log_To_File_log(_category, "Begin background mark-all-eventlogs-as-read.", AppLogLevel.Trace);
+                    var success = await _apiManager.apiPut_eventLog_MarkAsRead().ConfigureAwait(false);
+
+                    if (!success)
+                    {
+                        AppLogger.Log_To_File_log(_category, "Mark_AllEventLogs_AsRead API returned failure.", AppLogLevel.Trace);
+                        return;
+                    }
+
+                    //成功後，更新本地狀態
+                    unreadCount = 0;
+                    foreach(var item in LastNotifications)
+                    {
+                        item.IsRead = true;
+                    }
+
+                    AppLogger.Log_To_File_log(_category, "Mark_AllEventLogs_AsRead API succeeded.", AppLogLevel.Trace);
+
+                    //通知訂閱者
+                    var payload = new Notifications
+                    {
+                        EventLogs = LastNotifications,
+                        UnreadCount = unreadCount,
+                        Epoch = epoch
+                    };
+                    NotifySubscribers(payload);
+                }
+                catch(Exception ex)
+                {
+                    AppLogger.Log_To_File_log(_category, $"Mark_AllEventLogs_AsRead failed: {ex}", AppLogLevel.Debug);
+                }
+                finally
+                {
+                    _markReadGate.Release();
+                }
+            });
+        }
+    }
+
+    
 }

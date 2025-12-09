@@ -29,5 +29,6 @@
     "demoVer.Services.SubSystemManager"         : 2,
     "demoVer.Services.VersionFileService"       : 2,
     "demoVer.Services.StartupHostedService"     : 2,
+    "demoVer.Services.NotificationService"      : 0,
     "demoVer.Utils.GetNowValueHelper"           : 2
 }

@@ -94,5 +94,6 @@
             "modelName": "NTN-5K-124",
             "epoch": "7a4c2d9f0b1e3f5a6c8d0e2b9f1a4c6d"
         }
-    ]
+    ],
+    "notifyEpoch": 639007557391793176
 }
