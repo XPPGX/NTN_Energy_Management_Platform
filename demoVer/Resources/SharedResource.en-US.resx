@@ -760,4 +760,22 @@
   <data name="TopRow-SwitchToDark" xml:space="preserve">
     <value>Switch to Dark Mode</value>
   </data>
+  <data name="BottomRow-NavLabel" xml:space="preserve">
+    <value>Primary navigation</value>
+  </data>
+  <data name="BottomRow-Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="BottomRow-Battery" xml:space="preserve">
+    <value>Battery</value>
+  </data>
+  <data name="BottomRow-Inverter" xml:space="preserve">
+    <value>Inverter</value>
+  </data>
+  <data name="BottomRow-LinkStatus" xml:space="preserve">
+    <value>Link Status</value>
+  </data>
+  <data name="BottomRow-Log" xml:space="preserve">
+    <value>Log</value>
+  </data>
 </root>

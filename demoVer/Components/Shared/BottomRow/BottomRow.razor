@@ -1,0 +1,40 @@
+@namespace demoVer.Shared
+@using demoVer.Components.Layout
+@using Microsoft.AspNetCore.Components
+@inject NavigationManager NavManager
+@inject IStringLocalizer<SharedResource> Localizer
+
+<div class="bottom-row" role="navigation" aria-label="@Localizer["BottomRow-NavLabel"]">
+    <button type="button" class="bottomRow-btn" @onclick="GoHome" title="@Localizer["BottomRow-Home"]">
+        <span class="bottomRow-label">@Localizer["BottomRow-Home"]</span>
+    </button>
+    <button type="button" class="bottomRow-btn" @onclick="GoBattery" title="@Localizer["BottomRow-Battery"]">
+        <span class="bottomRow-label">@Localizer["BottomRow-Battery"]</span>
+    </button>
+    <button type="button" class="bottomRow-btn" @onclick="GoInverter" title="@Localizer["BottomRow-Inverter"]">
+        <span class="bottomRow-label">@Localizer["BottomRow-Inverter"]</span>
+    </button>
+    <button type="button" class="bottomRow-btn" @onclick="GoLinkStatus" title="@Localizer["BottomRow-LinkStatus"]">
+        <span class="bottomRow-label">@Localizer["BottomRow-LinkStatus"]</span>
+    </button>
+    <button type="button" class="bottomRow-btn" @onclick="GoLog" title="@Localizer["BottomRow-Log"]">
+        <span class="bottomRow-label">@Localizer["BottomRow-Log"]</span>
+    </button>
+</div>
+
+@code {
+    [CascadingParameter(Name = "MainLayout")]
+    private MainLayout? Layout { get; set; }
+
+    private void GoHome() => NavigateTo("/");
+    private void GoBattery() => NavigateTo("/Battery_setting");
+    private void GoInverter() => NavigateTo("/Inverter_setting");
+    private void GoLinkStatus() => NavigateTo("/Link_status");
+    private void GoLog() => NavigateTo("/Log");
+
+    private void NavigateTo(string uri)
+    {
+        Layout?.HideTopRowMenu();
+        NavManager.NavigateTo(uri);
+    }
+}
