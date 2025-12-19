@@ -2,6 +2,7 @@
 
 @rendermode InteractiveServer
 @inject IJSRuntime JS
+@using System.Diagnostics
 @using demoVer.Components.Layout
 @using demoVer.Models
 @using demoVer.Utils
@@ -363,7 +364,7 @@
             IsMobile = await JS.InvokeAsync<bool>("checkIsMobile");
             await InvokeAsync(StateHasChanged);
 
-            await InitColumn();
+            // await InitColumn();
 
             // 添加假資料用於測試
             // await AddTestData();
@@ -522,6 +523,12 @@
         tableData.Clear();
         visibleColumns.Clear();
 
+        if(await InitColumn() is false)
+        {
+            AppLogger.Log_To_File_log(_category, $"[Log][searchClick] Error, InitColumn() failed", AppLogLevel.Trace);
+            return;
+        }
+
         if(string.Equals(selectedLogType, "event", StringComparison.OrdinalIgnoreCase))
         {
             //1. 更換表格名稱
@@ -563,6 +570,8 @@
         }
 
         //撈資料，顯示在Table上
+        
+
         await QueryFromDB_InitTCB();
         UI_PageNum = 1;
         await InvokeAsync(StateHasChanged);
@@ -782,7 +791,7 @@
     #endregion //Appearance_Control
 
     #region Logic_Control
-    private async Task InitColumn()
+    private async Task<bool> InitColumn()
     {//可動態接收資料庫欄位變動
         //1. 清空當前 所有Column選擇
         allColumns.Clear();
@@ -791,20 +800,53 @@
         dataLog_allColumns.Clear();
 
         //2. 載入當前資料表 所有Column
-    eventLog_allColumns = await _sqlProcessor.GetTableColumn("event_log") ?? new List<string>();
-    dataLog_allColumns  = await _sqlProcessor.GetTableColumn("datalog_NTN-5K_CAN") ?? new List<string>();
+        if(string.Equals(selectedLogType, "event", StringComparison.OrdinalIgnoreCase))
+        {
+            
+            eventLog_allColumns = await _sqlProcessor.GetTableColumn("event_log") ?? new List<string>();
+            
+            if(eventLog_allColumns is null || eventLog_allColumns.Count == 0)
+            {
+                AppLogger.Log_To_File_log(_category, $"[Log][InitColumn] Error, eventLog_allColumns is null or empty", AppLogLevel.Trace);
+                return false;
+            }
 
-        var Json_Str = JsonSerializer.Serialize(eventLog_allColumns, new JsonSerializerOptions{
-            WriteIndented = true
-        });
-        Console.WriteLine(Json_Str);
+            var Json_Str = JsonSerializer.Serialize(eventLog_allColumns, new JsonSerializerOptions{
+                WriteIndented = true
+            });
+            Console.WriteLine(Json_Str);
 
-        Json_Str = JsonSerializer.Serialize(dataLog_allColumns, new JsonSerializerOptions{
-            WriteIndented = true
-        });
-        Console.WriteLine(Json_Str);
+            return true;
+        }
+        else if(string.Equals(selectedLogType, "data", StringComparison.OrdinalIgnoreCase))
+        {
+            if(string.IsNullOrEmpty(selectedDataTableName))
+            {
+                AppLogger.Log_To_File_log(_category, $"[Log][InitColumn] Error, selectedDataTableName is null or empty", AppLogLevel.Trace);
+                return false;
+            }
+            
+            dataLog_allColumns  = await _sqlProcessor.GetTableColumn(selectedDataTableName) ?? new List<string>();
+            
+            if(dataLog_allColumns is null || dataLog_allColumns.Count == 0)
+            {
+                AppLogger.Log_To_File_log(_category, $"[Log][InitColumn] Error, dataLog_allColumns is null or empty", AppLogLevel.Trace);
+                return false;
+            }
+
+            var Json_Str = JsonSerializer.Serialize(dataLog_allColumns, new JsonSerializerOptions{
+                WriteIndented = true
+            });
+            Console.WriteLine(Json_Str);
+            return true;
+        }
+        else
+        {
+            AppLogger.Log_To_File_log(_category, $"[Log][InitColumn] Error, LogType = {selectedLogType}", AppLogLevel.Trace);
+            return false;
+        }        
     }
-    
+
     private DateTime? dateTime_Transform(DateTime? date, TimeOnly? time)
     {
         try
