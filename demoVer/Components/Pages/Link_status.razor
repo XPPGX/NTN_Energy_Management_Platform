@@ -392,6 +392,7 @@
                 selectedAddr = 0;
             }
 
+            Console.WriteLine("Current elements count is 0");
             return;
         }
 
@@ -473,6 +474,10 @@
             //如果modelName收到空值，直接忽略這個連線
             if(string.IsNullOrEmpty(modelName.ToString()))
             {
+                Console.WriteLine($"[Link_status][getINVsLink] modelName is null or empty, addr = {addr}");
+                AppLogger.Log_To_File_log(_category, $"[Link_status][getINVsLink] : modelName is null or empty for addr {addr}", AppLogLevel.Warning);
+                
+                
                 continue;
             }
 

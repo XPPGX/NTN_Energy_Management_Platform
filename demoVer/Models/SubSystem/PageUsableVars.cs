@@ -220,53 +220,69 @@ namespace demoVer.Models
             //Update BatterySetting
             if (RangesDict.TryGetValue("00B0", out var CC_Range))
             {
-                if(CURVE_CC_Max_val != CC_Range.max || CURVE_CC_Min_val != CC_Range.min) { Changed = true; }
-                CURVE_CC_Max_val = CC_Range.max;
-                CURVE_CC_Min_val = CC_Range.min;
+                var max = CC_Range.max ?? 0.0;
+                var min = CC_Range.min ?? 0.0;
+                if(CURVE_CC_Max_val != max || CURVE_CC_Min_val != min) { Changed = true; }
+                CURVE_CC_Max_val = max;
+                CURVE_CC_Min_val = min;
             }
             if (RangesDict.TryGetValue("00B1", out var CV_Range))
             {
-                if(CURVE_CV_Max_val != CV_Range.max || CURVE_CV_Min_val != CV_Range.min){ Changed = true; }
-                CURVE_CV_Max_val = CV_Range.max;
-                CURVE_CV_Min_val = CV_Range.min;
+                var max = CV_Range.max ?? 0.0;
+                var min = CV_Range.min ?? 0.0;
+                if(CURVE_CV_Max_val != max || CURVE_CV_Min_val != min){ Changed = true; }
+                CURVE_CV_Max_val = max;
+                CURVE_CV_Min_val = min;
             }
             if (RangesDict.TryGetValue("00B2", out var FV_Range))
             {
-                if(CURVE_FV_Max_val != FV_Range.max || CURVE_FV_Min_val != FV_Range.min){ Changed = true; }
-                CURVE_FV_Max_val = FV_Range.max;
-                CURVE_FV_Min_val = FV_Range.min;
+                var max = FV_Range.max ?? 0.0;
+                var min = FV_Range.min ?? 0.0;
+                if(CURVE_FV_Max_val != max || CURVE_FV_Min_val != min){ Changed = true; }
+                CURVE_FV_Max_val = max;
+                CURVE_FV_Min_val = min;
             }
             if (RangesDict.TryGetValue("00B3", out var TC_Range))
             {
-                if(CURVE_TC_Max_val != TC_Range.max || CURVE_TC_Min_val != TC_Range.min){ Changed = true; }
-                CURVE_TC_Max_val = TC_Range.max;
-                CURVE_TC_Min_val = TC_Range.min;
+                var max = TC_Range.max ?? 0.0;
+                var min = TC_Range.min ?? 0.0;
+                if(CURVE_TC_Max_val != max || CURVE_TC_Min_val != min){ Changed = true; }
+                CURVE_TC_Max_val = max;
+                CURVE_TC_Min_val = min;
             }
 
             //Update InverterSetting
             if (RangesDict.TryGetValue("00B9", out var BAT_ALM_VOLT_Range))
             {
-                if(BAT_ALM_VOLT_Max_val != BAT_ALM_VOLT_Range.max || BAT_ALM_VOLT_Min_val != BAT_ALM_VOLT_Range.min){ Changed = true; }
-                BAT_ALM_VOLT_Max_val = BAT_ALM_VOLT_Range.max;
-                BAT_ALM_VOLT_Min_val = BAT_ALM_VOLT_Range.min;
+                var max = BAT_ALM_VOLT_Range.max ?? 0.0;
+                var min = BAT_ALM_VOLT_Range.min ?? 0.0;
+                if(BAT_ALM_VOLT_Max_val != max || BAT_ALM_VOLT_Min_val != min){ Changed = true; }
+                BAT_ALM_VOLT_Max_val = max;
+                BAT_ALM_VOLT_Min_val = min;
             }
             if (RangesDict.TryGetValue("00BA", out var BAT_SHDN_VOLT_Range))
             {
-                if(BAT_SHDN_VOLT_Max_val != BAT_SHDN_VOLT_Range.max || BAT_SHDN_VOLT_Min_val != BAT_SHDN_VOLT_Range.min){ Changed = true; }
-                BAT_SHDN_VOLT_Max_val = BAT_SHDN_VOLT_Range.max;
-                BAT_SHDN_VOLT_Min_val = BAT_SHDN_VOLT_Range.min;
+                var max = BAT_SHDN_VOLT_Range.max ?? 0.0;
+                var min = BAT_SHDN_VOLT_Range.min ?? 0.0;
+                if(BAT_SHDN_VOLT_Max_val != max || BAT_SHDN_VOLT_Min_val != min){ Changed = true; }
+                BAT_SHDN_VOLT_Max_val = max;
+                BAT_SHDN_VOLT_Min_val = min;
             }
             if (RangesDict.TryGetValue("00BB", out var BAT_RCHG_VOLT_Range))
             {
-                if(BAT_RCHG_VOLT_Max_val != BAT_RCHG_VOLT_Range.max || BAT_RCHG_VOLT_Min_val != BAT_RCHG_VOLT_Range.min){ Changed = true; }
-                BAT_RCHG_VOLT_Max_val = BAT_RCHG_VOLT_Range.max;
-                BAT_RCHG_VOLT_Min_val = BAT_RCHG_VOLT_Range.min;
+                var max = BAT_RCHG_VOLT_Range.max ?? 0.0;
+                var min = BAT_RCHG_VOLT_Range.min ?? 0.0;
+                if(BAT_RCHG_VOLT_Max_val != max || BAT_RCHG_VOLT_Min_val != min){ Changed = true; }
+                BAT_RCHG_VOLT_Max_val = max;
+                BAT_RCHG_VOLT_Min_val = min;
             }
             if (RangesDict.TryGetValue("00BC", out var BAT_OV_ALM_VOLT_Range))
             {
-                if (BAT_OV_ALM_VOLT_Max_val != BAT_OV_ALM_VOLT_Range.max || BAT_OV_ALM_VOLT_Min_val != BAT_OV_ALM_VOLT_Range.min) { Changed = true; }
-                BAT_OV_ALM_VOLT_Max_val = BAT_OV_ALM_VOLT_Range.max;
-                BAT_OV_ALM_VOLT_Min_val = BAT_OV_ALM_VOLT_Range.min;
+                var max = BAT_OV_ALM_VOLT_Range.max ?? 0.0;
+                var min = BAT_OV_ALM_VOLT_Range.min ?? 0.0;
+                if (BAT_OV_ALM_VOLT_Max_val != max || BAT_OV_ALM_VOLT_Min_val != min) { Changed = true; }
+                BAT_OV_ALM_VOLT_Max_val = max;
+                BAT_OV_ALM_VOLT_Min_val = min;
             }
             
             return Changed;

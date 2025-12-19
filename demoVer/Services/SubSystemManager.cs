@@ -175,7 +175,7 @@ namespace demoVer.Services
                 var subsys = GetOneSubSystem_Ref(port, protocol);
                 if (subsys is null)
                 {
-                    AppLogger.Log_To_File_log(_category, $"[SubSystemManager][UpdateSubSystem_CmdFormat] subsys is null for (port, protocol) = ({port}, {protocol})", AppLogLevel.Warning);
+                    AppLogger.Log_To_File_log(_category, $"[SubSys temManager][UpdateSubSystem_CmdFormat] subsys is null for (port, protocol) = ({port}, {protocol})", AppLogLevel.Warning);
                     return;
                 }
 

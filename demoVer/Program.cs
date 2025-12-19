@@ -86,13 +86,13 @@ builder.Services.AddHttpClient("ApiClient", client =>
 {
     if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
     {
-        client.BaseAddress = new Uri("http://127.0.0.1:5050/"); //local debug with python
+        // client.BaseAddress = new Uri("http://127.0.0.1:5050/"); //local debug with python
         // client.BaseAddress = new Uri("http://192.168.102.210:5039"); 
         // client.BaseAddress = new Uri("http://192.168.31.184:5039/"); //CMU3 test
         // client.BaseAddress = new Uri("http://192.168.102.201:5039/"); //windows debug with remote linux
         // client.BaseAddress = new Uri("http://192.168.102.204:5039/"); //windows debug with remote linux
         // client.BaseAddress = new Uri("http://192.168.31.90:5039/"); //windows debug with remote linux
-        // client.BaseAddress = new Uri("http://192.168.102.219:503s9/"); //windows debug with remote linux
+        client.BaseAddress = new Uri("http://192.168.102.225:5039/"); //windows debug with remote linux
     }
     else if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
     {

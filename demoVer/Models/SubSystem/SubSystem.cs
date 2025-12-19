@@ -65,7 +65,7 @@ namespace demoVer.Models
          *                         Range 相關資料結構與方法
          **************************************************************************/
         /// <summary>只有數值型態的指令會有設定範圍(上限、下限)，要用cmdCode當Key來找</summary>
-        public ConcurrentDictionary<string, SingleCmdRange> SettingRanges { get; set; } = new();
+        public ConcurrentDictionary<string, SingleCmdRange> SettingRanges { get; set; } = new();                                                       
         private readonly SemaphoreSlim _SettingRange_Lock = new(1, 1);
         public async Task UpdateSettingRanges_From(ConcurrentDictionary<string, SingleCmdRange> newRanges)
         {
@@ -80,7 +80,7 @@ namespace demoVer.Models
                     {
                         this.SettingRanges[HexCmd].min = newRange_Obj.min;
                         this.SettingRanges[HexCmd].max = newRange_Obj.max;
-                        this.SettingRanges[HexCmd].cmdCode = newRange_Obj.cmdCode;
+                        this.SettingRanges[HexCmd].cmdName = newRange_Obj.cmdName;
                     }
                     else
                     {
@@ -140,12 +140,12 @@ namespace demoVer.Models
                         AppLogger.Log_To_File_log(_category, $"[SubSystem][UpdateInfosForWriteCmd_From] Add new Write CMD Info for CmdCode {ClearCmdCode}", AppLogLevel.Debug);
                         this.InfosForWriteCmd.Add(ClearCmdCode, new_singleRawSettingCmd);
                     }
+                }
 
-                    // 為每個 Info 建立 Lookup_BitControl 的字典
-                    foreach (var (cmdCode_As_Key, cmdInfo_As_Value) in this.InfosForWriteCmd)
-                    {
-                        cmdInfo_As_Value.Build_Lookup_BitControl();
-                    }
+                // 為每個 Info 建立 Lookup_BitControl 的字典
+                foreach (var (cmdCode_As_Key, cmdInfo_As_Value) in this.InfosForWriteCmd)
+                {
+                    cmdInfo_As_Value.Build_Lookup_BitControl();
                 }
 
                 //3. 更新 nowConfigurableVars
@@ -308,8 +308,10 @@ namespace demoVer.Models
         {
             if (Mapping_Cmd_CodeToName.TryGetValue(cmdCode, out string? cmdName))
             {
+                AppLogger.Log_To_File_log(_category, $"[SubSystem][Get_UserDefined_CmdName_By_CmdCode] cmdCode {cmdCode} mapped to cmdName {cmdName}", AppLogLevel.Debug);
                 return cmdName;
             }
+            AppLogger.Log_To_File_log(_category, $"[SubSystem][Get_UserDefined_CmdName_By_CmdCode] cmdCode {cmdCode} not found in Mapping_Cmd_CodeToName", AppLogLevel.Warning);
             return null;
         }
 

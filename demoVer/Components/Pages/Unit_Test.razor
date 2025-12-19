@@ -154,7 +154,7 @@
 
     public async Task GetSettingRange()
     {
-        var result = await apiManager.apiRead_SettingRange("CAN1", "NTN-5K_CAN.json");
+        var result = await apiManager.apiRead_SettingRange("CAN1", "NTN-5K_CAN_testWrite.json");
 
         var rawJsonData_String = JsonSerializer.Serialize(result, new JsonSerializerOptions{
             WriteIndented = true

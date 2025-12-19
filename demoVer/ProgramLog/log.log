@@ -1,1 +1,45 @@
-﻿
+﻿[2025-12-18 20:36:00.974] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2025-12-18 20:36:00.991] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2025-12-18 20:36:06.973] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-12-18 20:36:06.974] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-18 20:36:07.136] [parse_Numeric_Val] CmdCode: 00B0, Numeric Value: 27
+[2025-12-18 20:36:07.138] [parse_Numeric_Val] CmdCode: 00B1, Numeric Value: 24.8
+[2025-12-18 20:36:07.155] [parse_Numeric_Val] CmdCode: 00B2, Numeric Value: 24.8
+[2025-12-18 20:36:07.158] [parse_Numeric_Val] CmdCode: 00B3, Numeric Value: 2.7
+[2025-12-18 20:36:07.162] [parse_CURVE_CONFIG] CmdCode: 00B4, Result: selectStage = True, CCT_Enable = False, CVT_Enable = False, FVT_Enable = False
+[2025-12-18 20:36:07.163] [parse_Numeric_Val] CmdCode: 00B5, Numeric Value: 0
+[2025-12-18 20:36:07.165] [parse_Numeric_Val] CmdCode: 00B6, Numeric Value: 0
+[2025-12-18 20:36:07.167] [parse_Numeric_Val] CmdCode: 00B7, Numeric Value: 0
+[2025-12-18 20:36:07.170] [parse_ACV_Set] CmdCode: 0102, ACV_Set_str: 100/200
+[2025-12-18 20:36:07.172] [parse_ACF_Set] CmdCode: 0103, ACF_Set_str: 50Hz
+[2025-12-18 20:36:07.175] [parse_INV_CONFIG] CmdCode: 0101, OutputPriority: Battery, ChargingPriority: Utility
+[2025-12-18 20:36:07.176] [parse_INV_OPERATION] CmdCode: 0100, CHG_EN: True, GRID_EN: False
+[2025-12-18 20:36:07.178] [parse_Numeric_Val] CmdCode: 00B9, Numeric Value: 19
+[2025-12-18 20:36:07.180] [parse_Numeric_Val] CmdCode: 00BA, Numeric Value: 18.4
+[2025-12-18 20:36:07.182] [parse_Numeric_Val] CmdCode: 00BB, Numeric Value: 22
+[2025-12-18 20:36:07.182] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-18 20:36:07.183] [parse_Numeric_Val] CmdCode: 00BC, Numeric Value: 33
+[2025-12-18 20:37:32.888] [ApiManager][apiPut_eventLog_MarkAsRead] Success
+[2025-12-18 20:37:50.141] [WriteDataChangeEventManager][UnsubscribeAll] connectionId = UkDzQCMFxwQxIR4_bpAOGQ ...
+[2025-12-18 20:37:50.143] [WriteDataChangeEventManager][UnsubscribeAll] done.
+[2025-12-18 20:37:50.157] [WriteDataChangeEventManager][EnsureHook] Hooked handler for : NTN-5K_CAN_testWrite.json@CAN1
+[2025-12-18 20:37:50.159] [FirstPush_SubSystem] NTN-5K_CAN_testWrite.json@CAN1
+[2025-12-18 20:37:50.181] [WriteDataChangeEventManager][Subscribe Cmd] First Push Data
+[2025-12-18 20:37:58.247] [WriteDataChangeEventManager][UnsubscribeAll] connectionId = UkDzQCMFxwQxIR4_bpAOGQ ...
+[2025-12-18 20:37:58.248] (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json), found connectionId = UkDzQCMFxwQxIR4_bpAOGQ
+[2025-12-18 20:37:58.251] [WriteDataChangeEventManager][UnsubscribeAll] Unhook handler for : (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-18 20:37:58.253] [WriteDataChangeEventManager][UnsubscribeAll] done.
+[2025-12-18 20:37:58.255] [WriteDataChangeEventManager][UnsubscribeAll] connectionId = lBtOC8Vl9NqfQJ-t85nRTA ...
+[2025-12-18 20:37:58.256] [WriteDataChangeEventManager][UnsubscribeAll] done.
+[2025-12-18 20:37:58.258] [WriteDataChangeEventManager][EnsureHook] Hooked handler for : NTN-5K_CAN_testWrite.json@CAN1
+[2025-12-18 20:37:58.259] [FirstPush_SubSystem] NTN-5K_CAN_testWrite.json@CAN1
+[2025-12-18 20:37:58.261] [WriteDataChangeEventManager][Subscribe Cmd] First Push Data
+[2025-12-18 20:38:20.435] [WriteDataChangeEventManager][UnsubscribeAll] connectionId = v2jLRm97_UfBLoGxyYnAaQ ...
+[2025-12-18 20:38:20.436] [WriteDataChangeEventManager][UnsubscribeAll] done.
+[2025-12-18 20:38:20.439] [WriteDataChangeEventManager][UnsubscribeAll] connectionId = lBtOC8Vl9NqfQJ-t85nRTA ...
+[2025-12-18 20:38:20.439] (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json), found connectionId = lBtOC8Vl9NqfQJ-t85nRTA
+[2025-12-18 20:38:20.441] [WriteDataChangeEventManager][UnsubscribeAll] Unhook handler for : (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-18 20:38:20.443] [WriteDataChangeEventManager][UnsubscribeAll] done.
+[2025-12-18 20:38:20.446] [WriteDataChangeEventManager][EnsureHook] Hooked handler for : NTN-5K_CAN_testWrite.json@CAN1
+[2025-12-18 20:38:20.446] [FirstPush_SubSystem] NTN-5K_CAN_testWrite.json@CAN1
+[2025-12-18 20:38:20.448] [WriteDataChangeEventManager][Subscribe Cmd] First Push Data

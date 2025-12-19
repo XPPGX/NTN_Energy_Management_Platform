@@ -210,38 +210,6 @@ namespace demoVer.Services
             }
         }
 
-        //GET API WRITE_Memory_V1.1 : 讀某個(port)的所有協定的所有命令格式、值
-        // public async Task<Dictionary<string, List<GET_RealSingleRawSettingCMD_JsonFormat>>> apiReadReal_SettingData_AllProtocol_Within_OnePort(string type)
-        // {
-        //     try
-        //     {
-        //         if(string.IsNullOrEmpty(type))
-        //         {
-        //             AppLogger.Log_To_File_log(_category, $"[ApiManager][apiReadReal_SettingData_AllProtocol_Within_OnePort] type is invalid", AppLogLevel.Trace);
-        //             return null;
-        //         }
-                
-        //         string url = $"api/memory/write-api?type={type}";
-        //         var result = await _http.GetFromJsonAsync<Dictionary<string, List<GET_RealSingleRawSettingCMD_JsonFormat>>>(url);
-                
-        //         if(result == null)
-        //         {
-        //              throw new Exception($"[ApiManager][apiReadReal_SettingData_AllProtocol_Within_OnePort] ReadReal_SettingData is null");
-        //         }
-        //         return result;
-        //     }
-        //     catch (HttpRequestException ex)
-        //     {
-        //         AppLogger.Log_To_File_log(_category, $"[ApiManager][apiReadReal_SettingData_AllProtocol_Within_OnePort] Http_Error: {ex}", AppLogLevel.Debug);
-        //         return null;
-        //     }
-        //     catch(Exception ex)
-        //     {
-        //         AppLogger.Log_To_File_log(_category, $"[ApiManager][apiReadReal_SettingData_AllProtocol_Within_OnePort] Error : {ex.Message}", AppLogLevel.Error);
-        //         return null;
-        //     }
-        // }
-
         //GET API WRITE_Memory_V1.1 : 讀某個(Port, protocolFileName)所有命令格式、當前值
         public async Task<Dictionary<string, List<GET_RealSingleRawSettingCMD_JsonFormat>>?> apiReadReal_SettingData(string type, string protocolFileName)
         {

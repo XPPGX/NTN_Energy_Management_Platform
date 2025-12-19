@@ -79,48 +79,6 @@ namespace demoVer.Models
                 Console.WriteLine($"GetBitKey: bitPostion {bitPostion} not found in Lookup_BitControl");
                 return null;
             }
-
-            // if (IsPerAddr is true)
-            // {
-            //     if (AddrValues is null)
-            //     {
-            //         Console.WriteLine($"GetBitKey: AddrValues is null");
-            //         return null;
-            //     }
-            //     var first_addrValue = AddrValues[0].Value;
-            //     var first_addrBits = first_addrValue.Bits;
-            //     if (first_addrBits is null)
-            //     {
-            //         Console.WriteLine($"GetBitKey: first_addrBits is null");
-            //         return null;
-            //     }
-
-            //     var arbitrary_BitKey = first_addrBits.Keys.First();
-            //     var parts = arbitrary_BitKey.Split('_');
-
-            //     string correctKey = parts[0] + "_" + bitPostion.ToString();
-            //     return correctKey;
-            // }
-            // else
-            // {
-            //     if (Target is null)
-            //     {
-            //         Console.WriteLine($"GetBitKey: Target is null");
-            //         return null;
-            //     }
-            //     var targetBits = Target.Bits;
-            //     if (targetBits is null)
-            //     {
-            //         Console.WriteLine($"GetBitKey: targetBits is null");
-            //         return null;
-            //     }
-
-            //     var arbitrary_BitKey = targetBits.Keys.First();
-            //     var parts = arbitrary_BitKey.Split('_');
-
-            //     string correctKey = parts[0] + "_" + bitPostion.ToString();
-            //     return correctKey;
-            // }
         }
 
         public void Build_Lookup_BitControl()
