@@ -27,26 +27,25 @@ namespace demoVer.Services
             if(!_subSystemManager.Mapping_Addr_To_SubSys.TryGetValue(addr.ToString(), out var portProtocol_Tuple)) return null; // 找不到對應的 Port 和 Protocol//取 subsys 參考
             (port, protocol) = portProtocol_Tuple;
             
-            Console.WriteLine("[CodeTranslator][Translate_FixedCmdName_To_UserDefinedName] port: " + port + ", protocol: " + protocol);
+            // Console.WriteLine("[CodeTranslator][Translate_FixedCmdName_To_UserDefinedName] port: " + port + ", protocol: " + protocol);
 
             var subsys = _subSystemManager.GetOneSubSystem_Ref(port, protocol);
             if(subsys is null) return null; // 找不到對應的 SubSystem
-            AppLogger.Log_To_File_log(_category, "[CodeTranslator][Translate_FixedCmdName_To_UserDefinedName] got subsys", AppLogLevel.Trace);
+            // AppLogger.Log_To_File_log(_category, "[CodeTranslator][Translate_FixedCmdName_To_UserDefinedName] got subsys", AppLogLevel.Trace);
 
             //取 ClearPort
             string clearPort = Custom.getPort_ExceptFor_Num(port); //得到 "CAN" or "MOD"
             if(string.IsNullOrEmpty(clearPort)) return null; // 無效的 Port
-            Console.WriteLine("[CodeTranslator][Translate_FixedCmdName_To_UserDefinedName] clearPort: " + clearPort);
+            // Console.WriteLine("[CodeTranslator][Translate_FixedCmdName_To_UserDefinedName] clearPort: " + clearPort);
 
             //用 ClearPort 搭配 FixedCmdName 查 FixedCmdCode
             if(!GlobalVar.HardCodes.TryGetValue(clearPort, out var cmdDict)) return null; // 取cmdDict ; 若取不到對應的 CmdCode 字典則 return null
             if(!cmdDict.TryGetValue(FixedCmdName, out var FixedCmdCode)) return null; // 取cmdDict ; 若取不到對應的 CmdCode 則 return null
-            Console.WriteLine("[CodeTranslator][Translate_FixedCmdName_To_UserDefinedName] FixedCmdCode: " + FixedCmdCode);
+            // Console.WriteLine("[CodeTranslator][Translate_FixedCmdName_To_UserDefinedName] FixedCmdCode: " + FixedCmdCode);
 
             //用FixedCmdCode 查 UserDefinedName
             var userDefinedCmdName = subsys.Get_UserDefined_CmdName_By_CmdCode(FixedCmdCode);
-            Console.WriteLine("[CodeTranslator][Translate_FixedCmdName_To_UserDefinedName] userDefinedCmdName: " + userDefinedCmdName);
-
+            // Console.WriteLine("[CodeTranslator][Translate_FixedCmdName_To_UserDefinedName] userDefinedCmdName: " + userDefinedCmdName);
             return userDefinedCmdName;
         }
 

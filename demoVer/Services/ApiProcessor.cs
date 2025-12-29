@@ -10,9 +10,13 @@ namespace demoVer.Services
     {
         private string _category;
         private readonly HttpClient _http;
+        private readonly HttpClient _http_soc;
+        private readonly IHttpClientFactory _factory;
         public ApiManager(IHttpClientFactory factory)
         {
             _http = factory.CreateClient("ApiClient");
+            _http_soc = factory.CreateClient("SOC");
+            _factory = factory;
             _category = GetType().FullName!;
         }
 
@@ -388,7 +392,7 @@ namespace demoVer.Services
 
                 var detail = await response.Content.ReadAsStringAsync();
                 AppLogger.Log_To_File_log(_category,
-                    $"[ApiManager][apiPut_eventLog_MarkAsRead] Failed: {(int)response.StatusCode}, Detail: {detail}",
+                    () => $"[ApiManager][apiPut_eventLog_MarkAsRead] Failed: {(int)response.StatusCode}, Detail: {detail}",
                     AppLogLevel.Trace);
                 return false;
             }
@@ -401,6 +405,31 @@ namespace demoVer.Services
             {
                 AppLogger.Log_To_File_log(_category, $"[ApiManager][apiPut_eventLog_MarkAsRead] Error: {ex.Message}", AppLogLevel.Error);
                 return false;
+            }
+        }
+
+        public async Task<List<BAT_nowData>?> apiRead_nowSOC_All()
+        {
+            try
+            {
+                string url = $"/read-api/now-soc-all";
+                var result = await _http_soc.GetFromJsonAsync<List<BAT_nowData>>(url);
+                
+                if(result == null)
+                {
+                    throw new Exception($"[apiRead_nowSOC] Read_API_Json == null");
+                }
+                return result;
+            }
+            catch(HttpRequestException ex)
+            {
+                AppLogger.Log_To_File_log(_category, () => $"[ApiManager][apiRead_nowSOC] Http_Error: {ex}", AppLogLevel.Debug);
+                return null;
+            }
+            catch(Exception ex)
+            {
+                AppLogger.Log_To_File_log(_category, () => $"[ApiManager][apiRead_nowSOC] Error : {ex.Message}", AppLogLevel.Error);
+                return null;
             }
         }
     }

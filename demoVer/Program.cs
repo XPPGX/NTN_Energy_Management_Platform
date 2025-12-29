@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Localization;
 using demoVer.Services.Localization;
 using System.Globalization;
 using System.Linq;
+using System.Security.Principal;
+using Microsoft.AspNetCore.Mvc.Routing;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -103,6 +105,22 @@ builder.Services.AddHttpClient("ApiClient", client =>
         client.BaseAddress = new Uri("http://127.0.0.1:5050/"); //local debug with python
     }
     Console.WriteLine($"API Server : {client.BaseAddress}");
+});
+
+builder.Services.AddHttpClient("SOC", client =>
+{
+    if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+    {
+        client.BaseAddress = new Uri("http://192.168.102.225:5043/"); //windows debug with remote linux
+    }
+    else if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+    {
+        client.BaseAddress = new Uri("http://127.0.0.1:5043/"); //Release
+    }
+    else
+    {
+        client.BaseAddress = new Uri("http://127.0.0.1:5043/"); //local debuug with python
+    }
 });
 builder.Services.AddSingleton<ApiManager>();
 builder.Services.AddSingleton<WriteProcess>();

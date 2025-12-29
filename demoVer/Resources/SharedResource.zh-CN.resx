@@ -94,6 +94,9 @@
   <data name="BatterySetting-PleaseSelectSubsystem" xml:space="preserve">
     <value>请选择子系统</value>
   </data>
+  <data name="RunningDiagramCard-BatteryInfo" xml:space="preserve">
+    <value>開發中</value>
+  </data>
   <data name="BatterySetting-SaveSettings" xml:space="preserve">
     <value>保存设置</value>
   </data>

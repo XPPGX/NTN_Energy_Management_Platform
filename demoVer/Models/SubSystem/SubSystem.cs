@@ -1213,7 +1213,14 @@ namespace demoVer.Models
         }
         #endregion Computed In SubSystem
 
-        
+        #region For BAT Info
+        public SOC SOC_Info { get; set;} = new SOC(); 
+        public void Update_BAT_Info(SOC new_socInfo)
+        {
+            if(new_socInfo is null) return;
+            this.SOC_Info = new_socInfo;
+        }
+        #endregion For BAT Info
         public string? GetSummaryValue(string cmdName)
         {
             return cmdName switch

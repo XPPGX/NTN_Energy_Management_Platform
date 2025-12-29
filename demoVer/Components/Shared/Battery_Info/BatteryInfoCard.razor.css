@@ -1,0 +1,39 @@
+.battery-info-card {
+    position: absolute;
+    left: 70px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #0f172a;
+    color: #e2e8f0;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 12px 14px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+    min-width: 180px;
+    z-index: 100;
+}
+
+.battery-info-title {
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+    margin-bottom: 8px;
+    color: #a5b4fc;
+}
+
+.battery-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 13px;
+}
+
+.battery-info-label {
+    color: #cbd5e1;
+}
+
+.battery-info-value {
+    font-weight: 600;
+    color: #f8fafc;
+}

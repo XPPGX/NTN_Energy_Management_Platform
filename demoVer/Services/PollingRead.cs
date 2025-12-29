@@ -68,7 +68,8 @@ namespace demoVer.Services
         // MOD1         |128~191         |0~63
         // MOD2         |191~255         |0~63
         private LinkStatus_JsonFormat rcv_linkStatus = new();
-        private int counter = 0;
+        private int counter = 0; //用於每50次polling發送一次link-status的計數器
+        private int BAT_pollCounter = 0; //用於每100次polling發送一次BAT_nowData的計數器
 
         public PollingRead(GlobalVar globalVar,
                             ApiManager apiManager,
@@ -119,6 +120,12 @@ namespace demoVer.Services
                         {
                             await PollNowLinkAddr(ct);
                             counter = 0;
+                        }
+                        BAT_pollCounter ++;
+                        if(BAT_pollCounter == 100)
+                        {
+                            
+                            BAT_pollCounter = 0;
                         }
                     }
                     
@@ -285,6 +292,38 @@ namespace demoVer.Services
                     }
                 }
             }
+        }
+        
+        private async Task PollNow_BAT_allData(CancellationToken ct)
+        {
+            bool PollingNowBAT_isSucc = true;
+            try
+            {
+                using var reqCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                reqCts.CancelAfter(_opt.RequestTimeoutMs);
+
+                var rcv_BAT_nowAllData = await _apiManager.apiRead_nowSOC_All();
+                if(rcv_BAT_nowAllData is null)
+                {
+                    PollingNowBAT_isSucc = false;
+
+                    AppLogger.Log_To_File_log(_category, () => $"[PollingRead][PollNow_BAT_allData] rcv_BAT_nowAllData is Null", AppLogLevel.Trace);
+                }
+                else
+                {
+                    PollingNowBAT_isSucc = true;
+
+                }
+            }
+            catch(Exception ex)
+            {
+                AppLogger.Log_To_File_log(_category, () => $"[PollingRead][PollNow_BAT_allData] Error : {ex}", AppLogLevel.Error);
+            }
+            finally
+            {
+                
+            }
+
         }
         public void initPollingWave()
         {
@@ -542,6 +581,25 @@ namespace demoVer.Services
                     oneSubSys_FireAndForgetLock.Release();
                 }
             });
+        }
+    
+        private void UpdatePartitionSOC(List<BAT_nowData> all_SubSys_Soc_Data)
+        {
+            if(all_SubSys_Soc_Data is null) return;
+            if(all_SubSys_Soc_Data.Count == 0) return;
+
+            foreach(var soc_data in all_SubSys_Soc_Data)
+            {
+                string port = soc_data.port;
+                string protocol = soc_data.protocol;
+
+                var subsys = _subSystemManager.GetOneSubSystem_Ref(port, protocol);
+                if(subsys is null) continue;
+
+
+
+                
+            }
         }
     }
 }

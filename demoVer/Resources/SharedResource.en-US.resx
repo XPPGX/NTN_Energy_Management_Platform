@@ -109,6 +109,9 @@
   <data name="BatterySetting-CCT" xml:space="preserve">
     <value>CCT</value>
   </data>
+  <data name="RunningDiagramCard-BatteryInfo" xml:space="preserve">
+    <value>In Development</value>
+  </data>
   <data name="BatterySetting-CVTimeout" xml:space="preserve">
     <value>CV Timeout</value>
   </data>

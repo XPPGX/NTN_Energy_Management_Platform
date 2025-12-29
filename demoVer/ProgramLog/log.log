@@ -43,3 +43,95 @@
 [2025-12-18 20:38:20.446] [WriteDataChangeEventManager][EnsureHook] Hooked handler for : NTN-5K_CAN_testWrite.json@CAN1
 [2025-12-18 20:38:20.446] [FirstPush_SubSystem] NTN-5K_CAN_testWrite.json@CAN1
 [2025-12-18 20:38:20.448] [WriteDataChangeEventManager][Subscribe Cmd] First Push Data
+[2025-12-26 17:20:45.981] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2025-12-26 17:20:45.997] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2025-12-26 17:20:58.031] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-12-26 17:20:58.033] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-26 17:20:58.186] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-12-26 17:20:58.187] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-26 17:20:58.312] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-26 17:20:58.312] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-26 17:20:58.441] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-26 17:20:58.441] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-26 17:20:58.558] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-26 17:20:58.558] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-26 17:20:58.682] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-26 17:20:58.682] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-26 17:30:07.735] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2025-12-26 17:30:07.749] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2025-12-26 17:30:16.638] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-12-26 17:30:16.639] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-26 17:30:16.782] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-12-26 17:30:16.783] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-26 17:30:16.910] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-26 17:30:16.910] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-26 17:30:17.030] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-26 17:30:17.030] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-26 17:30:17.167] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-26 17:30:17.167] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-29 09:02:00.829] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2025-12-29 09:02:00.844] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2025-12-29 09:02:06.727] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-12-29 09:02:06.729] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-29 09:02:06.825] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-12-29 09:02:06.825] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-29 09:02:06.954] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-29 09:02:06.954] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-29 09:05:33.769] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2025-12-29 09:05:33.805] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2025-12-29 09:05:34.668] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-12-29 09:05:34.669] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-29 09:05:34.795] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-12-29 09:05:34.796] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-29 09:06:33.916] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2025-12-29 09:06:33.928] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2025-12-29 09:06:37.868] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-12-29 09:06:37.870] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-29 09:06:38.073] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-12-29 09:06:38.074] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-29 09:14:47.882] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2025-12-29 09:14:47.896] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2025-12-29 09:14:48.972] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-12-29 09:14:48.973] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-29 09:14:49.097] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-12-29 09:14:49.097] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-29 09:17:58.331] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2025-12-29 09:17:58.344] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2025-12-29 09:18:01.842] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-12-29 09:18:01.844] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-29 09:18:01.954] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-12-29 09:18:01.955] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-29 09:21:39.347] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2025-12-29 09:21:39.369] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2025-12-29 09:21:41.066] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-12-29 09:21:41.070] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-29 09:21:41.170] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-12-29 09:21:41.170] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-29 09:22:11.035] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2025-12-29 09:22:11.051] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2025-12-29 09:22:13.355] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-12-29 09:22:13.357] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-29 09:22:13.467] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-12-29 09:22:13.467] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-29 10:18:13.099] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2025-12-29 10:18:13.112] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2025-12-29 10:18:18.155] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-12-29 10:18:18.160] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-29 10:18:18.263] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-12-29 10:18:18.264] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-29 10:18:47.321] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2025-12-29 10:18:47.332] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2025-12-29 10:23:22.069] CmdCode 對照表載入失敗，已建立預設檔案: Data\CmdCode.json, Data\CmdCodeReverse.json
+[2025-12-29 10:23:22.080] DecodeLogic JSON 載入失敗，已建立預設檔案: Data\CmdDecodeLogic.json
+[2025-12-29 10:24:56.295] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2025-12-29 10:24:56.305] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2025-12-29 10:25:07.083] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-12-29 10:25:07.086] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-29 10:25:07.190] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-12-29 10:25:07.191] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-29 10:34:29.305] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2025-12-29 10:34:29.318] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2025-12-29 10:34:32.225] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-12-29 10:34:32.226] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-29 10:34:32.230] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-12-29 10:34:32.231] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)

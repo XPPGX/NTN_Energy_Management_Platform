@@ -1,3 +1,4 @@
+using System;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.IO;
@@ -117,11 +118,26 @@ namespace demoVer.Utils
         
         public static void Log_To_File_log(string category, string message, AppLogLevel level = AppLogLevel.Trace)
         {
-            // 用 TryGetValue 避免兩次查表
-            if (CategoryLevels.Count == 0) readLogLevelSettings();
-            if (!CategoryLevels.TryGetValue(category, out var minLevel)) return;
-            if (level < (AppLogLevel)minLevel) return;
+            if (!ShouldWriteLog(category, level)) return;
+            AppendLogEntry(message);
+        }
 
+        public static void Log_To_File_log(string category, Func<string> messageFactory, AppLogLevel level = AppLogLevel.Trace)
+        {
+            if (messageFactory == null) throw new ArgumentNullException(nameof(messageFactory));
+            if (!ShouldWriteLog(category, level)) return;
+            AppendLogEntry(messageFactory());
+        }
+
+        private static bool ShouldWriteLog(string category, AppLogLevel level)
+        {
+            if (CategoryLevels.Count == 0) readLogLevelSettings();
+            if (!CategoryLevels.TryGetValue(category, out var minLevel)) return false;
+            return level >= (AppLogLevel)minLevel;
+        }
+
+        private static void AppendLogEntry(string message)
+        {
             try
             {
                 Directory.CreateDirectory(LogDirectory); // 多次呼叫也安全

@@ -1,0 +1,38 @@
+@namespace demoVer.Shared
+@using System.Globalization
+@inject IStringLocalizer<SharedResource> Localizer
+
+<div class="battery-info-card">
+    <div class="battery-info-title">@Localizer["RunningDiagramCard-BatteryInfo"]</div>
+    <div class="battery-info-row">
+        <span class="battery-info-label">Level</span>
+        <span class="battery-info-value">@FormatBatteryValue(BatLevel, "%")</span>
+    </div>
+    <div class="battery-info-row">
+        <span class="battery-info-label">Remain</span>
+        <span class="battery-info-value">@FormatBatteryValue(BatRemainTime, "h")</span>
+    </div>
+    <div class="battery-info-row">
+        <span class="battery-info-label">Capacity</span>
+        <span class="battery-info-value">@FormatBatteryValue(BatCapacity, "kWh")</span>
+    </div>
+</div>
+
+@code {
+    [Parameter] public object? BatLevel { get; set; }
+    [Parameter] public object? BatRemainTime { get; set; }
+    [Parameter] public object? BatCapacity { get; set; }
+
+    private string FormatBatteryValue(object? val, string unit = "")
+    {
+        if (val is null) return "--";
+
+        if (val is IFormattable fmt)
+        {
+            var str = fmt.ToString("0.##", CultureInfo.InvariantCulture);
+            return string.IsNullOrWhiteSpace(unit) ? str : $"{str} {unit}";
+        }
+
+        return val.ToString() ?? "--";
+    }
+}
