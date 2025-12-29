@@ -763,4 +763,22 @@
   <data name="TopRow-SwitchToDark" xml:space="preserve">
     <value>切换到暗色模式</value>
   </data>
+  <data name="BottomRow-NavLabel" xml:space="preserve">
+    <value>主要导航</value>
+  </data>
+  <data name="BottomRow-Home" xml:space="preserve">
+    <value>首页</value>
+  </data>
+  <data name="BottomRow-Battery" xml:space="preserve">
+    <value>电池</value>
+  </data>
+  <data name="BottomRow-Inverter" xml:space="preserve">
+    <value>逆变器</value>
+  </data>
+  <data name="BottomRow-LinkStatus" xml:space="preserve">
+    <value>连接状态</value>
+  </data>
+  <data name="BottomRow-Log" xml:space="preserve">
+    <value>监测报告</value>
+  </data>
 </root>

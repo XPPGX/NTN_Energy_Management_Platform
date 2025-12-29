@@ -8,6 +8,8 @@
 @using demoVer.Services
 @using System.Text.Json
 @using System.IO
+@using System
+@using Microsoft.JSInterop
 @using demoVer.Utils
 @inject WriteProcess writeProcess
 @inject HeartbeatService Heartbeat
@@ -324,6 +326,8 @@
             MainLayout?.ClearTopRowCallbacks(this);
             topRowCallbacksRegistered = false;
         }
+        DotNetHelper_Is_OK = false;
+        FirstAutoGet_SubSys_done = false;
     }
     #endregion System Task
 
@@ -833,11 +837,14 @@
     private async Task ReSubscribeSubSys()
     {
         //1. [JS]嘗試解除當前訂閱的子系統
-        await JS.InvokeVoidAsync("unsubscribeAllSubSys");
+        if (!await TryInvokeVoidAsync("unsubscribeAllSubSys"))
+        {
+            return;
+        }
         //2. [JS]訂閱新的子系統
         var (port, protocol) = GetSelectedSubSystemPortAndProtocol();
         Console.WriteLine($"[ReSubscribeSubSys] port = {port}, protocol = {protocol}");
-        await JS.InvokeVoidAsync("subscribeBatteryHub", port, protocol);
+        await TryInvokeVoidAsync("subscribeBatteryHub", port, protocol);
     }
     private async Task subSystemSelectionChangedHandler()
     {
@@ -848,13 +855,62 @@
 
     private async Task OnHeartbeatTickAsync()
     {
-        await RefreshSubSystemOptions();
-        if(FirstAutoGet_SubSys_done is false && DotNetHelper_Is_OK is true)
+        try
         {
-            FirstAutoGet_SubSys_done = true;
-            await subSystemSelectionChangedHandler();
+            await RefreshSubSystemOptions();
+            if(FirstAutoGet_SubSys_done is false && DotNetHelper_Is_OK is true)
+            {
+                FirstAutoGet_SubSys_done = true;
+                await subSystemSelectionChangedHandler();
+            }
+            await InvokeAsync(StateHasChanged);
         }
-        await InvokeAsync(StateHasChanged);
+        catch (JSException ex) when (IsSignalRDisconnected(ex))
+        {
+            DotNetHelper_Is_OK = false;
+            AppLogger.Log_To_File_log(_category, $"[Battery_setting][OnHeartbeatTickAsync] JS disconnected: {ex.Message}", AppLogLevel.Trace);
+        }
+        catch (JSDisconnectedException ex)
+        {
+            DotNetHelper_Is_OK = false;
+            AppLogger.Log_To_File_log(_category, $"[Battery_setting][OnHeartbeatTickAsync] JS runtime unavailable: {ex.Message}", AppLogLevel.Trace);
+        }
+        catch (InvalidOperationException ex) when (ex.Message.Contains("JSRuntime"))
+        {
+            DotNetHelper_Is_OK = false;
+            AppLogger.Log_To_File_log(_category, $"[Battery_setting][OnHeartbeatTickAsync] JS invoke failed: {ex.Message}", AppLogLevel.Trace);
+        }
+    }
+
+    private async Task<bool> TryInvokeVoidAsync(string identifier, params object?[] args)
+    {
+        try
+        {
+            await JS.InvokeVoidAsync(identifier, args);
+            return true;
+        }
+        catch (JSException ex) when (IsSignalRDisconnected(ex))
+        {
+            DotNetHelper_Is_OK = false;
+            AppLogger.Log_To_File_log(_category, $"[Battery_setting][TryInvokeVoidAsync] SignalR disconnected while calling {identifier}: {ex.Message}", AppLogLevel.Trace);
+        }
+        catch (JSDisconnectedException ex)
+        {
+            DotNetHelper_Is_OK = false;
+            AppLogger.Log_To_File_log(_category, $"[Battery_setting][TryInvokeVoidAsync] JS disconnected while calling {identifier}: {ex.Message}", AppLogLevel.Trace);
+        }
+        catch (InvalidOperationException ex) when (ex.Message.Contains("JSRuntime"))
+        {
+            DotNetHelper_Is_OK = false;
+            AppLogger.Log_To_File_log(_category, $"[Battery_setting][TryInvokeVoidAsync] JS runtime unavailable for {identifier}: {ex.Message}", AppLogLevel.Trace);
+        }
+
+        return false;
+    }
+
+    private static bool IsSignalRDisconnected(JSException ex)
+    {
+        return ex.Message.Contains("connection is not in the 'Connected' State", StringComparison.OrdinalIgnoreCase);
     }
 
     
