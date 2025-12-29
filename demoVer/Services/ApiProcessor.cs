@@ -408,12 +408,15 @@ namespace demoVer.Services
             }
         }
 
-        public async Task<List<BAT_nowData>?> apiRead_nowSOC_All()
+        public async Task<List<BAT_nowData>?> apiRead_nowSOC_All(int timeouts = 5000, CancellationToken ct = default)
         {
             try
             {
+                using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                cts.CancelAfter(timeouts);
+
                 string url = $"/read-api/now-soc-all";
-                var result = await _http_soc.GetFromJsonAsync<List<BAT_nowData>>(url);
+                var result = await _http_soc.GetFromJsonAsync<List<BAT_nowData>>(url, cancellationToken: cts.Token);
                 
                 if(result == null)
                 {

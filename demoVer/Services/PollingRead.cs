@@ -47,7 +47,7 @@ namespace demoVer.Services
         //控制PollingRead的啟動時機    
         private volatile bool _enabled;
         private readonly SemaphoreSlim _startGate = new(0, 1);
-
+        private readonly SemaphoreSlim _batPollingLock = new(1, 1);
         //Variables
         private string _category;
         private List<PollingWave> _pollingWave = new List<PollingWave>();
@@ -118,13 +118,13 @@ namespace demoVer.Services
                         counter ++;
                         if(counter == 50)
                         {
-                            await PollNowLinkAddr(ct);
+                            await PollNowLinkAddr(ct);      // 等待完成再繼續polling
                             counter = 0;
                         }
                         BAT_pollCounter ++;
                         if(BAT_pollCounter == 100)
                         {
-                            
+                            _ = PollNow_BAT_allData(ct);    // Fire-and-Forget，不阻塞 polling
                             BAT_pollCounter = 0;
                         }
                     }
@@ -296,23 +296,35 @@ namespace demoVer.Services
         
         private async Task PollNow_BAT_allData(CancellationToken ct)
         {
-            bool PollingNowBAT_isSucc = true;
+            // 防止重入：如果上一次調用還在執行，直接返回
+            if (!await _batPollingLock.WaitAsync(0, ct))
+            {
+                AppLogger.Log_To_File_log(_category, () => $"[PollingRead][PollNow_BAT_allData] Previous call still running, skipping.", AppLogLevel.Trace);
+                return;
+            }
             try
             {
-                using var reqCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
-                reqCts.CancelAfter(_opt.RequestTimeoutMs);
-
                 var rcv_BAT_nowAllData = await _apiManager.apiRead_nowSOC_All();
                 if(rcv_BAT_nowAllData is null)
                 {
-                    PollingNowBAT_isSucc = false;
-
                     AppLogger.Log_To_File_log(_category, () => $"[PollingRead][PollNow_BAT_allData] rcv_BAT_nowAllData is Null", AppLogLevel.Trace);
+
+                    var subsys_list = _subSystemManager.GetAllSubSystems_Ref_In_List();
+                    if(subsys_list is null || subsys_list.Count == 0) return;
+
+                    AppLogger.Log_To_File_log(_category, () => $"[PollingRead][PollNow_BAT_allData] updating all SubSys BAT_Info to null begin...", AppLogLevel.Trace);
+                    foreach(var subsys in subsys_list)
+                    {
+                        subsys.Clear_BAT_Info();
+                    }
+                    AppLogger.Log_To_File_log(_category, () => $"[PollingRead][PollNow_BAT_allData] updating all SubSys BAT_Info to null done.", AppLogLevel.Trace);
                 }
                 else
                 {
-                    PollingNowBAT_isSucc = true;
+                    AppLogger.Log_To_File_log(_category, () => $"[PollingRead][PollNow_BAT_allData] rcv_BAT_nowAllData count = {rcv_BAT_nowAllData.Count}", AppLogLevel.Trace);
 
+                    //更新SubSystems的BAT_Info
+                    UpdateSOC_For_allPartitions(rcv_BAT_nowAllData);
                 }
             }
             catch(Exception ex)
@@ -321,9 +333,8 @@ namespace demoVer.Services
             }
             finally
             {
-                
+                _batPollingLock.Release();
             }
-
         }
         public void initPollingWave()
         {
@@ -529,8 +540,6 @@ namespace demoVer.Services
             {
                 AppLogger.Log_To_File_log(_category, $"[PollingRead][savePartAsSubSys] Error : {e}", AppLogLevel.Error);
             }
-
-
         }
     
         /// <summary>
@@ -583,7 +592,7 @@ namespace demoVer.Services
             });
         }
     
-        private void UpdatePartitionSOC(List<BAT_nowData> all_SubSys_Soc_Data)
+        private void UpdateSOC_For_allPartitions(List<BAT_nowData> all_SubSys_Soc_Data)
         {
             if(all_SubSys_Soc_Data is null) return;
             if(all_SubSys_Soc_Data.Count == 0) return;
@@ -596,9 +605,7 @@ namespace demoVer.Services
                 var subsys = _subSystemManager.GetOneSubSystem_Ref(port, protocol);
                 if(subsys is null) continue;
 
-
-
-                
+                subsys.Update_BAT_Info(soc_data.data);                
             }
         }
     }

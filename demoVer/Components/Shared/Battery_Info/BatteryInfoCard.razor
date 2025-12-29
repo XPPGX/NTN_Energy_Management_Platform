@@ -1,5 +1,6 @@
 @namespace demoVer.Shared
 @using System.Globalization
+@using demoVer.Models
 @inject IStringLocalizer<SharedResource> Localizer
 
 <div class="battery-info-card">
@@ -19,9 +20,10 @@
 </div>
 
 @code {
-    [Parameter] public object? BatLevel { get; set; }
-    [Parameter] public object? BatRemainTime { get; set; }
-    [Parameter] public object? BatCapacity { get; set; }
+    [Parameter] public SOC currentBAT_SOC {get; set;} = new SOC();
+    public object? BatLevel => currentBAT_SOC.BAT_level; 
+    public object? BatRemainTime => currentBAT_SOC.BAT_Remain_Time;
+    public object? BatCapacity => currentBAT_SOC.BAT_Capacity;
 
     private string FormatBatteryValue(object? val, string unit = "")
     {

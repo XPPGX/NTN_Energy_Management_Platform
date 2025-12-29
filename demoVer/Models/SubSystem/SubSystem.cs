@@ -1218,7 +1218,15 @@ namespace demoVer.Models
         public void Update_BAT_Info(SOC new_socInfo)
         {
             if(new_socInfo is null) return;
-            this.SOC_Info = new_socInfo;
+            this.SOC_Info.BAT_level = new_socInfo.BAT_level;
+            this.SOC_Info.BAT_Remain_Time = new_socInfo.BAT_Remain_Time;
+            this.SOC_Info.BAT_Capacity = new_socInfo.BAT_Capacity;
+        }
+        public void Clear_BAT_Info()
+        {
+            this.SOC_Info.BAT_level = 0;
+            this.SOC_Info.BAT_Remain_Time = 0;
+            this.SOC_Info.BAT_Capacity = 0;
         }
         #endregion For BAT Info
         public string? GetSummaryValue(string cmdName)

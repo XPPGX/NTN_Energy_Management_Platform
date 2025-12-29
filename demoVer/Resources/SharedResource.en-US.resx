@@ -110,7 +110,7 @@
     <value>CCT</value>
   </data>
   <data name="RunningDiagramCard-BatteryInfo" xml:space="preserve">
-    <value>In Development</value>
+    <value>BAT_Info</value>
   </data>
   <data name="BatterySetting-CVTimeout" xml:space="preserve">
     <value>CV Timeout</value>

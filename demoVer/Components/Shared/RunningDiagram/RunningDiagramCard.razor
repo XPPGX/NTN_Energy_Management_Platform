@@ -56,9 +56,7 @@
                 <div class="grid-item">
                     <img src="@currentCard.Link_STATUS_Pairs[3].iconPath" alt="battery" style="width:48px; height:48px" @ref="battery"/>
                     <BatteryInfoCard 
-                        BatLevel="null"
-                        BatRemainTime="null"
-                        BatCapacity="null" />
+                        currentBAT_SOC="@currentBAT_SoC"/>
                 </div>
                 <div class="grid-label">@currentCard.Link_STATUS_Pairs[3].Label</div>
             </div>
@@ -144,7 +142,7 @@
     private bool DEBUG_MODE = true;
     private string local_INV_MODE_str = ConstDefinition.DEFAULT_MODE_str;
     private SubSystem? activeSubSystem;
-
+    private SOC currentBAT_SoC = new SOC();
     [Parameter] public string CssClass { get; set; }
     [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object> AdditionalAttributes { get; set; }
     [Parameter] public bool showEditButton { get; set; }
@@ -252,6 +250,20 @@
 
         local_INV_MODE_str = activeSubSystem?.DisplayModeName ?? ConstDefinition.DEFAULT_MODE_str;
         arrowService.UpdateDirections(directions);
+
+        // Update Local Battery SOC
+        if(activeSubSystem?.SOC_Info is not null)
+        {
+            currentBAT_SoC.BAT_Capacity = activeSubSystem.SOC_Info.BAT_Capacity;
+            currentBAT_SoC.BAT_level = activeSubSystem.SOC_Info.BAT_level;
+            currentBAT_SoC.BAT_Remain_Time = activeSubSystem.SOC_Info.BAT_Remain_Time;
+        }
+        else
+        {
+            currentBAT_SoC.BAT_Capacity = 0;
+            currentBAT_SoC.BAT_level = 0;
+            currentBAT_SoC.BAT_Remain_Time = 0;
+        }
     }
 
     private void OnArrowTick()

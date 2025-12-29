@@ -135,3 +135,145 @@
 [2025-12-29 10:34:32.226] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
 [2025-12-29 10:34:32.230] [PollingRead][savePartAsSubSys] New Port created : CAN2
 [2025-12-29 10:34:32.231] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-29 10:52:07.866] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2025-12-29 10:52:07.878] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2025-12-29 10:52:10.107] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-12-29 10:52:10.109] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-29 10:52:10.206] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-12-29 10:52:10.206] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-29 12:08:44.543] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2025-12-29 12:08:44.555] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2025-12-29 12:09:44.278] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:10:36.392] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:11:28.501] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:12:20.609] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:13:12.693] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:14:04.814] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:14:56.932] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:15:49.017] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:16:41.117] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:17:33.211] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:18:25.302] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:19:17.387] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:20:09.504] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:21:01.560] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:21:53.660] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:22:45.768] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:23:37.877] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:24:29.961] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:25:22.078] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:26:14.194] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:27:06.287] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:27:58.376] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:28:50.452] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:29:42.564] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:30:34.666] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:31:26.741] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:32:18.825] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:33:10.946] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:34:03.020] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:34:55.123] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:35:47.215] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:36:39.273] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:37:31.369] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:38:23.470] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:39:15.537] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:40:07.635] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:40:59.717] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:41:51.822] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:42:43.880] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:43:35.995] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:44:28.094] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:45:20.181] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:46:12.288] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:47:04.368] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:47:56.448] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:48:48.570] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:49:40.637] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:50:32.763] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:51:24.858] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:52:16.946] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:53:09.044] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:54:01.132] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:54:53.217] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:55:45.312] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:56:37.438] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:57:29.499] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:58:21.625] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 12:59:13.725] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 13:00:05.835] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 13:00:57.944] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 13:01:50.051] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 13:02:42.146] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 13:03:34.250] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 13:04:26.323] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 13:05:18.405] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 13:06:10.518] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 13:07:02.637] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 13:07:54.735] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 13:08:46.832] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 13:09:38.916] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 13:10:31.037] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 13:11:23.114] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 13:12:15.236] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 13:13:07.361] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 13:13:59.460] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 13:14:51.556] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 13:15:13.119] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-12-29 13:15:13.124] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-29 13:15:13.205] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-12-29 13:15:13.205] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-29 13:15:13.337] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-29 13:15:13.337] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-29 13:15:13.466] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-29 13:15:13.466] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-29 13:15:13.585] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-29 13:15:13.585] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-29 13:15:13.705] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-29 13:15:13.705] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-29 13:36:11.317] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 13:36:16.504] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 13:36:21.704] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 13:45:38.287] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2025-12-29 13:59:03.570] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2025-12-29 13:59:03.583] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2025-12-29 13:59:05.254] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-12-29 13:59:05.257] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-29 13:59:05.435] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-12-29 13:59:05.436] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-29 14:00:53.326] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2025-12-29 14:00:53.347] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2025-12-29 14:00:57.279] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-12-29 14:00:57.282] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-29 14:00:57.428] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-12-29 14:00:57.428] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-29 14:02:10.151] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2025-12-29 14:02:10.163] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2025-12-29 14:02:29.292] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-12-29 14:02:29.299] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-29 14:02:29.406] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-12-29 14:02:29.407] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-29 14:06:37.669] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2025-12-29 14:06:37.682] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2025-12-29 14:06:39.436] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-12-29 14:06:39.437] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-29 14:06:39.546] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-12-29 14:06:39.546] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-29 14:33:44.383] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2025-12-29 14:33:44.393] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2025-12-29 14:33:51.902] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-12-29 14:33:51.903] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-29 14:33:52.004] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-12-29 14:33:52.004] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-29 14:36:52.050] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2025-12-29 14:36:52.068] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2025-12-29 14:36:53.787] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-12-29 14:36:53.788] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-29 14:36:53.896] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-12-29 14:36:53.897] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2025-12-29 14:39:42.459] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2025-12-29 14:39:42.471] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2025-12-29 14:39:43.869] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2025-12-29 14:39:43.872] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2025-12-29 14:39:43.969] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2025-12-29 14:39:43.970] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
