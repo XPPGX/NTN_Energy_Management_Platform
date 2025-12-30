@@ -22,7 +22,7 @@ namespace demoVer.Services
 
             if(n == 1)
             {
-                _ = _worker.EnableAsync();
+                // _ = _worker.EnableAsync();
             }
 
             return Task.CompletedTask;

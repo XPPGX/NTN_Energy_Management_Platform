@@ -10,7 +10,7 @@
 
 <div class="top-row">
     <div class="left-items">
-        <button class="topRow-btn mobile-hide" @onclick="toggleMenu" @onclick:stopPropagation="true">
+        @* <button class="topRow-btn mobile-hide" @onclick="toggleMenu" @onclick:stopPropagation="true">
             <!-- <i class="fas fa-th-large"></i> -->
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="iconBtn" style="stroke: @(IsDarkTheme ? "#ffffff" : "#000000");">
                 <path d="M3 12H15M3 6H21M3 18H21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -27,11 +27,11 @@
         }
         <div class="current-tab">
             
-        </div>
+        </div> *@
     </div>
 
     <div class="right-items">
-        @if(afterFirstRender_Flag)
+        @* @if(afterFirstRender_Flag)
         {
             
             if(showEditBtn_Flag && Page_index == PAGE.HOME)
@@ -53,32 +53,21 @@
 
             if( Page_index == PAGE.BATTERY_SETTING)
             {
-                @* <button class="topRow-btn" @onclick="apply_battery_setting">
-                    <img src="images/checked.png" alt="apply" class="iconBtn"/>
-                </button>
-                <button class="topRow-btn" @onclick="UseDefault_battery_setting">
-                    <img src="images/settings.png" alt="restore" class="iconBtn"/>
-                </button> *@
+                
             }
 
             if( Page_index == PAGE.INV_SETTING)
             {
-                @* <button class="topRow-btn" @onclick="apply_INV_setting">
-                    <img src="images/checked.png" alt="apply" class="iconBtn"/>
-                </button>
-                <button class="topRow-btn" @onclick="UseDefault_INV_setting">
-                    <img src="images/settings.png" alt="restore" class="iconBtn"/>
-                </button> *@
+                
             }
 
             <button class="topRow-btn" @onclick="ToggleTheme" title="@(IsDarkTheme ? Localizer["TopRow-SwitchToLight"] : Localizer["TopRow-SwitchToDark"])">
                 <img src="images/night-mode.png" class="iconBtn"/>
             </button>
 
-            @* <BellIcon @ref="bellIconRef" IsDarkTheme="@IsDarkTheme" OnMenuOpened="@CloseMainMenu" /> *@
 
             <BellNotification @ref="bellNotificationRef" OnViewAllClicked="GoTo_Log" />
-        }
+        } *@
 
         <img src="images/logo.png" alt="logo" class="clickable-logo" @onclick="GoTo_Framework"/>
     </div>

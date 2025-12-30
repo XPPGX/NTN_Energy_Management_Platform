@@ -784,4 +784,13 @@
   <data name="BottomRow-Log" xml:space="preserve">
     <value>Log</value>
   </data>
+  <data name="Weather-Developing" xml:space="preserve">
+    <value>Under Development</value>
+  </data>
+  <data name="Weather-ReturnToMainFramework" xml:space="preserve">
+    <value>Return to Framework</value>
+  </data>
+  <data name="Weather-PageTitle" xml:space="preserve">
+    <value>Under Development</value>
+  </data>
 </root>

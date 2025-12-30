@@ -18,7 +18,6 @@ namespace demoVer.Services
         private static int _hasStarted = 0; // 保險用: 避免重入
 
         private string _DataFolderPath = string.Empty;
-        private string _UserSettingFolderPath = string.Empty;
         private string _HardCoded_CmdCodeFileName = "CmdCode.json";
         private string _HardCoded_CmdCodeReverseFileName = "CmdCodeReverse.json";
         private string _HardCoded_DecodeLogicFileName = "CmdDecodeLogic.json";
@@ -51,19 +50,19 @@ namespace demoVer.Services
                 if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) await _versionFileService.WriteVersionFileAsync();
                 AppLogger.Log_To_File_log(_category, "[StartupHostedService][2] 版本檔案寫入完成", AppLogLevel.Debug);
 
-                //2. 載入 FixedCmdName => FixedCmdCode 對照表
-                Load_HardCoded_CmdCode();
-                AppLogger.Log_To_File_log(_category, "[StartupHostedService][3] CmdCode 載入完成", AppLogLevel.Debug);
+                // //2. 載入 FixedCmdName => FixedCmdCode 對照表
+                // Load_HardCoded_CmdCode();
+                // AppLogger.Log_To_File_log(_category, "[StartupHostedService][3] CmdCode 載入完成", AppLogLevel.Debug);
                 
-                //3. 載入 FixedCmdName => DecodeLogic 對照表
-                Load_HardCoded_DecodeLogic();
-                AppLogger.Log_To_File_log(_category, "[StartupHostedService][4] DecodeLogic 載入完成", AppLogLevel.Debug);
+                // //3. 載入 FixedCmdName => DecodeLogic 對照表
+                // Load_HardCoded_DecodeLogic();
+                // AppLogger.Log_To_File_log(_category, "[StartupHostedService][4] DecodeLogic 載入完成", AppLogLevel.Debug);
                 
                 //4. 載入 BottomRow 設定
-                _bottomRowConfig.Init();
-                AppLogger.Log_To_File_log(_category, "[StartupHostedService][5] BottomRow 設定載入完成", AppLogLevel.Debug);
+                // _bottomRowConfig.Init();
+                // AppLogger.Log_To_File_log(_category, "[StartupHostedService][5] BottomRow 設定載入完成", AppLogLevel.Debug);
                 
-                AppLogger.Log_To_File_log(_category, "應用啟動初始化完成。", AppLogLevel.Debug);
+                // AppLogger.Log_To_File_log(_category, "應用啟動初始化完成。", AppLogLevel.Debug);
             }
             catch (OperationCanceledException)
             {
@@ -88,16 +87,12 @@ namespace demoVer.Services
             if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 _DataFolderPath = "/userdata/CMU3/Data/";
-                _UserSettingFolderPath = "/userdata/CMU3/UserSetting/";
                 AppLogger.Log_To_File_log(_category, () => $"Linux 環境，Data FolderPath 設定為: {_DataFolderPath}", AppLogLevel.Debug);
-                AppLogger.Log_To_File_log(_category, () => $"Linux 環境，UserSetting FolderPath 設定為: {_UserSettingFolderPath}", AppLogLevel.Debug);
             }
             else
             {
                 _DataFolderPath = "Data";
-                _UserSettingFolderPath = "UserSetting";
                 AppLogger.Log_To_File_log(_category, () => $"非 Linux 環境，Data FolderPath 設定為: {_DataFolderPath}", AppLogLevel.Debug);
-                AppLogger.Log_To_File_log(_category, () => $"非 Linux 環境，UserSetting FolderPath 設定為: {_UserSettingFolderPath}", AppLogLevel.Debug);
             }
         }
         

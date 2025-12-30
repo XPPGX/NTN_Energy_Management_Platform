@@ -784,4 +784,13 @@
   <data name="BottomRow-Log" xml:space="preserve">
     <value>监测报告</value>
   </data>
+  <data name="Weather-Developing" xml:space="preserve">
+    <value>开发中</value>
+  </data>
+  <data name="Weather-ReturnToMainFramework" xml:space="preserve">
+    <value>返回主框架</value>
+  </data>
+  <data name="Weather-PageTitle" xml:space="preserve">
+    <value>开发中</value>
+  </data>
 </root>

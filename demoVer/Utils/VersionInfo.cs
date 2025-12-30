@@ -9,7 +9,7 @@ namespace demoVer.Utils
 		private const byte ExtVersion					= 0x01;							// 對外版：0x01=0.1、0x0A=1.0
 		private const byte CompatVersion				= 0x01;							// 相容版：通常 = ExtVersion
 		private const char BranchLetter					= 'G';							// 分支字母
-		private static readonly DateTime ReleaseDate	= new DateTime(2025, 11, 25);	// 發佈日期(UTC/本地都可，僅取年月日)
+		private static readonly DateTime ReleaseDate	= new DateTime(2025, 12, 30);	// 發佈日期(UTC/本地都可，僅取年月日)
 		private const byte IntraDaySeq					= 0;							// 當天序號 0..7
 		// ===============================================
 
