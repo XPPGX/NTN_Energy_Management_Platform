@@ -757,6 +757,9 @@
   <data name="TopRow-PredictiveMaintenance" xml:space="preserve">
     <value>Predictive Maintenance</value>
   </data>
+  <data name="TopRow-ShortcutSettings" xml:space="preserve">
+    <value>Shortcut Settings</value>
+  </data>
   <data name="TopRow-SwitchToLight" xml:space="preserve">
     <value>Switch to Light Mode</value>
   </data>

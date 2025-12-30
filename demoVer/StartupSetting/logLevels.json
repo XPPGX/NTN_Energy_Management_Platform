@@ -30,5 +30,6 @@
     "demoVer.Services.VersionFileService"       : 2,
     "demoVer.Services.StartupHostedService"     : 2,
     "demoVer.Services.NotificationService"      : 2,
+    "demoVer.Services.BottomRowConfig"          : 0,
     "demoVer.Utils.GetNowValueHelper"           : 2
 }

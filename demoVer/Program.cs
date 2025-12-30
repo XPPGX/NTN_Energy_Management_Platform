@@ -83,6 +83,8 @@ builder.Services.AddHostedService(sp => sp.GetRequiredService<PollingRead>());
 builder.Services.AddSingleton<CircuitsWatcher>();
 builder.Services.AddSingleton<CircuitHandler>(sp => sp.GetRequiredService<CircuitsWatcher>());
 
+builder.Services.AddSingleton<BottomRowConfig>();
+
 //根據作業系統自動切換 API Server IP 與 Port
 builder.Services.AddHttpClient("ApiClient", client =>
 {

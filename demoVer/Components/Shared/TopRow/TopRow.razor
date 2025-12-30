@@ -5,68 +5,25 @@
 @inject NavigationManager NavManager
 @using demoVer.Utils
 @using demoVer.Models
+@using demoVer.Components.Layout
 @inject IStringLocalizer<SharedResource> Localizer
 
 <div class="top-row">
     <div class="left-items">
-        <button class="topRow-btn" @onclick="toggleMenu">
+        <button class="topRow-btn mobile-hide" @onclick="toggleMenu" @onclick:stopPropagation="true">
             <!-- <i class="fas fa-th-large"></i> -->
-            <img src="@(IsDarkTheme ? "images/menu-forDark.png" : "images/menu-forLight.png")" alt="menu" class="iconBtn"/>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="iconBtn" style="stroke: @(IsDarkTheme ? "#ffffff" : "#000000");">
+                <path d="M3 12H15M3 6H21M3 18H21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
         </button>
-        @if(afterFirstRender_Flag)
-        {
-            if(!isMobile)
-            {
-                <div class="current_page_label">
-                    <div>@currentPage</div>
-                </div>
-            }
-        }
+        <div class="current_page_label mobile-hide">
+            <div>@currentPage</div>
+        </div>
 
         
         @if(menuOpen)
         {
-            <div class="dropdown-menu">
-                <button class="nav-link" @onclick="GoTo_NTN_HOME">@Localizer["TopRow-Home"]</button>
-
-                <button class="nav-link expandable" @onclick="Toggle_expand_sys_setting">
-                    <span>@Localizer["TopRow-SystemSettings"]</span>
-                    <span class="caret">▾</span>
-                </button>
-                @if(expand_sys_setting)
-                {
-                    <div class="sub-menu">
-                        <button class="nav-link" @onclick="GoTo_Battery_setting">@Localizer["TopRow-BatterySettings"]</button>
-                        <button class="nav-link" @onclick="GoTo_Inverter_setting">@Localizer["TopRow-InvSettings"]</button>
-                    </div>
-                }
-                
-                <button class="nav-link expandable" @onclick="Toggle_expand_management">
-                    <span>@Localizer["TopRow-ModelManagement"]</span>
-                    <span class="caret">▾</span>
-                </button>
-                @if(expand_management)
-                {
-                    <div class="sub-menu">
-                        <button class="nav-link" @onclick="GoTo_Link_status">@Localizer["TopRow-LinkStatus"]</button>
-                        <button class="nav-link" @onclick="GoTo_Log">@Localizer["TopRow-MonitoringReport"]</button>
-                    </div>
-                }
-
-                <button class="nav-link expandable" @onclick="Toggle_expand_AI_application">
-                    <span>@Localizer["TopRow-AIApplications"]</span>
-                    <span class="caret">▾</span>
-                </button>
-                @if(expand_AI_applicaiton)
-                {
-                    <div class="sub-menu">
-                        <button class="nav-link nav-link-inactive">@Localizer["TopRow-EfficiencyAnalysis"]</button>
-                        <button class="nav-link nav-link-inactive">@Localizer["TopRow-SmartPowerUsage"]</button>
-                        <button class="nav-link nav-link-inactive">@Localizer["TopRow-FailureAnalysis"]</button>
-                        <button class="nav-link nav-link-inactive">@Localizer["TopRow-PredictiveMaintenance"]</button>
-                    </div>
-                }
-            </div>
+            <MenuDropdown @bind-MenuOpen="menuOpen" PositionClass="dropdown-menu-below" />
         }
         <div class="current-tab">
             
@@ -120,7 +77,7 @@
 
             @* <BellIcon @ref="bellIconRef" IsDarkTheme="@IsDarkTheme" OnMenuOpened="@CloseMainMenu" /> *@
 
-            <BellNotification OnViewAllClicked="GoTo_Log" />
+            <BellNotification @ref="bellNotificationRef" OnViewAllClicked="GoTo_Log" />
         }
 
         <img src="images/logo.png" alt="logo" class="clickable-logo" @onclick="GoTo_Framework"/>
@@ -146,8 +103,14 @@
     private bool showEditBtn_Flag = false;
     private bool showAddBtn_Flag = false;
 
-    private bool IsDarkTheme { get; set; } = true; // 默認暗色主題
+    [CascadingParameter(Name = "IsDarkTheme")]
+    private bool IsDarkTheme { get; set; }
     @* private BellIcon? bellIconRef; *@
+
+    [CascadingParameter(Name = "MainLayout")]
+    private MainLayout? Layout { get; set; }
+
+    private BellNotification? bellNotificationRef;
 
     [Parameter] public EventCallback<bool> OnSendToParent {get; set;}
     [Parameter] public EventCallback InformParentTo_OpenAddCard {get; set;}
@@ -158,21 +121,7 @@
 
     private async Task ToggleTheme()
     {
-        IsDarkTheme = !IsDarkTheme;
-        await JS.InvokeVoidAsync("setThemePreference", IsDarkTheme);
-        
-        // 直接切換頁面主題
-        if (IsDarkTheme)
-        {
-            await JS.InvokeVoidAsync("document.body.classList.remove", "theme-light");
-        }
-        else
-        {
-            await JS.InvokeVoidAsync("document.body.classList.add", "theme-light");
-        }
-
-        // 重新渲染所有圖表以應用新主題
-        await JS.InvokeVoidAsync("redrawAllCharts");
+        await Layout?.ToggleTheme();
     }
 
     private async Task apply_INV_setting()
@@ -217,24 +166,6 @@
         {
             afterFirstRender_Flag = true;
             isMobile = await JS.InvokeAsync<bool>("checkIsMobile");
-            
-            // 從 localStorage 讀取主題偏好
-            var storedTheme = await JS.InvokeAsync<string>("getThemePreference");
-            if (!string.IsNullOrEmpty(storedTheme))
-            {
-                IsDarkTheme = storedTheme == "dark";
-                
-                // 直接應用主題
-                if (IsDarkTheme)
-                {
-                    await JS.InvokeVoidAsync("document.body.classList.remove", "theme-light");
-                }
-                else
-                {
-                    await JS.InvokeVoidAsync("document.body.classList.add", "theme-light");
-                }
-            }
-            
             StateHasChanged(); // 讓頁面更新
         }
     }
@@ -245,8 +176,13 @@
         if(menuOpen)
         {
             // 關閉通知選單
-            @* bellIconRef?.CloseNotification(); *@
+            @* bellNotificationRef?.CloseNotifications(); *@
         }
+    }
+
+    public void CloseNotifications()
+    {
+        bellNotificationRef?.CloseNotifications();
     }
 
     private void CloseMainMenu()
@@ -256,61 +192,6 @@
         {
             menuOpen = false;
         }
-    }
-    
-    private void Toggle_expand_management()
-    {
-        expand_management = !expand_management;
-    }
-
-    private void Toggle_expand_sys_setting()
-    {
-        expand_sys_setting = !expand_sys_setting;
-    }
-
-    private void Toggle_expand_AI_application()
-    {
-        expand_AI_applicaiton = !expand_AI_applicaiton;
-    }
-    @* private void GoTo_NTN_HOME()
-    {
-        NavManager.NavigateTo("/");
-    } *@
-
-    private void GoTo_NTN_HOME()
-    {
-        showEditBtn_Flag = false;
-        NavManager.NavigateTo("/");
-    }
-
-    private void GoTo_Battery_setting()
-    {
-        showEditBtn_Flag = false;
-        NavManager.NavigateTo("/Battery_setting");
-    }
-
-    private void GoTo_Inverter_setting()
-    {
-        showEditBtn_Flag = false;
-        NavManager.NavigateTo("/Inverter_setting");
-    }
-
-    private void GoTo_Link_status()
-    {
-        showEditBtn_Flag = false;
-        NavManager.NavigateTo("/Link_status");
-    }
-
-    private void GoTo_Log()
-    {
-        showEditBtn_Flag = false;
-        NavManager.NavigateTo("/Log");
-    }
-
-    private void GoTo_Use_strategy()
-    {
-        @* showEditBtn_Flag = false;
-        NavManager.NavigateTo("/Use_strategy"); *@
     }
 
     protected override void OnInitialized()
@@ -325,6 +206,12 @@
     private async Task GoTo_Framework()
     {
         await JS.InvokeVoidAsync("jumpToApp", 5039);
+    }
+
+    private void GoTo_Log()
+    {
+        showEditBtn_Flag = false;
+        NavManager.NavigateTo("/Log");
     }
 
     private bool IsPortInUse(string host, int port)
@@ -408,6 +295,11 @@
 
         menuOpen = false;
         StateHasChanged();
+    }
+
+    public void ToggleMenu()
+    {
+        toggleMenu();
     }
 
     public void Dispose()

@@ -55,10 +55,15 @@
             <div class="grid-col" style="@Grid(3, 3)">
                 <div class="grid-item">
                     <img src="@currentCard.Link_STATUS_Pairs[3].iconPath" alt="battery" style="width:48px; height:48px" @ref="battery"/>
+                </div>
+                
+                <div class="grid-label">@currentCard.Link_STATUS_Pairs[3].Label</div>
+            </div>
+            <div class="grid-col" style="@Grid(3, 4)">
+                <div class="grid-item-plain">
                     <BatteryInfoCard 
                         currentBAT_SOC="@currentBAT_SoC"/>
                 </div>
-                <div class="grid-label">@currentCard.Link_STATUS_Pairs[3].Label</div>
             </div>
             @if (arrowService.triGroup1.get_showArrowFlag())
             {
@@ -70,7 +75,6 @@
                     }
                 </div>
             }
-
             @if (arrowService.triGroup2.get_showArrowFlag())
             {
                 <div class="@arrowService.triGroup2.GetGroupClass()" style="@arrowService.triGroup2.GetGridAreaStyle()">

@@ -1,0 +1,18 @@
+[
+  {
+    "Route": "/",
+    "DisplayName": "Home"
+  },
+  {
+    "Route": "/Inverter_Setting",
+    "DisplayName": "INV"
+  },
+  {
+    "Route": "/Battery_Setting",
+    "DisplayName": "BAT"
+  },
+  {
+    "Route": "/Link_Status",
+    "DisplayName": "Linking"
+  }
+]

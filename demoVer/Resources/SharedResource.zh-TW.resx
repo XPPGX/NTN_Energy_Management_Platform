@@ -757,6 +757,9 @@
   <data name="TopRow-PredictiveMaintenance" xml:space="preserve">
     <value>預測維護</value>
   </data>
+  <data name="TopRow-ShortcutSettings" xml:space="preserve">
+    <value>快捷設定</value>
+  </data>
   <data name="TopRow-SwitchToLight" xml:space="preserve">
     <value>切換到亮色模式</value>
   </data>

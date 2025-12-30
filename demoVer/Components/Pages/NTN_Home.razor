@@ -115,7 +115,7 @@
 <!---------------------------------------->
 
 
-<div class="column-container" @onclick="HandleGlobalClick">
+<div class="column-container">
     
     <div id="sortable-modules" class="module-grid" @ref="ref_module_container">
         @foreach(var card in CardInfos)
@@ -623,11 +623,6 @@
     private void CloseAlert()
     {
         AlertMessage_parent = null;
-    }
-
-    private void HandleGlobalClick()
-    {
-        MainLayout?.HideTopRowMenu();
     }
 
     private void addCard(CardType selection)

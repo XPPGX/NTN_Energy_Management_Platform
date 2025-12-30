@@ -5,6 +5,10 @@
 @inject IStringLocalizer<SharedResource> Localizer
 
 <div class="bottom-row" role="navigation" aria-label="@Localizer["BottomRow-NavLabel"]">
+    @if (menuOpen)
+    {
+        <MenuDropdown @bind-MenuOpen="menuOpen" PositionClass="dropdown-menu-above" />
+    }
     <button type="button" class="bottomRow-btn" @onclick="GoHome" title="@Localizer["BottomRow-Home"]">
         <span class="bottomRow-label">@Localizer["BottomRow-Home"]</span>
     </button>
@@ -17,8 +21,13 @@
     <button type="button" class="bottomRow-btn" @onclick="GoLinkStatus" title="@Localizer["BottomRow-LinkStatus"]">
         <span class="bottomRow-label">@Localizer["BottomRow-LinkStatus"]</span>
     </button>
-    <button type="button" class="bottomRow-btn" @onclick="GoLog" title="@Localizer["BottomRow-Log"]">
+    @* <button type="button" class="bottomRow-btn" @onclick="GoLog" title="@Localizer["BottomRow-Log"]">
         <span class="bottomRow-label">@Localizer["BottomRow-Log"]</span>
+    </button> *@
+    <button type="button" class="bottomRow-btn" @onclick="ToggleMenu" @onclick:stopPropagation="true" title="Toggle Menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="iconBtn" style="stroke: @(IsDarkTheme ? "#ffffff" : "#000000");">
+            <path d="M3 12H15M3 6H21M3 18H21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
     </button>
 </div>
 
@@ -26,15 +35,46 @@
     [CascadingParameter(Name = "MainLayout")]
     private MainLayout? Layout { get; set; }
 
+    [CascadingParameter(Name = "IsDarkTheme")]
+    private bool IsDarkTheme { get; set; }
+
+    private bool menuOpen = false;
+
     private void GoHome() => NavigateTo("/");
     private void GoBattery() => NavigateTo("/Battery_setting");
     private void GoInverter() => NavigateTo("/Inverter_setting");
     private void GoLinkStatus() => NavigateTo("/Link_status");
     private void GoLog() => NavigateTo("/Log");
 
+    private void ToggleMenu()
+    {
+        menuOpen = !menuOpen;
+    }
+
     private void NavigateTo(string uri)
     {
-        Layout?.HideTopRowMenu();
+        Layout?.HideMenu();
         NavManager.NavigateTo(uri);
+    }
+
+    public void HideMenu()
+    {
+        Console.WriteLine($"[BottomRow][HideMenu] menuOpen = {menuOpen}");
+        if(menuOpen == false)
+        {
+            return;
+        }
+
+        menuOpen = false;
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // 主題由 MainLayout 管理，這裡不需要額外邏輯
+            StateHasChanged();
+        }
     }
 }

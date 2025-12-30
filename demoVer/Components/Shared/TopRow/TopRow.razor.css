@@ -1,6 +1,8 @@
 .top-row {
     /* background-color: var(--bg-secondary); */
     /* border-bottom: 1px solid var(--border-color); */
+    top: 0;
+    left: 0;
     background-color: #1f262A;
     border-bottom: 1px solid #C0C0C0;
     display: flex;
@@ -10,7 +12,7 @@
     align-items: center;
     width: 100%;
     height: 60px;
-    position: relative;
+    position: sticky;
     z-index: 100;
 }
 
@@ -237,7 +239,7 @@
 @media(max-width:1200px)
 {
     .top-row {
-        position: fixed;
+        position: static;
         top: 0;
         left: 0;
         
@@ -265,6 +267,9 @@
         display: block;            /* 去掉底下空白 */
     }
 
+    .mobile-hide{
+        display: none;
+    }
 }
 
 /* Tablet */

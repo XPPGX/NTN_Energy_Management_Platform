@@ -1,0 +1,60 @@
+/* MenuDropdown.razor.css */
+
+.dropdown-menu {
+    display: block !important; /* 覆蓋bootstrap的display:none */
+    position: absolute;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    padding: 6px 0;
+    min-width: 180px;
+    border-radius: 6px;
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dropdown-menu-below {
+    top: 100%;
+    left: 0;
+    margin-top: 4px;
+}
+
+.dropdown-menu-above {
+    bottom: 100%;
+    left: auto;
+    right: 0;
+    margin-bottom: 4px;
+}
+
+.dropdown-menu .nav-link {
+    display: block;
+    padding: 10px 14px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    background-color: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dropdown-menu .nav-link:hover {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.dropdown-menu .nav-link.nav-link-inactive {
+    color: var(--text-muted);
+    cursor: not-allowed;
+}
+
+.dropdown-menu .sub-menu {
+    padding-left: 20px;
+}
+
+.dropdown-menu .caret {
+    float: right;
+    margin-top: 2px;
+}

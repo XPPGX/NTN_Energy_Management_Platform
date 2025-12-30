@@ -3,36 +3,40 @@
 @using System
 @using System.Threading.Tasks
 @rendermode InteractiveServer
+@inject IJSRuntime JS
 <CascadingValue Value="this" Name="MainLayout">
-    <div class="page">
-        <main>
-            <TopRow @ref="_topRow"
-                    OnSendToParent="HandleTopRowEditModeChanged"
-                    InformParentTo_OpenAddCard="HandleTopRowRequestOpenAddCard"
-                    InformParentTo_SaveCardsInfo="HandleTopRowRequestSaveCardsInfo"
-                    InformParentTo_ApplySetting="HandleTopRowRequestApplySetting"
-                    InformParentTo_UseDefaultValue="HandleTopRowRequestUseDefaultValue" />
+    <CascadingValue Value="IsDarkTheme" Name="IsDarkTheme">
+        <div class="page" @onclick="HandleGlobalClick">
+            <main>
+                <TopRow @ref="_topRow"
+                        OnSendToParent="HandleTopRowEditModeChanged"
+                        InformParentTo_OpenAddCard="HandleTopRowRequestOpenAddCard"
+                        InformParentTo_SaveCardsInfo="HandleTopRowRequestSaveCardsInfo"
+                        InformParentTo_ApplySetting="HandleTopRowRequestApplySetting"
+                        InformParentTo_UseDefaultValue="HandleTopRowRequestUseDefaultValue" />
 
-            <!-- ✅ 確保 @Body 在 CascadingValue 裡 -->
-            <div class="content">
-                @Body
-            </div>
+                <!-- ✅ 確保 @Body 在 CascadingValue 裡 -->
+                <div class="content">
+                    @Body
+                </div>
 
-            <BottomRow />
-        </main>
-    </div>
+                <BottomRow @ref="_bottomRow" />
+            </main>
+        </div>
 
-    <div id="blazor-error-ui">
-        An unhandled error has occurred.
-        <a href="" class="reload">Reload</a>
-        <a class="dismiss">🗙</a>
-    </div>
+        <div id="blazor-error-ui">
+            An unhandled error has occurred.
+            <a href="" class="reload">Reload</a>
+            <a class="dismiss">🗙</a>
+        </div>
+    </CascadingValue>
 </CascadingValue>
 
 
 @code {
     //以下是 以MainLayout 為中介，讓 TopRow 與各 Page 溝通的相關程式碼
     private TopRow? _topRow;
+    private BottomRow? _bottomRow;
     private object? _topRowCallbacksOwner;
     private Func<bool, Task>? _onSendToParent;
     private Func<Task>? _onOpenAddCard;
@@ -40,9 +44,44 @@
     private Func<Task>? _onApplySetting;
     private Func<Task>? _onUseDefaultValue;
 
-    public void HideTopRowMenu()
+    public bool IsDarkTheme { get; private set; } = true; // 默認暗色主題
+
+    public void HideMenu()
     {
         _topRow?.HideMenu();
+        _bottomRow?.HideMenu();
+    }
+
+    public void HideNotifications()
+    {
+        _topRow?.CloseNotifications();
+    }
+
+    private void HandleGlobalClick()
+    {
+        Console.WriteLine("Test");
+        HideMenu();
+        HideNotifications();
+    }
+    public async Task ToggleTheme()
+    {
+        IsDarkTheme = !IsDarkTheme;
+        await JS.InvokeVoidAsync("setThemePreference", IsDarkTheme);
+        
+        // 直接切換頁面主題
+        if (IsDarkTheme)
+        {
+            await JS.InvokeVoidAsync("document.body.classList.remove", "theme-light");
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("document.body.classList.add", "theme-light");
+        }
+
+        // 重新渲染所有圖表以應用新主題
+        await JS.InvokeVoidAsync("redrawAllCharts");
+        
+        StateHasChanged(); // 通知子組件主題已改變
     }
 
     public void RegisterTopRowCallbacks(
@@ -118,6 +157,31 @@
         if (_onUseDefaultValue != null)
         {
             await _onUseDefaultValue.Invoke();
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // 從 localStorage 讀取主題偏好
+            var storedTheme = await JS.InvokeAsync<string>("getThemePreference");
+            if (!string.IsNullOrEmpty(storedTheme))
+            {
+                IsDarkTheme = storedTheme == "dark";
+                
+                // 直接應用主題
+                if (IsDarkTheme)
+                {
+                    await JS.InvokeVoidAsync("document.body.classList.remove", "theme-light");
+                }
+                else
+                {
+                    await JS.InvokeVoidAsync("document.body.classList.add", "theme-light");
+                }
+                
+                StateHasChanged(); // 讓頁面更新
+            }
         }
     }
 }

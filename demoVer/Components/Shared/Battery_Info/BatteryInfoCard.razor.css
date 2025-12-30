@@ -1,24 +1,23 @@
 .battery-info-card {
     position: absolute;
-    left: 70px;
+    left: 10%;
     top: 50%;
     transform: translateY(-50%);
-    background: #0f172a;
-    color: #e2e8f0;
-    border: 1px solid #1e293b;
+    border: 1px solid var(--info-card-border);
     border-radius: 8px;
     padding: 12px 14px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 6px 18px var(--info-card-shadow), inset 0 1px 0 var(--info-card-inset);
     min-width: 180px;
     z-index: 100;
+    background-color: var(--bg-secondary);
 }
 
 .battery-info-title {
-    font-weight: 700;
+    font-weight: 900;
     font-size: 14px;
     letter-spacing: 0.3px;
     margin-bottom: 8px;
-    color: #a5b4fc;
+    color: var(--accent-color);
 }
 
 .battery-info-row {
@@ -30,10 +29,11 @@
 }
 
 .battery-info-label {
-    color: #cbd5e1;
+    color: var(--text-secondary);
+    font-weight: 600;
 }
 
 .battery-info-value {
     font-weight: 600;
-    color: #f8fafc;
+    color: var(--text-primary);
 }

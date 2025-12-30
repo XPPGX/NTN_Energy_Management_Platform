@@ -1,0 +1,253 @@
+@page "/Shortcut_setting"
+
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+@inject NavigationManager NavManager
+@inject IStringLocalizer<SharedResource> Localizer
+
+@using demoVer.Components.Layout
+@using demoVer.Utils
+@using demoVer.Resources
+
+<PageTitle>@Localizer["TopRow-ShortcutSettings"]</PageTitle>
+
+<div class="shortcut-settings-page">
+    <div class="page-header">
+        <h1>@Localizer["TopRow-ShortcutSettings"]</h1>
+        <p>Customize the navigation shortcuts in the bottom row</p>
+    </div>
+
+    <div class="settings-container">
+        <div class="settings-paper">
+            <h2 class="section-title">Bottom Row Button Configuration</h2>
+            <p class="section-description">
+                Configure which page each bottom row button navigates to. Changes will be applied immediately.
+            </p>
+
+            <div class="button-configurations">
+                <!-- Button 1: Home -->
+                <div class="config-item">
+                    <div class="button-preview">
+                        <span class="button-label">Button 1</span>
+                    </div>
+                    <div class="config-controls">
+                        <div class="name-input-wrapper">
+                            <label class="input-label">Button Name</label>
+                            <input type="text" @bind="button1Name" class="custom-input" placeholder="Enter button name" />
+                        </div>
+                        <div class="select-wrapper">
+                            <label class="select-label">Navigate to</label>
+                            <select @bind="button1Target" class="custom-select">
+                                @foreach (var option in pageOptions)
+                                {
+                                    <option value="@option.Key">@option.Value</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Button 2: Battery -->
+                <div class="config-item">
+                    <div class="button-preview">
+                        <span class="button-label">Button 2</span>
+                    </div>
+                    <div class="config-controls">
+                        <div class="name-input-wrapper">
+                            <label class="input-label">Button Name</label>
+                            <input type="text" @bind="button2Name" class="custom-input" placeholder="Enter button name" />
+                        </div>
+                        <div class="select-wrapper">
+                            <label class="select-label">Navigate to</label>
+                            <select @bind="button2Target" class="custom-select">
+                                @foreach (var option in pageOptions)
+                                {
+                                    <option value="@option.Key">@option.Value</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Button 3: Inverter -->
+                <div class="config-item">
+                    <div class="button-preview">
+                        <span class="button-label">Button 3</span>
+                    </div>
+                    <div class="config-controls">
+                        <div class="name-input-wrapper">
+                            <label class="input-label">Button Name</label>
+                            <input type="text" @bind="button3Name" class="custom-input" placeholder="Enter button name" />
+                        </div>
+                        <div class="select-wrapper">
+                            <label class="select-label">Navigate to</label>
+                            <select @bind="button3Target" class="custom-select">
+                                @foreach (var option in pageOptions)
+                                {
+                                    <option value="@option.Key">@option.Value</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Button 4: Link Status -->
+                <div class="config-item">
+                    <div class="button-preview">
+                        <span class="button-label">Button 4</span>
+                    </div>
+                    <div class="config-controls">
+                        <div class="name-input-wrapper">
+                            <label class="input-label">Button Name</label>
+                            <input type="text" @bind="button4Name" class="custom-input" placeholder="Enter button name" />
+                        </div>
+                        <div class="select-wrapper">
+                            <label class="select-label">Navigate to</label>
+                            <select @bind="button4Target" class="custom-select">
+                                @foreach (var option in pageOptions)
+                                {
+                                    <option value="@option.Key">@option.Value</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button type="button" class="btn btn-primary" @onclick="SaveSettings">
+                    <span class="btn-icon"></span>
+                    Save Settings
+                </button>
+                <button type="button" class="btn btn-secondary" @onclick="ResetToDefault">
+                    <span class="btn-icon"></span>
+                    Reset to Default
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Section -->
+    <div class="preview-section">
+        <div class="preview-paper">
+            <h3 class="preview-title">Bottom Row Preview</h3>
+            <div class="bottom-row-preview">
+                <button type="button" class="preview-btn" @onclick="() => NavigateTo(button1Target)">
+                    <span>@button1Name</span>
+                </button>
+                <button type="button" class="preview-btn" @onclick="() => NavigateTo(button2Target)">
+                    <span>@button2Name</span>
+                </button>
+                <button type="button" class="preview-btn" @onclick="() => NavigateTo(button3Target)">
+                    <span>@button3Name</span>
+                </button>
+                <button type="button" class="preview-btn" @onclick="() => NavigateTo(button4Target)">
+                    <span>@button4Name</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    // Button target configurations (using fake data for now)
+    private string button1Target = "/"; // Default: Home
+    private string button2Target = "/Battery_setting"; // Default: Battery
+    private string button3Target = "/Inverter_setting"; // Default: Inverter
+    private string button4Target = "/Link_status"; // Default: Link Status
+
+    // Custom button names
+    private string button1Name = "Home";
+    private string button2Name = "Battery";
+    private string button3Name = "Inverter";
+    private string button4Name = "Link";
+
+    // Available page options
+    private Dictionary<string, string> pageOptions = new()
+    {
+        { "/", "NTN Home" },
+        { "/Battery_setting", "Battery Setting" },
+        { "/Inverter_setting", "Inverter Setting" },
+        { "/Link_status", "Link Status" },
+        { "/Log", "Monitoring Report" }
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        // TODO: Load saved settings from storage
+        await LoadSettings();
+    }
+
+    private async Task LoadSettings()
+    {
+        // Fake data loading - in real implementation, load from localStorage or API
+        try
+        {
+            var savedSettings = await JS.InvokeAsync<string>("localStorage.getItem", "bottomRowShortcuts");
+            if (!string.IsNullOrEmpty(savedSettings))
+            {
+                var settings = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(savedSettings);
+                if (settings != null)
+                {
+                    button1Target = settings.GetValueOrDefault("button1", "/");
+                    button2Target = settings.GetValueOrDefault("button2", "/Battery_setting");
+                    button3Target = settings.GetValueOrDefault("button3", "/Inverter_setting");
+                    button4Target = settings.GetValueOrDefault("button4", "/Link_status");
+                    button1Name = settings.GetValueOrDefault("button1Name", "Home");
+                    button2Name = settings.GetValueOrDefault("button2Name", "Battery");
+                    button3Name = settings.GetValueOrDefault("button3Name", "Inverter");
+                    button4Name = settings.GetValueOrDefault("button4Name", "Link");
+                }
+            }
+        }
+        catch
+        {
+            // Use default values if loading fails
+        }
+    }
+
+    private async Task SaveSettings()
+    {
+        // Fake data saving - in real implementation, save to localStorage or API
+        var settings = new Dictionary<string, string>
+        {
+            { "button1", button1Target },
+            { "button2", button2Target },
+            { "button3", button3Target },
+            { "button4", button4Target },
+            { "button1Name", button1Name },
+            { "button2Name", button2Name },
+            { "button3Name", button3Name },
+            { "button4Name", button4Name }
+        };
+
+        var json = System.Text.Json.JsonSerializer.Serialize(settings);
+        await JS.InvokeVoidAsync("localStorage.setItem", "bottomRowShortcuts", json);
+
+        // Show success message
+        await JS.InvokeVoidAsync("alert", "Settings saved successfully!");
+    }
+
+    private async Task ResetToDefault()
+    {
+        button1Target = "/";
+        button2Target = "/Battery_setting";
+        button3Target = "/Inverter_setting";
+        button4Target = "/Link_status";
+
+        await SaveSettings();
+    }
+
+    private void NavigateTo(string route)
+    {
+        if (!string.IsNullOrEmpty(route))
+        {
+            NavManager.NavigateTo(route);
+        }
+    }
+}
+
+
+
+

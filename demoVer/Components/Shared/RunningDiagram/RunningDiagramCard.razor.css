@@ -271,6 +271,14 @@
         border-radius: 50%;
         position: relative;
     }
+    .grid-item-plain {
+        width: 70px;
+        aspect-ratio: 1 / 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
     .grid-label{
         text-align: center;
         min-height: 40px;
