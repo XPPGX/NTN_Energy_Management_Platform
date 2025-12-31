@@ -8,7 +8,9 @@
 @using demoVer.Components.Layout
 @using demoVer.Utils
 @using demoVer.Resources
+@using demoVer.Services
 
+@inject BottomRowConfig BottomRowConfigService
 <PageTitle>@Localizer["TopRow-ShortcutSettings"]</PageTitle>
 
 <div class="shortcut-settings-page">
@@ -33,11 +35,11 @@
                     <div class="config-controls">
                         <div class="name-input-wrapper">
                             <label class="input-label">Button Name</label>
-                            <input type="text" @bind="button1Name" class="custom-input" placeholder="Enter button name" />
+                            <input type="text" @bind="Local_BottomRowItems_List[0].DisplayName" class="custom-input" placeholder="Enter button name" maxlength="@BottomRowConfig._MaxDisplayNameLength" />
                         </div>
                         <div class="select-wrapper">
                             <label class="select-label">Navigate to</label>
-                            <select @bind="button1Target" class="custom-select">
+                            <select @bind="Local_BottomRowItems_List[0].Route" class="custom-select">
                                 @foreach (var option in pageOptions)
                                 {
                                     <option value="@option.Key">@option.Value</option>
@@ -55,11 +57,11 @@
                     <div class="config-controls">
                         <div class="name-input-wrapper">
                             <label class="input-label">Button Name</label>
-                            <input type="text" @bind="button2Name" class="custom-input" placeholder="Enter button name" />
+                            <input type="text" @bind="Local_BottomRowItems_List[1].DisplayName" class="custom-input" placeholder="Enter button name" maxlength="@BottomRowConfig._MaxDisplayNameLength" />
                         </div>
                         <div class="select-wrapper">
                             <label class="select-label">Navigate to</label>
-                            <select @bind="button2Target" class="custom-select">
+                            <select @bind="Local_BottomRowItems_List[1].Route" class="custom-select">
                                 @foreach (var option in pageOptions)
                                 {
                                     <option value="@option.Key">@option.Value</option>
@@ -77,11 +79,11 @@
                     <div class="config-controls">
                         <div class="name-input-wrapper">
                             <label class="input-label">Button Name</label>
-                            <input type="text" @bind="button3Name" class="custom-input" placeholder="Enter button name" />
+                            <input type="text" @bind="Local_BottomRowItems_List[2].DisplayName" class="custom-input" placeholder="Enter button name" maxlength="@BottomRowConfig._MaxDisplayNameLength" />
                         </div>
                         <div class="select-wrapper">
                             <label class="select-label">Navigate to</label>
-                            <select @bind="button3Target" class="custom-select">
+                            <select @bind="Local_BottomRowItems_List[2].Route" class="custom-select">
                                 @foreach (var option in pageOptions)
                                 {
                                     <option value="@option.Key">@option.Value</option>
@@ -99,11 +101,11 @@
                     <div class="config-controls">
                         <div class="name-input-wrapper">
                             <label class="input-label">Button Name</label>
-                            <input type="text" @bind="button4Name" class="custom-input" placeholder="Enter button name" />
+                            <input type="text" @bind="Local_BottomRowItems_List[3].DisplayName" class="custom-input" placeholder="Enter button name" maxlength="@BottomRowConfig._MaxDisplayNameLength" />
                         </div>
                         <div class="select-wrapper">
                             <label class="select-label">Navigate to</label>
-                            <select @bind="button4Target" class="custom-select">
+                            <select @bind="Local_BottomRowItems_List[3].Route" class="custom-select">
                                 @foreach (var option in pageOptions)
                                 {
                                     <option value="@option.Key">@option.Value</option>
@@ -115,12 +117,18 @@
             </div>
 
             <div class="action-buttons">
-                <button type="button" class="btn btn-primary" @onclick="SaveSettings">
-                    <span class="btn-icon"></span>
+                <button type="button" class="btn btn-primary" @onclick="() => ShowConfirmModal(ModalType.Save)">
+                    @if (isSaving)
+                    {
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    }
                     Save Settings
                 </button>
-                <button type="button" class="btn btn-secondary" @onclick="ResetToDefault">
-                    <span class="btn-icon"></span>
+                <button type="button" class="btn btn-secondary" @onclick="() => ShowConfirmModal(ModalType.Reset)">
+                    @if (isResetting)
+                    {
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    }
                     Reset to Default
                 </button>
             </div>
@@ -132,111 +140,241 @@
         <div class="preview-paper">
             <h3 class="preview-title">Bottom Row Preview</h3>
             <div class="bottom-row-preview">
-                <button type="button" class="preview-btn" @onclick="() => NavigateTo(button1Target)">
-                    <span>@button1Name</span>
+                <button type="button" class="preview-btn" @onclick="() => NavigateTo(preview_BottomRowItems_List[0].Route)">
+                    <span>@preview_BottomRowItems_List[0].DisplayName</span>
                 </button>
-                <button type="button" class="preview-btn" @onclick="() => NavigateTo(button2Target)">
-                    <span>@button2Name</span>
+                <button type="button" class="preview-btn" @onclick="() => NavigateTo(preview_BottomRowItems_List[1].Route)">
+                    <span>@preview_BottomRowItems_List[1].DisplayName</span>
                 </button>
-                <button type="button" class="preview-btn" @onclick="() => NavigateTo(button3Target)">
-                    <span>@button3Name</span>
+                <button type="button" class="preview-btn" @onclick="() => NavigateTo(preview_BottomRowItems_List[2].Route)">
+                    <span>@preview_BottomRowItems_List[2].DisplayName</span>
                 </button>
-                <button type="button" class="preview-btn" @onclick="() => NavigateTo(button4Target)">
-                    <span>@button4Name</span>
+                <button type="button" class="preview-btn" @onclick="() => NavigateTo(preview_BottomRowItems_List[3].Route)">
+                    <span>@preview_BottomRowItems_List[3].DisplayName</span>
                 </button>
             </div>
         </div>
     </div>
 </div>
 
+<!-- 頂部消息提示 -->
+@if (showToast)
+{
+    <div class="toast-container">
+        <div class="toast show @toastType">
+            <div class="toast-content">
+                <span class="toast-icon">@(toastType == "success" ? "✓" : "ℹ")</span>
+                <span class="toast-message">@toastMessage</span>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- 確認對話框 Modal -->
+@if (showModal)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" style="display: block;" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@modalTitle</h5>
+                    <button type="button" class="btn-close" @onclick="CloseModal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>@modalMessage</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseModal">取消</button>
+                    <button type="button" class="btn btn-primary" @onclick="ConfirmAction">確定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
-    // Button target configurations (using fake data for now)
-    private string button1Target = "/"; // Default: Home
-    private string button2Target = "/Battery_setting"; // Default: Battery
-    private string button3Target = "/Inverter_setting"; // Default: Inverter
-    private string button4Target = "/Link_status"; // Default: Link Status
+    // Modal 相關狀態
+    private bool showModal = false;
+    private string modalTitle = "";
+    private string modalMessage = "";
+    private ModalType currentModalType;
+    private bool isSaving = false;
+    private bool isResetting = false;
 
-    // Custom button names
-    private string button1Name = "Home";
-    private string button2Name = "Battery";
-    private string button3Name = "Inverter";
-    private string button4Name = "Link";
+    // Toast 消息相關狀態
+    private bool showToast = false;
+    private string toastMessage = "";
+    private string toastType = "success"; // success, info, error
+    private System.Threading.Timer? toastTimer;
 
-    // Available page options
-    private Dictionary<string, string> pageOptions = new()
+    private enum ModalType
     {
-        { "/", "NTN Home" },
-        { "/Battery_setting", "Battery Setting" },
-        { "/Inverter_setting", "Inverter Setting" },
-        { "/Link_status", "Link Status" },
-        { "/Log", "Monitoring Report" }
+        Save,
+        Reset
+    }
+    
+    private List<BottomRowItem> Local_BottomRowItems_List = new List<BottomRowItem>()
+    {
+        //預防Initialization還沒完成時，渲染畫面使用會 Index Out of Range
+        new BottomRowItem(){Route = "/", DisplayName="Home"},
+        new BottomRowItem(){Route = "/", DisplayName="Home"},
+        new BottomRowItem(){Route = "/", DisplayName="Home"},
+        new BottomRowItem(){Route = "/", DisplayName="Home"},
     };
+
+    private List<BottomRowItem> preview_BottomRowItems_List = new List<BottomRowItem>()
+    {
+        //預防Initialization還沒完成時，渲染畫面使用會 Index Out of Range
+        new BottomRowItem(){Route = "/", DisplayName="Home"},
+        new BottomRowItem(){Route = "/", DisplayName="Home"},
+        new BottomRowItem(){Route = "/", DisplayName="Home"},
+        new BottomRowItem(){Route = "/", DisplayName="Home"},
+    };
+    private Dictionary<string, string> pageOptions = new Dictionary<string, string>();
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        // TODO: Load saved settings from storage
-        await LoadSettings();
+        Load_Basic_Data_From_Service();
     }
 
-    private async Task LoadSettings()
+    private void Load_Basic_Data_From_Service()
     {
-        // Fake data loading - in real implementation, load from localStorage or API
-        try
+        //初始化:使用者設定區塊
+        Local_BottomRowItems_List = BottomRowConfigService.Get_UserDefinedList_snapshot();
+        
+        //初始化:預覽區塊
+        preview_BottomRowItems_List = BottomRowConfigService.Get_UserDefinedList_snapshot();
+        
+        //初始化:可選頁面清單
+        pageOptions = BottomRowConfigService.Get_FixedRouteToKeyMapping_snapshot();
+    }
+
+    // 顯示 Toast 消息
+    private void ShowToast(string message, string type = "success")
+    {
+        toastMessage = message;
+        toastType = type;
+        showToast = true;
+        StateHasChanged();
+
+        // 3秒後自動隱藏
+        toastTimer?.Dispose();
+        toastTimer = new System.Threading.Timer(_ =>
         {
-            var savedSettings = await JS.InvokeAsync<string>("localStorage.getItem", "bottomRowShortcuts");
-            if (!string.IsNullOrEmpty(savedSettings))
+            InvokeAsync(() =>
             {
-                var settings = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(savedSettings);
-                if (settings != null)
-                {
-                    button1Target = settings.GetValueOrDefault("button1", "/");
-                    button2Target = settings.GetValueOrDefault("button2", "/Battery_setting");
-                    button3Target = settings.GetValueOrDefault("button3", "/Inverter_setting");
-                    button4Target = settings.GetValueOrDefault("button4", "/Link_status");
-                    button1Name = settings.GetValueOrDefault("button1Name", "Home");
-                    button2Name = settings.GetValueOrDefault("button2Name", "Battery");
-                    button3Name = settings.GetValueOrDefault("button3Name", "Inverter");
-                    button4Name = settings.GetValueOrDefault("button4Name", "Link");
-                }
-            }
-        }
-        catch
+                showToast = false;
+                StateHasChanged();
+            });
+        }, null, 3000, Timeout.Infinite);
+    }
+
+    // 顯示確認對話框
+    private void ShowConfirmModal(ModalType type)
+    {
+        currentModalType = type;
+        showModal = true;
+        
+        switch (type)
         {
-            // Use default values if loading fails
+            case ModalType.Save:
+                modalTitle = "確認儲存";
+                modalMessage = "確定要儲存嗎？";
+                break;
+            case ModalType.Reset:
+                modalTitle = "確認還原";
+                modalMessage = "確定要還原預設嗎？";
+                break;
+        }
+        
+        StateHasChanged();
+    }
+
+    // 關閉對話框
+    private void CloseModal()
+    {
+        showModal = false;
+        StateHasChanged();
+    }
+
+    // 確認操作
+    private async Task ConfirmAction()
+    {
+        showModal = false;
+        StateHasChanged();
+        
+        switch (currentModalType)
+        {
+            case ModalType.Save:
+                await SaveSettings();
+                break;
+            case ModalType.Reset:
+                await ResetToDefault();
+                break;
         }
     }
 
     private async Task SaveSettings()
     {
-        // Fake data saving - in real implementation, save to localStorage or API
-        var settings = new Dictionary<string, string>
+        isSaving = true;
+        StateHasChanged();
+        
+        try
         {
-            { "button1", button1Target },
-            { "button2", button2Target },
-            { "button3", button3Target },
-            { "button4", button4Target },
-            { "button1Name", button1Name },
-            { "button2Name", button2Name },
-            { "button3Name", button3Name },
-            { "button4Name", button4Name }
-        };
+            // 模擬處理時間(如果處理太快)
+            await Task.Delay(500);
+            
+            //將UI設定寫進Service記憶體，並存檔於硬碟
+            var result = BottomRowConfigService.UpdateAndSave(Local_BottomRowItems_List);
+            if(result != ConfigResult.Success)
+            {
+                //跳個警告視窗 : 失敗了請稍後再試
+                ShowToast("儲存失敗，請稍後再試", "error");
+                return;
+            }
 
-        var json = System.Text.Json.JsonSerializer.Serialize(settings);
-        await JS.InvokeVoidAsync("localStorage.setItem", "bottomRowShortcuts", json);
-
-        // Show success message
-        await JS.InvokeVoidAsync("alert", "Settings saved successfully!");
+            //若成功，同步更新預覽區塊
+            preview_BottomRowItems_List = BottomRowConfigService.Get_UserDefinedList_snapshot();
+            ShowToast("設定已成功儲存！", "success");
+        }
+        finally
+        {
+            isSaving = false;
+            StateHasChanged();
+        }
     }
 
     private async Task ResetToDefault()
     {
-        button1Target = "/";
-        button2Target = "/Battery_setting";
-        button3Target = "/Inverter_setting";
-        button4Target = "/Link_status";
+        isResetting = true;
+        StateHasChanged();
+        
+        try
+        {
+            // 模擬處理時間(如果操作太快)
+            await Task.Delay(500);
+            
+            //將Service內的設定重設為預設值
+            BottomRowConfigService.DefaultAndSave();
 
-        await SaveSettings();
+            //初始化:使用者設定區塊
+            Local_BottomRowItems_List = BottomRowConfigService.Get_UserDefinedList_snapshot();
+            //初始化:預覽區塊
+            preview_BottomRowItems_List = BottomRowConfigService.Get_UserDefinedList_snapshot();
+            ShowToast("已還原為預設設定！", "success");
+        }
+        finally
+        {
+            isResetting = false;
+            StateHasChanged();
+        }
+    }
+
+    public void Dispose()
+    {
+        toastTimer?.Dispose();
     }
 
     private void NavigateTo(string route)

@@ -5,11 +5,14 @@ using System.Runtime.InteropServices;
 using System;
 using MudBlazor;
 
+using System.Collections.Immutable;
+using demoVer.Shared;
+
 namespace demoVer.Services
 {
     public class BottomRowConfig
     {
-        private const int _MaxDisplayNameLength = 7;
+        public const int _MaxDisplayNameLength = 7;
         private const int _MaxItemCount = 4;
         private string _category = "";
 
@@ -19,15 +22,22 @@ namespace demoVer.Services
         private string _fileName = string.Empty; // Set in SetPath()
         private string _fullPath = string.Empty; // Set in SetPath()
 
-        public event EventHandler? OnConfigChanged;        
-        private Dictionary<string, string> Mapping_Key_To_Route_Fixed {get; set;} = new Dictionary<string, string>()
+        public event EventHandler? OnConfigChanged;
+
+        /// <summary>
+        /// 這邊寫各模組用到的 key => route 對照表
+        /// key : 要給使用者看的頁面名稱，讓使用者選擇，比如 "NTN_Home", "INV_Setting"
+        /// route : 實際的頁面路由，比如 "/", "/Inverter_Setting
+        /// 這個字典初始化後不可修改!!!!
+        /// </summary>
+        private ImmutableDictionary<string, string> FixedRouteToKeyMapping {get; } = ImmutableDictionary.CreateRange(new Dictionary<string, string>()
         {
-            {"NTN_Home", "/"},
-            {"INV_Setting", "/Inverter_Setting"},
-            {"BAT_Setting", "/Battery_Setting"},
-            {"Link_Status", "/Link_Status"},
-            {"Log", "/Log"},
-        };
+            {"/", "NTN_Home"},
+            {"/Battery_Setting", "BAT_Setting"},
+            {"/Inverter_Setting", "INV_Setting"},
+            {"/Link_Status", "Link_Status"},
+            {"/Log", "Log"},
+        });
         private List<BottomRowItem> List_UserDefined {get; set;} = new List<BottomRowItem>(_MaxItemCount);
         
         public BottomRowConfig()
@@ -39,6 +49,15 @@ namespace demoVer.Services
             }
         }
         
+        /// <summary>
+        /// 初始化流程如下:
+        /// 1. 設定路徑
+        /// 2. 從檔案讀取設定，成功則結束
+        /// 
+        /// 3. 若讀取失敗則使用預設值
+        /// 4. 若使用預設值則寫入檔案
+        /// 5. 廣播設定已變更事件
+        /// </summary>
         public void Init()
         {
             try
@@ -64,9 +83,6 @@ namespace demoVer.Services
 
                 //4. Notify Config Changed
                 OnConfigChanged?.Invoke(this, EventArgs.Empty);
-
-                //Debug
-                Debug();
             }
             catch(Exception ex)
             {
@@ -124,18 +140,34 @@ namespace demoVer.Services
             }
         }
 
-        private void WriteJsonFile<T>(string filePath, T content)
+        private ConfigResult WriteJsonFile<T>(string filePath, T content)
         {
-            var directory = Path.GetDirectoryName(filePath);
-            if (!string.IsNullOrEmpty(directory))
+            try
             {
-                Directory.CreateDirectory(directory);
-            }
+                var directory = Path.GetDirectoryName(filePath);
+                if (!string.IsNullOrEmpty(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
 
-            var options = new JsonSerializerOptions { WriteIndented = true };
-            File.WriteAllText(filePath, JsonSerializer.Serialize(content, options));
+                var options = new JsonSerializerOptions { WriteIndented = true };
+                File.WriteAllText(filePath, JsonSerializer.Serialize(content, options));
+                return ConfigResult.Success;
+            }
+            catch(Exception ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"WriteJsonFile 發生未預期錯誤。Exception: {ex}", AppLogLevel.Error);
+                return ConfigResult.FileWriteError;
+            }
         }
 
+        /// <summary>
+        /// List_UserDefined 的單一項目更新
+        /// </summary>
+        /// <param name="index">第幾個element</param>
+        /// <param name="Route">跳轉路徑</param>
+        /// <param name="DisplayName">User設定的顯示名稱</param>
+        /// <returns>回傳enum錯誤代碼</returns>
         public ConfigResult UpdateOneItem(int index, string Route, string DisplayName)
         {
             if(index < 0 || index >= _MaxItemCount)
@@ -161,7 +193,41 @@ namespace demoVer.Services
             }
         }
         
+        public ConfigResult UpdateAllItem(List<BottomRowItem> newList)
+        {
+            try
+            {
+                //1. Check element count
+                if(newList.Count != _MaxItemCount)
+                {
+                    return ConfigResult.OverListCount;
+                }
 
+                //2. Update each item
+                ConfigResult res;
+                res = UpdateOneItem(0, newList[0].Route, newList[0].DisplayName);
+                if(res != ConfigResult.Success) return res;
+                res = UpdateOneItem(1, newList[1].Route, newList[1].DisplayName);
+                if(res != ConfigResult.Success) return res;
+                res = UpdateOneItem(2, newList[2].Route, newList[2].DisplayName);
+                if(res != ConfigResult.Success) return res;
+                res = UpdateOneItem(3, newList[3].Route, newList[3].DisplayName);
+                if(res != ConfigResult.Success) return res;
+
+                return ConfigResult.Success;
+            }
+            catch(Exception ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"UpdateListItem 發生未預期錯誤。Exception: {ex}", AppLogLevel.Error);
+                return ConfigResult.UnknownError;   
+            }
+        }
+
+        /// <summary>
+        /// 要改預設值請在這裡修改
+        /// Default Config:
+        /// List[0] : Route = "/", DisplayName = "Home"
+        /// </summary>
         public void DefaultConfig()
         {
             ConfigResult res; //just using for checking whether success or not in each step
@@ -172,14 +238,61 @@ namespace demoVer.Services
             res = UpdateOneItem(3, "/Link_Status", "Linking");
         }
 
+        public Dictionary<string, string> Get_FixedRouteToKeyMapping_snapshot()
+        {
+            return FixedRouteToKeyMapping.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+        }
+
+        public List<BottomRowItem> Get_UserDefinedList_snapshot()
+        {
+            // 深拷贝：创建新的 BottomRowItem 对象，而不是引用同一个对象
+            return List_UserDefined.Select(item => new BottomRowItem 
+            { 
+                Route = item.Route, 
+                DisplayName = item.DisplayName 
+            }).ToList();
+        }
         
+        public ConfigResult UpdateAndSave(List<BottomRowItem> newList)
+        {
+            ConfigResult res = UpdateAllItem(newList);
+            if(res != ConfigResult.Success)
+            {
+                return res;
+            }
+
+            res = WriteJsonFile(_fullPath, List_UserDefined);
+            
+            if(res == ConfigResult.Success)
+            {
+                // 触发配置变更事件
+                OnConfigChanged?.Invoke(this, EventArgs.Empty);
+            }
+            
+            return res;
+        }
+        public ConfigResult DefaultAndSave()
+        {
+            DefaultConfig();
+            ConfigResult res = WriteJsonFile(_fullPath, List_UserDefined);
+            
+            if(res == ConfigResult.Success)
+            {
+                // 触发配置变更事件
+                OnConfigChanged?.Invoke(this, EventArgs.Empty);
+            }
+            
+            return res;
+        }
         private void Debug()
         {
             foreach(var item in List_UserDefined)
             {
-                Console.WriteLine($"Route: {item.Route}, DisplayName: {item.DisplayName}");
+                Console.WriteLine($"Route: {item.Route}         | DisplayName: {item.DisplayName}");
             }
         }
+    
+        
     }
 
     public class BottomRowItem
@@ -195,6 +308,7 @@ namespace demoVer.Services
         FileContentError = 2,
         OverListCount = 3, //List.Count = 4
         OverStringLength = 4, //DisplayName Length should be <= 7
+        FileWriteError = 5,
         UnknownError = -99,
     }
 }

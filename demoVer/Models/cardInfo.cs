@@ -9,6 +9,7 @@ namespace demoVer.Models
         LINK_STATUS     = 4,
         LOG             = 5,
         USE_STRATEGY    = 6,
+        SHORTCUT_SETTING = 7,
     }
 
     public enum CardType

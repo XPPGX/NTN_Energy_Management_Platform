@@ -89,6 +89,8 @@ namespace demoVer.Services
         
         public Task EnableAsync()
         {
+            //[Debug時]註解掉以下2行即可擋住PollingRead啟動
+
             _enabled = true;
             if(_startGate.CurrentCount == 0) _startGate.Release();
             return Task.CompletedTask;

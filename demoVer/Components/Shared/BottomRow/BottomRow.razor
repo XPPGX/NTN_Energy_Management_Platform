@@ -1,29 +1,25 @@
 @namespace demoVer.Shared
 @using demoVer.Components.Layout
+@using demoVer.Services
 @using Microsoft.AspNetCore.Components
+@implements IDisposable
+
 @inject NavigationManager NavManager
 @inject IStringLocalizer<SharedResource> Localizer
+@inject BottomRowConfig BottomRowConfigService
 
 <div class="bottom-row" role="navigation" aria-label="@Localizer["BottomRow-NavLabel"]">
     @if (menuOpen)
     {
         <MenuDropdown @bind-MenuOpen="menuOpen" PositionClass="dropdown-menu-above" />
     }
-    <button type="button" class="bottomRow-btn" @onclick="GoHome" title="@Localizer["BottomRow-Home"]">
-        <span class="bottomRow-label">@Localizer["BottomRow-Home"]</span>
-    </button>
-    <button type="button" class="bottomRow-btn" @onclick="GoBattery" title="@Localizer["BottomRow-Battery"]">
-        <span class="bottomRow-label">@Localizer["BottomRow-Battery"]</span>
-    </button>
-    <button type="button" class="bottomRow-btn" @onclick="GoInverter" title="@Localizer["BottomRow-Inverter"]">
-        <span class="bottomRow-label">@Localizer["BottomRow-Inverter"]</span>
-    </button>
-    <button type="button" class="bottomRow-btn" @onclick="GoLinkStatus" title="@Localizer["BottomRow-LinkStatus"]">
-        <span class="bottomRow-label">@Localizer["BottomRow-LinkStatus"]</span>
-    </button>
-    @* <button type="button" class="bottomRow-btn" @onclick="GoLog" title="@Localizer["BottomRow-Log"]">
-        <span class="bottomRow-label">@Localizer["BottomRow-Log"]</span>
-    </button> *@
+    @for (int i = 0; i < bottomRowItems.Count; i++)
+    {
+        var item = bottomRowItems[i];
+        <button type="button" class="bottomRow-btn" @onclick="@(() => NavigateTo(item.Route))" title="@item.DisplayName">
+            <span class="bottomRow-label">@item.DisplayName</span>
+        </button>
+    }
     <button type="button" class="bottomRow-btn" @onclick="ToggleMenu" @onclick:stopPropagation="true" title="Toggle Menu">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="iconBtn" style="stroke: @(IsDarkTheme ? "#ffffff" : "#000000");">
             <path d="M3 12H15M3 6H21M3 18H21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -39,12 +35,27 @@
     private bool IsDarkTheme { get; set; }
 
     private bool menuOpen = false;
+    private List<BottomRowItem> bottomRowItems = new List<BottomRowItem>();
 
-    private void GoHome() => NavigateTo("/");
-    private void GoBattery() => NavigateTo("/Battery_setting");
-    private void GoInverter() => NavigateTo("/Inverter_setting");
-    private void GoLinkStatus() => NavigateTo("/Link_status");
-    private void GoLog() => NavigateTo("/Log");
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        LoadBottomRowItems();
+        
+        // 订阅配置变更事件
+        BottomRowConfigService.OnConfigChanged += HandleConfigChanged;
+    }
+
+    private void LoadBottomRowItems()
+    {
+        bottomRowItems = BottomRowConfigService.Get_UserDefinedList_snapshot();
+    }
+
+    private void HandleConfigChanged(object? sender, EventArgs e)
+    {
+        LoadBottomRowItems();
+        InvokeAsync(StateHasChanged);
+    }
 
     private void ToggleMenu()
     {
@@ -76,5 +87,10 @@
             // 主題由 MainLayout 管理，這裡不需要額外邏輯
             StateHasChanged();
         }
+    }
+
+    public void Dispose()
+    {
+        BottomRowConfigService.OnConfigChanged -= HandleConfigChanged;
     }
 }
