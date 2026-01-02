@@ -1,34 +1,40 @@
 ﻿@inherits LayoutComponentBase
 @using demoVer.Shared
+@using demoVer.Models
 @using System
 @using System.Threading.Tasks
 @rendermode InteractiveServer
 @inject IJSRuntime JS
+@inject NavigationManager NavManager
+@implements IDisposable
+
 <CascadingValue Value="this" Name="MainLayout">
     <CascadingValue Value="IsDarkTheme" Name="IsDarkTheme">
-        <div class="page" @onclick="HandleGlobalClick">
-            <main>
-                <TopRow @ref="_topRow"
-                        OnSendToParent="HandleTopRowEditModeChanged"
-                        InformParentTo_OpenAddCard="HandleTopRowRequestOpenAddCard"
-                        InformParentTo_SaveCardsInfo="HandleTopRowRequestSaveCardsInfo"
-                        InformParentTo_ApplySetting="HandleTopRowRequestApplySetting"
-                        InformParentTo_UseDefaultValue="HandleTopRowRequestUseDefaultValue" />
+        <CascadingValue Value="CurrentPage" Name="CurrentPage">
+            <div class="page" @onclick="HandleGlobalClick">
+                <main>
+                    <TopRow @ref="_topRow"
+                            OnSendToParent="HandleTopRowEditModeChanged"
+                            InformParentTo_OpenAddCard="HandleTopRowRequestOpenAddCard"
+                            InformParentTo_SaveCardsInfo="HandleTopRowRequestSaveCardsInfo"
+                            InformParentTo_ApplySetting="HandleTopRowRequestApplySetting"
+                            InformParentTo_UseDefaultValue="HandleTopRowRequestUseDefaultValue" />
 
-                <!-- ✅ 確保 @Body 在 CascadingValue 裡 -->
-                <div class="content">
-                    @Body
-                </div>
+                    <!-- ✅ 確保 @Body 在 CascadingValue 裡 -->
+                    <div class="content">
+                        @Body
+                    </div>
 
-                <BottomRow @ref="_bottomRow" />
-            </main>
-        </div>
+                    <BottomRow @ref="_bottomRow" />
+                </main>
+            </div>
 
-        <div id="blazor-error-ui">
-            An unhandled error has occurred.
-            <a href="" class="reload">Reload</a>
-            <a class="dismiss">🗙</a>
-        </div>
+            <div id="blazor-error-ui">
+                An unhandled error has occurred.
+                <a href="" class="reload">Reload</a>
+                <a class="dismiss">🗙</a>
+            </div>
+        </CascadingValue>
     </CascadingValue>
 </CascadingValue>
 
@@ -45,6 +51,39 @@
     private Func<Task>? _onUseDefaultValue;
 
     public bool IsDarkTheme { get; private set; } = true; // 默認暗色主題
+    public PAGE CurrentPage { get; private set; } = PAGE.HOME;
+
+    protected override void OnInitialized()
+    {
+        // Initialize current page
+        UpdateCurrentPage();
+        
+        // Subscribe to navigation events
+        NavManager.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        UpdateCurrentPage();
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void UpdateCurrentPage()
+    {
+        var currentRoute = NavManager.ToBaseRelativePath(NavManager.Uri);
+        
+        CurrentPage = currentRoute switch
+        {
+            "" => PAGE.HOME,
+            "Battery_setting" => PAGE.BATTERY_SETTING,
+            "Inverter_setting" => PAGE.INV_SETTING,
+            "Link_status" => PAGE.LINK_STATUS,
+            "Log" => PAGE.LOG,
+            "Use_strategy" => PAGE.USE_STRATEGY,
+            "Shortcut_setting" => PAGE.SHORTCUT_SETTING,
+            _ => PAGE.HOME
+        };
+    }
 
     public void HideMenu()
     {
@@ -183,5 +222,10 @@
                 StateHasChanged(); // 讓頁面更新
             }
         }
+    }
+
+    public void Dispose()
+    {
+        NavManager.LocationChanged -= OnLocationChanged;
     }
 }

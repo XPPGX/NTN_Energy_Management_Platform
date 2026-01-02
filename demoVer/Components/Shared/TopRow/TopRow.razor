@@ -88,7 +88,6 @@
 @code{
 
     private bool local_debug = true;
-    private PAGE Page_index;
     private bool isMobile;
     private bool afterFirstRender_Flag = false;
     private bool menuOpen = false;
@@ -105,6 +104,10 @@
 
     [CascadingParameter(Name = "IsDarkTheme")]
     private bool IsDarkTheme { get; set; }
+    
+    [CascadingParameter(Name = "CurrentPage")]
+    private PAGE Page_index { get; set; }
+    
     @* private BellIcon? bellIconRef; *@
 
     [CascadingParameter(Name = "MainLayout")]
@@ -210,8 +213,7 @@
 
     private void GoTo_Log()
     {
-        showEditBtn_Flag = false;
-        NavManager.NavigateTo("/Log");
+        NavManager.NavigateTo("/Log", forceLoad: false);
     }
 
     private bool IsPortInUse(string host, int port)
@@ -231,7 +233,7 @@
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
         UpdatePageLabel();
-        StateHasChanged();
+        InvokeAsync(StateHasChanged); // 確保 UI 更新
     }
 
     private void UpdatePageLabel()
@@ -242,37 +244,39 @@
         expand_management = false;
 
         currentRoute = NavManager.ToBaseRelativePath(NavManager.Uri);
-        Console.WriteLine($"{currentRoute}");
+        
+        // 離開 HOME 頁面時，重置編輯模式
+        if (!string.IsNullOrEmpty(currentRoute) && !currentRoute.Equals("", StringComparison.OrdinalIgnoreCase))
+        {
+            showEditBtn_Flag = false;
+        }
+        
+        Console.WriteLine($"[TopRow] currentRoute = {currentRoute}");
         switch(currentRoute)
         {
             case "":
                 currentPage = "NTN Home";
                 Console.WriteLine("App started1");
-                Page_index = PAGE.HOME;
                 break;
 
             case "Battery_setting":
                 currentPage = "Battery Setting";
                 AppLogger.Log("[TopRow] Page : Battery Setting", local_debug);
-                Page_index = PAGE.BATTERY_SETTING;
                 break;
 
             case "Inverter_setting":
                 currentPage = "Inverter Setting";
                 AppLogger.Log("[TopRow] Page : Inverter Setting", local_debug);
-                Page_index = PAGE.INV_SETTING;
                 break;
 
             case "Link_status":
                 currentPage = "Link Status";
                 AppLogger.Log("[TopRow] Page : Link Status", local_debug);
-                Page_index = PAGE.LINK_STATUS;
                 break;
 
             case "Log":
                 currentPage = "Log";
                 AppLogger.Log("[TopRow] Page : Log", local_debug);
-                Page_index = PAGE.LOG;
                 break;
 
             case "Use_strategy":
@@ -282,7 +286,6 @@
             case "Shortcut_setting":
                 currentPage = "Shortcut Setting";
                 AppLogger.Log("[TopRow] Page : Shortcut Setting", local_debug);
-                Page_index = PAGE.SHORTCUT_SETTING;
                 break;
 
             default:

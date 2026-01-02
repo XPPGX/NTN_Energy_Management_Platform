@@ -62,13 +62,6 @@
     </div>
 
     <div class="content-container">
-        @* <MudOverlay DisablePortal="true" Visible="_isLoading" DarkBackground="true" Class="Mud-overlay d-flex justify-center align-center">
-            <MudPaper Class="pa-6 d-flex flex-column align-center" Elevation="4" Rounded="true">
-                <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Medium"/>
-                <MudText Typo="Typo.h6" Class="mt-4">Waiting for devices linking...</MudText>
-            </MudPaper>
-        </MudOverlay> *@
-
         <div class="card-grid">
             <div class="w50">
                 <div class="card-container-layout card-container-base">
@@ -408,12 +401,24 @@
 
     private async Task ReSubscribeSubSys()
     {
-        //1. [JS]嘗試解除當前訂閱的子系統
-        await JS.InvokeVoidAsync("unsubscribeAllSubSys");
-        //2. [JS]訂閱新的子系統
-        var (port, protocol) = GetSelectedSubSystemPortAndProtocol();
-        Console.WriteLine($"[ReSubscribeSubSys] port = {port}, protocol = {protocol}");
-        await JS.InvokeVoidAsync("subscribeInverterHub", port, protocol);
+        try
+        {
+            //1. [JS]嘗試解除當前訂閱的子系統
+            await JS.InvokeVoidAsync("unsubscribeAllSubSys");
+            //2. [JS]訂閱新的子系統
+            var (port, protocol) = GetSelectedSubSystemPortAndProtocol();
+            Console.WriteLine($"[ReSubscribeSubSys] port = {port}, protocol = {protocol}");
+            await JS.InvokeVoidAsync("subscribeInverterHub", port, protocol);
+        }
+        catch (JSDisconnectedException)
+        {
+            // Circuit has been disconnected, ignore the exception
+            Console.WriteLine("[ReSubscribeSubSys] Circuit disconnected, skipping JS interop");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[ReSubscribeSubSys] Error: {ex.Message}");
+        }
     }
 
     private async Task subSystemSelectionChangedHandler()
@@ -521,13 +526,42 @@
 
     private async Task OnHeartbeatTickAsync()
     {
-        await RefreshSubSystemOptionsAsync();
-        if(FirstAutoGet_SubSys_done is false && DotNetHelper_Is_OK is true)
+        try
         {
-            FirstAutoGet_SubSys_done = true;
-            await subSystemSelectionChangedHandler();
+            await RefreshSubSystemOptionsAsync();
+            if(FirstAutoGet_SubSys_done is false && DotNetHelper_Is_OK is true)
+            {
+                FirstAutoGet_SubSys_done = true;
+                await subSystemSelectionChangedHandler();
+            }
+            await InvokeAsync(StateHasChanged);
         }
-        await InvokeAsync(StateHasChanged);
+        catch (JSDisconnectedException ex)
+        {
+            // Component has been disposed, unsubscribe from heartbeat
+            DotNetHelper_Is_OK = false;
+            Console.WriteLine($"[OnHeartbeatTickAsync] Circuit disconnected: {ex.Message}");
+            if (_subsystemHeartbeatSubscribed)
+            {
+                Heartbeat.OnTick -= OnHeartbeatTickAsync;
+                _subsystemHeartbeatSubscribed = false;
+            }
+        }
+        catch (JSException ex) when (ex.Message.Contains("connection is not in the 'Connected' State", StringComparison.OrdinalIgnoreCase))
+        {
+            // SignalR disconnected
+            DotNetHelper_Is_OK = false;
+            Console.WriteLine($"[OnHeartbeatTickAsync] SignalR disconnected: {ex.Message}");
+            if (_subsystemHeartbeatSubscribed)
+            {
+                Heartbeat.OnTick -= OnHeartbeatTickAsync;
+                _subsystemHeartbeatSubscribed = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[OnHeartbeatTickAsync] Error: {ex.Message}");
+        }
     }
 
     private async Task OnFreqTypeChanged(ChangeEventArgs e)

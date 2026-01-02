@@ -27,15 +27,15 @@ namespace demoVer.Services
         /// <summary>
         /// 這邊寫各模組用到的 key => route 對照表
         /// key : 要給使用者看的頁面名稱，讓使用者選擇，比如 "NTN_Home", "INV_Setting"
-        /// route : 實際的頁面路由，比如 "/", "/Inverter_Setting
+        /// route : 實際的頁面路由，比如 "/", "/Inverter_setting"
         /// 這個字典初始化後不可修改!!!!
         /// </summary>
         private ImmutableDictionary<string, string> FixedRouteToKeyMapping {get; } = ImmutableDictionary.CreateRange(new Dictionary<string, string>()
         {
             {"/", "NTN_Home"},
-            {"/Battery_Setting", "BAT_Setting"},
-            {"/Inverter_Setting", "INV_Setting"},
-            {"/Link_Status", "Link_Status"},
+            {"/Battery_setting", "BAT_Setting"},
+            {"/Inverter_setting", "INV_Setting"},
+            {"/Link_status", "Link_Status"},
             {"/Log", "Log"},
         });
         private List<BottomRowItem> List_UserDefined {get; set;} = new List<BottomRowItem>(_MaxItemCount);

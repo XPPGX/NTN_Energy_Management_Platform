@@ -14,20 +14,25 @@
     width: 100%;
     padding: 1rem;
     gap: 1rem;
+    flex-wrap: wrap; /* 允許換行 */
 }
 
 .subsystem-select-group{
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 1rem;
+    flex-wrap: wrap; /* 允許換行 */
 }
 
 .subsystem-select{
+    min-width: 180px; /* 最小寬度 */
+    max-width: 300px; /* 最大寬度 */
     width: 220px;
     text-align: center;
     text-align-last: center;
+    flex-shrink: 1; /* 允許適度收縮 */
 }
 
 .subsystem-select option{
@@ -37,6 +42,8 @@
 .leftPart{
     display: flex;
     align-items: center;
+    flex: 1 1 auto; /* 可伸縮，但保持最小內容寬度 */
+    min-width: 0; /* 允許收縮 */
 }
 
 .rightPart{
@@ -44,11 +51,15 @@
     flex-direction: row;
     align-items: center;
     gap: 0.75rem;
+    flex-shrink: 0; /* 防止按鈕被壓縮 */
+    margin-left: auto; /* 保持靠右對齊 */
 }
 
 .local-label{
     text-align: center;
     margin-bottom: 0px!important;
+    white-space: nowrap; /* 防止 label 換行 */
+    flex-shrink: 0; /* 防止 label 被壓縮 */
 }
 
 .content-container{
@@ -391,11 +402,34 @@ mud-slider-vertical =>
         gap: 0.25rem;
     }
 
+    .top-bar {
+        flex-direction: column; /* 手機版垂直排列 */
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .leftPart {
+        width: 100%;
+        justify-content: center;
+    }
+
     .rightPart{
         display: flex;
         flex-direction: row;
         align-items: center;
+        justify-content: center; /* 手機版按鈕置中 */
         gap: 0.75rem;
+        width: 100%;
+    }
+
+    .subsystem-select-group {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .subsystem-select {
+        max-width: 100%;
+        flex: 1 1 auto;
     }
 
     .content-container{

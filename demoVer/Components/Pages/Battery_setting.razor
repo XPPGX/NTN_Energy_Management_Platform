@@ -868,16 +868,31 @@
         {
             DotNetHelper_Is_OK = false;
             AppLogger.Log_To_File_log(_category, $"[Battery_setting][OnHeartbeatTickAsync] JS disconnected: {ex.Message}", AppLogLevel.Trace);
+            if (_heartbeatSubscribed)
+            {
+                Heartbeat.OnTick -= OnHeartbeatTickAsync;
+                _heartbeatSubscribed = false;
+            }
         }
         catch (JSDisconnectedException ex)
         {
             DotNetHelper_Is_OK = false;
             AppLogger.Log_To_File_log(_category, $"[Battery_setting][OnHeartbeatTickAsync] JS runtime unavailable: {ex.Message}", AppLogLevel.Trace);
+            if (_heartbeatSubscribed)
+            {
+                Heartbeat.OnTick -= OnHeartbeatTickAsync;
+                _heartbeatSubscribed = false;
+            }
         }
         catch (InvalidOperationException ex) when (ex.Message.Contains("JSRuntime"))
         {
             DotNetHelper_Is_OK = false;
             AppLogger.Log_To_File_log(_category, $"[Battery_setting][OnHeartbeatTickAsync] JS invoke failed: {ex.Message}", AppLogLevel.Trace);
+            if (_heartbeatSubscribed)
+            {
+                Heartbeat.OnTick -= OnHeartbeatTickAsync;
+                _heartbeatSubscribed = false;
+            }
         }
     }
 

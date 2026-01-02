@@ -170,7 +170,7 @@
     <value>AC Mode Charger</value>
   </data>
   <data name="InverterSetting-GridTiedPowerFeeding" xml:space="preserve">
-    <value>Grid Tied Power Feeding</value>
+    <value>Grid-tied feed-in</value>
   </data>
   <data name="InverterSetting-OutputPriority" xml:space="preserve">
     <value>Output Priority</value>

@@ -242,6 +242,7 @@
     private int currentPage = 1;
     private int pageInput = 1;
     private bool topRowCallbacksRegistered = false;
+    private bool _heartbeatSubscribed = false;
     private List<string> SubscribeCmdCodes = new List<string>();
     private List<string> UserDefinedCmdNames = new List<string>();
     
@@ -425,10 +426,26 @@
     {
         if (firstRender)
         {
-            Heartbeat.OnTick += pageTimer;
-            IsMobile = await JS.InvokeAsync<bool>("checkIsMobile");
-            checkMobile_complete = true;
-            await InvokeAsync(StateHasChanged);
+            if (!_heartbeatSubscribed)
+            {
+                Heartbeat.OnTick += pageTimer;
+                _heartbeatSubscribed = true;
+            }
+            
+            try
+            {
+                IsMobile = await JS.InvokeAsync<bool>("checkIsMobile");
+                checkMobile_complete = true;
+                await InvokeAsync(StateHasChanged);
+            }
+            catch (JSDisconnectedException ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[Link_status][OnAfterRenderAsync] Circuit disconnected: {ex.Message}", AppLogLevel.Trace);
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Log_To_File_log(_category, $"[Link_status][OnAfterRenderAsync] Error: {ex.Message}", AppLogLevel.Warning);
+            }
         }
         if(modal_IsOpen && !NotifyJS && jumpWindow.Context != null)
         {
@@ -575,6 +592,13 @@
                 await JS.InvokeVoidAsync("subscribeGroup_fixedCommands_dynamicAddr", UserDefinedCmdNames, selectedAddr);
             }
         }
+        catch (JSDisconnectedException ex)
+        {
+            AppLogger.Log_To_File_log(_category, $"[Link_status][OnRowClick] : Circuit disconnected, {ex.Message}", AppLogLevel.Trace);
+            // Close modal since JS interop is not available
+            modal_IsOpen = false;
+            InfoCard_isOpen = false;
+        }
         catch(Exception ex)
         {
             AppLogger.Log_To_File_log(_category, $"[Link_status][OnRowClick] : Error, {ex}", AppLogLevel.Error);
@@ -687,25 +711,45 @@
     {
         if(modal_IsOpen) return;
 
-        if(pageTimer_Cnt >= 3)
+        try
         {
-            pageTimer_Cnt = 0;
-            await InvokeAsync(() => 
+            if(pageTimer_Cnt >= 3)
             {
-                getINVsLink();
-                UpdateDonutChart();
-                summarizeDevicesStatus_Timeline();
-                StateHasChanged();
-            });
+                pageTimer_Cnt = 0;
+                await InvokeAsync(() => 
+                {
+                    getINVsLink();
+                    UpdateDonutChart();
+                    summarizeDevicesStatus_Timeline();
+                    StateHasChanged();
+                });
+            }
+            else
+            {
+                pageTimer_Cnt ++;
+            }
         }
-        else
+        catch (JSDisconnectedException ex)
         {
-            pageTimer_Cnt ++;
+            AppLogger.Log_To_File_log(_category, $"[Link_status][pageTimer] Circuit disconnected: {ex.Message}", AppLogLevel.Trace);
+            if (_heartbeatSubscribed)
+            {
+                Heartbeat.OnTick -= pageTimer;
+                _heartbeatSubscribed = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Log_To_File_log(_category, $"[Link_status][pageTimer] Error: {ex.Message}", AppLogLevel.Warning);
         }
     }
     public void Dispose()
     {
-        Heartbeat.OnTick -= pageTimer;
+        if (_heartbeatSubscribed)
+        {
+            Heartbeat.OnTick -= pageTimer;
+            _heartbeatSubscribed = false;
+        }
         linkAddrManager.linkChanged -= OnLinksChanged;
         @* globalVar.LinkedDevices.linkChanged -= OnLinksChanged; *@
         Console.WriteLine($"Heartbeat 註冊 : {this.GetHashCode()}");
@@ -719,8 +763,19 @@
     public async Task CancelAllSubscriptions()
     {
         //主動關閉dataHub()
-        await JS.InvokeVoidAsync("unsubscribeAllCmds");
-        @* await JS.InvokeVoidAsync("hubDisconnect"); *@
+        try
+        {
+            await JS.InvokeVoidAsync("unsubscribeAllCmds");
+            @* await JS.InvokeVoidAsync("hubDisconnect"); *@
+        }
+        catch (JSDisconnectedException ex)
+        {
+            AppLogger.Log_To_File_log(_category, $"[Link_status][CancelAllSubscriptions] Circuit disconnected: {ex.Message}", AppLogLevel.Trace);
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Log_To_File_log(_category, $"[Link_status][CancelAllSubscriptions] Error: {ex.Message}", AppLogLevel.Warning);
+        }
     }
 
     private string decode_INV_Status(uint addr)

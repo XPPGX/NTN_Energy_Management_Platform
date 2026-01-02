@@ -65,7 +65,7 @@
     private void NavigateTo(string uri)
     {
         Layout?.HideMenu();
-        NavManager.NavigateTo(uri);
+        NavManager.NavigateTo(uri, forceLoad: false);
     }
 
     public void HideMenu()

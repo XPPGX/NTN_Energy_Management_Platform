@@ -4,15 +4,15 @@
     "DisplayName": "Home"
   },
   {
-    "Route": "/Inverter_Setting",
+    "Route": "/Inverter_setting",
     "DisplayName": "INV"
   },
   {
-    "Route": "/Battery_Setting",
+    "Route": "/Battery_setting",
     "DisplayName": "BAT"
   },
   {
-    "Route": "/Link_Status",
+    "Route": "/Link_status",
     "DisplayName": "Linking"
   }
 ]

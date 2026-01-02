@@ -76,37 +76,37 @@
     private async Task GoTo_NTN_HOME()
     {
         await CloseMenu();
-        NavManager.NavigateTo("/");
+        NavManager.NavigateTo("/", forceLoad: false);
     }
 
     private async Task GoTo_Battery_setting()
     {
         await CloseMenu();
-        NavManager.NavigateTo("/Battery_setting");
+        NavManager.NavigateTo("/Battery_setting", forceLoad: false);
     }
 
     private async Task GoTo_Inverter_setting()
     {
         await CloseMenu();
-        NavManager.NavigateTo("/Inverter_setting");
+        NavManager.NavigateTo("/Inverter_setting", forceLoad: false);
     }
 
     private async Task GoTo_Link_status()
     {
         await CloseMenu();
-        NavManager.NavigateTo("/Link_status");
+        NavManager.NavigateTo("/Link_status", forceLoad: false);
     }
 
     private async Task GoTo_Log()
     {
         await CloseMenu();
-        NavManager.NavigateTo("/Log");
+        NavManager.NavigateTo("/Log", forceLoad: false);
     }
 
     private async Task GoTo_ShortcutSetting()
     {
         await CloseMenu();
-        NavManager.NavigateTo("/Shortcut_setting");
+        NavManager.NavigateTo("/Shortcut_setting", forceLoad: false);
     }
 
     private async Task CloseMenu()
