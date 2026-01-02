@@ -107,6 +107,7 @@
 
     public void CloseNotifications()
     {
+        if(!notificationsOpen) return;
         notificationsOpen = false;
         // 向 框架 發出 告警訊息已讀
         NotificationService.Mark_AllEventLogs_AsRead();

@@ -19,7 +19,7 @@
 @inject DataCenter dataCenter
 @inject ICardDefinitionRegistry CardDefinitionRegistry
 @inject IStringLocalizer<SharedResource> Localizer
-
+@inject VisibleCardsConfig visibleCardsConfig
 
 <PageTitle>@Localizer["NTNHome-PageTitle"]</PageTitle>
 
@@ -282,8 +282,9 @@
         _category = GetType().FullName!;
 
         await hookTask();
-        await Read_CardInfos_FromJsonFile();
         
+        // Load card info from VisibleCardsConfig service
+        CardInfos = visibleCardsConfig.GetVisibleCards_snapshot();
     }
     #endregion //Render_Flow_Control
 
@@ -585,12 +586,16 @@
             .Select(card => CreateCardSnapshotWithoutData(card))
             .ToList();
 
-        string jsonString = JsonSerializer.Serialize(sanitizedCards, new JsonSerializerOptions { WriteIndented = true });
-
-        string FilePath = Path.Combine(dataCenter.get_basePath(), "visibleCards.json");
-        File.WriteAllText(FilePath, jsonString);
-
-        Console.WriteLine("JSON 檔案已寫入完成。");
+        ConfigResult result = visibleCardsConfig.UpdateAndSave(sanitizedCards);
+        
+        if(result == ConfigResult.Success)
+        {
+            Console.WriteLine("[NTN_Home] 卡片配置已成功保存");
+        }
+        else
+        {
+            Console.WriteLine($"[NTN_Home] 卡片配置保存失敗: {result}");
+        }
         
         CloseAlert();
         CloseModal();
@@ -685,37 +690,6 @@
         Console.WriteLine(json);
         CloseModal();
         StateHasChanged();
-    }
-
-    private async Task Read_CardInfos_FromJsonFile()
-    {
-         
-        // string linuxPath = "/userdata/CMU3/UserSetting/5040/visibleCards.json";
-        // var filePath = linuxPath;
-        // var filePath = "visibleCards.json";
-        string filePath = Path.Combine(dataCenter.get_basePath(), "visibleCards.json");
-
-        try
-        {
-            string json = File.ReadAllText(filePath);
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            CardInfos = JsonSerializer.Deserialize<List<CardInfo>>(json, options) ?? new();
-            CardInfos = CardInfos.OrderBy(c => c.showSequence).ToList();
-            
-            var CardInfos_jsonFormat = JsonSerializer.Serialize(CardInfos, new JsonSerializerOptions{
-                WriteIndented = true
-            });
-            Console.WriteLine(CardInfos_jsonFormat);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"JSON read fail: {ex.Message}");
-            CardInfos = new();
-        }
     }
 
     //Demo用

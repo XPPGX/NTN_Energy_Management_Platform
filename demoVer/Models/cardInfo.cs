@@ -30,6 +30,22 @@ namespace demoVer.Models
         public List<LINK_STATUS_Pair> Link_STATUS_Pairs{get; set;}          //存4個(iconPath, label) pair
         public string? SelectedSubsystemKey { get; set; }                   //RunningDiagram 選擇的子系統 key
         public CHART_SETTING Chart_Setting {get; set;}                      //存chart需要的資訊
+
+        public CardInfo DeepClone()
+        {
+            return new CardInfo
+            {
+                ID = this.ID,
+                card_Type = this.card_Type,
+                widthClass = this.widthClass,
+                showSequence = this.showSequence,
+                cardName = this.cardName,
+                Info_DataItems = this.Info_DataItems?.Select(item => item.DeepClone()).ToList() ?? new List<INFO_DataItem>(),
+                Link_STATUS_Pairs = this.Link_STATUS_Pairs?.Select(pair => pair.DeepClone()).ToList() ?? new List<LINK_STATUS_Pair>(),
+                SelectedSubsystemKey = this.SelectedSubsystemKey,
+                Chart_Setting = this.Chart_Setting?.DeepClone() ?? new CHART_SETTING()
+            };
+        }
     }
 
     public class InfoTuple
@@ -151,7 +167,7 @@ namespace demoVer.Models
         //X軸相關
         public string XTitle {get; set;} = "時間";
         public timeGap timeGap_selection {get; set;}
-    public string[] Labels {get; set;} //X軸資料，目前只支援顯示時間
+        public string[] Labels {get; set;} //X軸資料，目前只支援顯示時間
         //Y軸相關
         public string Y_left_Title {get; set;}
         public string Y_right_Title {get; set;}

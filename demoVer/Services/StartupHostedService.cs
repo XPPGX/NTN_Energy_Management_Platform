@@ -15,6 +15,7 @@ namespace demoVer.Services
         private readonly VersionFileService _versionFileService;
         private readonly GlobalVar _globalVar;
         private readonly BottomRowConfig _bottomRowConfig;
+        private readonly VisibleCardsConfig _visibleCardsConfig;
         private static int _hasStarted = 0; // 保險用: 避免重入
 
         private string _DataFolderPath = string.Empty;
@@ -23,12 +24,16 @@ namespace demoVer.Services
         private string _HardCoded_CmdCodeReverseFileName = "CmdCodeReverse.json";
         private string _HardCoded_DecodeLogicFileName = "CmdDecodeLogic.json";
         
-        public StartupHostedService(VersionFileService versionFileService, GlobalVar globalVar, BottomRowConfig bottomRowConfig)
+        public StartupHostedService(VersionFileService versionFileService, 
+                                    GlobalVar globalVar, 
+                                    BottomRowConfig bottomRowConfig,
+                                    VisibleCardsConfig visibleCardsConfig)
         {
             _category = GetType().FullName!;
             _versionFileService = versionFileService;
             _globalVar = globalVar;
             _bottomRowConfig = bottomRowConfig;
+            _visibleCardsConfig = visibleCardsConfig;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -46,23 +51,28 @@ namespace demoVer.Services
                 
                 //0. 設定路徑
                 SetPath();
-                AppLogger.Log_To_File_log(_category, "[StartupHostedService][1] 路徑設定完成", AppLogLevel.Debug);
+                AppLogger.Log_To_File_log(_category, "[StartupHostedService][0] 路徑設定完成", AppLogLevel.Debug);
+
                 //1. 寫入版本檔案
                 if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) await _versionFileService.WriteVersionFileAsync();
-                AppLogger.Log_To_File_log(_category, "[StartupHostedService][2] 版本檔案寫入完成", AppLogLevel.Debug);
+                AppLogger.Log_To_File_log(_category, "[StartupHostedService][1] 版本檔案寫入完成", AppLogLevel.Debug);
 
                 //2. 載入 FixedCmdName => FixedCmdCode 對照表
                 Load_HardCoded_CmdCode();
-                AppLogger.Log_To_File_log(_category, "[StartupHostedService][3] CmdCode 載入完成", AppLogLevel.Debug);
+                AppLogger.Log_To_File_log(_category, "[StartupHostedService][2] CmdCode 載入完成", AppLogLevel.Debug);
                 
                 //3. 載入 FixedCmdName => DecodeLogic 對照表
                 Load_HardCoded_DecodeLogic();
-                AppLogger.Log_To_File_log(_category, "[StartupHostedService][4] DecodeLogic 載入完成", AppLogLevel.Debug);
+                AppLogger.Log_To_File_log(_category, "[StartupHostedService][3] DecodeLogic 載入完成", AppLogLevel.Debug);
                 
                 //4. 載入 BottomRow 設定
                 _bottomRowConfig.Init();
-                AppLogger.Log_To_File_log(_category, "[StartupHostedService][5] BottomRow 設定載入完成", AppLogLevel.Debug);
+                AppLogger.Log_To_File_log(_category, "[StartupHostedService][4] BottomRow 設定載入完成", AppLogLevel.Debug);
                 
+                //5. 載入 首頁卡片資料
+                _visibleCardsConfig.Init();
+                AppLogger.Log_To_File_log(_category, "[StartupHostedService][5] 首頁卡片資料載入完成", AppLogLevel.Debug);
+
                 AppLogger.Log_To_File_log(_category, "應用啟動初始化完成。", AppLogLevel.Debug);
             }
             catch (OperationCanceledException)
