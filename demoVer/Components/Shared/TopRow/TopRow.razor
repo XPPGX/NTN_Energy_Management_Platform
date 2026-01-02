@@ -88,7 +88,6 @@
 @code{
 
     private bool local_debug = true;
-    private bool isMobile;
     private bool afterFirstRender_Flag = false;
     private bool menuOpen = false;
     private bool expand_sys_setting = false;
@@ -105,8 +104,7 @@
     [CascadingParameter(Name = "IsDarkTheme")]
     private bool IsDarkTheme { get; set; }
     
-    [CascadingParameter(Name = "CurrentPage")]
-    private PAGE Page_index { get; set; }
+    private PAGE Page_index { get; set; } = PAGE.HOME;
     
     @* private BellIcon? bellIconRef; *@
 
@@ -168,8 +166,10 @@
         if (firstRender)
         {
             afterFirstRender_Flag = true;
-            isMobile = await JS.InvokeAsync<bool>("checkIsMobile");
             StateHasChanged(); // 讓頁面更新
+
+            //register the nav
+            NavManager.LocationChanged += OnLocationChanged;
         }
     }
 
@@ -202,8 +202,7 @@
         //update the label at the first
         UpdatePageLabel();
 
-        //register the nav
-        NavManager.LocationChanged += OnLocationChanged;
+        
     }
 
     private async Task GoTo_Framework()
@@ -244,6 +243,8 @@
         expand_management = false;
 
         currentRoute = NavManager.ToBaseRelativePath(NavManager.Uri);
+        var routeKey = (currentRoute ?? string.Empty).Trim('/');
+        var routeKeyNormalized = routeKey.ToLowerInvariant();
         
         // 離開 HOME 頁面時，重置編輯模式
         if (!string.IsNullOrEmpty(currentRoute) && !currentRoute.Equals("", StringComparison.OrdinalIgnoreCase))
@@ -252,38 +253,52 @@
         }
         
         Console.WriteLine($"[TopRow] currentRoute = {currentRoute}");
-        switch(currentRoute)
+        
+        // 同時更新 Page_index
+        Page_index = routeKeyNormalized switch
+        {
+            "" => PAGE.HOME,
+            "battery_setting" => PAGE.BATTERY_SETTING,
+            "inverter_setting" => PAGE.INV_SETTING,
+            "link_status" => PAGE.LINK_STATUS,
+            "log" => PAGE.LOG,
+            "use_strategy" => PAGE.USE_STRATEGY,
+            "shortcut_setting" => PAGE.SHORTCUT_SETTING,
+            _ => PAGE.HOME
+        };
+
+        switch(routeKeyNormalized)
         {
             case "":
                 currentPage = "NTN Home";
                 Console.WriteLine("App started1");
                 break;
 
-            case "Battery_setting":
+            case "battery_setting":
                 currentPage = "Battery Setting";
                 AppLogger.Log("[TopRow] Page : Battery Setting", local_debug);
                 break;
 
-            case "Inverter_setting":
+            case "inverter_setting":
                 currentPage = "Inverter Setting";
                 AppLogger.Log("[TopRow] Page : Inverter Setting", local_debug);
                 break;
 
-            case "Link_status":
+            case "link_status":
                 currentPage = "Link Status";
                 AppLogger.Log("[TopRow] Page : Link Status", local_debug);
                 break;
 
-            case "Log":
+            case "log":
                 currentPage = "Log";
                 AppLogger.Log("[TopRow] Page : Log", local_debug);
                 break;
 
-            case "Use_strategy":
+            case "use_strategy":
                 @* currentPage = "Use strategy"; *@
                 break;
 
-            case "Shortcut_setting":
+            case "shortcut_setting":
                 currentPage = "Shortcut Setting";
                 AppLogger.Log("[TopRow] Page : Shortcut Setting", local_debug);
                 break;

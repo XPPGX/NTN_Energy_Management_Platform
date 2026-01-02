@@ -233,9 +233,10 @@ namespace demoVer.Services
             ConfigResult res; //just using for checking whether success or not in each step
             
             res = UpdateOneItem(0, "/", "Home");
-            res = UpdateOneItem(1, "/Inverter_Setting", "INV");
-            res = UpdateOneItem(2, "/Battery_Setting", "BAT");
-            res = UpdateOneItem(3, "/Link_Status", "Linking");
+            // Keep routes consistent with actual page routes (case-sensitive comparisons elsewhere may rely on this)
+            res = UpdateOneItem(1, "/Inverter_setting", "INV");
+            res = UpdateOneItem(2, "/Battery_setting", "BAT");
+            res = UpdateOneItem(3, "/Link_status", "Linking");
         }
 
         public Dictionary<string, string> Get_FixedRouteToKeyMapping_snapshot()

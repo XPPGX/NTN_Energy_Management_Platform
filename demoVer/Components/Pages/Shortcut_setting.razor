@@ -194,6 +194,8 @@
 }
 
 @code {
+    private string _category = "";
+
     // Modal 相關狀態
     private bool showModal = false;
     private string modalTitle = "";
@@ -235,6 +237,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        _category = GetType().FullName!;
+        
         await base.OnInitializedAsync();
         Load_Basic_Data_From_Service();
     }
