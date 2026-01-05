@@ -7,6 +7,7 @@
 @inject NavigationManager NavManager
 @inject IStringLocalizer<SharedResource> Localizer
 @inject BottomRowConfig BottomRowConfigService
+@inject BottomRowImageService BottomRowImageService
 
 <div class="bottom-row" role="navigation" aria-label="@Localizer["BottomRow-NavLabel"]">
     @if (menuOpen)
@@ -16,8 +17,14 @@
     @for (int i = 0; i < bottomRowItems.Count; i++)
     {
         var item = bottomRowItems[i];
-        <button type="button" class="bottomRow-btn" @onclick="@(() => NavigateTo(item.Route))" title="@item.DisplayName">
-            <span class="bottomRow-label">@item.DisplayName</span>
+        var imageIndex = i + 1;
+        var url = BottomRowImageService.GetImageUrl(imageIndex);
+        var src = (!string.IsNullOrEmpty(url))
+            ? $"{url}?v={BottomRowImageService.GetImageLastWriteTicksUtc(imageIndex) ?? refreshTimestamp}"
+            : BottomRowImageService.GetDefaultImageUrl(imageIndex);
+
+        <button type="button" class="bottomRow-btn" @onclick="@(() => NavigateTo(item.Route))" title="@item.Route">
+            <img src="@src" alt="Bottom button @imageIndex" class="bottomRow-label" onerror="this.src='@BottomRowImageService.GetDefaultImageUrl(imageIndex)';" />
         </button>
     }
     <button type="button" class="bottomRow-btn" @onclick="ToggleMenu" @onclick:stopPropagation="true" title="Toggle Menu">
@@ -36,6 +43,7 @@
 
     private bool menuOpen = false;
     private List<BottomRowItem> bottomRowItems = new List<BottomRowItem>();
+    private long refreshTimestamp = DateTimeOffset.UtcNow.Ticks;
 
     protected override void OnInitialized()
     {
@@ -51,10 +59,11 @@
         bottomRowItems = BottomRowConfigService.Get_UserDefinedList_snapshot();
     }
 
-    private void HandleConfigChanged(object? sender, EventArgs e)
+    private async void HandleConfigChanged(object? sender, EventArgs e)
     {
         LoadBottomRowItems();
-        InvokeAsync(StateHasChanged);
+        refreshTimestamp = DateTimeOffset.UtcNow.Ticks; // Force refresh images
+        await InvokeAsync(StateHasChanged);
     }
 
     private void ToggleMenu()

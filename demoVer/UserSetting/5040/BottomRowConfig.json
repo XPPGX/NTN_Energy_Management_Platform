@@ -1,18 +1,18 @@
 [
   {
     "Route": "/",
-    "DisplayName": "Home"
+    "imgUrl": "/images/btmRowSvgs/home.svg"
   },
   {
     "Route": "/Inverter_setting",
-    "DisplayName": "INV"
+    "imgUrl": "/images/btmRowSvgs/ac.svg"
   },
   {
     "Route": "/Battery_setting",
-    "DisplayName": "BAT"
+    "imgUrl": "/images/btmRowSvgs/battery.svg"
   },
   {
     "Route": "/Link_status",
-    "DisplayName": "Linking"
+    "imgUrl": "/images/btmRowSvgs/wire.svg"
   }
 ]

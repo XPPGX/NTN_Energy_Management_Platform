@@ -4,6 +4,7 @@
 @inject IJSRuntime JS
 @inject NavigationManager NavManager
 @inject IStringLocalizer<SharedResource> Localizer
+@using Microsoft.AspNetCore.Components.Forms
 
 @using demoVer.Components.Layout
 @using demoVer.Utils
@@ -11,6 +12,7 @@
 @using demoVer.Services
 @using demoVer.Models
 @inject BottomRowConfig BottomRowConfigService
+@inject BottomRowImageService BottomRowImageService
 <PageTitle>@Localizer["TopRow-ShortcutSettings"]</PageTitle>
 
 <div class="shortcut-settings-page">
@@ -34,8 +36,9 @@
                     </div>
                     <div class="config-controls">
                         <div class="name-input-wrapper">
-                            <label class="input-label">Button Name</label>
-                            <input type="text" @bind="Local_BottomRowItems_List[0].DisplayName" class="custom-input" placeholder="Enter button name" maxlength="@BottomRowConfig._MaxDisplayNameLength" />
+                            <label class="input-label">Button Image</label>
+                            <img src="@GetButtonImageSrc(0)" alt="Bottom button 1" class="custom-input" onerror="this.src='/images/empty_img.svg';" />
+                            <InputFile OnChange="@(e => OnImageSelected(e, 0))" accept="image/*" />
                         </div>
                         <div class="select-wrapper">
                             <label class="select-label">Navigate to</label>
@@ -56,8 +59,9 @@
                     </div>
                     <div class="config-controls">
                         <div class="name-input-wrapper">
-                            <label class="input-label">Button Name</label>
-                            <input type="text" @bind="Local_BottomRowItems_List[1].DisplayName" class="custom-input" placeholder="Enter button name" maxlength="@BottomRowConfig._MaxDisplayNameLength" />
+                            <label class="input-label">Button Image</label>
+                            <img src="@GetButtonImageSrc(1)" alt="Bottom button 2" class="custom-input" onerror="this.src='/images/empty_img.svg';" />
+                            <InputFile OnChange="@(e => OnImageSelected(e, 1))" accept="image/*" />
                         </div>
                         <div class="select-wrapper">
                             <label class="select-label">Navigate to</label>
@@ -78,8 +82,9 @@
                     </div>
                     <div class="config-controls">
                         <div class="name-input-wrapper">
-                            <label class="input-label">Button Name</label>
-                            <input type="text" @bind="Local_BottomRowItems_List[2].DisplayName" class="custom-input" placeholder="Enter button name" maxlength="@BottomRowConfig._MaxDisplayNameLength" />
+                            <label class="input-label">Button Image</label>
+                            <img src="@GetButtonImageSrc(2)" alt="Bottom button 3" class="custom-input" onerror="this.src='/images/empty_img.svg';" />
+                            <InputFile OnChange="@(e => OnImageSelected(e, 2))" accept="image/*" />
                         </div>
                         <div class="select-wrapper">
                             <label class="select-label">Navigate to</label>
@@ -100,8 +105,9 @@
                     </div>
                     <div class="config-controls">
                         <div class="name-input-wrapper">
-                            <label class="input-label">Button Name</label>
-                            <input type="text" @bind="Local_BottomRowItems_List[3].DisplayName" class="custom-input" placeholder="Enter button name" maxlength="@BottomRowConfig._MaxDisplayNameLength" />
+                            <label class="input-label">Button Image</label>
+                            <img src="@GetButtonImageSrc(3)" alt="Bottom button 4" class="custom-input" onerror="this.src='/images/empty_img.svg';" />
+                            <InputFile OnChange="@(e => OnImageSelected(e, 3))" accept="image/*" />
                         </div>
                         <div class="select-wrapper">
                             <label class="select-label">Navigate to</label>
@@ -141,16 +147,16 @@
             <h3 class="preview-title">Bottom Row Preview</h3>
             <div class="bottom-row-preview">
                 <button type="button" class="preview-btn" @onclick="() => NavigateTo(preview_BottomRowItems_List[0].Route)">
-                    <span>@preview_BottomRowItems_List[0].DisplayName</span>
+                    <img src="@GetButtonImageSrc(0)" alt="Preview button 1" onerror="this.src='/images/empty_img.svg';" />
                 </button>
                 <button type="button" class="preview-btn" @onclick="() => NavigateTo(preview_BottomRowItems_List[1].Route)">
-                    <span>@preview_BottomRowItems_List[1].DisplayName</span>
+                    <img src="@GetButtonImageSrc(1)" alt="Preview button 2" onerror="this.src='/images/empty_img.svg';" />
                 </button>
                 <button type="button" class="preview-btn" @onclick="() => NavigateTo(preview_BottomRowItems_List[2].Route)">
-                    <span>@preview_BottomRowItems_List[2].DisplayName</span>
+                    <img src="@GetButtonImageSrc(2)" alt="Preview button 3" onerror="this.src='/images/empty_img.svg';" />
                 </button>
                 <button type="button" class="preview-btn" @onclick="() => NavigateTo(preview_BottomRowItems_List[3].Route)">
-                    <span>@preview_BottomRowItems_List[3].DisplayName</span>
+                    <img src="@GetButtonImageSrc(3)" alt="Preview button 4" onerror="this.src='/images/empty_img.svg';" />
                 </button>
             </div>
         </div>
@@ -219,21 +225,24 @@
     private List<BottomRowItem> Local_BottomRowItems_List = new List<BottomRowItem>()
     {
         //預防Initialization還沒完成時，渲染畫面使用會 Index Out of Range
-        new BottomRowItem(){Route = "/", DisplayName="Home"},
-        new BottomRowItem(){Route = "/", DisplayName="Home"},
-        new BottomRowItem(){Route = "/", DisplayName="Home"},
-        new BottomRowItem(){Route = "/", DisplayName="Home"},
+        new BottomRowItem(){Route = "/", imgUrl="Home"},
+        new BottomRowItem(){Route = "/", imgUrl="Home"},
+        new BottomRowItem(){Route = "/", imgUrl="Home"},
+        new BottomRowItem(){Route = "/", imgUrl="Home"},
     };
 
     private List<BottomRowItem> preview_BottomRowItems_List = new List<BottomRowItem>()
     {
         //預防Initialization還沒完成時，渲染畫面使用會 Index Out of Range
-        new BottomRowItem(){Route = "/", DisplayName="Home"},
-        new BottomRowItem(){Route = "/", DisplayName="Home"},
-        new BottomRowItem(){Route = "/", DisplayName="Home"},
-        new BottomRowItem(){Route = "/", DisplayName="Home"},
+        new BottomRowItem(){Route = "/", imgUrl="Home"},
+        new BottomRowItem(){Route = "/", imgUrl="Home"},
+        new BottomRowItem(){Route = "/", imgUrl="Home"},
+        new BottomRowItem(){Route = "/", imgUrl="Home"},
     };
     private Dictionary<string, string> pageOptions = new Dictionary<string, string>();
+
+    // Cache-buster for preview/images after overwrite
+    private long[] _imageVersionTicks = new long[4];
 
     protected override async Task OnInitializedAsync()
     {
@@ -245,6 +254,12 @@
 
     private void Load_Basic_Data_From_Service()
     {
+        // Clean up any temporary images from previous sessions
+        for (var i = 1; i <= 4; i++)
+        {
+            BottomRowImageService.DeleteTempVariants(i);
+        }
+
         //初始化:使用者設定區塊
         Local_BottomRowItems_List = BottomRowConfigService.Get_UserDefinedList_snapshot();
         
@@ -253,6 +268,64 @@
         
         //初始化:可選頁面清單
         pageOptions = BottomRowConfigService.Get_FixedRouteToKeyMapping_snapshot();
+
+        // initialize cache-buster
+        for (var i = 0; i < _imageVersionTicks.Length; i++)
+        {
+            _imageVersionTicks[i] = DateTimeOffset.UtcNow.Ticks;
+        }
+    }
+
+    private string GetButtonImageSrc(int index)
+    {
+        var imageIndex = index + 1;
+        
+        // Priority 1: Show temp image if exists (user uploaded but not saved)
+        if (BottomRowImageService.TempImageExists(imageIndex))
+        {
+            var ticks = BottomRowImageService.GetTempImageLastWriteTicksUtc(imageIndex) ?? _imageVersionTicks[index];
+            var url = BottomRowImageService.GetTempImageUrl(imageIndex);
+            if (!string.IsNullOrEmpty(url)) return $"{url}?v={ticks}";
+        }
+        
+        // Priority 2: Show official image if exists
+        if (BottomRowImageService.ImageExists(imageIndex))
+        {
+            var ticks = BottomRowImageService.GetImageLastWriteTicksUtc(imageIndex) ?? _imageVersionTicks[index];
+            var url = BottomRowImageService.GetImageUrl(imageIndex);
+            if (!string.IsNullOrEmpty(url)) return $"{url}?v={ticks}";
+        }
+
+        // Priority 3: Use default SVG icon from btmRowSvgs folder
+        return BottomRowImageService.GetDefaultImageUrl(imageIndex);
+    }
+
+    private async Task OnImageSelected(InputFileChangeEventArgs e, int index)
+    {
+        try
+        {
+            var file = e.File;
+            if (file is null)
+            {
+                return;
+            }
+
+            var imageIndex = index + 1;
+            // Save as temporary image (not committed until Save button)
+            var url = await BottomRowImageService.SaveTempAsync(imageIndex, file);
+
+            // Update cache-buster for preview
+            _imageVersionTicks[index] = DateTimeOffset.UtcNow.Ticks;
+            ShowToast("圖片上傳成功！請按 Save 儲存變更。", "success");
+        }
+        catch (Exception ex)
+        {
+            ShowToast($"圖片上傳失敗：{ex.Message}", "error");
+        }
+        finally
+        {
+            StateHasChanged();
+        }
     }
 
     // 顯示 Toast 消息
@@ -327,11 +400,36 @@
         
         try
         {
+            // Commit all temporary images to official images
+            for (var i = 0; i < 4; i++)
+            {
+                var imageIndex = i + 1;
+                if (BottomRowImageService.TempImageExists(imageIndex))
+                {
+                    BottomRowImageService.CommitTempImage(imageIndex);
+                    // Update imgUrl with official image URL
+                    var url = BottomRowImageService.GetImageUrl(imageIndex);
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        Local_BottomRowItems_List[i].imgUrl = url;
+                    }
+                }
+            }
+            
             // 模擬處理時間(如果處理太快)
             await Task.Delay(500);
             
             //將UI設定寫進Service記憶體，並存檔於硬碟
-            var result = BottomRowConfigService.UpdateAndSave(Local_BottomRowItems_List);
+            var normalized = Local_BottomRowItems_List
+                .Select(x => new BottomRowItem
+                {
+                    Route = x.Route,
+                    // strip cache-busting query if present
+                    imgUrl = (x.imgUrl ?? string.Empty).Split('?', 2)[0]
+                })
+                .ToList();
+
+            var result = BottomRowConfigService.UpdateAndSave(normalized);
             if(result != ConfigResult.Success)
             {
                 //跳個警告視窗 : 失敗了請稍後再試
@@ -357,16 +455,25 @@
         
         try
         {
-            // 模擬處理時間(如果操作太快)
-            await Task.Delay(500);
+            // Remove both temp and official images first
+            for (var i = 1; i <= 4; i++)
+            {
+                BottomRowImageService.DeleteTempVariants(i);
+                BottomRowImageService.DeleteAllVariants(i);
+            }
             
             //將Service內的設定重設為預設值
             BottomRowConfigService.DefaultAndSave();
+            
+            // Give time for event propagation and UI update
+            await Task.Delay(100);
 
             //初始化:使用者設定區塊
             Local_BottomRowItems_List = BottomRowConfigService.Get_UserDefinedList_snapshot();
             //初始化:預覽區塊
             preview_BottomRowItems_List = BottomRowConfigService.Get_UserDefinedList_snapshot();
+            
+            StateHasChanged();
             ShowToast("已還原為預設設定！", "success");
         }
         finally

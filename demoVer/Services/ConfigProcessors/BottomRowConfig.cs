@@ -12,8 +12,10 @@ namespace demoVer.Services
 {
     public class BottomRowConfig
     {
+        // imgUrl is now used as "ImagePath" (URL) for BottomRow button images.
+        // Keep the symbol to avoid wide refactors, but do not enforce length anymore.
         public const int _MaxDisplayNameLength = 7;
-        private const int _MaxItemCount = 4;
+        private const int _MaxItemCount = BottomRowConstants.MaxButtonCount;
         private string _category = "";
 
 
@@ -71,6 +73,7 @@ namespace demoVer.Services
                 if(readRes == ConfigResult.Success && readlist != null)
                 {
                     List_UserDefined = readlist;
+                    NormalizeBottomImagePaths();
                     AppLogger.Log_To_File_log(_category, "BottomRowConfig 從檔案載入設定成功。", AppLogLevel.Debug);
                     return;
                 }
@@ -92,18 +95,16 @@ namespace demoVer.Services
 
         public void SetPath()
         {
+            _appPort = BottomRowConstants.AppPort;
+            _fileName = BottomRowConstants.ConfigFileName;
             if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                _DirName = "/userdata/CMU3/UserSetting";
-               _appPort = "5040";
-               _fileName = "BottomRowConfig.json";
                _fullPath = System.IO.Path.Combine(_DirName, _appPort, _fileName);
             }
             else
             {
                 _DirName = "UserSetting";
-                _appPort = "5040";
-                _fileName = "BottomRowConfig.json";
                 _fullPath = System.IO.Path.Combine(_DirName, _appPort, _fileName);
             }
         }
@@ -166,24 +167,19 @@ namespace demoVer.Services
         /// </summary>
         /// <param name="index">第幾個element</param>
         /// <param name="Route">跳轉路徑</param>
-        /// <param name="DisplayName">User設定的顯示名稱</param>
+        /// <param name="imgUrl">User設定的顯示名稱</param>
         /// <returns>回傳enum錯誤代碼</returns>
-        public ConfigResult UpdateOneItem(int index, string Route, string DisplayName)
+        public ConfigResult UpdateOneItem(int index, string Route, string imgUrl)
         {
             if(index < 0 || index >= _MaxItemCount)
             {
                 return ConfigResult.OverListCount;
             }
-            
-            if(DisplayName.Length > _MaxDisplayNameLength)
-            {
-                return ConfigResult.OverStringLength;
-            }
 
             try
             {
                 List_UserDefined[index].Route = Route;
-                List_UserDefined[index].DisplayName = DisplayName;
+                List_UserDefined[index].imgUrl = imgUrl;
                 return ConfigResult.Success;
             }
             catch(Exception ex)
@@ -205,13 +201,13 @@ namespace demoVer.Services
 
                 //2. Update each item
                 ConfigResult res;
-                res = UpdateOneItem(0, newList[0].Route, newList[0].DisplayName);
+                res = UpdateOneItem(0, newList[0].Route, newList[0].imgUrl);
                 if(res != ConfigResult.Success) return res;
-                res = UpdateOneItem(1, newList[1].Route, newList[1].DisplayName);
+                res = UpdateOneItem(1, newList[1].Route, newList[1].imgUrl);
                 if(res != ConfigResult.Success) return res;
-                res = UpdateOneItem(2, newList[2].Route, newList[2].DisplayName);
+                res = UpdateOneItem(2, newList[2].Route, newList[2].imgUrl);
                 if(res != ConfigResult.Success) return res;
-                res = UpdateOneItem(3, newList[3].Route, newList[3].DisplayName);
+                res = UpdateOneItem(3, newList[3].Route, newList[3].imgUrl);
                 if(res != ConfigResult.Success) return res;
 
                 return ConfigResult.Success;
@@ -224,19 +220,67 @@ namespace demoVer.Services
         }
 
         /// <summary>
-        /// 要改預設值請在這裡修改
-        /// Default Config:
-        /// List[0] : Route = "/", DisplayName = "Home"
+        /// 要改預設值請修改 BottomRowConstants.DefaultButtonConfigs
+        /// Default Config 從 BottomRowConstants 讀取，方便移植
         /// </summary>
         public void DefaultConfig()
         {
             ConfigResult res; //just using for checking whether success or not in each step
             
-            res = UpdateOneItem(0, "/", "Home");
-            // Keep routes consistent with actual page routes (case-sensitive comparisons elsewhere may rely on this)
-            res = UpdateOneItem(1, "/Inverter_setting", "INV");
-            res = UpdateOneItem(2, "/Battery_setting", "BAT");
-            res = UpdateOneItem(3, "/Link_status", "Linking");
+            // 使用集中配置，方便移植到其他專案
+            for (int i = 0; i < BottomRowConstants.DefaultButtonConfigs.Length && i < _MaxItemCount; i++)
+            {
+                var config = BottomRowConstants.DefaultButtonConfigs[i];
+                res = UpdateOneItem(i, config.Route, config.ImagePath);
+            }
+        }
+
+        private void NormalizeBottomImagePaths()
+        {
+            // Keep JSON in sync with actual stored image files.
+            // If image exists => store URL; else => empty (UI falls back to placeholder).
+            var changed = false;
+            for (var i = 0; i < _MaxItemCount; i++)
+            {
+                var imageIndex = i + 1;
+                var desiredUrl = string.Empty;
+                try
+                {
+                    var dir = Path.Combine(_DirName, _appPort);
+                    if (Directory.Exists(dir))
+                    {
+                        var prefix = $"BottomImg{imageIndex}";
+                        var found = Directory.EnumerateFiles(dir, prefix + ".*")
+                            .OrderBy(p => p, StringComparer.OrdinalIgnoreCase)
+                            .FirstOrDefault();
+
+                        if (!string.IsNullOrEmpty(found))
+                        {
+                            desiredUrl = $"/UserSetting/{_appPort}/{Path.GetFileName(found)}";
+                        }
+                    }
+                }
+                catch
+                {
+                    desiredUrl = string.Empty;
+                }
+
+                // Strip any cache-busting query if present
+                var current = List_UserDefined[i].imgUrl ?? string.Empty;
+                var currentNoQuery = current.Split('?', 2)[0];
+
+                if (!string.Equals(currentNoQuery, desiredUrl, StringComparison.Ordinal))
+                {
+                    List_UserDefined[i].imgUrl = desiredUrl;
+                    changed = true;
+                }
+            }
+
+            if (changed)
+            {
+                WriteJsonFile(_fullPath, List_UserDefined);
+                OnConfigChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         public Dictionary<string, string> Get_FixedRouteToKeyMapping_snapshot()
@@ -250,7 +294,7 @@ namespace demoVer.Services
             return List_UserDefined.Select(item => new BottomRowItem 
             { 
                 Route = item.Route, 
-                DisplayName = item.DisplayName 
+                imgUrl = item.imgUrl 
             }).ToList();
         }
         
@@ -289,7 +333,7 @@ namespace demoVer.Services
         {
             foreach(var item in List_UserDefined)
             {
-                Console.WriteLine($"Route: {item.Route}         | DisplayName: {item.DisplayName}");
+                Console.WriteLine($"Route: {item.Route}         | imgUrl: {item.imgUrl}");
             }
         }
     
@@ -299,6 +343,6 @@ namespace demoVer.Services
     public class BottomRowItem
     {
         public string Route {get; set;} = string.Empty; // Page Route
-        public string DisplayName {get; set;} = string.Empty; // User Defined Name
+        public string imgUrl {get; set;} = string.Empty; // ImagePath (URL).
     }   
 }

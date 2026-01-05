@@ -89,7 +89,7 @@
 
     .name-input-wrapper {
         flex: 1;
-        max-width: 300px;
+        max-width: 200px;
     }
 
     .input-label {
@@ -101,15 +101,16 @@
     }
 
     .custom-input {
-        width: 100%;
-        padding: 0.5rem;
+        max-width: 100%;
+        max-height: 80px;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        padding: 0.25rem;
         border: 1px solid var(--border-color);
         border-radius: 4px;
-        font-size: 0.9rem;
         background-color: var(--bg-primary);
-        color: var(--text-primary);
-        border-color: var(--border-color);
-        transition: border-color 0.2s ease;
+        margin-bottom: 0.5rem;
     }
 
     .custom-input:focus {
@@ -117,6 +118,28 @@
         border-color: var(--accent-color);
         box-shadow: 0 0 0 2px rgba(var(--accent-color-rgb), 0.2);
         background-color: var(--bg-secondary);
+    }
+
+    /* InputFile styling */
+    .name-input-wrapper ::deep input[type="file"] {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .name-input-wrapper ::deep input[type="file"]::file-selector-button {
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+        background-color: var(--accent-color);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 0.5rem;
+        transition: background-color 0.2s ease;
+    }
+
+    .name-input-wrapper ::deep input[type="file"]::file-selector-button:hover {
+        background-color: var(--accent-hover);
     }
 
     .select-wrapper {
@@ -250,6 +273,14 @@
         font-weight: 500;
         color: var(--text-primary);
         background-color: var(--bg-primary);
+    }
+
+    .preview-btn img {
+        max-width: 100%;
+        max-height: 36px;
+        width: auto;
+        height: auto;
+        object-fit: contain;
     }
 
     .preview-btn:hover {
@@ -825,4 +856,62 @@
             padding: 0.5rem 0.75rem;
             font-size: 0.9rem;
         }
+    }
+
+    /* Image Upload Styles */
+    .image-upload-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .upload-label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+        margin-bottom: 0.25rem;
+    }
+
+    .image-preview {
+        width: 60px;
+        height: 60px;
+        border: 2px dashed var(--border-color);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--bg-secondary);
+        overflow: hidden;
+        transition: border-color 0.2s ease;
+    }
+
+    .image-preview:hover {
+        border-color: var(--accent-color);
+    }
+
+    .preview-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 6px;
+    }
+
+    .file-input {
+        position: absolute;
+        width: 60px;
+        height: 60px;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 2;
+    }
+
+    .image-upload-wrapper {
+        position: relative;
+    }
+
+    .image-upload-wrapper .file-input {
+        position: absolute;
+        top: 0;
+        left: 0;
     }

@@ -85,6 +85,7 @@ builder.Services.AddSingleton<CircuitHandler>(sp => sp.GetRequiredService<Circui
 
 builder.Services.AddSingleton<BottomRowConfig>();
 builder.Services.AddSingleton<VisibleCardsConfig>();
+builder.Services.AddSingleton<BottomRowImageService>();
 //根據作業系統自動切換 API Server IP 與 Port
 builder.Services.AddHttpClient("ApiClient", client =>
 {
@@ -156,6 +157,14 @@ var localizationOptions = new RequestLocalizationOptions
 };
 
 app.UseRequestLocalization(localizationOptions);
+
+// 提供 UserSetting 目錄的靜態檔案存取
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(
+        BottomRowImageService.GetUserSettingBaseDir()),
+    RequestPath = "/UserSetting"
+});
 
 app.UseStaticFiles();
 app.UseAntiforgery();

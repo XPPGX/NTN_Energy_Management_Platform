@@ -1,1 +1,132 @@
-﻿
+﻿[2026-01-05 08:50:04.673] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2026-01-05 08:50:04.687] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2026-01-05 08:50:04.690] BottomRowConfig 從檔案載入設定成功。
+[2026-01-05 08:52:22.287] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2026-01-05 08:52:22.288] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2026-01-05 08:52:22.372] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2026-01-05 08:52:22.373] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2026-01-05 08:52:22.374] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2026-01-05 08:52:22.375] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2026-01-05 08:52:22.380] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2026-01-05 08:52:22.382] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2026-01-05 08:52:22.384] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2026-01-05 09:04:22.965] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2026-01-05 09:18:23.547] [Heartbeat] StopAsync called
+[2026-01-05 09:18:23.548] [Heartbeat] Service stopped
+[2026-01-05 09:18:36.499] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2026-01-05 09:18:36.512] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2026-01-05 09:18:36.514] BottomRowConfig 從檔案載入設定成功。
+[2026-01-05 09:18:39.316] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2026-01-05 09:18:39.319] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2026-01-05 09:18:39.401] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2026-01-05 09:18:39.402] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2026-01-05 09:18:39.403] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2026-01-05 09:18:39.404] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2026-01-05 09:18:39.411] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2026-01-05 09:18:39.413] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2026-01-05 09:18:39.416] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2026-01-05 09:19:47.626] [Heartbeat] StopAsync called
+[2026-01-05 09:19:47.627] [Heartbeat] Service stopped
+[2026-01-05 09:19:53.406] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2026-01-05 09:19:53.418] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2026-01-05 09:19:53.421] BottomRowConfig 從檔案載入設定成功。
+[2026-01-05 09:19:55.415] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2026-01-05 09:19:55.417] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2026-01-05 09:19:55.512] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2026-01-05 09:19:55.513] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2026-01-05 09:19:55.514] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2026-01-05 09:19:55.515] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2026-01-05 09:19:55.522] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2026-01-05 09:19:55.524] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2026-01-05 09:19:55.528] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2026-01-05 09:19:55.623] [GlobalData][ComputeOverallValues] SubSystem Port = CAN1, Protocol = NTN-5K_CAN.json Error : System.InvalidOperationException: Collection was modified; enumeration operation may not execute.
+   at System.Collections.Generic.HashSet`1.Enumerator.MoveNext()
+   at demoVer.Services.GlobalVar.ComputeOverallValues() in C:\code\CMU3\NTN_Energy_Management_Platform\demoVer\Services\GlobalData.cs:line 218
+[2026-01-05 09:23:38.720] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2026-01-05 09:23:44.414] [ApiManager][apiRead_nowSOC] Error : A task was canceled.
+[2026-01-05 09:26:47.682] [Heartbeat] StopAsync called
+[2026-01-05 09:26:47.683] [Heartbeat] Service stopped
+[2026-01-05 09:26:57.482] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2026-01-05 09:26:57.496] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2026-01-05 09:26:57.498] BottomRowConfig 從檔案載入設定成功。
+[2026-01-05 09:26:59.849] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2026-01-05 09:26:59.850] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2026-01-05 09:26:59.955] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2026-01-05 09:26:59.956] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2026-01-05 09:26:59.956] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2026-01-05 09:26:59.958] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2026-01-05 09:26:59.963] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2026-01-05 09:26:59.965] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2026-01-05 09:26:59.970] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2026-01-05 09:29:39.460] [Heartbeat] StopAsync called
+[2026-01-05 09:29:39.461] [Heartbeat] Service stopped
+[2026-01-05 09:29:46.652] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2026-01-05 09:29:46.664] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2026-01-05 09:29:46.669] BottomRowConfig 從檔案載入設定成功。
+[2026-01-05 09:29:49.191] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2026-01-05 09:29:49.193] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2026-01-05 09:29:49.276] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2026-01-05 09:29:49.277] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2026-01-05 09:29:49.279] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2026-01-05 09:29:49.280] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2026-01-05 09:29:49.287] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2026-01-05 09:29:49.290] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2026-01-05 09:29:49.294] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2026-01-05 09:33:27.645] [Heartbeat] StopAsync called
+[2026-01-05 09:33:27.646] [Heartbeat] Service stopped
+[2026-01-05 09:33:36.395] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2026-01-05 09:33:36.407] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2026-01-05 09:33:36.410] BottomRowConfig 從檔案載入設定成功。
+[2026-01-05 09:33:39.083] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2026-01-05 09:33:39.085] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2026-01-05 09:33:39.218] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2026-01-05 09:33:39.218] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2026-01-05 09:33:39.219] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2026-01-05 09:33:39.221] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2026-01-05 09:33:39.229] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2026-01-05 09:33:39.232] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2026-01-05 09:33:39.234] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2026-01-05 09:33:57.121] [Heartbeat] StopAsync called
+[2026-01-05 09:33:57.121] [Heartbeat] Service stopped
+[2026-01-05 09:34:51.092] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2026-01-05 09:34:51.108] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2026-01-05 09:34:51.109] ReadFromFile 檔案不存在。Path: UserSetting\5040\BottomRowConfig.json
+[2026-01-05 09:34:57.145] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2026-01-05 09:34:57.146] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2026-01-05 09:34:57.236] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2026-01-05 09:34:57.237] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2026-01-05 09:34:57.237] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2026-01-05 09:34:57.240] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2026-01-05 09:34:57.250] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2026-01-05 09:34:57.263] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2026-01-05 09:34:57.274] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2026-01-05 09:35:23.018] [Heartbeat] StopAsync called
+[2026-01-05 09:35:23.019] [Heartbeat] Service stopped
+[2026-01-05 09:35:52.950] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2026-01-05 09:35:52.962] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2026-01-05 09:35:52.966] BottomRowConfig 從檔案載入設定成功。
+[2026-01-05 09:35:57.269] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2026-01-05 09:35:57.271] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2026-01-05 09:35:57.368] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2026-01-05 09:35:57.369] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2026-01-05 09:35:57.369] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2026-01-05 09:35:57.372] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2026-01-05 09:35:57.381] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2026-01-05 09:35:57.383] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2026-01-05 09:35:57.385] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2026-01-05 09:36:12.706] [Heartbeat] StopAsync called
+[2026-01-05 09:36:12.707] [Heartbeat] Service stopped
+[2026-01-05 09:39:35.730] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2026-01-05 09:39:35.744] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2026-01-05 09:39:35.748] BottomRowConfig 從檔案載入設定成功。
+[2026-01-05 09:39:38.986] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2026-01-05 09:39:38.987] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2026-01-05 09:39:39.096] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2026-01-05 09:39:39.097] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN.json)
+[2026-01-05 09:39:39.097] [PollingRead][FireAndForgetTask] oneSubSys_FireAndForgetLock is being used (port, protocol) = (CAN1, NTN-5K_CAN.json)
+[2026-01-05 09:39:39.100] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2026-01-05 09:39:39.109] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD.json)
+[2026-01-05 09:39:39.112] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2026-01-05 09:39:39.115] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD.json)
+[2026-01-05 09:42:11.051] [Heartbeat] StopAsync called
+[2026-01-05 09:42:11.052] [Heartbeat] Service stopped
