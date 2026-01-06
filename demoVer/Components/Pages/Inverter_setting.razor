@@ -201,7 +201,7 @@
             </div>
         </div>
     </div>
-    </div>
+</div>
 @code
 {
     [CascadingParameter(Name = "MainLayout")] public MainLayout? MainLayout { get; set; }
@@ -654,6 +654,7 @@
 
     private async Task DrawChart()
     {
+        double margin = 1.1; // 10% margin
         await JS.InvokeVoidAsync("drawChart_Sin", new {
             canvasID = "sinChart",
             peak = peak,
@@ -661,8 +662,8 @@
             chartType = "line",
             xLabel = xLabel,
             yLabel = yLabel,
-            yMin = -250,
-            yMax = 250,
+            yMin = -peak * margin,
+            yMax = peak * margin,
             totalDegrees = 720
         });
     }

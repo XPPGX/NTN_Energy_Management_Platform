@@ -718,7 +718,7 @@ namespace demoVer.Services
 
                 //Battery_recharge_value
                 var BAT_RCHG_val_WriteData = Get_Numeric_Cmd_Default_Write_Data(subsys, "00BB");
-                if(BAT_SHDN_val_WriteData is not null){configurableCmdDatas.Add(BAT_RCHG_val_WriteData);}
+                if(BAT_RCHG_val_WriteData is not null){configurableCmdDatas.Add(BAT_RCHG_val_WriteData);}
 
                 var BAT_OV_ALM_val_WriteData = Get_Numeric_Cmd_Default_Write_Data(subsys, "00BC");
                 if(BAT_OV_ALM_val_WriteData is not null){configurableCmdDatas.Add(BAT_OV_ALM_val_WriteData);}
