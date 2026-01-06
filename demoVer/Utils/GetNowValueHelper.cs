@@ -6,7 +6,7 @@ namespace demoVer.Utils
 {
     public static class GetNowValueHelper
     {
-        private static readonly string _category = typeof(GetNowValueHelper).FullName!;
+        public static readonly string _category = typeof(GetNowValueHelper).FullName!;
         public static string getClearCmdCode(string rawCmdCode)
         {
             if (rawCmdCode.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
@@ -301,6 +301,7 @@ namespace demoVer.Utils
 
                 //取Bit0 (ACF_Enable)
                 var ACF_Enable_BitKey = cmdSettingData.GetBitKey(0);
+                Console.WriteLine("[parse_ACF_Set] ACF_Enable_BitKey: " + ACF_Enable_BitKey);
                 if (ACF_Enable_BitKey is not null && cmdSettingData.Target.Bits.TryGetValue(ACF_Enable_BitKey, out int val))
                 {
                     switch (val)
@@ -315,6 +316,7 @@ namespace demoVer.Utils
                             ACF_Set_str = "50Hz";
                             break;
                     }
+                    Console.WriteLine("[parse_ACF_Set] ACF_Enable Value: " + val);
                 }
                 AppLogger.Log_To_File_log(_category, $"[parse_ACF_Set] CmdCode: {ClearCmdCode}, ACF_Set_str: {ACF_Set_str}", AppLogLevel.Debug);
                 return ACF_Set_str;

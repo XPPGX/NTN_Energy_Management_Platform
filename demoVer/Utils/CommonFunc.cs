@@ -327,6 +327,8 @@ namespace demoVer.Utils
             }
             return false;
         }
+    
+        
     }    
 
     public static class ScalingComputer

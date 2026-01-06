@@ -107,7 +107,7 @@ public async Task<bool> WriteCmdsToFramework(
         return false;
     }
 
-    var pageWriteLock = subsys.Get_WriteProcessFlowLock_By_PageSelection(pageSelection);
+    var pageWriteLock = subsys.Get_WriteProcessFlowLock(pageSelection);
     if (pageWriteLock is null)
     {
         return false;

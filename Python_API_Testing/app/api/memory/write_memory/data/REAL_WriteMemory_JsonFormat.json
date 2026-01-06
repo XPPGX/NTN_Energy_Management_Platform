@@ -546,7 +546,7 @@
                 "number": null,
                 "text": null,
                 "bits": {
-                    "BIT_0": 1
+                    "BIT_0": 4
                 }
             },
             "targetDirty": false,

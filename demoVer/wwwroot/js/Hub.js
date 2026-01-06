@@ -182,14 +182,14 @@ window.drawSinChart_Helper = function(INV_setting)
     //compute peak
     switch(INV_setting.acv_display_str)
     {
-        case "100VAC": peak_computed = 100; break;
-        case "110VAC": peak_computed = 110; break;
-        case "115VAC": peak_computed = 115; break;
-        case "120VAC": peak_computed = 120; break;
-        case "200VAC": peak_computed = 200; break;
-        case "220VAC": peak_computed = 220; break;
-        case "230VAC": peak_computed = 230; break;
-        case "240VAC": peak_computed = 240; break;
+        case "100VAC": peak_computed = 100 * Math.sqrt(2); break;
+        case "110VAC": peak_computed = 110 * Math.sqrt(2); break;
+        case "115VAC": peak_computed = 115 * Math.sqrt(2); break;
+        case "120VAC": peak_computed = 120 * Math.sqrt(2); break;
+        case "200VAC": peak_computed = 200 * Math.sqrt(2); break;
+        case "220VAC": peak_computed = 220 * Math.sqrt(2); break;
+        case "230VAC": peak_computed = 230 * Math.sqrt(2); break;
+        case "240VAC": peak_computed = 240 * Math.sqrt(2); break;
         default:
             break;
     }

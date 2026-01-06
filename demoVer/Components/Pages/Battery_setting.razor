@@ -60,6 +60,7 @@
         </div>
         <div class="rightPart">
             <button type="button" class="btn btn-primary no-flex" @onclick="OnSaveButtonClick">@Localizer["BatterySetting-SaveSettings"]</button>
+            <button type="button" class="btn btn-primary no-flex" @onclick="OnDefaultButtonClick">@Localizer["BatterySetting-RestoreDefault"]</button>
         </div>
     </div>
     <div class="content-container">
@@ -101,8 +102,8 @@
                     <canvas id="stageChart" class="stage-chart"></canvas>
                     <div class="stage-controls">
                         <select value="@selectedStage.ToString().ToLower()" @onchange="OnStageSelectChanged" @onclick:stopPropagation="true" @onchange:stopPropagation="true">
-                            <option value="false">@Localizer["BatterySetting-2Stage"]</option>
-                            <option value="true">@Localizer["BatterySetting-3Stage"]</option>
+                            <option value="true">@Localizer["BatterySetting-2Stage"]</option>
+                            <option value="false">@Localizer["BatterySetting-3Stage"]</option>
                         </select>
                     </div>
                 </div>
@@ -603,12 +604,14 @@
                 ConfirmBtn_Text_parent  = Localizer["Common-Confirm"];
                 CancelBtn_Text_parent   = Localizer["Common-Cancel"];
                 ConfirmBtn_Func_parent  = EventCallback.Factory.Create(this, ConfirmSave);
-                CancelBtn_Func_parent   = EventCallback.Factory.Create(this, CancelSave);
+                CancelBtn_Func_parent   = EventCallback.Factory.Create(this, CancelModal);
                 break;
             case "DefaultVal":
                 AlertMessage_parent     = Localizer["BatterySetting-ConfirmRestoreDefault"];
                 ConfirmBtn_Text_parent  = Localizer["Common-Confirm"];
                 CancelBtn_Text_parent   = Localizer["Common-Cancel"];
+                ConfirmBtn_Func_parent  = EventCallback.Factory.Create(this, ConfirmRestoreDefault);
+                CancelBtn_Func_parent   = EventCallback.Factory.Create(this, CancelModal);
                 break;
             default:
                 break;
@@ -631,6 +634,11 @@
     {
         // await ReceiveFrom_TopRow_SaveBatterySetting();
         TriggerAlert("Save");
+    }
+    
+    private async Task OnDefaultButtonClick()
+    {
+        TriggerAlert("DefaultVal");
     }
     #endregion UI InteractionFuncs
 
@@ -659,14 +667,24 @@
         var fv_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "00B2", RealNumber: sliderValues[2]);
         if (fv_cmdData != null) { configurableCmdDatas.Add(fv_cmdData); }
 
+        //check if BatRchg > FV (0x00BB)
+        double now_BAT_RCHG_VOLT = SubSystemManager.Get_Now_Cmd_value(port, protocol, "00BB");
+        var fv_value = sliderValues[2];
+        if(now_BAT_RCHG_VOLT >= fv_value) //BAT_RCHG must < FV
+        {
+            var fixed_BAT_RCHG_VOLT = fv_value;
+            var BAT_RCHG_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "00BB", RealNumber: fixed_BAT_RCHG_VOLT);
+            if (BAT_RCHG_cmdData != null) { configurableCmdDatas.Add(BAT_RCHG_cmdData); }
+        }
+
         //TC (0x00B3)
         var tc_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "00B3", RealNumber: sliderValues[3]);
         if (tc_cmdData != null) { configurableCmdDatas.Add(tc_cmdData); }
 
         //CurveStage in (0x00B4 "BIT_6")
         //CCT_Enable in (0x00B4 "BIT_8")
-        //CVT_Enabel in (0x00B4 "BIT_9")
-        //FVT Enabel in (0x00B4 "BIT_10")
+        //CVT_Enable in (0x00B4 "BIT_9")
+        //FVT Enable in (0x00B4 "BIT_10")
         Console.WriteLine($"[nowUiData_transformTo_apiWriteData] selectedStage: {selectedStage}, CCT_Enable: {CCT_Enable}, CVT_Enable: {CVT_Enable}, FVT_Enable: {FVT_Enable}");
         var CurveStage_BitKey = SubSystemManager.GetBitKey_FromSubSys(port, protocol, "00B4", 6);
         var CCT_Enable_BitKey = SubSystemManager.GetBitKey_FromSubSys(port, protocol, "00B4", 8);
@@ -743,7 +761,35 @@
         }
     }
 
-    private async Task CancelSave()
+    private async Task ConfirmRestoreDefault()
+    {
+        try
+        {
+            string port = string.Empty;
+            string protocol = string.Empty;
+            (port, protocol) = GetSelectedSubSystemPortAndProtocol();
+            
+            //1. 傳到 SubSystemManager 發送還原預設值指令 (只還原Battery相關)
+            bool isWriteSuccess = await SubSystemManager.Set_To_Default_BAT(port, protocol);
+            if(isWriteSuccess is false)
+            {
+                AppLogger.Log_To_File_log(_category, $"[Battery_setting][ConfirmRestoreDefault] Writing Default To device failed", AppLogLevel.Warning);
+                return;
+            }
+        }
+        catch(Exception ex)
+        {
+            AppLogger.Log_To_File_log(_category, $"[Battery_setting][ConfirmRestoreDefault] Exception: {ex.Message}", AppLogLevel.Error);
+        }
+        finally
+        {
+            CloseAlert();
+            CloseModal();
+            Console.WriteLine("[ConfirmRestoreDefault]");
+        }
+    }
+
+    private async Task CancelModal()
     {
         CloseAlert();
         CloseModal();

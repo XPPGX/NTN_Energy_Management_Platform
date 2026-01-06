@@ -4,6 +4,7 @@ using System.Threading;
 using demoVer.Services;
 using demoVer.Interfaces;
 using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 
 namespace demoVer.Services
 {
@@ -176,6 +177,60 @@ namespace demoVer.Services
         public Dictionary<string, string> GetCmdUnit_Dict_FromSubsysManager(string port, string protocol)
         {
             return _subSystemManager.GetCmd_Unit_Dict_InOneSubSystem(port, protocol);
+        }
+
+        //Filtered the numeric value cmds for chart display
+        public Dictionary<string, string> Get_CmdUnit_Dict_FromSubsysManager_ForChart(string port, string protocol)
+        {
+            var cmdUnitDict = _subSystemManager.GetCmd_Unit_Dict_InOneSubSystem(port, protocol);
+            if (cmdUnitDict is null || cmdUnitDict.Count == 0)
+            {
+                AppLogger.Log_To_File_log(_category, $"[GlobalData][Get_CmdUnit_Dict_FromSubsysManager_ForChart] No CMD Unit Dict found for (port, protocol) = ({port}, {protocol})", AppLogLevel.Trace);
+                return new Dictionary<string, string>();
+            }
+
+            var subsys = _subSystemManager.GetOneSubSystem_Ref(port, protocol);
+            if(subsys is null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[GlobalData][Get_CmdUnit_Dict_FromSubsysManager_ForChart] SubSystem not found for (port, protocol) = ({port}, {protocol})", AppLogLevel.Trace);
+                return new Dictionary<string, string>();
+            }
+
+            try
+            {
+                using var addrSetEnumerator = subsys.AddrSet.GetEnumerator();
+                if(!addrSetEnumerator.MoveNext())
+                {
+                    AppLogger.Log_To_File_log(_category, $"[GlobalData][Get_CmdUnit_Dict_FromSubsysManager_ForChart] SubSystem AddrSet is empty for (port, protocol) = ({port}, {protocol})", AppLogLevel.Trace);
+                    return new Dictionary<string, string>();
+                }
+                uint firstAddr = addrSetEnumerator.Current;
+                uint storingAddr = Custom.getAddrOffsetByPort(subsys.Port) + firstAddr;
+                
+                var deviceData_snapshot = Real_Devices_ReadData.Get_oneDevice_DataSnapshot(storingAddr);
+                if(deviceData_snapshot is null)
+                {
+                    AppLogger.Log_To_File_log(_category, $"[GlobalData][Get_CmdUnit_Dict_FromSubsysManager_ForChart] No Device Data found at storingAddr = {storingAddr} for (port, protocol) = ({port}, {protocol})", AppLogLevel.Trace);
+                    return new Dictionary<string, string>();
+                }
+                
+                Dictionary<string, string> cmdUnitDict_ForChart = new Dictionary<string, string>();
+                foreach(var (cmdName, cmdUnit) in cmdUnitDict)
+                {
+                    var cmdType = deviceData_snapshot.GetCmdType(cmdName);
+                    if(string.Equals(cmdType, "Numeric", StringComparison.OrdinalIgnoreCase))
+                    {
+                        cmdUnitDict_ForChart[cmdName] = cmdUnit; 
+                    }
+                }
+
+                return cmdUnitDict_ForChart;
+            }
+            catch(Exception e)
+            {
+                AppLogger.Log_To_File_log(_category, $"[GlobalData][Get_CmdUnit_Dict_FromSubsysManager_ForChart] Error : {e}", AppLogLevel.Error);
+                return new Dictionary<string, string>();
+            }
         }
 
         public string? Get_Subsystem_Summary_Value(string port, string protocol, string cmdName)

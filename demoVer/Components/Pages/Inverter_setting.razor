@@ -58,6 +58,7 @@
         </div>
         <div class="rightPart">
             <button type="button" class="btn btn-primary no-flex" @onclick="OnSaveButtonClick">@Localizer["InverterSetting-SaveSettings"]</button>
+            <button type="button" class="btn btn-primary no-flex" @onclick="OnDefaultButtonClick">@Localizer["InverterSetting-RestoreDefault"]</button>
         </div>
     </div>
 
@@ -81,6 +82,10 @@
                                 }
                             </select>
                         </div>
+                    </div>
+                    <div class="value-display">
+                        <span>Vpeak: @peak.ToString("F2") V</span>
+                        <span>VRMS: @( (peak / Math.Sqrt(2)).ToString("F2") ) V</span>
                     </div>
                 </div>
             </div>
@@ -210,8 +215,8 @@
     public EventCallback CancelBtn_Func_parent { get; set; } = EventCallback.Empty;
     private bool _isLoading = true;
     private bool oldScalingFactor_OK;
-    private string? selectedFreqType;
-    private string? selectedVoltType;
+    private string? selectedFreqType = ConstDefinition.Str_50Hz;
+    private string? selectedVoltType = ConstDefinition.Str_AC_InputType_100VAC;
     private int waveCount = 5;
     private double period = 144;
     private double peak = 240;
@@ -524,6 +529,12 @@
         return Task.CompletedTask;
     }
 
+    private Task OnDefaultButtonClick()
+    {
+        TriggerAlert("DefaultVal");
+        return Task.CompletedTask;
+    }
+
     private async Task OnHeartbeatTickAsync()
     {
         try
@@ -624,14 +635,14 @@
 
         switch(selectedVoltType)
         {
-            case "100VAC": peak = 100; break;
-            case "110VAC": peak = 110; break;
-            case "115VAC": peak = 115; break;
-            case "120VAC": peak = 120; break;
-            case "200VAC": peak = 200; break;
-            case "220VAC": peak = 220; break;
-            case "230VAC": peak = 230; break;
-            case "240VAC": peak = 240; break;
+            case "100VAC": peak = 100 * Math.Sqrt(2); break;
+            case "110VAC": peak = 110 * Math.Sqrt(2); break;
+            case "115VAC": peak = 115 * Math.Sqrt(2); break;
+            case "120VAC": peak = 120 * Math.Sqrt(2); break;
+            case "200VAC": peak = 200 * Math.Sqrt(2); break;
+            case "220VAC": peak = 220 * Math.Sqrt(2); break;
+            case "230VAC": peak = 230 * Math.Sqrt(2); break;
+            case "240VAC": peak = 240 * Math.Sqrt(2); break;
             default:
                 break;
         }
@@ -681,10 +692,17 @@
         {
             case "Save":
                 AlertMessage_parent     = Localizer["InverterSetting-ConfirmSave"];
-                ConfirmBtn_Text_parent  = "確定";
-                CancelBtn_Text_parent   = "取消";
+                ConfirmBtn_Text_parent  = Localizer["Common-Confirm"];
+                CancelBtn_Text_parent   = Localizer["Common-Cancel"];
                 ConfirmBtn_Func_parent  = EventCallback.Factory.Create(this, ConfirmSave);
-                CancelBtn_Func_parent   = EventCallback.Factory.Create(this, CancelSave);
+                CancelBtn_Func_parent   = EventCallback.Factory.Create(this, CancelModal);
+                break;
+            case "DefaultVal":
+                AlertMessage_parent     = Localizer["InverterSetting-ConfirmRestoreDefault"];
+                ConfirmBtn_Text_parent  = Localizer["Common-Confirm"];
+                CancelBtn_Text_parent   = Localizer["Common-Cancel"];
+                ConfirmBtn_Func_parent  = EventCallback.Factory.Create(this, ConfirmRestoreDefault);
+                CancelBtn_Func_parent   = EventCallback.Factory.Create(this, CancelModal);
                 break;
             default:
                 break;
@@ -890,7 +908,35 @@
         }
     }
 
-    private async Task CancelSave()
+    private async Task ConfirmRestoreDefault()
+    {
+        try
+        {
+            string port = string.Empty;
+            string protocol = string.Empty;
+            (port, protocol) = GetSelectedSubSystemPortAndProtocol();
+
+            //1. 傳到 SubSystemManager 發送還原預設值指令 (只還原INV相關)
+            bool isWriteSuccess = await SubSystemManager.Set_To_Default_INV(port, protocol);
+            if(isWriteSuccess is false)
+            {
+                AppLogger.Log_To_File_log(_category, $"[Inverter_setting][ConfirmRestoreDefault] Restore to default failed", AppLogLevel.Warning);
+                return;
+            }
+        }
+        catch(Exception e)
+        {
+            AppLogger.Log_To_File_log(_category, $"[Inverter_setting][ConfirmRestoreDefault] Exception: {e.Message}", AppLogLevel.Error);
+        }
+        finally
+        {
+            CloseAlert();
+            CloseModal();
+            Console.WriteLine("[ConfirmRestoreDefault]");
+        }
+    }
+
+    private async Task CancelModal()
     {
         CloseAlert();
         CloseModal();

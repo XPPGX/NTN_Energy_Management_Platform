@@ -806,6 +806,7 @@ window.drawChart_Sin = function(config)
     const peak = config.peak || 1;
     const period = config.period || 360;
     const totalDegrees = config.totalDegrees || 360;
+    const vrms = peak / Math.sqrt(2);  // 計算 VRMS
     for (let x = 0; x <= totalDegrees; x += 5) {
         const radians = (x * Math.PI) / 180;
         labels.push(x + "°");
@@ -819,7 +820,7 @@ window.drawChart_Sin = function(config)
             labels: labels,
             datasets: [
                 {
-                label: config.yLabel || "輸出電壓",
+                label: config.yLabel || "V(t)",
                 data: data,
                 borderWidth: 2,
                 borderColor: "rgba(75, 192, 192, 1)",
@@ -829,17 +830,28 @@ window.drawChart_Sin = function(config)
                 pointRadius: 0,
                 pointHoverRadius: 0,
                 },
-                // {
-                // label: "峰值",
-                // data: Array(100).fill(peak), // ⬅ 長度符合 labels
-                // borderColor: "red",
-                // borderDash: [5, 5],
-                // borderWidth: 2,
-                // fill: false,
-                // tension: 0,
-                // pointRadius: 0
-
-                // }
+                // 正 VRMS 水平線
+                {
+                    label: "VRMS (+)",
+                    data: Array(labels.length).fill(vrms),
+                    borderColor: "orange",
+                    borderDash: [10, 5],
+                    borderWidth: 2,
+                    fill: false,
+                    pointRadius: 0,
+                    pointHoverRadius: 0,
+                },
+                // 負 VRMS 水平線
+                {
+                    label: "VRMS (-)",
+                    data: Array(labels.length).fill(-vrms),
+                    borderColor: "blue",
+                    borderDash: [10, 5],
+                    borderWidth: 2,
+                    fill: false,
+                    pointRadius: 0,
+                    pointHoverRadius: 0,
+                }
             ]
         },
         options: {

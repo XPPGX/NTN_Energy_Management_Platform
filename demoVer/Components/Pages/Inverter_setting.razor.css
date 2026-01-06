@@ -156,6 +156,15 @@
     justify-content: center;
 }
 
+.value-display {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
 
 
 .card-container-timeout{
@@ -569,4 +578,9 @@ mud-slider-vertical =>
         height: 100%;
     }
     
+    .value-display {
+        flex-direction: row;
+        gap: 1rem;
+        font-size: 0.9rem;
+    }
 }

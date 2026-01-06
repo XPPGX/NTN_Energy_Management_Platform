@@ -661,23 +661,20 @@
             }
             else if (currentSelected_Addr < 256)
             {
-                @* oneDevice_cmd_unit_Dict.Clear(); *@
-                @* var deviceDict = globalVar.Get_oneDevice_Cmd_unit_Dict(currentSelected_Addr); *@
-                @* oneDevice_cmd_unit_Dict = deviceDict ?? new Dictionary<string, string>(); *@
-                @* show_cmd_unit_Dict_ref = oneDevice_cmd_unit_Dict; *@
-                Console.WriteLine($"[ChartCardEdit][getCMDs] Get CMDs for Addr: {currentSelected_Addr}");
-                var tmpCmdUnitDict = globalVar.GetCmdUnit_Dict_FromSubsysManager(currentSelected_Port, currentSelected_Protocol);
+                AppLogger.Log_To_File_log(_category, $"[ChartCardEdit][getCMDs] Get CMDs for Addr: {currentSelected_Addr}", AppLogLevel.Trace);
+                var tmpCmdUnitDict = globalVar.Get_CmdUnit_Dict_FromSubsysManager_ForChart(currentSelected_Port, currentSelected_Protocol);
                 if(tmpCmdUnitDict is null || tmpCmdUnitDict.Count == 0)
                 {
                     Console.WriteLine($"[ChartCardEdit][getCMDs] No CMDs found for Addr: {currentSelected_Addr}, Port: {currentSelected_Port}, Protocol: {currentSelected_Protocol}");
-                    @* AppLogger.Log_To_File_log(_category, $"[ChartCardEdit][getCMDs] No CMDs found for Addr: {currentSelected_Addr}, Port: {currentSelected_Port}, Protocol: {currentSelected_Protocol}", AppLogLevel.Information); *@
+                    // AppLogger.Log_To_File_log(_category, $"[ChartCardEdit][getCMDs] No CMDs found for Addr: {currentSelected_Addr}, Port: {currentSelected_Port}, Protocol: {currentSelected_Protocol}", AppLogLevel.Information);
                 }
+
                 show_cmd_unit_Dict_ref = tmpCmdUnitDict ?? new Dictionary<string, string>();
                 //印出取得的CMD列表
-                foreach (var cmd in show_cmd_unit_Dict_ref)
-                {
-                    Console.WriteLine($"[ChartCardEdit][getCMDs] CMD: {cmd.Key}, Unit: {cmd.Value}");
-                }
+                // foreach (var cmd in show_cmd_unit_Dict_ref)
+                // {
+                //     Console.WriteLine($"[ChartCardEdit][getCMDs] CMD: {cmd.Key}, Unit: {cmd.Value}");
+                // }
             }
             else
             {
@@ -694,6 +691,8 @@
             return false;
         }
     }
+
+    
 
     private void ResetSelection()
     {

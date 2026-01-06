@@ -9,7 +9,7 @@ using System.ComponentModel;
 using demoVer.Components;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Http.Connections;
-
+using SubSystem = demoVer.Models.SubSystem;
 namespace demoVer.Services
 {
     public class SubSystemManager
@@ -587,12 +587,318 @@ namespace demoVer.Services
         }
 
         /// <summary>
+        /// 取得目前某命令的值
+        /// </summary>
+        /// <param name="port"></param>
+        /// <param name="protocol"></param>
+        /// <param name="clearCmdCode"></param>
+        /// <returns></returns>
+        public double Get_Now_Cmd_value(string port, string protocol, string clearCmdCode)
+        {
+            var subsys = GetOneSubSystem_Ref(port, protocol);
+            if(subsys is null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][Get_Now_Cmd_value] subsys is null for (port, protocol) = ({port}, {protocol})", AppLogLevel.Warning);
+                return 0.0;
+            }
+            var value = GetNowValueHelper.parse_Numeric_Val(subsys.InfosForWriteCmd, clearCmdCode);
+            
+            return value;
+        }
+        
+        public async Task<bool> Set_To_Default_BAT(string port, string protocol)
+        {
+            List<Post_RealSingleRawSettingCMD_JsonFormat> configurableCmdDatas = new List<Post_RealSingleRawSettingCMD_JsonFormat>();
+
+            var subsys = GetOneSubSystem_Ref(port, protocol);
+            if (subsys is null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][Set_To_Default_BAT] subsys is null for (port, protocol) = ({port}, {protocol})", AppLogLevel.Warning);
+                return false;
+            }
+
+            try
+            {
+                //CC (0x00B0)
+                var cc_Default_WriteData = Get_Numeric_Cmd_Default_Write_Data(subsys, "00B0");
+                if(cc_Default_WriteData is not null){configurableCmdDatas.Add(cc_Default_WriteData);}
+
+                //CV (0x00B1)
+                var cv_Default_WriteData = Get_Numeric_Cmd_Default_Write_Data(subsys, "00B1");
+                if(cv_Default_WriteData is not null){configurableCmdDatas.Add(cv_Default_WriteData);}
+
+                //FV (0x00B2)
+                var fv_Default_WriteData = Get_Numeric_Cmd_Default_Write_Data(subsys, "00B2");
+                if(fv_Default_WriteData is not null){configurableCmdDatas.Add(fv_Default_WriteData);}
+
+                //BAT_RCHG (0x00BB)
+                var fv_range = subsys.GetSettingRange_ByClearCmdCode("00BB");
+                var BAT_RCHG_nowValue = Get_Now_Cmd_value(port, protocol, "00BB");
+                if(fv_range is not null)
+                {
+                    if(BAT_RCHG_nowValue > fv_range.defaultVal)
+                    {
+                        var new_BAT_RCHG_value = fv_range.defaultVal;
+                        var bat_rchg_WriteData = createOneWriteCmdData(port, protocol, "00BB", RealNumber: new_BAT_RCHG_value);
+                        if(bat_rchg_WriteData is not null){configurableCmdDatas.Add(bat_rchg_WriteData);}
+                    }
+                }
+                //TC (0x00B3)
+                var tc_Default_WriteData = Get_Numeric_Cmd_Default_Write_Data(subsys, "00B3");
+                if(tc_Default_WriteData is not null){configurableCmdDatas.Add(tc_Default_WriteData);}
+
+                //CCT (0x00B5)
+                var cct_Default_WriteData = Get_Numeric_Cmd_Default_Write_Data(subsys, "00B5");
+                if(cct_Default_WriteData is not null){configurableCmdDatas.Add(cct_Default_WriteData);}
+                
+                //CVT (0x00B6)
+                var cvt_Default_WriteData = Get_Numeric_Cmd_Default_Write_Data(subsys, "00B6");
+                if(cvt_Default_WriteData is not null){configurableCmdDatas.Add(cvt_Default_WriteData);}
+
+                //FVT (0x00B7)
+                var fvt_Default_WriteData = Get_Numeric_Cmd_Default_Write_Data(subsys, "00B7");
+                if(fvt_Default_WriteData is not null){configurableCmdDatas.Add(fvt_Default_WriteData);}
+
+                //CurveStage in (0x00B4 "BIT_6")
+                //CCT_Enable in (0x00B4 "BIT_8")
+                //CVT_Enable in (0x00B4 "BIT_9")
+                //FVT_Enable in (0x00B4 "BIT_10")
+                var curveConfig_WriteData = Get_BitField_Cmd_Default_Write_Data(subsys, "00B4", new List<int>(){6,8,9,10});
+                if(curveConfig_WriteData is not null){configurableCmdDatas.Add(curveConfig_WriteData);}
+
+                bool isWriteSuccess = await WriteCmdsToFramework(port, protocol, configurableCmdDatas, 0);
+                
+                return isWriteSuccess;
+            }
+            catch(Exception e)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][Set_To_Default_BAT] Exception: {e.Message}", AppLogLevel.Error);
+                return false;
+            }
+        }
+
+        public async Task<bool> Set_To_Default_INV(string port, string protocol)
+        {
+            List<Post_RealSingleRawSettingCMD_JsonFormat> configurableCmdDatas = new List<Post_RealSingleRawSettingCMD_JsonFormat>();
+
+            var subsys = GetOneSubSystem_Ref(port, protocol);
+            if (subsys is null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][Set_To_Default_INV] subsys is null for (port, protocol) = ({port}, {protocol})", AppLogLevel.Warning);
+                return false;
+            }
+
+            try
+            {
+                //Output_ACF_Set (0x0103 "BIT_0") programmer defined default value = 1
+                var Output_ACF_Set_WriteData = Get_BitField_Cmd_Default_Write_Data(subsys, "0103", new List<int>(){0}, otherDefaultVal: 1);
+                if(Output_ACF_Set_WriteData is not null){configurableCmdDatas.Add(Output_ACF_Set_WriteData);}
+
+                //Output_ACV_Set (0x0102 "BIT_0") programmer defined default value = 1
+                var Output_ACV_Set_WriteData = Get_BitField_Cmd_Default_Write_Data(subsys, "0102", new List<int>(){0}, otherDefaultVal: 1);
+                if(Output_ACV_Set_WriteData is not null){configurableCmdDatas.Add(Output_ACV_Set_WriteData);}
+
+                //CHG_Enable (0x0100 "BIT_2")
+                //GRID_Enable (0x0100 "BIT_3")
+                var INV_OPERATION = Get_AddrCmd_Default_Write_Data(subsys, "0100", new List<int>(){2, 3});
+                if(INV_OPERATION is not null){configurableCmdDatas.Add(INV_OPERATION);}
+
+                //OutputPrio (0x0101 "BIT_0")
+                //ChargingPrio (0x0101 "BIT_2")
+                var INV_CONFIG_WriteData = Get_BitField_Cmd_Default_Write_Data(subsys, "0101", new List<int>(){0, 2});
+                if(INV_CONFIG_WriteData is not null){configurableCmdDatas.Add(INV_CONFIG_WriteData);}
+
+                //Battery_Alarm_value
+                var BAT_ALM_val_WriteData = Get_Numeric_Cmd_Default_Write_Data(subsys, "00B9");
+                if(BAT_ALM_val_WriteData is not null){configurableCmdDatas.Add(BAT_ALM_val_WriteData);}
+
+                //Battery_Shutdown_value
+                var BAT_SHDN_val_WriteData = Get_Numeric_Cmd_Default_Write_Data(subsys, "00BA");
+                if(BAT_SHDN_val_WriteData is not null){configurableCmdDatas.Add(BAT_SHDN_val_WriteData);}
+
+                //Battery_recharge_value
+                var BAT_RCHG_val_WriteData = Get_Numeric_Cmd_Default_Write_Data(subsys, "00BB");
+                if(BAT_SHDN_val_WriteData is not null){configurableCmdDatas.Add(BAT_RCHG_val_WriteData);}
+
+                var BAT_OV_ALM_val_WriteData = Get_Numeric_Cmd_Default_Write_Data(subsys, "00BC");
+                if(BAT_OV_ALM_val_WriteData is not null){configurableCmdDatas.Add(BAT_OV_ALM_val_WriteData);}
+
+                return true;
+            }
+            catch(Exception e)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][Set_To_Default_INV] Exception: {e.Message}", AppLogLevel.Error);
+                return false;
+            }
+        }
+        public Post_RealSingleRawSettingCMD_JsonFormat? Get_Numeric_Cmd_Default_Write_Data(SubSystem subsys, string clearCmdCode)
+        {
+            if(subsys is null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][Set_Numeric_Cmd_To_Default] subsys is null", AppLogLevel.Warning);
+                return null;
+            }
+
+            var port = subsys.Port;
+            var protocol = subsys.Protocol;
+            var default_val = subsys.GetSettingRange_ByClearCmdCode(clearCmdCode)?.defaultVal;
+            if(default_val is not null)
+            {
+                var writeCmdData = createOneWriteCmdData(port, protocol, clearCmdCode, RealNumber: default_val);
+                return writeCmdData;
+            }
+
+            return null;
+        }
+
+        public Post_RealSingleRawSettingCMD_JsonFormat? Get_BitField_Cmd_Default_Write_Data(SubSystem subsys, string clearCmdCode, List<int> startBitList, int? otherDefaultVal = null)
+        {
+            if(subsys is null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][Set_BitField_Cmd_To_Default] subsys is null", AppLogLevel.Warning);
+                return null;
+            }
+
+            var port = subsys.Port;
+            var protocol = subsys.Protocol;
+            
+            int default_value_int = 0;
+            //Get default value as int, for following bit operation
+            if(otherDefaultVal is not null)
+            {
+                //For programmer self defined default value
+                default_value_int = otherDefaultVal.Value;
+            }
+            else
+            {
+                //For protocol defined default value
+                var default_value = subsys.GetSettingRange_ByClearCmdCode(clearCmdCode)?.defaultVal;
+                default_value_int = Convert.ToInt32(default_value);
+            }
+
+            //Get cmdInfo, which will be used to get all Bit Keys
+            if(!subsys.InfosForWriteCmd.TryGetValue(clearCmdCode, out var cmdInfo))
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][Set_BitField_Cmd_To_Default] cmdInfo is null for (port, protocol, cmdCode) = ({port}, {protocol}, {clearCmdCode})", AppLogLevel.Warning);
+                return null;
+            }
+            if(cmdInfo.BitControl is null || cmdInfo.BitControl.Count == 0)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][Set_BitField_Cmd_To_Default] cmdInfo.BitControl is null or empty for (port, protocol, cmdCode) = ({port}, {protocol}, {clearCmdCode})", AppLogLevel.Warning);
+                return null;
+            }
+
+            //Get notBits format, which we fill each default value into.
+            var nowBits = GetRealBitsFormat(port, protocol, clearCmdCode);
+            if(nowBits is null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][Set_BitField_Cmd_To_Default] nowBits is null for (port, protocol, cmdCode) = ({port}, {protocol}, {clearCmdCode})", AppLogLevel.Warning);
+                return null;
+            }
+            
+            //Fill each Bit Key with default value
+            foreach (var bitControl in cmdInfo.BitControl)
+            {
+                if(!startBitList.Contains(bitControl.Bit))
+                {
+                    //Skip bits not in startBitList
+                    continue;
+                }
+
+                var bitKey = bitControl.Name;
+                var bitPosition = bitControl.Bit;
+                var bitLength = bitControl.Length;
+
+                var defaultBitValue_for_thisKey = (default_value_int >> bitPosition) & ((1 << bitLength) - 1);
+                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][Set_BitField_Cmd_To_Default] For (port, protocol, cmdCode, bitKey) = ({port}, {protocol}, {clearCmdCode}, {bitKey}), defaultBitValue = {defaultBitValue_for_thisKey}", AppLogLevel.Debug);    
+                nowBits[bitKey] = defaultBitValue_for_thisKey;
+            }
+
+            var curveConfig_WriteData = createOneWriteCmdData(port, protocol, clearCmdCode, RealBits: nowBits);
+            return curveConfig_WriteData;
+        }
+
+        public Post_RealSingleRawSettingCMD_JsonFormat? Get_AddrCmd_Default_Write_Data(SubSystem subsys, string clearCmdCode, List<int> startBitList, int? otherDefaultVal = null)
+        {
+            if(subsys is null)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][Set_AddrCmd_To_Default] subsys is null", AppLogLevel.Warning);
+                return null;
+            }
+
+            var port = subsys.Port;
+            var protocol = subsys.Protocol;
+
+            int default_value_int = 0;
+            //Get default value as int, for following bit operation
+            if(otherDefaultVal is not null)
+            {
+                //For programmer self defined default value
+                default_value_int = otherDefaultVal.Value;
+            }
+            else
+            {
+                //For protocol defined default value
+                var default_value = subsys.GetSettingRange_ByClearCmdCode(clearCmdCode)?.defaultVal;
+                default_value_int = Convert.ToInt32(default_value);
+            }
+
+            //Get cmdInfo, which will be used to get all Bit Keys
+            if(!subsys.InfosForWriteCmd.TryGetValue(clearCmdCode, out var cmdInfo))
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][Set_AddrCmd_To_Default] cmdInfo is null for (port, protocol, cmdCode) = ({port}, {protocol}, {clearCmdCode})", AppLogLevel.Warning);
+                return null;
+            }
+            if(cmdInfo.BitControl is null || cmdInfo.BitControl.Count == 0)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][Set_AddrCmd_To_Default] cmdInfo.BitControl is null or empty for (port, protocol, cmdCode) = ({port}, {protocol}, {clearCmdCode})", AppLogLevel.Warning);
+                return null;
+            }
+
+            //Get AddrValues format, which we fill each default value into
+            var nowAddrValues = GetAddrValues_Copy(port, protocol, clearCmdCode);
+            if(nowAddrValues is null ||  nowAddrValues.Count == 0)
+            {
+                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][Set_AddrCmd_To_Default] nowAddrValues is null for (port, protocol, cmdCode) = ({port}, {protocol}, {clearCmdCode})", AppLogLevel.Warning);
+                return null;
+            }
+
+            //Fill each Bit Key with default value for each Addr
+            foreach (var addrValue in nowAddrValues)
+            {
+                //Reference to Bits
+                var Bits_tmp = addrValue.Value.Bits;
+                if(Bits_tmp is not null)
+                {
+                    foreach (var bitControl in cmdInfo.BitControl)
+                    {
+                        if(!startBitList.Contains(bitControl.Bit))
+                        {
+                            //Skip bits not in startBitList
+                            continue;
+                        }
+
+                        var bitKey = bitControl.Name;
+                        var bitPosition = bitControl.Bit;
+                        var bitLength = bitControl.Length;
+
+                        var defaultBitValue_for_thisKey = (default_value_int >> bitPosition) & ((1 << bitLength) - 1);
+                        AppLogger.Log_To_File_log(_category, $"[SubSystemManager][Set_AddrCmd_To_Default] For (port, protocol, cmdCode, addr, bitKey) = ({port}, {protocol}, {clearCmdCode}, {addrValue.Addr}, {bitKey}), defaultBitValue = {defaultBitValue_for_thisKey}", AppLogLevel.Debug);    
+                        Bits_tmp[bitKey] = defaultBitValue_for_thisKey;
+                    }
+                }
+            }
+
+            var addrCmd_WriteData = createOneWriteCmdData(port, protocol, clearCmdCode, RealPerAddrValues: nowAddrValues);
+            return addrCmd_WriteData;
+        }
+        /// <summary>
         /// 將寫入命令資料發送到Framework
         /// </summary>
         /// <param name="port"></param>
         /// <param name="protocol"></param>
         /// <param name="writeCmdData_List">準備發送的寫入命令資料組成的List</param>
-        /// <param name="PageSelection">選擇SubSystem的鎖</param>
+        /// <param name="PageSelection">指示由哪個頁面寫入SubSystem</param>
         /// <returns>發送成功回傳True，但不代表設定成功，要看Page對應的FailedCmd_List數量，等於0才是全部設定成功，沒設定成功的話要顯示在UI上，說哪些沒有設定成功</returns>
         public async Task<bool> WriteCmdsToFramework(string port, string protocol, List<Post_RealSingleRawSettingCMD_JsonFormat> writeCmdData_List, int PageSelection)
         {
@@ -609,16 +915,16 @@ namespace demoVer.Services
                 return false;
             }
 
-            //2. 拿Page對應的寫入鎖，確保同一時間，一個子系統的目標Page只有一個寫入程序在執行
-            var pageWriteLock = subsys.Get_WriteProcessFlowLock_By_PageSelection(PageSelection);
-            if (pageWriteLock is null)
+            //2. 拿寫入鎖，確保同一時間，一個子系統只有一個寫入程序在執行
+            var WriteLock = subsys.Get_WriteProcessFlowLock();
+            if (WriteLock is null)
             {
-                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][WriteCmdToFramework] pageWriteLock is null for (port, protocol) = ({port}, {protocol})", AppLogLevel.Warning);
+                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][WriteCmdToFramework] WriteLock is null for (port, protocol) = ({port}, {protocol})", AppLogLevel.Warning);
                 return false;
             }
             
             // 等待寫入鎖可用，才進到Try區塊
-            await pageWriteLock.WaitAsync();
+            await WriteLock.WaitAsync();
             try
             {
                 //做3次嘗試，如果List長度還是大於0就代表有失敗的CMD，就退出這波寫入流程
@@ -652,7 +958,7 @@ namespace demoVer.Services
             }
             finally
             {
-                pageWriteLock.Release();
+                WriteLock.Release();
             }
         }
     }

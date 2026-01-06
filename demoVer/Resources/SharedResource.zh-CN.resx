@@ -100,6 +100,9 @@
   <data name="BatterySetting-SaveSettings" xml:space="preserve">
     <value>保存设置</value>
   </data>
+  <data name="BatterySetting-RestoreDefault" xml:space="preserve">
+    <value>还原默认</value>
+  </data>
   <data name="BatterySetting-2Stage" xml:space="preserve">
     <value>2阶段</value>
   </data>
@@ -166,6 +169,9 @@
   <data name="InverterSetting-SaveSettings" xml:space="preserve">
     <value>保存设置</value>
   </data>
+  <data name="InverterSetting-RestoreDefault" xml:space="preserve">
+    <value>还原默认</value>
+  </data>
   <data name="InverterSetting-ACModeCharger" xml:space="preserve">
     <value>AC模式充电器</value>
   </data>
@@ -192,6 +198,9 @@
   </data>
   <data name="InverterSetting-ConfirmSave" xml:space="preserve">
     <value>是否确定要保存？</value>
+  </data>
+  <data name="InverterSetting-ConfirmRestoreDefault" xml:space="preserve">
+    <value>确定要还原默认？</value>
   </data>
   <data name="InverterSetting-Unknown" xml:space="preserve">
     <value>Unknown</value>

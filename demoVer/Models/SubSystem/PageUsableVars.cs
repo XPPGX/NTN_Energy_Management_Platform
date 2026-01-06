@@ -7,7 +7,6 @@ namespace demoVer.Models
     public class PageUsableVars
     {
         //這邊的Numeric類型數值，在設定頁面中使用時，需在使用小數精度調整(捨棄多餘小數位)
-
         //For BatterySetting
         [JsonPropertyName("CURVE_CC_val")]
         public double CURVE_CC_val { get; set; } = 0.0;

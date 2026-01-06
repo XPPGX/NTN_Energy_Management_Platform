@@ -463,7 +463,7 @@ code {
         <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
     }
 
-    <span class="hljs-keyword">var</span> pageWriteLock = subsys.Get_WriteProcessFlowLock_By_PageSelection(pageSelection);
+    <span class="hljs-keyword">var</span> pageWriteLock = subsys.Get_WriteProcessFlowLock(pageSelection);
     <span class="hljs-keyword">if</span> (pageWriteLock <span class="hljs-keyword">is</span> <span class="hljs-literal">null</span>)
     {
         <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;

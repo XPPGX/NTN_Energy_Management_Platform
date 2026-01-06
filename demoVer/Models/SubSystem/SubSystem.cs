@@ -27,7 +27,7 @@ namespace demoVer.Models
         }
 
         #region From Status API
-        public HashSet<uint> AddrSet { get; set; } = new();
+        public HashSet<uint> AddrSet { get; set; } = new(); //Only record the addresses from [0, 63], which is different from Real_allDeviceData
         public bool CheckOK { get; set; } = false;
         public bool ModelError { get; set; } = false;
         public string? ModelName { get; set; } = string.Empty;
@@ -65,7 +65,7 @@ namespace demoVer.Models
          *                         Range 相關資料結構與方法
          **************************************************************************/
         /// <summary>只有數值型態的指令會有設定範圍(上限、下限)，要用cmdCode當Key來找</summary>
-        public ConcurrentDictionary<string, SingleCmdRange> SettingRanges { get; set; } = new();                                                       
+        public ConcurrentDictionary<string, SingleCmdRange> SettingRanges { get; set; } = new(); //Key: cmdCode, Value: SingleCmdRange物件                                              
         private readonly SemaphoreSlim _SettingRange_Lock = new(1, 1);
         public async Task UpdateSettingRanges_From(ConcurrentDictionary<string, SingleCmdRange> newRanges)
         {
@@ -80,6 +80,8 @@ namespace demoVer.Models
                     {
                         this.SettingRanges[HexCmd].min = newRange_Obj.min;
                         this.SettingRanges[HexCmd].max = newRange_Obj.max;
+                        this.SettingRanges[HexCmd].defaultVal = newRange_Obj.defaultVal;
+                        this.SettingRanges[HexCmd].commandType = newRange_Obj.commandType;
                         this.SettingRanges[HexCmd].cmdName = newRange_Obj.cmdName;
                     }
                     else
@@ -106,6 +108,14 @@ namespace demoVer.Models
             }
         }
 
+        public SingleCmdRange? GetSettingRange_ByClearCmdCode(string cmdCode)
+        {
+            if (SettingRanges.TryGetValue(cmdCode, out SingleCmdRange? cmdData))
+            {
+                return cmdData;
+            }
+            return null;
+        }
 
         /***************************************************************************
          *                     Writable Cmd 相關資料結構與方法
@@ -153,6 +163,31 @@ namespace demoVer.Models
                 {
                     //觸發 OnChanged 事件
                     OnChanged?.Invoke();
+                    //[Debug]
+                    AppLogger.Log_To_File_log(_category, () => $"[SubSystem][UpdateInfosForWriteCmd_From] nowConfigurableVars updated for ({this.Port}, {this.Protocol}):", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, () => $"  Battery Settings:", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, () => $"    CURVE_CC_val: {nowConfigurableVars.CURVE_CC_val}", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, () => $"    CURVE_CV_val: {nowConfigurableVars.CURVE_CV_val}", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, () => $"    CURVE_FV_val: {nowConfigurableVars.CURVE_FV_val}", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, () => $"    CURVE_TC_val: {nowConfigurableVars.CURVE_TC_val}", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, () => $"    selectStage: {nowConfigurableVars.selectStage}", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, () => $"    CCT_Enable: {nowConfigurableVars.CCT_Enable}", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, () => $"    CVT_Enable: {nowConfigurableVars.CVT_Enable}", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, () => $"    FVT_Enable: {nowConfigurableVars.FVT_Enable}", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, () => $"    CC_Timeout: {nowConfigurableVars.CC_Timeout_val}", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, () => $"    CV_Timeout: {nowConfigurableVars.CV_Timeout_val}", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, () => $"    FV_Timeout: {nowConfigurableVars.FV_Timeout_val}", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, () => $"  Inverter Settings:", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, () => $"    Output_ACV_Set: {nowConfigurableVars.Output_ACV_Set}", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, () => $"    Output_ACF_Set: {nowConfigurableVars.Output_ACF_Set}", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, () => $"    OutputPrio: {nowConfigurableVars.OutputPrio}", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, () => $"    ChargingPrio: {nowConfigurableVars.ChargingPrio}", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, () => $"    CHG_Enable: {nowConfigurableVars.CHG_Enable}", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, () => $"    GRID_Enable: {nowConfigurableVars.GRID_Enable}", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, () => $"    BAT_ALM_VOLT: {nowConfigurableVars.BAT_ALM_VOLT_val}", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, () => $"    BAT_SHDN_VOLT: {nowConfigurableVars.BAT_SHDN_VOLT_val}", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, () => $"    BAT_RCHG_VOLT: {nowConfigurableVars.BAT_RCHG_VOLT_val}", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, () => $"    BAT_OV_ALM_VOLT: {nowConfigurableVars.BAT_OV_ALM_VOLT_val}", AppLogLevel.Debug);
                 }
                 AppLogger.Log_To_File_log(_category, $"[SubSystem][UpdateInfosForWriteCmd_From] done for (port, protocol) = ({this.Port}, {this.Protocol})", AppLogLevel.Debug);
             }
@@ -171,21 +206,12 @@ namespace demoVer.Models
          **************************************************************************/
         /// <summary>給SubSystemManager使用的寫入流程鎖，確保同一時間，一個子系統只有一個寫入流程在進行</summary>
 
-        public readonly SemaphoreSlim BAT_WriteProcessFlowLock = new(1, 1);
-        public readonly SemaphoreSlim INV_WriteProcessFlowLock = new(1, 1);
+        public readonly SemaphoreSlim WriteProcessFlowLock = new(1, 1);
 
         //這個或許可以用Dictionary去做
-        public SemaphoreSlim? Get_WriteProcessFlowLock_By_PageSelection(int PageSelection)
+        public SemaphoreSlim? Get_WriteProcessFlowLock()
         {
-            switch (PageSelection)
-            {
-                case 0: //Battery
-                    return BAT_WriteProcessFlowLock;
-                case 1: //Inverter
-                    return INV_WriteProcessFlowLock;
-                default:
-                    return null;
-            }
+            return WriteProcessFlowLock;
         }
         public List<Post_RealSingleRawSettingCMD_JsonFormat> BatterySetting_WriteFailedCmds_List { get; set; } = new(); //每次送出命令後，暫存失敗的CMD，準備顯示在UI上。
         public List<Post_RealSingleRawSettingCMD_JsonFormat> InverterSetting_WriteFailedCmds_List { get; set; } = new(); //每次送出命令後，暫存失敗的CMD，準備顯示在UI上。
