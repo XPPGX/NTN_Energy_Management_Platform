@@ -402,12 +402,9 @@
 
     private void TogglePanel()
     {
-        if(IsMobileView())
+        if(isCollapsed is true)
         {
-            if(isCollapsed is true)
-            {
-                ExpandPanel();
-            }
+            ExpandPanel();
         }
     }
 
@@ -418,11 +415,7 @@
 
     private void CollapsePanel()
     {
-        // isCollapsed = true;
-        if(IsMobileView())
-        {
-            isCollapsed = true;
-        }
+        isCollapsed = true;
     }
 
     private void ExpandPanel()

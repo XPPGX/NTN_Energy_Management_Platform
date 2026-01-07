@@ -1,4 +1,10 @@
 /***** chart editor *****/
+.edit-container {
+    width : 100%;
+    height: 100%;
+    display : flex;
+    flex-direction: flex;
+}
 .custom-dialog-overlay {
     position: fixed;
     top: 0;
@@ -207,5 +213,12 @@
         min-width: 250px;
         height: 100%;
         padding: 5%;
+    }
+
+    .edit-container {
+        width : 100%;
+        height: 100%;
+        display : flex;
+        flex-direction: flex;
     }
 }

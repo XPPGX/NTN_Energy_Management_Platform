@@ -178,6 +178,12 @@ window.drawChart_Func = function(config, webFirstRend = false) {
     const hasLeftData = datasets.some(ds => ds.yAxisID === "y");
     const hasrightData = datasets.some(ds => ds.yAxisID === "y1");
 
+    // 計算左右軸數據的最大值
+    const leftDataValues = datasets.filter(ds => ds.yAxisID === 'y').flatMap(ds => ds.data).filter(val => val != null && !isNaN(val));
+    const rightDataValues = datasets.filter(ds => ds.yAxisID === 'y1').flatMap(ds => ds.data).filter(val => val != null && !isNaN(val));
+    const leftDataMax = leftDataValues.length > 0 ? Math.max(...leftDataValues) : 0;
+    const rightDataMax = rightDataValues.length > 0 ? Math.max(...rightDataValues) : 0;
+
     if(existingChart && webFirstRend == false)
     {   
         // 重新獲取當前主題的顏色
@@ -205,9 +211,17 @@ window.drawChart_Func = function(config, webFirstRend = false) {
 
         existingChart.options.scales.y.display = hasLeftData;
         existingChart.options.scales.y.title.text = config.y_left_Title;
+        if (hasLeftData) {
+            existingChart.options.scales.y.min = 0;
+            existingChart.options.scales.y.suggestedMax = leftDataMax * 2;
+        }
         
         existingChart.options.scales.y1.display = hasrightData;
         existingChart.options.scales.y1.title.text = config.y_right_Title;
+        if (hasrightData) {
+            existingChart.options.scales.y1.min = 0;
+            existingChart.options.scales.y1.suggestedMax = rightDataMax * 2;
+        }
 
         existingChart.update();
     }
@@ -261,6 +275,8 @@ window.drawChart_Func = function(config, webFirstRend = false) {
                         type: "linear",
                         position: "left",
                         display: hasLeftData,
+                        min: hasLeftData ? 0 : undefined,
+                        suggestedMax: hasLeftData ? leftDataMax * 2 : undefined,
                         title:{
                             display: hasLeftData && !!config.y_left_Title,
                             text: hasLeftData ? config.y_left_Title : "",
@@ -278,6 +294,8 @@ window.drawChart_Func = function(config, webFirstRend = false) {
                         type: "linear",
                         position: "right",
                         display: hasrightData,
+                        min: hasrightData ? 0 : undefined,
+                        suggestedMax: hasrightData ? rightDataMax * 2 : undefined,
                         title: {
                             display: hasrightData && !!config.y_right_Title,
                             text: hasrightData ? config.y_right_Title : "",

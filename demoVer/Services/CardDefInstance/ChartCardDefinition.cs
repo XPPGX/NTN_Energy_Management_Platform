@@ -2,16 +2,25 @@ using System;
 using System.Collections.Generic;
 using demoVer.Interfaces;
 using demoVer.Models;
+using demoVer.Resources;
 using demoVer.Shared;
+using Microsoft.Extensions.Localization;
 
 namespace demoVer.Services;
 
 public sealed class ChartCardDefinition : ICardDefinition
 {
+    private readonly IStringLocalizer<SharedResource> _localizer;
+
+    public ChartCardDefinition(IStringLocalizer<SharedResource> localizer)
+    {
+        _localizer = localizer;
+    }
+
     public CardType CardType => CardType.Chart;
     public Type DisplayComponent => typeof(BlankChartCard);
     public Type EditorComponent => typeof(ChartCardEdit);
-    public string DisplayName => "圖表";
+    public string DisplayName => _localizer["CardType-Chart"];
     public string ThumbnailPath => "images/cardSelection-chart.png";
     public string DefaultWidthClass => "w50";
 

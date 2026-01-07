@@ -793,4 +793,13 @@
   <data name="BottomRow-Log" xml:space="preserve">
     <value>Log</value>
   </data>
+  <data name="CardType-Chart" xml:space="preserve">
+    <value>Chart</value>
+  </data>
+  <data name="CardType-Info" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="CardType-Status" xml:space="preserve">
+    <value>Connection Status</value>
+  </data>
 </root>

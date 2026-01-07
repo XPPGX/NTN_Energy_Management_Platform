@@ -2,16 +2,25 @@ using System;
 using System.Collections.Generic;
 using demoVer.Interfaces;
 using demoVer.Models;
+using demoVer.Resources;
 using demoVer.Shared;
+using Microsoft.Extensions.Localization;
 
 namespace demoVer.Services;
 
 public sealed class RunningDiagramCardDefinition : ICardDefinition
 {
+    private readonly IStringLocalizer<SharedResource> _localizer;
+
+    public RunningDiagramCardDefinition(IStringLocalizer<SharedResource> localizer)
+    {
+        _localizer = localizer;
+    }
+
     public CardType CardType => CardType.Status;
     public Type DisplayComponent => typeof(RunningDiagramCard);
     public Type EditorComponent => typeof(RunningDiagramCardEdit);
-    public string DisplayName => "連接狀態";
+    public string DisplayName => _localizer["CardType-Status"];
     public string ThumbnailPath => "images/cardSelection-status.png";
     public string DefaultWidthClass => "w50";
 

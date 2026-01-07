@@ -793,4 +793,13 @@
   <data name="BottomRow-Log" xml:space="preserve">
     <value>監測報告</value>
   </data>
+  <data name="CardType-Chart" xml:space="preserve">
+    <value>圖表</value>
+  </data>
+  <data name="CardType-Info" xml:space="preserve">
+    <value>資訊</value>
+  </data>
+  <data name="CardType-Status" xml:space="preserve">
+    <value>連接狀態</value>
+  </data>
 </root>
