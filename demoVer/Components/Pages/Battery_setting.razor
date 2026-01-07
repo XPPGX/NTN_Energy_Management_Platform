@@ -75,9 +75,9 @@
                     var slider = Sliders[i];
                     <div class="slider-wrapper">
                         <div class="vue-vertical-slider"
-                            style="@(slider.Label == "FV" && !selectedStage ? "opacity: 0.5;" : "")"
-                            @onmousedown="@(e => (slider.Label == "FV" && !selectedStage) ? Task.CompletedTask : OnSliderMouseDown(e, localIndex, slider.Label))"
-                            @ontouchstart="@(e => (slider.Label == "FV" && !selectedStage) ? Task.CompletedTask : OnSliderTouchStart(e, localIndex, slider.Label))">
+                            style="@(slider.Label == "FV" && selectedStage ? "opacity: 0.5;" : "")"
+                            @onmousedown="@(e => (slider.Label == "FV" && selectedStage) ? Task.CompletedTask : OnSliderMouseDown(e, localIndex, slider.Label))"
+                            @ontouchstart="@(e => (slider.Label == "FV" && selectedStage) ? Task.CompletedTask : OnSliderTouchStart(e, localIndex, slider.Label))">
                             <div class="vue-vertical-fill" @ref="@FillRefs[localIndex]"></div>
                             <div class="vue-vertical-thumb" @ref="@ThumbRefs[localIndex]"></div>
                         </div>
@@ -88,7 +88,7 @@
                                 max=""
                                 class="slider-input"
                                 style="text-align: center;"
-                                disabled="@(slider.Label == "FV" && !selectedStage)"/>
+                                disabled="@(slider.Label == "FV" && selectedStage)"/>
                         @* <div class="slider-label">值: @slider.Value</div> *@
                         <label>@slider.Label</label>
                     </div>
@@ -161,12 +161,12 @@
                     </div>
                     <div class="timeout-group">
                         <label class="custom-toggle-button" title="@(FVT_Enable ? "On" : "Off")">
-                            <input type="checkbox" @bind="FVT_Enable" />
+                            <input type="checkbox" @bind="FVT_Enable" disabled="@selectedStage" />
                             <span class="toggle-slider"></span>
                         </label>
                         <span style="display: inline-block;">@(!isMobile ? Localizer["BatterySetting-FVTimeout"] : Localizer["BatterySetting-FVT"])</span>
                         <div class="inputField">
-                            <input type="number" @bind-value="FV_Timeout_value" @bind-value:after="OnFVTimeoutValueChanged" placeholder="FVT" min="0"/>
+                            <input type="number" @bind-value="FV_Timeout_value" @bind-value:after="OnFVTimeoutValueChanged" placeholder="FVT" min="0" disabled="@selectedStage"/>
                             @if(!isMobile)
                             {
                                 <MudText Typo="Typo.body1">@FormatToHourMin(FV_Timeout_value)</MudText>
@@ -180,7 +180,7 @@
                         @if(!isMobile)
                         {
                             <div class="responsive-slider">
-                                <input type="range" @bind="FV_Timeout_value" @bind:event="oninput" min="0" max="6000" step="1" class="custom-slider" />
+                                <input type="range" @bind="FV_Timeout_value" @bind:event="oninput" min="0" max="6000" step="1" class="custom-slider" disabled="@selectedStage"/>
                             </div>
                         }
                     </div>
@@ -855,10 +855,10 @@
 
         await JS.InvokeVoidAsync("refreshSliderVisuals");
 
-        _sliderRangeOverrides["CC"] = (ReceiveData_FromSignalR.CURVE_CC_Min_val, ReceiveData_FromSignalR.CURVE_CC_Max_val);
-        _sliderRangeOverrides["TC"] = (ReceiveData_FromSignalR.CURVE_TC_Min_val, ReceiveData_FromSignalR.CURVE_TC_Max_val);
-        _sliderRangeOverrides["CV"] = (ReceiveData_FromSignalR.CURVE_CV_Min_val, ReceiveData_FromSignalR.CURVE_CV_Max_val);
-        _sliderRangeOverrides["FV"] = (ReceiveData_FromSignalR.CURVE_FV_Min_val, ReceiveData_FromSignalR.CURVE_FV_Max_val);
+        _sliderRangeOverrides["CC"] = (0, ReceiveData_FromSignalR.CURVE_CC_Max_val);
+        _sliderRangeOverrides["TC"] = (0, ReceiveData_FromSignalR.CURVE_TC_Max_val);
+        _sliderRangeOverrides["CV"] = (0, ReceiveData_FromSignalR.CURVE_CV_Max_val);
+        _sliderRangeOverrides["FV"] = (0, ReceiveData_FromSignalR.CURVE_FV_Max_val);
 
         Sliders[0].Value    = ReceiveData_FromSignalR.CURVE_CC_val;
         Sliders[1].Value    = ReceiveData_FromSignalR.CURVE_TC_val;

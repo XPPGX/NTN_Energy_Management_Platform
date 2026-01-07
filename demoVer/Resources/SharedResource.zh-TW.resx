@@ -730,43 +730,43 @@
   <data name="LinkStatusTimeline-NoStatusUpdates" xml:space="preserve">
     <value>目前沒有狀態更新</value>
   </data>
-  <data name="TopRow-Home" xml:space="preserve">
+  <data name="MenuDropdown-Home" xml:space="preserve">
     <value>NTN首頁</value>
   </data>
-  <data name="TopRow-SystemSettings" xml:space="preserve">
+  <data name="MenuDropdown-SystemSettings" xml:space="preserve">
     <value>系統設定</value>
   </data>
-  <data name="TopRow-BatterySettings" xml:space="preserve">
-    <value>電池設定</value>
+  <data name="MenuDropdown-BatterySettings" xml:space="preserve">
+    <value>充電器設定</value>
   </data>
-  <data name="TopRow-InvSettings" xml:space="preserve">
+  <data name="MenuDropdown-InverterSettings" xml:space="preserve">
     <value>INV設定</value>
   </data>
-  <data name="TopRow-ModelManagement" xml:space="preserve">
+  <data name="MenuDropdown-ModelManagement" xml:space="preserve">
     <value>機型管理</value>
   </data>
-  <data name="TopRow-LinkStatus" xml:space="preserve">
+  <data name="MenuDropdown-LinkStatus" xml:space="preserve">
     <value>連線狀態</value>
   </data>
-  <data name="TopRow-MonitoringReport" xml:space="preserve">
+  <data name="MenuDropdown-MonitoringReport" xml:space="preserve">
     <value>監測報告</value>
   </data>
-  <data name="TopRow-AIApplications" xml:space="preserve">
+  <data name="MenuDropdown-AIApplications" xml:space="preserve">
     <value>AI應用</value>
   </data>
-  <data name="TopRow-EfficiencyAnalysis" xml:space="preserve">
+  <data name="MenuDropdown-EfficiencyAnalysis" xml:space="preserve">
     <value>效率分析</value>
   </data>
-  <data name="TopRow-SmartPowerUsage" xml:space="preserve">
+  <data name="MenuDropdown-SmartPowerUsage" xml:space="preserve">
     <value>智慧用電</value>
   </data>
-  <data name="TopRow-FailureAnalysis" xml:space="preserve">
+  <data name="MenuDropdown-FailureAnalysis" xml:space="preserve">
     <value>失效分析</value>
   </data>
-  <data name="TopRow-PredictiveMaintenance" xml:space="preserve">
+  <data name="MenuDropdown-PredictiveMaintenance" xml:space="preserve">
     <value>預測維護</value>
   </data>
-  <data name="TopRow-ShortcutSettings" xml:space="preserve">
+  <data name="MenuDropdown-ShortcutSettings" xml:space="preserve">
     <value>快捷設定</value>
   </data>
   <data name="TopRow-SwitchToLight" xml:space="preserve">

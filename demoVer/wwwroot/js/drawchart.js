@@ -443,7 +443,7 @@ window.stageChartStorage = {
 
 window.updateStageData_Init = function()
 {
-    if(stageChartStorage.stageOption == 0) // 2 stage
+    if(stageChartStorage.stageOption == 1) // 2 stage
     {
         //clear the lists
         window.stageChartStorage.stage2.y1Data.length = 0;
@@ -460,7 +460,7 @@ window.updateStageData_Init = function()
             {x:2, y:sliderBars_Info["CV"].currentVal},
             {x:3, y:sliderBars_Info["CV"].currentVal}]);
     }
-    else if(stageChartStorage.stageOption == 1) // 3 stage
+    else if(stageChartStorage.stageOption == 0) // 3 stage
     {
         //clear the lists
         window.stageChartStorage.stage3.y1Data.length = 0;
@@ -525,8 +525,8 @@ window.drawChart_Stage = function (webFirstRend = false) {
         console.warn("找不到 canvas:", stageCanvasID);
         return;
     }
-    
-    const stageData = (stageChartStorage.stageOption == 0) ? stageChartStorage.stage2 : stageChartStorage.stage3;
+    console.log(`CC_Max : ${sliderBars_Info["CC"].selfMax}, TC_Max : ${sliderBars_Info["TC"].selfMax}, CV_Max : ${sliderBars_Info["CV"].selfMax}, FV_Max : ${sliderBars_Info["FV"].selfMax}`);
+    const stageData = (stageChartStorage.stageOption == 1) ? stageChartStorage.stage2 : stageChartStorage.stage3;
     console.log(stageData);
 
     const rect = canvas.getBoundingClientRect();
@@ -572,6 +572,9 @@ window.drawChart_Stage = function (webFirstRend = false) {
         existingChart.data.labels = stageData.labels;
         existingChart.data.datasets[0].data = stageData.y1Data;
         existingChart.data.datasets[1].data = stageData.y2Data;
+        // 更新 max 值
+        existingChart.options.scales.y1.max = Math.max(sliderBars_Info["CC"].selfMax, sliderBars_Info["TC"].selfMax);
+        existingChart.options.scales.y2.max = Math.max(sliderBars_Info["CV"].selfMax, sliderBars_Info["FV"].selfMax);
         // updateStageData_AfterInit(existingChart);
         existingChart.update();
     }
@@ -627,7 +630,7 @@ window.drawChart_Stage = function (webFirstRend = false) {
                         },
                         grid: {
                             color: borderColor
-                        },
+                        },         
                         ticks: {
                             color: textPrimary
                         }
@@ -640,8 +643,8 @@ window.drawChart_Stage = function (webFirstRend = false) {
                             text: "電流 (A)",
                             color: textPrimary
                         },
-                        suggestedMin: 0,
-                        suggestedMax: 100,
+                        min: 0,
+                        max: Math.max(sliderBars_Info["CC"].selfMax, sliderBars_Info["TC"].selfMax),
                         grid: {
                             color: borderColor
                         },
@@ -657,8 +660,8 @@ window.drawChart_Stage = function (webFirstRend = false) {
                             text: "電壓 (V)",
                             color: textPrimary
                         },
-                        suggestedMin: 0,
-                        suggestedMax: 100,
+                        min: 0,
+                        max: Math.max(sliderBars_Info["CV"].selfMax, sliderBars_Info["FV"].selfMax),
                         grid: {
                             drawOnChartArea: false,
                             color: borderColor

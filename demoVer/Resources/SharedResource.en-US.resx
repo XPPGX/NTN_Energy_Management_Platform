@@ -730,43 +730,43 @@
   <data name="LinkStatusTimeline-NoStatusUpdates" xml:space="preserve">
     <value>No status updates currently</value>
   </data>
-  <data name="TopRow-Home" xml:space="preserve">
+  <data name="MenuDropdown-Home" xml:space="preserve">
     <value>NTN Home</value>
   </data>
-  <data name="TopRow-SystemSettings" xml:space="preserve">
+  <data name="MenuDropdown-SystemSettings" xml:space="preserve">
     <value>System Settings</value>
   </data>
-  <data name="TopRow-BatterySettings" xml:space="preserve">
-    <value>Battery Settings</value>
+  <data name="MenuDropdown-BatterySettings" xml:space="preserve">
+    <value>Charger Settings</value>
   </data>
-  <data name="TopRow-InvSettings" xml:space="preserve">
+  <data name="MenuDropdown-InverterSettings" xml:space="preserve">
     <value>Inverter Settings</value>
   </data>
-  <data name="TopRow-ModelManagement" xml:space="preserve">
+  <data name="MenuDropdown-ModelManagement" xml:space="preserve">
     <value>Model Management</value>
   </data>
-  <data name="TopRow-LinkStatus" xml:space="preserve">
+  <data name="MenuDropdown-LinkStatus" xml:space="preserve">
     <value>Link Status</value>
   </data>
-  <data name="TopRow-MonitoringReport" xml:space="preserve">
+  <data name="MenuDropdown-MonitoringReport" xml:space="preserve">
     <value>Monitoring Report</value>
   </data>
-  <data name="TopRow-AIApplications" xml:space="preserve">
+  <data name="MenuDropdown-AIApplications" xml:space="preserve">
     <value>AI Applications</value>
   </data>
-  <data name="TopRow-EfficiencyAnalysis" xml:space="preserve">
+  <data name="MenuDropdown-EfficiencyAnalysis" xml:space="preserve">
     <value>Efficiency Analysis</value>
   </data>
-  <data name="TopRow-SmartPowerUsage" xml:space="preserve">
+  <data name="MenuDropdown-SmartPowerUsage" xml:space="preserve">
     <value>Smart Power Usage</value>
   </data>
-  <data name="TopRow-FailureAnalysis" xml:space="preserve">
+  <data name="MenuDropdown-FailureAnalysis" xml:space="preserve">
     <value>Failure Analysis</value>
   </data>
-  <data name="TopRow-PredictiveMaintenance" xml:space="preserve">
+  <data name="MenuDropdown-PredictiveMaintenance" xml:space="preserve">
     <value>Predictive Maintenance</value>
   </data>
-  <data name="TopRow-ShortcutSettings" xml:space="preserve">
+  <data name="MenuDropdown-ShortcutSettings" xml:space="preserve">
     <value>Shortcut Settings</value>
   </data>
   <data name="TopRow-SwitchToLight" xml:space="preserve">

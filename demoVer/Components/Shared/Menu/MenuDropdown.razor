@@ -5,47 +5,47 @@
 @if (MenuOpen)
 {
     <div class="dropdown-menu @PositionClass" @onclick:stopPropagation="true">
-        <button class="nav-link" @onclick="GoTo_NTN_HOME">@Localizer["TopRow-Home"]</button>
+        <button class="nav-link" @onclick="GoTo_NTN_HOME">@Localizer["MenuDropdown-Home"]</button>
 
         <button class="nav-link expandable" @onclick="Toggle_expand_sys_setting">
-            <span>@Localizer["TopRow-SystemSettings"]</span>
+            <span>@Localizer["MenuDropdown-SystemSettings"]</span>
             <span class="caret">▾</span>
         </button>
         @if (expand_sys_setting)
         {
             <div class="sub-menu">
-                <button class="nav-link" @onclick="GoTo_Battery_setting">@Localizer["TopRow-BatterySettings"]</button>
-                <button class="nav-link" @onclick="GoTo_Inverter_setting">@Localizer["TopRow-InvSettings"]</button>
+                <button class="nav-link" @onclick="GoTo_Battery_setting">@Localizer["MenuDropdown-BatterySettings"]</button>
+        <button class="nav-link" @onclick="GoTo_Inverter_setting">@Localizer["MenuDropdown-InverterSettings"]</button>
             </div>
         }
 
         <button class="nav-link expandable" @onclick="Toggle_expand_management">
-            <span>@Localizer["TopRow-ModelManagement"]</span>
+            <span>@Localizer["MenuDropdown-ModelManagement"]</span>
             <span class="caret">▾</span>
         </button>
         @if (expand_management)
         {
             <div class="sub-menu">
-                <button class="nav-link" @onclick="GoTo_Link_status">@Localizer["TopRow-LinkStatus"]</button>
-                <button class="nav-link" @onclick="GoTo_Log">@Localizer["TopRow-MonitoringReport"]</button>
+                <button class="nav-link" @onclick="GoTo_Link_status">@Localizer["MenuDropdown-LinkStatus"]</button>
+                <button class="nav-link" @onclick="GoTo_Log">@Localizer["MenuDropdown-MonitoringReport"]</button>
             </div>
         }
 
         <button class="nav-link expandable" @onclick="Toggle_expand_AI_application">
-            <span>@Localizer["TopRow-AIApplications"]</span>
+            <span>@Localizer["MenuDropdown-AIApplications"]</span>
             <span class="caret">▾</span>
         </button>
         @if (expand_AI_applicaiton)
         {
             <div class="sub-menu">
-                <button class="nav-link nav-link-inactive">@Localizer["TopRow-EfficiencyAnalysis"]</button>
-                <button class="nav-link nav-link-inactive">@Localizer["TopRow-SmartPowerUsage"]</button>
-                <button class="nav-link nav-link-inactive">@Localizer["TopRow-FailureAnalysis"]</button>
-                <button class="nav-link nav-link-inactive">@Localizer["TopRow-PredictiveMaintenance"]</button>
+                <button class="nav-link nav-link-inactive">@Localizer["MenuDropdown-EfficiencyAnalysis"]</button>
+                <button class="nav-link nav-link-inactive">@Localizer["MenuDropdown-SmartPowerUsage"]</button>
+                <button class="nav-link nav-link-inactive">@Localizer["MenuDropdown-FailureAnalysis"]</button>
+                <button class="nav-link nav-link-inactive">@Localizer["MenuDropdown-PredictiveMaintenance"]</button>
             </div>
         }
         
-        <button class="nav-link" @onclick="GoTo_ShortcutSetting">@Localizer["TopRow-ShortcutSettings"]</button>
+        <button class="nav-link" @onclick="GoTo_ShortcutSetting">@Localizer["MenuDropdown-ShortcutSettings"]</button>
     </div>
 }
 

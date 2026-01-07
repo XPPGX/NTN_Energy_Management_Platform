@@ -33,12 +33,13 @@ window.sliderBars_Info =
     },
 };
 
-function computeVisualPercent(value, max) {
-    if (!Number.isFinite(value)) {
+function computeVisualPercent(value, max, min = 0) {
+    if (!Number.isFinite(value) || !Number.isFinite(max) || !Number.isFinite(min)) {
         return 0;
     }
-    const safeMax = Number.isFinite(max) && max > 0 ? max : 1;
-    const ratio = Math.min(Math.max(value / safeMax, 0), 1);
+    const safeMax = Number.isFinite(max) && max > min ? max : min + 1;
+    const safeMin = Number.isFinite(min) ? min : 0;
+    const ratio = Math.min(Math.max((value - safeMin) / (safeMax - safeMin), 0), 1);
     return ratio * 100;
 }
 
@@ -106,7 +107,7 @@ window.refreshSliderVisuals = function() {
             ? info.UI_max
             : info.selfMax;
 
-        const percent = computeVisualPercent(info.currentVal, maxForVisual);
+        const percent = computeVisualPercent(info.currentVal, maxForVisual, 0);
         info.fill.style.height = `${percent}%`;
         info.thumb.style.bottom = `${percent}%`;
     }
@@ -217,9 +218,7 @@ window.startVerticalSliderDrag = (config) => {
         window.drawChart_Stage();
         window.limitOthersMax(label, config.dotNetHelper);
         // 顯示 config.fill/slider 在百分比位置（但使用 0~100% 表示）
-        // const visualPercent = ((value - config.minValue) / (config.maxValue - config.minValue)) * 100;
-        
-        const visualPercent = (Final_Val / config.displayMaxValue) * 100;
+        const visualPercent = ((Final_Val - config.minValue) / (config.displayMaxValue - config.minValue)) * 100;
         config.fill.style.height = `${visualPercent}%`;
         config.thumb.style.bottom = `${visualPercent}%`;
     
@@ -291,9 +290,9 @@ window.startVerticalSliderDrag = (config) => {
 
 window.updateSliderVisual = function(config)
 {
-    value = Math.max(0, Math.min(config.value, config.displayMaxValue));
+    value = Math.max(config.minValue, Math.min(config.value, config.displayMaxValue));
 
-    const visualPercent = (value / config.displayMaxValue) * 100;
+    const visualPercent = ((value - config.minValue) / (config.displayMaxValue - config.minValue)) * 100;
     config.fill.style.height = `${visualPercent}%`;
     config.thumb.style.bottom = `${visualPercent}%`;
 }
