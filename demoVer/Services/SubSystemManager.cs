@@ -723,7 +723,9 @@ namespace demoVer.Services
                 var BAT_OV_ALM_val_WriteData = Get_Numeric_Cmd_Default_Write_Data(subsys, "00BC");
                 if(BAT_OV_ALM_val_WriteData is not null){configurableCmdDatas.Add(BAT_OV_ALM_val_WriteData);}
 
-                return true;
+                bool isWriteSuccess = await WriteCmdsToFramework(port, protocol, configurableCmdDatas, 0);
+                
+                return isWriteSuccess;
             }
             catch(Exception e)
             {
@@ -744,10 +746,10 @@ namespace demoVer.Services
             var default_val = subsys.GetSettingRange_ByClearCmdCode(clearCmdCode)?.defaultVal;
             if(default_val is not null)
             {
+                AppLogger.Log_To_File_log(_category, $"[SubSystemManager][Set_Numeric_Cmd_To_Default] For (port, protocol, cmdCode) = ({port}, {protocol}, {clearCmdCode}), defaultVal = {default_val}", AppLogLevel.Debug);
                 var writeCmdData = createOneWriteCmdData(port, protocol, clearCmdCode, RealNumber: default_val);
                 return writeCmdData;
             }
-
             return null;
         }
 

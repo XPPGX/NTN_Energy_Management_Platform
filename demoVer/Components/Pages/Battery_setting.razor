@@ -110,16 +110,16 @@
                 
                 <div class="card-container-timeout card-container-base">
                     <div class="timeout-group">
-                        <label class="custom-toggle-button" title="@(CCT_Enable ? "On" : "Off")">
-                            <input type="checkbox" @bind="CCT_Enable" />
+                        <label class="custom-toggle-button" title="@(CCT.Enabled ? "On" : "Off")">
+                            <input type="checkbox" @bind="CCT.Enabled" />
                             <span class="toggle-slider"></span>
                         </label>
                         <span style="display: inline-block;">@(!isMobile ? Localizer["BatterySetting-CCTimeout"] : Localizer["BatterySetting-CCT"])</span>
                         <div class="inputField">
-                            <input type="number" @bind-value="CC_Timeout_value" @bind-value:after="OnCCTimeoutValueChanged" placeholder="CCT" min="0" />
+                            <input type="number" @bind-value="CCT.value" @bind-value:after="OnCCTimeoutValueChanged" placeholder="CCT" min="@CCT.Min" />
                             @if(!isMobile)
                             {
-                                <MudText Typo="Typo.body1">@FormatToHourMin(CC_Timeout_value)</MudText>
+                                <MudText Typo="Typo.body1">@FormatToHourMin(CCT.value)</MudText>
                             }
                             else
                             {
@@ -130,21 +130,21 @@
                         @if(!isMobile)
                         {
                             <div class="responsive-slider">
-                                <input type="range" @bind="CC_Timeout_value" @bind:event="oninput" min="0" max="6000" step="1" class="custom-slider" />
+                                <input type="range" @bind="CCT.value" @bind:event="oninput" min="@CCT.Min" max="@CCT.Max" step="1" class="custom-slider" />
                             </div>
                         }
                     </div>
                     <div class="timeout-group">
-                        <label class="custom-toggle-button" title="@(CVT_Enable ? "On" : "Off")">
-                            <input type="checkbox" @bind="CVT_Enable" />
+                        <label class="custom-toggle-button" title="@(CVT.Enabled ? "On" : "Off")">
+                            <input type="checkbox" @bind="CVT.Enabled" />
                             <span class="toggle-slider"></span>
                         </label>
                         <span style="display: inline-block;">@(!isMobile ? Localizer["BatterySetting-CVTimeout"] : Localizer["BatterySetting-CVT"])</span>
                         <div class="inputField">
-                            <input type="number" @bind-value="CV_Timeout_value" @bind-value:after="OnCVTimeoutValueChanged" placeholder="CVT" min="0" />
+                            <input type="number" @bind-value="CVT.value" @bind-value:after="OnCVTimeoutValueChanged" placeholder="CVT" min="@CVT.Min" />
                             @if(!isMobile)
                             {
-                                <MudText Typo="Typo.body1">@FormatToHourMin(CV_Timeout_value)</MudText>
+                                <MudText Typo="Typo.body1">@FormatToHourMin(CVT.value)</MudText>
                             }
                             else
                             {
@@ -155,21 +155,21 @@
                         @if(!isMobile)
                         {
                             <div class="responsive-slider">
-                                <input type="range" @bind="CV_Timeout_value" @bind:event="oninput" min="0" max="6000" step="1" class="custom-slider" />
+                                <input type="range" @bind="CVT.value" @bind:event="oninput" min="@CVT.Min" max="@CVT.Max" step="1" class="custom-slider" />
                             </div>
                         }
                     </div>
                     <div class="timeout-group">
-                        <label class="custom-toggle-button" title="@(FVT_Enable ? "On" : "Off")">
-                            <input type="checkbox" @bind="FVT_Enable" disabled="@selectedStage" />
+                        <label class="custom-toggle-button" title="@(FVT.Enabled ? "On" : "Off")">
+                            <input type="checkbox" @bind="FVT.Enabled" disabled="@selectedStage" />
                             <span class="toggle-slider"></span>
                         </label>
                         <span style="display: inline-block;">@(!isMobile ? Localizer["BatterySetting-FVTimeout"] : Localizer["BatterySetting-FVT"])</span>
                         <div class="inputField">
-                            <input type="number" @bind-value="FV_Timeout_value" @bind-value:after="OnFVTimeoutValueChanged" placeholder="FVT" min="0" disabled="@selectedStage"/>
+                            <input type="number" @bind-value="FVT.value" @bind-value:after="OnFVTimeoutValueChanged" placeholder="FVT" min="@FVT.Min" disabled="@selectedStage"/>
                             @if(!isMobile)
                             {
-                                <MudText Typo="Typo.body1">@FormatToHourMin(FV_Timeout_value)</MudText>
+                                <MudText Typo="Typo.body1">@FormatToHourMin(FVT.value)</MudText>
                             }
                             else
                             {
@@ -180,7 +180,7 @@
                         @if(!isMobile)
                         {
                             <div class="responsive-slider">
-                                <input type="range" @bind="FV_Timeout_value" @bind:event="oninput" min="0" max="6000" step="1" class="custom-slider" disabled="@selectedStage"/>
+                                <input type="range" @bind="FVT.value" @bind:event="oninput" min="@FVT.Min" max="@FVT.Max" step="1" class="custom-slider" disabled="@selectedStage"/>
                             </div>
                         }
                     </div>
@@ -234,12 +234,9 @@
     private ElementReference FillRef;
     private ElementReference ThumbRef;
 
-    public bool CCT_Enable {get; set;}
-    public bool CVT_Enable {get; set;}
-    public bool FVT_Enable {get; set;}
-    private int CC_Timeout_value;
-    private int CV_Timeout_value;
-    private int FV_Timeout_value;
+    public TimeoutGroup CCT = new TimeoutGroup();
+    public TimeoutGroup CVT = new TimeoutGroup();
+    public TimeoutGroup FVT = new TimeoutGroup();
 
     private bool selectedStage = false; //true = 2階段, false = 3階段
     private bool topRowCallbacksRegistered = false;
@@ -532,49 +529,22 @@
     #endregion SliderFuncs
 
 
-
-
-
-
     #region UI InteractionFuncs
     private void OnCCTimeoutValueChanged()
     {
-        if (CC_Timeout_value < 0)
-        {
-            CC_Timeout_value = 0;
-        }
-
-        if(CC_Timeout_value > ConstDefinition.Timeout_Max)
-        {
-            CC_Timeout_value = ConstDefinition.Timeout_Max;
-        }
+        CCT.value = Math.Clamp(CCT.value, CCT.Min, CCT.Max);
         _sliderFillRefreshRequested = true;
     }
 
     private void OnCVTimeoutValueChanged()
     {
-        if (CV_Timeout_value < 0)
-        {
-            CV_Timeout_value = 0;
-        }
-
-        if(CV_Timeout_value > ConstDefinition.Timeout_Max)
-        {
-            CV_Timeout_value = ConstDefinition.Timeout_Max;
-        }
+        CVT.value = Math.Clamp(CVT.value, CVT.Min, CVT.Max);
         _sliderFillRefreshRequested = true;
     }
 
     private void OnFVTimeoutValueChanged()
     {
-        if (FV_Timeout_value < 0)
-        {
-            FV_Timeout_value = 0;
-        }
-        if(FV_Timeout_value > ConstDefinition.Timeout_Max)
-        {
-            FV_Timeout_value = ConstDefinition.Timeout_Max;
-        }
+        FVT.value = Math.Clamp(FVT.value, FVT.Min, FVT.Max);
         _sliderFillRefreshRequested = true;
     }
 
@@ -685,7 +655,7 @@
         //CCT_Enable in (0x00B4 "BIT_8")
         //CVT_Enable in (0x00B4 "BIT_9")
         //FVT Enable in (0x00B4 "BIT_10")
-        Console.WriteLine($"[nowUiData_transformTo_apiWriteData] selectedStage: {selectedStage}, CCT_Enable: {CCT_Enable}, CVT_Enable: {CVT_Enable}, FVT_Enable: {FVT_Enable}");
+        Console.WriteLine($"[nowUiData_transformTo_apiWriteData] selectedStage: {selectedStage}, CCT_Enable: {CCT.Enabled}, CVT_Enable: {CVT.Enabled}, FVT_Enable: {FVT.Enabled}");
         var CurveStage_BitKey = SubSystemManager.GetBitKey_FromSubSys(port, protocol, "00B4", 6);
         var CCT_Enable_BitKey = SubSystemManager.GetBitKey_FromSubSys(port, protocol, "00B4", 8);
         var CVT_Enable_BitKey = SubSystemManager.GetBitKey_FromSubSys(port, protocol, "00B4", 9);
@@ -694,24 +664,24 @@
         if(Bits_tmp != null)
         {
             if(CurveStage_BitKey is not null){Bits_tmp[CurveStage_BitKey] = selectedStage ? 1 : 0;}
-            if(CCT_Enable_BitKey is not null){Bits_tmp[CCT_Enable_BitKey] = CCT_Enable ? 1 : 0;}
-            if(CVT_Enable_BitKey is not null){Bits_tmp[CVT_Enable_BitKey] = CVT_Enable ? 1 : 0;}
-            if(FVT_Enable_BitKey is not null){Bits_tmp[FVT_Enable_BitKey] = FVT_Enable ? 1 : 0;}
+            if(CCT_Enable_BitKey is not null){Bits_tmp[CCT_Enable_BitKey] = CCT.Enabled ? 1 : 0;}
+            if(CVT_Enable_BitKey is not null){Bits_tmp[CVT_Enable_BitKey] = CVT.Enabled ? 1 : 0;}
+            if(FVT_Enable_BitKey is not null){Bits_tmp[FVT_Enable_BitKey] = FVT.Enabled ? 1 : 0;}
 
             Console.WriteLine($"[nowUiData_transformTo_apiWriteData] Bits_tmp: {JsonSerializer.Serialize(Bits_tmp)}");
             var curveStage_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "00B4", RealBits: Bits_tmp);
             if (curveStage_cmdData != null) { configurableCmdDatas.Add(curveStage_cmdData); }
         }
         //CC_Timeout (0x00B5)
-        var cc_timeout_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "00B5", RealNumber: CC_Timeout_value);
+        var cc_timeout_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "00B5", RealNumber: CCT.value);
         if (cc_timeout_cmdData != null) { configurableCmdDatas.Add(cc_timeout_cmdData); }
 
         //CV_Timeout (0x00B6)
-        var cv_timeout_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "00B6", RealNumber: CV_Timeout_value);
+        var cv_timeout_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "00B6", RealNumber: CVT.value);
         if (cv_timeout_cmdData != null) { configurableCmdDatas.Add(cv_timeout_cmdData); }
 
         //FV_Timeout (0x00B7)
-        var fv_timeout_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "00B7", RealNumber: FV_Timeout_value);
+        var fv_timeout_cmdData = SubSystemManager.createOneWriteCmdData(port, protocol, "00B7", RealNumber: FVT.value);
         if (fv_timeout_cmdData != null) { configurableCmdDatas.Add(fv_timeout_cmdData); }
 
         //[Debug] print out all the cmdCodes in configurableCmdDatas
@@ -867,13 +837,25 @@
 
         selectedStage       = ReceiveData_FromSignalR.selectStage;
 
-        CCT_Enable          = ReceiveData_FromSignalR.CCT_Enable;
-        CC_Timeout_value    = (int)ReceiveData_FromSignalR.CC_Timeout_val;
-        CVT_Enable          = ReceiveData_FromSignalR.CVT_Enable;
-        CV_Timeout_value    = (int)ReceiveData_FromSignalR.CV_Timeout_val;
-        FVT_Enable          = ReceiveData_FromSignalR.FVT_Enable;
-        FV_Timeout_value    = (int)ReceiveData_FromSignalR.FV_Timeout_val;
+        CCT.Enabled         = ReceiveData_FromSignalR.CCT_Enable;
+        CCT.value           = (int)ReceiveData_FromSignalR.CC_Timeout_val;
+        CCT.Max             = (int)ReceiveData_FromSignalR.CC_Timeout_Max_val;
+        CCT.Min             = (int)ReceiveData_FromSignalR.CC_Timeout_Min_val;
+        CCT.value = Math.Clamp(CCT.value, CCT.Min, CCT.Max);
 
+
+        CVT.Enabled         = ReceiveData_FromSignalR.CVT_Enable;
+        CVT.value           = (int)ReceiveData_FromSignalR.CV_Timeout_val;
+        CVT.Max             = (int)ReceiveData_FromSignalR.CV_Timeout_Max_val;
+        CVT.Min             = (int)ReceiveData_FromSignalR.CV_Timeout_Min_val;
+        CVT.value = Math.Clamp(CVT.value, CVT.Min, CVT.Max);
+
+        FVT.Enabled         = ReceiveData_FromSignalR.FVT_Enable;
+        FVT.value           = (int)ReceiveData_FromSignalR.FV_Timeout_val;
+        FVT.Max             = (int)ReceiveData_FromSignalR.FV_Timeout_Max_val;
+        FVT.Min             = (int)ReceiveData_FromSignalR.FV_Timeout_Min_val;
+        FVT.value = Math.Clamp(FVT.value, FVT.Min, FVT.Max);
+        
         await reDrawChart_Stage();
         _sliderFillRefreshRequested = true;
         // await InvokeAsync(StateHasChanged);
@@ -973,5 +955,11 @@
         return ex.Message.Contains("connection is not in the 'Connected' State", StringComparison.OrdinalIgnoreCase);
     }
 
-    
+    public class TimeoutGroup
+    {
+        public int Max {get; set;} = 6000;
+        public int Min {get; set;} = 0;
+        public int value {get; set;} = 0;
+        public bool Enabled {get; set;} = false;
+    }
 }

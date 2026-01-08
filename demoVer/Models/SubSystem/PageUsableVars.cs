@@ -40,12 +40,27 @@ namespace demoVer.Models
         public bool CVT_Enable { get; set; } = false;
         [JsonPropertyName("FVT_Enable")]
         public bool FVT_Enable { get; set; } = false;
+        
         [JsonPropertyName("CC_Timeout_val")]
         public double CC_Timeout_val { get; set; } = 0.0;
+        [JsonPropertyName("CC_Timeout_Max_val")]
+        public double CC_Timeout_Max_val {get; set;} = 0.0;
+        [JsonPropertyName("CC_Timeout_Min_val")]
+        public double CC_Timeout_Min_val {get; set;} = 0.0;
+
         [JsonPropertyName("CV_Timeout_val")]
         public double CV_Timeout_val { get; set; } = 0.0;
+        [JsonPropertyName("CV_Timeout_Max_val")]
+        public double CV_Timeout_Max_val {get; set;} = 0.0;
+        [JsonPropertyName("CV_Timeout_Min_val")]
+        public double CV_Timeout_Min_val {get; set;} = 0.0;
+        
         [JsonPropertyName("FV_Timeout_val")]
         public double FV_Timeout_val { get; set; } = 0.0;
+        [JsonPropertyName("FV_Timeout_Max_val")]
+        public double FV_Timeout_Max_val {get; set;} = 0.0;
+        [JsonPropertyName("FV_Timeout_Min_val")]
+        public double FV_Timeout_Min_val {get; set;} = 0.0;
 
         //For InverterSetting
         [JsonPropertyName("Output_ACV_Set")]
@@ -249,6 +264,37 @@ namespace demoVer.Models
                 CURVE_TC_Max_val = max;
                 CURVE_TC_Min_val = min;
             }
+
+            //CC_Timeout
+            if (RangesDict.TryGetValue("00B5", out var CC_Timeout_Range))
+            {
+                var max = CC_Timeout_Range.max ?? 0.0;
+                var min = CC_Timeout_Range.min ?? 0.0;
+                if(CC_Timeout_Max_val != max || CC_Timeout_Min_val != min){ Changed = true; }
+                CC_Timeout_Max_val = max;
+                CC_Timeout_Min_val = min;
+            }
+
+            //CV_Timeout
+            if (RangesDict.TryGetValue("00B6", out var CV_Timeout_Range))
+            {
+                var max = CV_Timeout_Range.max ?? 0.0;
+                var min = CV_Timeout_Range.min ?? 0.0;
+                if(CV_Timeout_Max_val != max || CV_Timeout_Min_val != min){ Changed = true; }
+                CV_Timeout_Max_val = max;
+                CV_Timeout_Min_val = min;
+            }
+
+            //FV_Timeout
+            if (RangesDict.TryGetValue("00B7", out var FV_Timeout_Range))
+            {
+                var max = FV_Timeout_Range.max ?? 0.0;
+                var min = FV_Timeout_Range.min ?? 0.0;
+                if(FV_Timeout_Max_val != max || FV_Timeout_Min_val != min){ Changed = true; }
+                FV_Timeout_Max_val = max;
+                FV_Timeout_Min_val = min;
+            }
+
 
             //Update InverterSetting
             if (RangesDict.TryGetValue("00B9", out var BAT_ALM_VOLT_Range))
