@@ -62,12 +62,14 @@
 					<tr>
 						<th>@Localizer["InfoCardEdit-Icon"]</th>
 						<th>@Localizer["InfoCardEdit-ContentSettings"]</th>
+						<th>@Localizer["Common-Action"]</th>
 					</tr>
 				</thead>
 				<tbody>
 					@for (int i = 0; i < edit_INFO_DataItems.Count; i++)
 					{
 						var temp = edit_INFO_DataItems[i];
+						var index = i;
 						var iconPath = string.IsNullOrEmpty(temp.iconPath) ? "images/square.png" : temp.iconPath;
 						<tr>
 							<td>
@@ -79,13 +81,23 @@
 								@{
 									var hint = temp.status switch
 									{
-										SettingStatus.YET => isMobile ? Localizer["InfoCardEdit-LongPressToEdit"] : Localizer["InfoCardEdit-RightClickToEdit"],
-										SettingStatus.PROGRESS => isMobile ? Localizer["InfoCardEdit-IncompleteLongPressToEdit"] : Localizer["InfoCardEdit-IncompleteRightClickToEdit"],
+										SettingStatus.YET => Localizer["InfoCardEdit-ClickEditToSetup"],
+										SettingStatus.PROGRESS => Localizer["InfoCardEdit-IncompleteClickEdit"],
 										SettingStatus.DONE => Localizer["InfoCardEdit-SetupCompleted"],
 										_ => string.Empty
 									};
 									@hint
 								}
+							</td>
+							<td>
+								<div class="action-buttons">
+									<button class="btn btn-edit" @onclick="() => EditItem(index)">
+										@Localizer["InfoCardEdit-Edit"]
+									</button>
+									<button class="btn btn-delete" @onclick="() => DeleteItem(index)">
+										@Localizer["InfoCardEdit-Delete"]
+									</button>
+								</div>
 							</td>
 						</tr>
 					}
@@ -719,6 +731,22 @@
 				break;
 		}
 	}
+
+	private void EditItem(int index)
+	{
+		if (index >= 0 && index < edit_INFO_DataItems.Count)
+		{
+			var tempINFO_DataItem = edit_INFO_DataItems[index];
+			AdjustValueCmdRow(tempINFO_DataItem);
+		}
+	}
+
+	private void DeleteItem(int index)
+	{
+		InfoData_index = index;
+		ShowDialog(Localizer["InfoCardEdit-ConfirmDeletion"], DeleteAction_In_ADD_ROW_STAGE);
+	}
+
 
 	private void DeleteAction_In_ADD_ROW_STAGE()
 	{

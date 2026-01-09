@@ -58,6 +58,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Common-Action" xml:space="preserve">
+    <value>操作</value>
+  </data>
   <data name="Common-Cancel" xml:space="preserve">
     <value>取消</value>
   </data>
@@ -624,6 +627,12 @@
   </data>
   <data name="InfoCardEdit-ContentSettings" xml:space="preserve">
     <value>內容設定</value>
+  </data>
+  <data name="InfoCardEdit-ClickEditToSetup" xml:space="preserve">
+    <value>點擊編輯按鈕進行設定</value>
+  </data>
+  <data name="InfoCardEdit-IncompleteClickEdit" xml:space="preserve">
+    <value>未完成:點擊編輯按鈕</value>
   </data>
   <data name="InfoCardEdit-LongPressToEdit" xml:space="preserve">
     <value>長按此處編輯</value>

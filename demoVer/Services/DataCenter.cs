@@ -21,7 +21,7 @@ namespace demoVer.Services
         protected void NotifyChanged() => OnUpdated?.Invoke();
     }
 
-    public class DataCenter 
+    public class DataCenter : IDisposable
     {
         //For log
         private string _category = "";
@@ -165,12 +165,11 @@ namespace demoVer.Services
         }
 
         #region DrawChartFunctions
-        public void ApplyRealDataToChart(CHART_SETTING chartSetting, bool isMobile)
+        public void ApplyRealDataToChart(CHART_SETTING chartSetting)
         {
             try
             {
-                // Console.WriteLine($"[DataCenter][ApplyRealDataToChart] isMobile = {isMobile}, hash = {this.GetHashCode}");
-                int chartMaxDataCount = (isMobile == true) ? 10 : 30;
+                int chartMaxDataCount = 30;
                 // 確保有線條
                 if (chartSetting.chart_single_data_lines == null || chartSetting.chart_single_data_lines.Count == 0)
                     return;
@@ -209,17 +208,15 @@ namespace demoVer.Services
                     {
                         var newChartLineData = line.Data?.ToList() ?? new List<double?>();
 
-                        if (newChartLineData?.Count < nowDataLength)
+                        // 限制資料長度，避免無限累積
+                        if (newChartLineData.Count >= chartMaxDataCount)
                         {
-                            for (int i = 0; i < nowDataLength; i++)
+                            // 移除舊資料，保持固定長度
+                            int excessCount = newChartLineData.Count - chartMaxDataCount + 1;
+                            if (excessCount > 0)
                             {
-                                newChartLineData.Add(null);
+                                newChartLineData.RemoveRange(0, excessCount);
                             }
-                        }
-
-                        if (newChartLineData?.Count >= chartMaxDataCount)
-                        {
-                            newChartLineData.RemoveAt(0);
                         }
 
                         newChartLineData?.Add(null);
@@ -236,17 +233,15 @@ namespace demoVer.Services
                             double? RealValue_double = (double?)realValue;
                             var newChartLineData = line.Data?.ToList() ?? new List<double?>();
 
-                            if (newChartLineData?.Count < nowDataLength)
+                            // 限制資料長度，避免無限累積
+                            if (newChartLineData.Count >= chartMaxDataCount)
                             {
-                                for (int i = 0; i < nowDataLength; i++)
+                                // 移除舊資料，保持固定長度
+                                int excessCount = newChartLineData.Count - chartMaxDataCount + 1;
+                                if (excessCount > 0)
                                 {
-                                    newChartLineData.Add(null);
+                                    newChartLineData.RemoveRange(0, excessCount);
                                 }
-                            }
-
-                            if (newChartLineData?.Count >= chartMaxDataCount)
-                            {
-                                newChartLineData.RemoveAt(0);
                             }
 
                             newChartLineData?.Add(RealValue_double);
@@ -258,10 +253,17 @@ namespace demoVer.Services
                     }
                 }
 
-                // 更新 X 軸標籤（時間戳）
+                // 更新 X 軸標籤（時間戳），同樣限制長度
                 var labels = chartSetting.Labels?.ToList() ?? new List<string>();
                 if (labels.Count >= chartMaxDataCount)
-                    labels.RemoveAt(0);
+                {
+                    // 同步移除舊的標籤
+                    int excessCount = labels.Count - chartMaxDataCount + 1;
+                    if (excessCount > 0)
+                    {
+                        labels.RemoveRange(0, excessCount);
+                    }
+                }
 
                 labels.Add(DateTime.Now.ToString("HH:mm:ss"));
                 chartSetting.Labels = labels.ToArray();
@@ -286,6 +288,16 @@ namespace demoVer.Services
         public void UnregisterChartListener(Func<Task> callback)
         {
             OnChartDataUpdated -= callback;
+        }
+
+        public void Dispose()
+        {
+            // 清理 HeartbeatService 的事件訂閱
+            _heartbeat.OnTick -= async () => 
+            {
+                NotifyChartSubscribers();
+                await RefreshAllAsync();
+            };
         }
         #endregion //DrawChartFunctions
     }

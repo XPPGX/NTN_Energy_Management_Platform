@@ -168,23 +168,34 @@
     {
         if (firstRender)
         {
-            // 從 localStorage 讀取主題偏好
-            var storedTheme = await JS.InvokeAsync<string>("getThemePreference");
-            if (!string.IsNullOrEmpty(storedTheme))
+            try
             {
-                IsDarkTheme = storedTheme == "dark";
-                
-                // 直接應用主題
-                if (IsDarkTheme)
+                // 從 localStorage 讀取主題偏好
+                var storedTheme = await JS.InvokeAsync<string>("getThemePreference");
+                if (!string.IsNullOrEmpty(storedTheme))
                 {
-                    await JS.InvokeVoidAsync("document.body.classList.remove", "theme-light");
+                    IsDarkTheme = storedTheme == "dark";
+                    
+                    // 直接應用主題
+                    if (IsDarkTheme)
+                    {
+                        await JS.InvokeVoidAsync("document.body.classList.remove", "theme-light");
+                    }
+                    else
+                    {
+                        await JS.InvokeVoidAsync("document.body.classList.add", "theme-light");
+                    }
+                    
+                    StateHasChanged(); // 讓頁面更新
                 }
-                else
-                {
-                    await JS.InvokeVoidAsync("document.body.classList.add", "theme-light");
-                }
-                
-                StateHasChanged(); // 讓頁面更新
+            }
+            catch (JSDisconnectedException)
+            {
+                // 電路已斷開，忽略此異常
+            }
+            catch (TaskCanceledException)
+            {
+                // 任務已取消，忽略此異常
             }
         }
     }

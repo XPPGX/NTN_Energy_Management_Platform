@@ -174,3 +174,44 @@ table.custom-table th {
 	from { transform: scale(0.95); opacity: 0; }
 	to   { transform: scale(1); opacity: 1; }
 }
+
+.action-buttons {
+	display: flex;
+	gap: 8px;
+	justify-content: center;
+	align-items: center;
+}
+
+.action-buttons .btn {
+	padding: 6px 12px;
+	font-size: 14px;
+	border-radius: 4px;
+	border: none;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	font-weight: 500;
+}
+
+.action-buttons .btn-edit {
+	background-color: #0078d4;
+	color: white;
+}
+
+.action-buttons .btn-edit:hover {
+	background-color: #005a9e;
+	box-shadow: 0 2px 6px rgba(0, 120, 212, 0.3);
+}
+
+.action-buttons .btn-delete {
+	background-color: #d13438;
+	color: white;
+}
+
+.action-buttons .btn-delete:hover {
+	background-color: #a71d2a;
+	box-shadow: 0 2px 6px rgba(209, 52, 56, 0.3);
+}
+
+.action-buttons .btn:active {
+	transform: scale(0.95);
+}

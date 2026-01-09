@@ -58,6 +58,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Common-Action" xml:space="preserve">
+    <value>Action</value>
+  </data>
   <data name="Common-Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
@@ -624,6 +627,12 @@
   </data>
   <data name="InfoCardEdit-ContentSettings" xml:space="preserve">
     <value>Content Settings</value>
+  </data>
+  <data name="InfoCardEdit-ClickEditToSetup" xml:space="preserve">
+    <value>Click Edit button to setup</value>
+  </data>
+  <data name="InfoCardEdit-IncompleteClickEdit" xml:space="preserve">
+    <value>Incomplete: Click Edit button</value>
   </data>
   <data name="InfoCardEdit-LongPressToEdit" xml:space="preserve">
     <value>Long press here to edit</value>

@@ -45,27 +45,38 @@
     {
         if(firstRender)
         {
-            if(currentCard == null)
+            try
             {
-                Console.WriteLine("[BlankChartCard] : currentCard == null !!");
-            }
-            else
-            {
-                Console.WriteLine("[BlankChartCard] : currentCard != null !!");
-            }
+                if(currentCard == null)
+                {
+                    Console.WriteLine("[BlankChartCard] : currentCard == null !!");
+                }
+                else
+                {
+                    Console.WriteLine("[BlankChartCard] : currentCard != null !!");
+                }
 
-            try{
-                
-                //[Debug] draw chart
-                await JS.InvokeVoidAsync("drawChart_Func", currentCard.Chart_Setting, true);
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine("Error : " + ex.Message);
-            }
+                try{
+                    
+                    //[Debug] draw chart
+                    await JS.InvokeVoidAsync("drawChart_Func", currentCard.Chart_Setting, true);
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine("Error : " + ex.Message);
+                }
 
-            isMobile = await JS.InvokeAsync<bool>("checkIsMobile");
-            AppLogger.Log_To_File_log(_category, $"isMobile = {isMobile}", AppLogLevel.Trace);
+                isMobile = await JS.InvokeAsync<bool>("checkIsMobile");
+                AppLogger.Log_To_File_log(_category, $"isMobile = {isMobile}", AppLogLevel.Trace);
+            }
+            catch (JSDisconnectedException)
+            {
+                // 電路已斷開，忽略此異常
+            }
+            catch (TaskCanceledException)
+            {
+                // 任務已取消，忽略此異常
+            }
         }
     }
 
@@ -90,7 +101,7 @@
     {
         @* Console.WriteLine("[UpdateData_OnChart]"); *@
         @* DataCenter.ApplySimulatedDataToChart(currentCard.Chart_Setting); *@
-        DataCenter.ApplyRealDataToChart(currentCard.Chart_Setting, isMobile);
+        DataCenter.ApplyRealDataToChart(currentCard.Chart_Setting);
         await JS.InvokeVoidAsync("drawChart_Func", currentCard.Chart_Setting);
     }
 
