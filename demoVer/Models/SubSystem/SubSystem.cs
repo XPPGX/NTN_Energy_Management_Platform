@@ -184,6 +184,7 @@ namespace demoVer.Models
                     AppLogger.Log_To_File_log(_category, () => $"    ChargingPrio: {nowConfigurableVars.ChargingPrio}", AppLogLevel.Debug);
                     AppLogger.Log_To_File_log(_category, () => $"    CHG_Enable: {nowConfigurableVars.CHG_Enable}", AppLogLevel.Debug);
                     AppLogger.Log_To_File_log(_category, () => $"    GRID_Enable: {nowConfigurableVars.GRID_Enable}", AppLogLevel.Debug);
+                    AppLogger.Log_To_File_log(_category, () => $"    Remote_OnOff: {nowConfigurableVars.Remote_OnOff}", AppLogLevel.Debug);
                     AppLogger.Log_To_File_log(_category, () => $"    BAT_ALM_VOLT: {nowConfigurableVars.BAT_ALM_VOLT_val}", AppLogLevel.Debug);
                     AppLogger.Log_To_File_log(_category, () => $"    BAT_SHDN_VOLT: {nowConfigurableVars.BAT_SHDN_VOLT_val}", AppLogLevel.Debug);
                     AppLogger.Log_To_File_log(_category, () => $"    BAT_RCHG_VOLT: {nowConfigurableVars.BAT_RCHG_VOLT_val}", AppLogLevel.Debug);

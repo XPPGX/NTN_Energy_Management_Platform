@@ -71,6 +71,8 @@ namespace demoVer.Models
         public OUTPUT_PRIORITY OutputPrio { get; set; } = OUTPUT_PRIORITY.Utility;
         [JsonPropertyName("ChargingPrio")]
         public CHARGING_PRIORITY ChargingPrio { get; set; } = CHARGING_PRIORITY.Utility;
+        [JsonPropertyName("Remote_OnOff")]
+        public bool Remote_OnOff {get; set;} = false;
         [JsonPropertyName("CHG_Enable")]
         public bool CHG_Enable { get; set; } = false;
         [JsonPropertyName("GRID_Enable")]
@@ -188,12 +190,13 @@ namespace demoVer.Models
                 Changed = true;
             }
 
-            bool new_CHG_Enable, new_GRID_Enable;
-            (new_CHG_Enable, new_GRID_Enable) = GetNowValueHelper.parse_INV_OPERATION(infosForWriteCmd, "0100");
-            if (CHG_Enable != new_CHG_Enable || GRID_Enable != new_GRID_Enable)
+            bool new_CHG_Enable, new_GRID_Enable, new_Remote_OnOff;
+            (new_CHG_Enable, new_GRID_Enable, new_Remote_OnOff) = GetNowValueHelper.parse_INV_OPERATION(infosForWriteCmd, "0100");
+            if (CHG_Enable != new_CHG_Enable || GRID_Enable != new_GRID_Enable || Remote_OnOff != new_Remote_OnOff)
             {
                 CHG_Enable = new_CHG_Enable;
                 GRID_Enable = new_GRID_Enable;
+                Remote_OnOff = new_Remote_OnOff;
                 Changed = true;
             }
 

@@ -2,6 +2,7 @@ using System.Diagnostics;
 using demoVer.Models;
 using MudBlazor;
 using demoVer.Services;
+using System.Xml;
 namespace demoVer.Utils
 {
     public static class GetNowValueHelper
@@ -211,31 +212,31 @@ namespace demoVer.Utils
         /// <param name="nowValuesInfo">整個子系統的InfosForWriteCmd</param>
         /// <param name="ClearCmdCode">目標命令的純命令碼(無0x)</param>
         /// <returns>CHG_EN, GRID_EN</returns>
-        public static (bool CHG_EN, bool GRID_EN) parse_INV_OPERATION(Dictionary<string, GET_RealSingleRawSettingCMD_JsonFormat> nowValuesInfo, string ClearCmdCode)
+        public static (bool CHG_EN, bool GRID_EN, bool Remote_OnOff) parse_INV_OPERATION(Dictionary<string, GET_RealSingleRawSettingCMD_JsonFormat> nowValuesInfo, string ClearCmdCode)
         {
+            bool Remote_OnOff = false;
             bool CHG_EN = false;
             bool GRID_EN = false;
-
             try
             {
                 var cmdSettingData = nowValuesInfo.ContainsKey(ClearCmdCode) ? nowValuesInfo[ClearCmdCode] : null;
                 if (cmdSettingData is null)
                 {
                     AppLogger.Log_To_File_log(_category, $"[parse_INV_OPERATION] cmdSettingData is null for CmdCode: {ClearCmdCode}", AppLogLevel.Debug);
-                    return (false, false);
+                    return (false, false, false);
                 }
 
                 string RawCmdCode_tmp = "0x" + ClearCmdCode;
                 if (!string.Equals(RawCmdCode_tmp, cmdSettingData.cmdCode, StringComparison.OrdinalIgnoreCase))
                 {
                     AppLogger.Log_To_File_log(_category, $"[parse_INV_OPERATION] cmdCode mismatch: expected {RawCmdCode_tmp}, got {cmdSettingData.cmdCode}", AppLogLevel.Debug);
-                    return (false, false);
+                    return (false, false, false);
                 }
 
                 if (cmdSettingData.AddrValues is null)
                 {
                     AppLogger.Log_To_File_log(_category, $"[parse_INV_OPERATION] AddrValues is null for CmdCode: {ClearCmdCode}", AppLogLevel.Debug);
-                    return (false, false);
+                    return (false, false, false);
                 }
 
                 //因整個子系統INV_Operation的BIT_2一樣，故取任一個addr的Value.Bits
@@ -243,9 +244,15 @@ namespace demoVer.Utils
                 if (firstAddrValue.Value.Bits is null)
                 {
                     AppLogger.Log_To_File_log(_category, $"[parse_INV_OPERATION] Value.Bits is null for CmdCode: {ClearCmdCode}", AppLogLevel.Debug);
-                    return (false, false);
+                    return (false, false, false);
                 }
                 var firstBitsDict = firstAddrValue.Value.Bits;
+                //取Remote_OnOff
+                var Remote_OnOff_BitKey = cmdSettingData.GetBitKey(0);
+                if(Remote_OnOff_BitKey is not null && firstBitsDict.TryGetValue(Remote_OnOff_BitKey, out int val0))
+                {
+                    Remote_OnOff = val0 == 1;
+                }
                 //取CHG_EN
                 var CHG_EN_BitKey = cmdSettingData.GetBitKey(2);
                 if (CHG_EN_BitKey is not null && firstBitsDict.TryGetValue(CHG_EN_BitKey, out int val1))
@@ -258,13 +265,13 @@ namespace demoVer.Utils
                 {
                     GRID_EN = val2 == 1;
                 }
-                AppLogger.Log_To_File_log(_category, $"[parse_INV_OPERATION] CmdCode: {ClearCmdCode}, CHG_EN: {CHG_EN}, GRID_EN: {GRID_EN}", AppLogLevel.Debug);
-                return (CHG_EN, GRID_EN);
+                AppLogger.Log_To_File_log(_category, $"[parse_INV_OPERATION] CmdCode: {ClearCmdCode}, CHG_EN: {CHG_EN}, GRID_EN: {GRID_EN}, Remote_OnOff: {Remote_OnOff}", AppLogLevel.Debug);
+                return (CHG_EN, GRID_EN, Remote_OnOff);
             }
             catch (Exception e)
             {
                 AppLogger.Log_To_File_log(_category, $"[parse_INV_OPERATION] CmdCode: {ClearCmdCode}, Exception: {e.Message}", AppLogLevel.Error);
-                return (false, false);
+                return (false, false, false);
             }
         }
 

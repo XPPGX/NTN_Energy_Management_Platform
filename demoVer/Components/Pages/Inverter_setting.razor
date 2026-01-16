@@ -54,6 +54,10 @@
                         }
                     }
                 </select>
+                <button type="button" class="@(isRemoteOn ? "btn btn-success" : "btn btn-secondary") refresh-btn" @onclick="RemoteOnOff">
+                    <i class="@(isRemoteOn ? "fas fa-power-off" : "fas fa-power-off")"></i>
+                    <span style="margin-left: 5px;">@(isRemoteOn ? Localizer["RemoteOn"] : Localizer["RemoteOff"])</span>
+                </button>
             </div>
         </div>
         <div class="rightPart">
@@ -255,7 +259,7 @@
     private double Battery_recharge_dynamic_upperBound => ScalingComputer.AutoSnapToDecimal_doubleVer(FV_now_val);
     private double Battery_ov_alm_now_min = 0.0, Battery_ov_alm_now_max = 0.0;
 
-
+    private bool isRemoteOn = false;
 
     bool FirstAutoGet_SubSys_done = false;
     bool DotNetHelper_Is_OK = false;
@@ -801,6 +805,8 @@
 
         //CHG_Enable (0x0100 "BIT_2")
         //GRID_Enable (0x0100 "BIT_3")
+        var CTRL_BitKey = SubSystemManager.GetBitKey_FromSubSys(port, protocol, "0100", 0);
+        var CTRL_ENable_BitKey = SubSystemManager.GetBitKey_FromSubSys(port, protocol, "0100", 1);
         var CHG_BitKey = SubSystemManager.GetBitKey_FromSubSys(port, protocol, "0100", 2);
         var GRID_BitKey = SubSystemManager.GetBitKey_FromSubSys(port, protocol, "0100", 3);
         var AddrValues_List = SubSystemManager.GetAddrValues_Copy(port, protocol, "0100");
@@ -813,6 +819,8 @@
                 if(Bits_tmp != null)
                 {
                     //透過 reference 修改 addrValue.Value.Bits 的值
+                    if(CTRL_BitKey is not null) {Bits_tmp[CTRL_BitKey] = isRemoteOn ? 1 : 0;}
+                    if(CTRL_ENable_BitKey is not null) {Bits_tmp[CTRL_ENable_BitKey] = 1;} //固定寫1，代表啟用遠端控制
                     if(CHG_BitKey is not null) {Bits_tmp[CHG_BitKey] = AC_mode_charging_enable ? 1 : 0;}
                     if(GRID_BitKey is not null) {Bits_tmp[GRID_BitKey] = Grid_tied_power_feeding_enable ? 1 : 0;}
                 }
@@ -966,6 +974,7 @@
 
         selectedFreqType = ReceiveData_FromSignalR.Output_ACF_Set;
         selectedVoltType = GetAC_InputType_By_mdlName(ReceiveData_FromSignalR.Output_ACV_Set);
+        isRemoteOn = ReceiveData_FromSignalR.Remote_OnOff;
         AC_mode_charging_enable = ReceiveData_FromSignalR.CHG_Enable;
         Grid_tied_power_feeding_enable = ReceiveData_FromSignalR.GRID_Enable;
         selectedOutputPriority = ReceiveData_FromSignalR.OutputPrio;
@@ -1052,6 +1061,14 @@
         AppLogger.Log_To_File_log(_category, $"[Inverter_setting][GetAC_InputType_By_mdlName] SubSystem ModelName = {mdlName}, ModelName Length = {mdlName.Length}, mdlName[7] = {(mdlName.Length >=8 ? mdlName[7].ToString() : "N/A")}", AppLogLevel.Debug);
         char type = mdlName.Length >= 8 ? mdlName[7] : '1'; //從第7個字元判斷，'1'代表100VAC系列，'2'代表200VAC系列，預設或錯誤都是'1'
         return type;
+    }
+
+    private async Task RemoteOnOff()
+    {
+        isRemoteOn = !isRemoteOn;
+        // TODO: 在這裡添加實際的遠端開關控制邏輯
+        Console.WriteLine($"Remote is now: {(isRemoteOn ? "ON" : "OFF")}");
+        await InvokeAsync(StateHasChanged);
     }
     #endregion JS Interop Callbacks
 }

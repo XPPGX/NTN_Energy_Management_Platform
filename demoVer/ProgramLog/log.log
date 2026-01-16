@@ -1,1 +1,76 @@
-﻿
+﻿[2026-01-16 11:51:17.212] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2026-01-16 11:51:17.226] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2026-01-16 11:51:21.645] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2026-01-16 11:51:21.646] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2026-01-16 11:51:21.734] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2026-01-16 11:51:21.735] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN_testWrite.json)
+[2026-01-16 11:51:21.737] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2026-01-16 11:51:21.738] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD_GenByFramework.json)
+[2026-01-16 11:51:21.739] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2026-01-16 11:51:21.740] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD_GenByFramework.json)
+[2026-01-16 11:53:46.126] [Heartbeat] StopAsync called
+[2026-01-16 11:53:46.127] [Heartbeat] Service stopped
+[2026-01-16 11:54:08.272] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2026-01-16 11:54:08.287] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2026-01-16 11:54:18.184] [Heartbeat] StopAsync called
+[2026-01-16 11:54:18.185] [Heartbeat] Service stopped
+[2026-01-16 11:54:26.607] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2026-01-16 11:54:26.620] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2026-01-16 11:54:28.995] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2026-01-16 11:54:28.997] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2026-01-16 11:54:28.999] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2026-01-16 11:54:29.000] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN_testWrite.json)
+[2026-01-16 11:54:29.001] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2026-01-16 11:54:29.002] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD_GenByFramework.json)
+[2026-01-16 11:54:29.003] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2026-01-16 11:54:29.004] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD_GenByFramework.json)
+[2026-01-16 11:58:48.909] [Heartbeat] StopAsync called
+[2026-01-16 11:58:48.910] [Heartbeat] Service stopped
+[2026-01-16 11:59:02.409] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2026-01-16 11:59:02.422] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2026-01-16 11:59:08.705] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2026-01-16 11:59:08.707] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2026-01-16 11:59:08.801] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2026-01-16 11:59:08.802] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN_testWrite.json)
+[2026-01-16 11:59:08.803] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2026-01-16 11:59:08.804] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD_GenByFramework.json)
+[2026-01-16 11:59:08.805] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2026-01-16 11:59:08.806] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD_GenByFramework.json)
+[2026-01-16 12:07:52.992] [Heartbeat] StopAsync called
+[2026-01-16 12:07:52.993] [Heartbeat] Service stopped
+[2026-01-16 12:08:15.921] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2026-01-16 12:08:15.932] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2026-01-16 12:08:19.649] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2026-01-16 12:08:19.651] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2026-01-16 12:08:19.735] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2026-01-16 12:08:19.735] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN_testWrite.json)
+[2026-01-16 12:08:19.737] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2026-01-16 12:08:19.738] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD_GenByFramework.json)
+[2026-01-16 12:08:19.739] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2026-01-16 12:08:19.741] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD_GenByFramework.json)
+[2026-01-16 12:12:17.394] [Heartbeat] StopAsync called
+[2026-01-16 12:12:17.394] [Heartbeat] Service stopped
+[2026-01-16 13:28:41.125] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2026-01-16 13:28:41.138] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2026-01-16 13:28:43.430] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2026-01-16 13:28:43.432] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2026-01-16 13:28:43.523] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2026-01-16 13:28:43.524] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN_testWrite.json)
+[2026-01-16 13:28:43.525] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2026-01-16 13:28:43.527] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD_GenByFramework.json)
+[2026-01-16 13:28:43.528] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2026-01-16 13:28:43.529] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD_GenByFramework.json)
+[2026-01-16 13:30:33.068] [Heartbeat] StopAsync called
+[2026-01-16 13:30:33.070] [Heartbeat] Service stopped
+[2026-01-16 13:30:41.166] 成功載入 CmdCode JSON 文件: Data\CmdCode.json 與 Data\CmdCodeReverse.json
+[2026-01-16 13:30:41.179] 成功載入 DecodeLogic JSON 文件: Data\CmdDecodeLogic.json
+[2026-01-16 13:30:43.920] [PollingRead][savePartAsSubSys] New Port created : CAN1
+[2026-01-16 13:30:43.921] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN1, NTN-5K_CAN_testWrite.json)
+[2026-01-16 13:30:44.012] [PollingRead][savePartAsSubSys] New Port created : CAN2
+[2026-01-16 13:30:44.013] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (CAN2, NTN-5K_CAN_testWrite.json)
+[2026-01-16 13:30:44.014] [PollingRead][savePartAsSubSys] New Port created : MOD1
+[2026-01-16 13:30:44.015] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD1, NTN-5K_MOD_GenByFramework.json)
+[2026-01-16 13:30:44.017] [PollingRead][savePartAsSubSys] New Port created : MOD2
+[2026-01-16 13:30:44.019] [PollingRead][savePartAsSubSys] New SubSystem created for (port, protocol) = (MOD2, NTN-5K_MOD_GenByFramework.json)
+[2026-01-16 13:32:32.981] [Heartbeat] StopAsync called
+[2026-01-16 13:32:32.982] [Heartbeat] Service stopped

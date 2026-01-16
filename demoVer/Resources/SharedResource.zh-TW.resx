@@ -811,4 +811,10 @@
   <data name="CardType-Status" xml:space="preserve">
     <value>連接狀態</value>
   </data>
+  <data name="RemoteOn" xml:space="preserve">
+    <value>開啟</value>
+  </data>
+  <data name="RemoteOff" xml:space="preserve">
+    <value>關閉</value>
+  </data>
 </root>
